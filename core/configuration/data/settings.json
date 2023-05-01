@@ -1,0 +1,39 @@
+{
+    "trs398": {
+        "tolerance": 0.01,
+        "reference_temperature": 20.0,
+        "reference_pressure": 101.325,
+        "reference_humidity": 50,
+        "photon_calibration": {
+            "allowed_chambers": "all"
+        },
+        "electron_calibration": {
+            "allowed_chambers": [
+                "Attix RMI 449",
+                "Capintec PS-033",
+                "Exradin P11",
+                "Holt (Memorial)",
+                "NACP01",
+                "NACP02",
+                "Markus",
+                "Roos",
+                "Capintec PR-06C/G Farmer",
+                "Exradin A2 Spokas (2 mm cap)",
+                "Exradin T2 Spokas (4 mm cap)",
+                "Exradin A12 (Farmer)",
+                "NE 2571 Farmer",
+                "NE 2581 (Polystyrene cap)",
+                "NE 2581 (PMMA cap)",
+                "PTW 30001",
+                "PTW 30010",
+                "PTW 30002 / 30011",
+                "PTW 30004 / 30012",
+                "PTW 31002 flexible",
+                "PTW 31003 flexible",
+                "Victoreen 30-348",
+                "Victoreen 30-351",
+                "Victoreen 30-349"
+            ]
+        }
+    }
+}

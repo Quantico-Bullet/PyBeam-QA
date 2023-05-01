@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+        <link rel="stylesheet" href="katex/katex.min.css">
+        <script defer src="katex/katex.min.js"></script>
+        <script defer src="katex/contrib/auto-render.min.js"></script>
+        <script >
+            
+            document.addEventListener("DOMContentLoaded", function() {
+                renderMathInElement(document.body, {
+                  // customised options
+                  // • auto-render specific keys, e.g.:
+                  delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false},
+                    {left: "\\(", right: "\\)", display: false},
+                    {left: "\\begin{equation}", right: "\\end{equation}", display: true},
+                    {left: "\\begin{align}", right: "\\end{align}", display: true},
+                    {left: "\\begin{alignat}", right: "\\end{alignat}", display: true},
+                    {left: "\\begin{gather}", right: "\\end{gather}", display: true},
+                    {left: "\\begin{CD}", right: "\\end{CD}", display: true},
+                    {left: "\\[", right: "\\]", display: true}
+                  ],
+                  // • rendering keys, e.g.:
+                  throwOnError : false
+                });
+                
+                //prevent user clicks
+                document.body.style.webkitUserSelect = 'none';
+                document.body.style.webkitUserDrag = 'none';
+            });
+        </script>
+
+        <style type="text/css">
+            @font-face {
+                font-family: RobotoFont;
+                src: url('fonts/roboto_regular.ttf');
+            }
+            body {
+                overflow: hidden;
+                background: rgba(0,0,0,0);
+                font-size: 15pt;
+            }
+    </style>
+    
+    </head>
+    <!-- Equations will go in here -->
+    <body style="margin: 0; padding: 0"> Test $z_{max}$</body>
+</html>

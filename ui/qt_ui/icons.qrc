@@ -1,0 +1,25 @@
+<RCC>
+    <qresource prefix="/colorIcons">
+        <file>icons/tools.png</file>
+        <file>icons/close_win.png</file>
+        <file>icons/circled-left.png</file>
+        <file>icons/left.png</file>
+        <file>icons/import.png</file>
+        <file>icons/image-file.png</file>
+        <file>icons/module.png</file>
+        <file>icons/picture.png</file>
+        <file>icons/plus.png</file>
+        <file>icons/add-file.png</file>
+        <file>icons/graph-report.png</file>
+        <file>icons/minus.png</file>
+        <file>icons/scan.png</file>
+        <file>icons/warning.png</file>
+        <file>icons/warning_48.png</file>
+        <file>icons/bb_shift.png</file>
+    </qresource>
+    <qresource prefix="/actionIcons">
+        <file>icons/eye.png</file>
+        <file>icons/remove.png</file>
+        <file>icons/delete.png</file>
+    </qresource>
+</RCC>
