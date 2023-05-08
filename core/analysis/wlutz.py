@@ -7,13 +7,13 @@ from pathlib import Path
 class QWinstonLutz(WinstonLutz):
 
     def __init__(self, directory: str | list[str] | Path,
-                 imageData: list = [],
-                 updateSignal: Signal = Signal(int),
+                 image_data: list = [],
+                 update_signal: Signal = Signal(int),
                  use_filenames: bool = False,
                  axis_mapping: dict[str, tuple[int, int, int]] | None = None):
         super().__init__(directory, use_filenames, axis_mapping)
-        self.updateSignal = updateSignal
-        self.imageData = imageData
+        self.update_signal = update_signal
+        self.image_data = image_data
 
     def analyze(self, bb_size_mm: float = 5,
                 machine_scale: MachineScale = MachineScale.IEC61217,
@@ -24,7 +24,7 @@ class QWinstonLutz(WinstonLutz):
         for img in self.images:
             img.analyze(bb_size_mm, low_density_bb)
 
-            self.imageData.append({
+            self.image_data.append({
                 "file_path": str(img.path),
                 "bb_location": {"x": img.bb.x, "y": img.bb.y},
                 "field_cax": {"x": img.field_cax.x, "y": img.field_cax.y},
@@ -32,36 +32,36 @@ class QWinstonLutz(WinstonLutz):
             })
 
             counter += 1
-            self.updateSignal.emit(counter)
+            self.update_signal.emit(counter)
         self._is_analyzed = True
 
-        del self.updateSignal
+        del self.update_signal
         
-    def getUpdateSignal(self) -> Signal:
-        return self.updateSignal
+    def get_update_signal(self) -> Signal:
+        return self.update_signal
 
 class QWinstonLutzWorker(QObject):
 
-    imagesAnalyzed = Signal(int)
-    threadFinished = Signal()
-    analysisResultsChanged = Signal(dict)
-    bbShiftInfoChanged = Signal(str)
+    images_analyzed = Signal(int)
+    thread_finished = Signal()
+    analysis_results_changed = Signal(dict)
+    bb_shift_info_changed = Signal(str)
 
     def __init__(self, images):
         super().__init__()
         self.images = images
-        self.imageData = []
+        self.image_data = []
 
     @Slot()
     def analyze(self):
-        wl = QWinstonLutz(self.images, self.imageData, 
-                          updateSignal=self.imagesAnalyzed, use_filenames=True)
+        wl = QWinstonLutz(self.images, self.image_data, 
+                          update_signal=self.images_analyzed, use_filenames=True)
         wl.analyze()
         
-        wlData = wl.results_data(as_dict=True)
-        wlData["image_details"] = self.imageData
+        wl_data = wl.results_data(as_dict=True)
+        wl_data["image_details"] = self.image_data
 
-        self.analysisResultsChanged.emit(wlData)
-        self.bbShiftInfoChanged.emit(wl.bb_shift_instructions())
+        self.analysis_results_changed.emit(wl_data)
+        self.bb_shift_info_changed.emit(wl.bb_shift_instructions())
         del wl
-        self.threadFinished.emit()
+        self.thread_finished.emit()

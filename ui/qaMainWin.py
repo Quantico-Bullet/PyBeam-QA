@@ -12,6 +12,7 @@ class QAToolsWin(QMainWindow):
         super().__init__()
         self.__ui = Ui_PhotonsMainWin()
         self.__ui.setupUi(self)
+        self.worksheetType = None
 
         if initData is not None:
             if initData["toolType"] == "photon_calibration":
@@ -31,9 +32,11 @@ class QAToolsWin(QMainWindow):
                 self.dataModel.userName_changed.emit(initData["user"])
 
             elif initData["toolType"] == "winston_lutz":
+                self.worksheetType = "WL_WORKSHEET"
+
                 self.setWindowTitle("PyBeam QA ‒ Winston Lutz Analysis")
                 worksheet = QWLutzWorksheet()
-                self.__ui.tabWidget.addTab(worksheet, u"Test Tab")
+                self.__ui.tabWidget.addTab(worksheet, u"WL Analysis (Untitled)")
 
         # setup basic window functionality
         self.__ui.dockWidget.close()
@@ -136,6 +139,10 @@ class QAToolsWin(QMainWindow):
             worksheet.ui.linacNameLE.setClearButtonEnabled(False)
     
         self.worksheetList.append(worksheet)
+
+    def addNewWorksheet(self):
+        if self.worksheetType == "WL_WORKSHEET":
+            print("Not yet implemented")
 
 class PhotonsCalModel(QObject):
     institution_changed = Signal(str)

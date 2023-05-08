@@ -23,61 +23,61 @@ class QWLutzWorksheet(QWidget):
         self.ui = Ui_QWLutzWorksheet()
         self.ui.setupUi(self)
 
-        self.imageIcon = QIcon()
-        self.imageIcon.addFile(u":/colorIcons/icons/picture.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.image_icon = QIcon()
+        self.image_icon.addFile(u":/colorIcons/icons/picture.png", QSize(), QIcon.Normal, QIcon.Off)
 
-        self.formLayout = QFormLayout()
-        self.formLayout.setHorizontalSpacing(30)
-        self.ui.analysisInfoVL.addLayout(self.formLayout)
+        self.form_layout = QFormLayout()
+        self.form_layout.setHorizontalSpacing(30)
+        self.ui.analysisInfoVL.addLayout(self.form_layout)
         self.ui.stackedWidget.setCurrentIndex(0)
         self.ui.shiftInfoBtn.setEnabled(False)
 
         # setup context menu for image list widget
-        self.imgListContextMenu = QMenu()
-        self.imgListContextMenu.addAction("View Original Image", self.viewDicomImage)
-        self.viewAnalyzedImgAction = self.imgListContextMenu.addAction("View Analyzed Image", self.viewAnalyzedImage)
-        self.viewAnalyzedImgAction.setEnabled(False)
-        self.imgListContextMenu.addAction("Show Containing Folder", self.openFileFolder)
-        self.removeFileAction = self.imgListContextMenu.addAction("Remove from List", self.removeFile)
-        self.deleteFileAction = self.imgListContextMenu.addAction("Delete", self.deleteFile)
-        self.imgListContextMenu.addAction("Properties")
-        self.imgListContextMenu.addSeparator()
-        self.selectAllAction = self.imgListContextMenu.addAction("Select All", lambda: self.performSelection("selectAll"))
-        self.unselectAllAction = self.imgListContextMenu.addAction("Unselect All", lambda: self.performSelection("unselectAll"))
-        self.invertSelectAction = self.imgListContextMenu.addAction("Invert Selection", lambda: self.performSelection("invertSelection"))
-        self.imgListContextMenu.addSeparator()
-        self.removeSelectedFilesAction = self.imgListContextMenu.addAction("Remove Selected Files", self.removeSelectedFiles)
-        self.removeAllFilesAction = self.imgListContextMenu.addAction("Remove All Files", self.removeAllFiles)
+        self.img_list_contextmenu = QMenu()
+        self.img_list_contextmenu.addAction("View Original Image", self.view_dicom_image)
+        self.view_analyzed_img_action = self.img_list_contextmenu.addAction("View Analyzed Image", self.viewAnalyzedImage)
+        self.view_analyzed_img_action.setEnabled(False)
+        self.img_list_contextmenu.addAction("Show Containing Folder", self.open_file_folder)
+        self.remove_file_action = self.img_list_contextmenu.addAction("Remove from List", self.remove_file)
+        self.delete_file_action = self.img_list_contextmenu.addAction("Delete", self.delete_file)
+        self.img_list_contextmenu.addAction("Properties")
+        self.img_list_contextmenu.addSeparator()
+        self.select_all_action = self.img_list_contextmenu.addAction("Select All", lambda: self.perform_selection("selectAll"))
+        self.unselect_all_action = self.img_list_contextmenu.addAction("Unselect All", lambda: self.perform_selection("unselectAll"))
+        self.invert_select_action = self.img_list_contextmenu.addAction("Invert Selection", lambda: self.perform_selection("invertSelection"))
+        self.img_list_contextmenu.addSeparator()
+        self.remove_selected_files_action = self.img_list_contextmenu.addAction("Remove Selected Files", self.remove_selected_files)
+        self.remove_all_files_action = self.img_list_contextmenu.addAction("Remove All Files", self.remove_all_files)
         self.ui.imageListWidget.installEventFilter(self)
 
         #Add widgets
-        self.progressVL = QVBoxLayout()
-        self.progressVL.setSpacing(10)
+        self.progress_vl = QVBoxLayout()
+        self.progress_vl.setSpacing(10)
 
-        self.analysisProgressBar = QProgressBar()
-        self.analysisProgressBar.setRange(0,0)
-        self.analysisProgressBar.setTextVisible(False)
-        self.analysisProgressBar.setMaximumSize(300, 10)
-        self.analysisProgressBar.setMinimumSize(300, 10)
-        self.analysisProgressBar.hide()
+        self.analysis_progress_bar = QProgressBar()
+        self.analysis_progress_bar.setRange(0,0)
+        self.analysis_progress_bar.setTextVisible(False)
+        self.analysis_progress_bar.setMaximumSize(300, 10)
+        self.analysis_progress_bar.setMinimumSize(300, 10)
+        self.analysis_progress_bar.hide()
 
-        self.analysisMessage = QLabel()
-        self.analysisMessage.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred))
-        self.analysisMessage.hide()
+        self.analysis_message_label = QLabel()
+        self.analysis_message_label.setSizePolicy(QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred))
+        self.analysis_message_label.hide()
 
-        self.progressVL.addWidget(self.analysisProgressBar, 0, Qt.AlignHCenter)
-        self.progressVL.addWidget(self.analysisMessage, 0, Qt.AlignHCenter)
+        self.progress_vl.addWidget(self.analysis_progress_bar, 0, Qt.AlignHCenter)
+        self.progress_vl.addWidget(self.analysis_message_label, 0, Qt.AlignHCenter)
 
-        self.ui.analysisInfoVL.addLayout(self.progressVL)
+        self.ui.analysisInfoVL.addLayout(self.progress_vl)
 
-        self.ui.addImgBtn.clicked.connect(self.addFiles)
-        self.ui.importImgBtn.clicked.connect(self.addFiles)
-        self.ui.analyzeBtn.clicked.connect(self.startAnalysis)
+        self.ui.addImgBtn.clicked.connect(self.add_files)
+        self.ui.importImgBtn.clicked.connect(self.add_files)
+        self.ui.analyzeBtn.clicked.connect(self.start_analysis)
         self.ui.shiftInfoBtn.clicked.connect(self.showShiftInfo)
-        self.ui.imageListWidget.itemChanged.connect(lambda x: self.updateMarkedImages())
+        self.ui.imageListWidget.itemChanged.connect(lambda x: self.update_marked_images())
 
-        self.markedImages = []
-        self.imageViewWindows = []
+        self.marked_images = []
+        self.imageView_windows = []
         self.analysis_in_progress = False
 
         self.params = {
@@ -103,7 +103,7 @@ class QWLutzWorksheet(QWidget):
             "max_couch_rms_deviation_mm": "Maximum couch RMS deviation"
         }
 
-    def addFiles(self):
+    def add_files(self):
         files, _ = QFileDialog.getOpenFileNames(
             self,
             "Select DICOM WL Images",
@@ -120,14 +120,14 @@ class QWLutzWorksheet(QWidget):
                 
                 listItemWidget = QListWidgetItem(self.ui.imageListWidget)
                 listItemWidget.setText(path.name)
-                listItemWidget.setIcon(self.imageIcon)
+                listItemWidget.setIcon(self.image_icon)
                 listItemWidget.setCheckState(Qt.Unchecked)
                 listItemWidget.setData(Qt.UserRole, itemData)
             
             if self.ui.stackedWidget.currentIndex() == 0:
                 self.ui.stackedWidget.setCurrentIndex(1)
 
-    def removeSelectedFiles(self):
+    def remove_selected_files(self):
         index = 0
         while index < self.ui.imageListWidget.count():
             if self.ui.imageListWidget.item(index).checkState() == Qt.CheckState.Checked:
@@ -136,34 +136,34 @@ class QWLutzWorksheet(QWidget):
             else:
                 index += 1
 
-        self.updateMarkedImages()
+        self.update_marked_images()
 
-    def removeAllFiles(self):
-        itemCount = self.ui.imageListWidget.count()
-        for index in range(itemCount):
-            listItemWidget = self.ui.imageListWidget.takeItem(itemCount-(index+1))
+    def remove_all_files(self):
+        item_count = self.ui.imageListWidget.count()
+        for index in range(item_count):
+            listItemWidget = self.ui.imageListWidget.takeItem(item_count-(index+1))
             del listItemWidget
         
-        self.updateMarkedImages()
+        self.update_marked_images()
 
-    def removeFile(self):
+    def remove_file(self):
         listItemWidget = self.ui.imageListWidget.takeItem(self.ui.imageListWidget.currentRow())
         del listItemWidget
 
-        self.updateMarkedImages()
+        self.update_marked_images()
 
-    def openFileFolder(self):
+    def open_file_folder(self):
         listWidgetItem = self.ui.imageListWidget.currentItem()
-        filePath = str(Path(listWidgetItem.data(Qt.UserRole)["file_path"]).parent.resolve())
+        file_path = str(Path(listWidgetItem.data(Qt.UserRole)["file_path"]).parent.resolve())
         
         if platform.system() == "Windows":
-            subprocess.Popen(["explorer", filePath])
+            subprocess.Popen(["explorer", file_path])
         elif platform.system() == "Darwin":
-            subprocess.Popen(["open", filePath])
+            subprocess.Popen(["open", file_path])
         else:
-            subprocess.Popen(["xdg-open", filePath])
+            subprocess.Popen(["xdg-open", file_path])
 
-    def performSelection(self, selection_type: str):
+    def perform_selection(self, selection_type: str):
 
         if selection_type == "selectAll":
             for index in range(self.ui.imageListWidget.count()):
@@ -180,7 +180,7 @@ class QWLutzWorksheet(QWidget):
                 elif self.ui.imageListWidget.item(index).checkState() == Qt.CheckState.Unchecked:
                     self.ui.imageListWidget.item(index).setCheckState(Qt.CheckState.Checked)
 
-        self.updateMarkedImages()
+        self.update_marked_images()
 
 
     def eventFilter(self, source, event: QEvent):
@@ -191,147 +191,148 @@ class QWLutzWorksheet(QWidget):
                 # Show context menu
                 if not self.analysis_in_progress:
                     if self.ui.imageListWidget.itemAt(pos).data(Qt.UserRole)["analysis_data"]:
-                        self.viewAnalyzedImgAction.setEnabled(True)
+                        self.view_analyzed_img_action.setEnabled(True)
                     else:
-                        self.viewAnalyzedImgAction.setEnabled(False)
+                        self.view_analyzed_img_action.setEnabled(False)
 
-                    if len(self.markedImages) > 0:
-                        self.invertSelectAction.setEnabled(True)
-                        self.unselectAllAction.setEnabled(True)
-                        self.removeSelectedFilesAction.setEnabled(True)
+                    if len(self.marked_images) > 0:
+                        self.invert_select_action.setEnabled(True)
+                        self.unselect_all_action.setEnabled(True)
+                        self.remove_selected_files_action.setEnabled(True)
                     else:
-                        self.invertSelectAction.setEnabled(False)
-                        self.unselectAllAction.setEnabled(False)
-                        self.removeSelectedFilesAction.setEnabled(False)
+                        self.invert_select_action.setEnabled(False)
+                        self.unselect_all_action.setEnabled(False)
+                        self.remove_selected_files_action.setEnabled(False)
 
-                    if len(self.markedImages) == self.ui.imageListWidget.count():
-                        self.selectAllAction.setEnabled(False)
+                    if len(self.marked_images) == self.ui.imageListWidget.count():
+                        self.select_all_action.setEnabled(False)
                     else:
-                        self.selectAllAction.setEnabled(True)
+                        self.select_all_action.setEnabled(True)
                     
-                    self.removeFileAction.setEnabled(True)
-                    self.deleteFileAction.setEnabled(True)
-                    self.removeAllFilesAction.setEnabled(True)
-                    self.selectAllAction.setEnabled(True)
+                    self.remove_file_action.setEnabled(True)
+                    self.delete_file_action.setEnabled(True)
+                    self.remove_all_files_action.setEnabled(True)
+                    self.select_all_action.setEnabled(True)
                 
                 else:
-                    self.removeFileAction.setEnabled(False)
-                    self.deleteFileAction.setEnabled(False)
-                    self.removeSelectedFilesAction.setEnabled(False)
-                    self.removeAllFilesAction.setEnabled(False)
-                    self.selectAllAction.setEnabled(False)
-                    self.viewAnalyzedImgAction.setEnabled(False)
+                    self.remove_file_action.setEnabled(False)
+                    self.delete_file_action.setEnabled(False)
+                    self.remove_selected_files_action.setEnabled(False)
+                    self.remove_all_files_action.setEnabled(False)
+                    self.select_all_action.setEnabled(False)
+                    self.view_analyzed_img_action.setEnabled(False)
 
-                self.imgListContextMenu.exec(event.globalPos())
+                self.img_list_contextmenu.exec(event.globalPos())
     
         return super().eventFilter(source, event)
     
-    def updateMarkedImages(self):
-        self.markedImages.clear()
+    def update_marked_images(self):
+        self.marked_images.clear()
 
         for index in range(self.ui.imageListWidget.count()):
             if self.ui.imageListWidget.item(index).checkState() == Qt.CheckState.Checked:
-                self.markedImages.append(self.ui.imageListWidget.item(index).data(Qt.UserRole)["file_path"])
+                self.marked_images.append(self.ui.imageListWidget.item(index).data(Qt.UserRole)["file_path"])
         
-        if len(self.markedImages) > 1:
-            self.ui.analyzeBtn.setText(f"Analyze {len(self.markedImages)} images")
+        if len(self.marked_images) > 1:
+            self.ui.analyzeBtn.setText(f"Analyze {len(self.marked_images)} images")
             self.ui.analyzeBtn.setEnabled(True)
 
         else:
             self.ui.analyzeBtn.setText(f"Analyze images")
             self.ui.analyzeBtn.setEnabled(False)
     
-    def startAnalysis(self):
+    def start_analysis(self):
         self.analysis_in_progress = True
-        self.removeListCheckmarks()
+        self.remove_list_checkmarks()
 
-        self.analysisProgressBar.show()
-        self.analysisMessage.show()
+        self.analysis_progress_bar.show()
+        self.analysis_message_label.show()
 
-        rowCount = self.formLayout.rowCount()
-        for i in range(rowCount):
-            self.formLayout.removeRow(rowCount - (i+1))
+        row_count = self.form_layout.rowCount()
+        for i in range(row_count):
+            self.form_layout.removeRow(row_count - (i+1))
 
         self.ui.analyzeBtn.setEnabled(False)
         self.ui.analyzeBtn.setText("Analysis in progress...")
 
-        self.analysisWorker = QWinstonLutzWorker(self.markedImages)
+        self.analysis_worker = QWinstonLutzWorker(self.marked_images)
     
         self.thread = QThread()
-        self.analysisWorker.moveToThread(self.thread)
-        self.thread.started.connect(self.analysisWorker.analyze)
+        self.analysis_worker.moveToThread(self.thread)
+        self.thread.started.connect(self.analysis_worker.analyze)
         self.thread.finished.connect(self.thread.deleteLater)
-        self.analysisWorker.imagesAnalyzed.connect(self.analysisProgressBar.setValue)
-        self.analysisWorker.imagesAnalyzed.connect(lambda num:
-                            self.analysisMessage.setText(f"Analyzing images ({num} of {len(self.markedImages)} complete)"))
-        self.analysisWorker.analysisResultsChanged.connect(self.showAnalysisResults)
-        self.analysisWorker.bbShiftInfoChanged.connect(self.updateBBShift)
-        self.analysisWorker.threadFinished.connect(self.thread.quit)
-        self.analysisWorker.threadFinished.connect(self.analysisWorker.deleteLater)
+        self.analysis_worker.images_analyzed.connect(self.analysis_progress_bar.setValue)
+        self.analysis_worker.images_analyzed.connect(lambda num:
+                            self.analysis_message_label.setText(f"Analyzing images ({num} of {len(self.marked_images)} complete)"))
+        self.analysis_worker.analysis_results_changed.connect(self.show_analysis_results)
+        self.analysis_worker.bb_shift_info_changed.connect(self.update_bb_shift)
+        self.analysis_worker.thread_finished.connect(self.thread.quit)
+        self.analysis_worker.thread_finished.connect(self.analysis_worker.deleteLater)
 
-        self.analysisProgressBar.setRange(0, len(self.markedImages))
-        self.analysisProgressBar.setValue(0)
-        self.analysisMessage.setText("Starting analysis...")
+        self.analysis_progress_bar.setRange(0, len(self.marked_images))
+        self.analysis_progress_bar.setValue(0)
+        self.analysis_message_label.setText("Starting analysis...")
 
         self.thread.start()
 
-    def showAnalysisResults(self, results):
+    def show_analysis_results(self, results):
         self.analysis_in_progress = False
-        self.restoreListCheckmarks()
+        self.restore_list_checkmarks()
 
         # NB: Data change of list widgets items will auto enable analyzeBtn
         for index in range(self.ui.imageListWidget.count()):
             listItemWidget = self.ui.imageListWidget.item(index)
-            itemData = listItemWidget.data(Qt.UserRole)
+            item_data = listItemWidget.data(Qt.UserRole)
 
-            for imageDetails in results["image_details"]:
-                if itemData["file_path"] == imageDetails["file_path"]:
-                    itemData["analysis_data"] = imageDetails
+            for image_details in results["image_details"]:
+                if item_data["file_path"] == image_details["file_path"]:
+                    item_data["analysis_data"] = image_details
                     break
                 else:
-                    itemData["analysis_data"] = None
+                    item_data["analysis_data"] = None
 
-            listItemWidget.setData(Qt.UserRole, itemData)
+            listItemWidget.setData(Qt.UserRole, item_data)
 
         for key in self.params:
             if "_mm" in key:
-                self.formLayout.addRow(f"{self.params[key]}:", QLabel(f"{round(float(results[key]),2)} mm"))
+                self.form_layout.addRow(f"{self.params[key]}:", QLabel(f"{round(float(results[key]),2)} mm"))
             else:
-                self.formLayout.addRow(f"{self.params[key]}:", QLabel(str(results[key])))
+                self.form_layout.addRow(f"{self.params[key]}:", QLabel(str(results[key])))
 
-        self.analysisProgressBar.hide()
-        self.analysisMessage.hide()
+        self.analysis_progress_bar.hide()
+        self.analysis_message_label.hide()
 
-    def updateBBShift(self, bbShiftInfo: str):
-        self.shiftInfo = bbShiftInfo
+    def update_bb_shift(self, bb_shift_info: str):
+        self.shift_info = bb_shift_info
         self.ui.shiftInfoBtn.setEnabled(True)
 
-    def viewDicomImage(self):
-        imageShortName = self.ui.imageListWidget.currentItem().text()
-        imagePath = self.ui.imageListWidget.selectedItems()[0].data(Qt.UserRole)["file_path"]
-        image = LinacDicomImage(imagePath)
+    def view_dicom_image(self):
+        image_short_name = self.ui.imageListWidget.currentItem().text()
+        image_path = self.ui.imageListWidget.selectedItems()[0].data(Qt.UserRole)["file_path"]
+        image = LinacDicomImage(image_path)
 
         imgView = pg.ImageView()
         imgView.setImage(image.array)
         imgView.setPredefinedGradient("viridis")
 
-        newWin = QMainWindow()
-        newWin.setWindowTitle(imageShortName)
-        newWin.setCentralWidget(imgView)
-        newWin.setMinimumSize(600, 500)
+        new_win = QMainWindow()
+        new_win.setWindowTitle(image_short_name)
+        new_win.setCentralWidget(imgView)
+        new_win.setMinimumSize(600, 500)
         
-        self.imageViewWindows.append(newWin)
-        newWin.show()
-        newWin.setMinimumSize(0, 0)
+        self.imageView_windows.append(new_win)
+        new_win.show()
+        new_win.setMinimumSize(0, 0)
 
     def viewAnalyzedImage(self):
         listWidgetItem = self.ui.imageListWidget.currentItem()
-        imageShortName = listWidgetItem.text()
-        imagePath = listWidgetItem.data(Qt.UserRole)["file_path"]
-        imageData = listWidgetItem.data(Qt.UserRole)["analysis_data"]
-        image = LinacDicomImage(imagePath)
+        image_short_name = listWidgetItem.text()
+        image_path = listWidgetItem.data(Qt.UserRole)["file_path"]
+        image_data = listWidgetItem.data(Qt.UserRole)["analysis_data"]
+        image = LinacDicomImage(image_path)
 
         plotView = pg.PlotWidget()
+        plotView.setAspectLocked(True)
         plotItem = plotView.getPlotItem()
         plotItem.invertY(False)
         
@@ -339,74 +340,86 @@ class QWLutzWorksheet(QWidget):
         image.flipud()
         imageItem = pg.ImageItem(image=image.array)
 
-        bbX = imageData["bb_location"]["x"]
-        bbY = imageData["bb_location"]["y"]
-        caxX = imageData["field_cax"]["x"]
-        caxY = imageData["field_cax"]["y"]
-        epidX = imageData["epid"]["x"]
-        epidY = imageData["epid"]["y"]
+        bbX = image_data["bb_location"]["x"]
+        bbY = image_data["bb_location"]["y"]
+        caxX = image_data["field_cax"]["x"]
+        caxY = image_data["field_cax"]["y"]
+        epidX = image_data["epid"]["x"]
+        epidY = image_data["epid"]["y"]
 
-        bbCaxPlotItem = pg.ScatterPlotItem()
-        bbCaxPlotItem.addPoints(pos=[(bbX, bbY)], pen=None, size=10, brush=(255, 0, 0, 255))
-        bbCaxPlotItem.addPoints(pos=[(caxX, caxY)], pen=None, size=10, brush=(0, 0, 255, 255),
-                                symbol="s")
+        bb_plotItem = pg.ScatterPlotItem()
+        cax_plotItem = pg.ScatterPlotItem()
+        bb_plotItem.addPoints(pos=[(bbX, bbY)], pen=None, size=10, brush=(255, 0, 0, 255), name="BB")
+        cax_plotItem.addPoints(pos=[(caxX, caxY)], pen=None, size=10, brush=(0, 0, 255, 255),
+                                symbol="s", name="CAX")
         
-        epidXPlotItem = pg.InfiniteLine(movable=False, angle=90, pen = (0,255,0), label="EPID x = {value:0.2f}",
-                       labelOpts={'position': 0.1, 'color': (200,200,100), 'fill': (0,200,0,50), 'movable': False})
+        epidX_plotItem = pg.InfiniteLine(movable=False, angle=90, pen = (0,255,0), name="EPID X line",
+                                        label="EPID x = {value:0.2f}", labelOpts={'position': 0.1,
+                                        'color': (200,200,100), 'fill': (0,200,0,50), 'movable': False})
         
-        epidYPlotItem = pg.InfiniteLine(movable=False, angle=0, pen = (0,255,0), label="EPID y = {value:0.2f}",
-                       labelOpts={'position': 0.1, 'color': (200,200,100), 'fill': (0,200,0,50), 'movable': False})
+        epidY_plotItem = pg.InfiniteLine(movable=False, angle=0, pen = (0,255,0), name="EPID Y line", 
+                                         label="EPID y = {value:0.2f}", labelOpts={'position': 0.1, 
+                                        'color': (200,200,100), 'fill': (0,200,0,50), 'movable': False})
         
-        epidXPlotItem.setPos([epidX,0])
-        epidYPlotItem.setPos([0,epidY])
+        epidX_plotItem.setPos([epidX,0])
+        epidY_plotItem.setPos([0,epidY])
         plotItem.addItem(imageItem)
-        plotItem.addItem(bbCaxPlotItem)
-        plotItem.addItem(epidXPlotItem)
-        plotItem.addItem(epidYPlotItem)
+        plotItem.addColorBar(imageItem, colorMap="viridis")
+        plotItem.addItem(bb_plotItem)
+        plotItem.addItem(cax_plotItem)
+        plotItem.addItem(epidX_plotItem)
+        plotItem.addItem(epidY_plotItem)
 
-        newWin = QMainWindow()
-        newWin.setWindowTitle(imageShortName + " (Analyzed)")
-        newWin.setCentralWidget(plotView)
-        newWin.setMinimumSize(600, 500)
+        legend = pg.LegendItem((50,50), offset=(50,50))
+        legend.setParentItem(plotItem)
+        legend.addItem(bb_plotItem, "BB")
+        legend.addItem(cax_plotItem, "Field CAX")
+        legend.addItem(epidX_plotItem, "EPID-x line")
+        legend.addItem(epidY_plotItem, "EPID-y line")
+
+        new_win = QMainWindow()
+        new_win.setWindowTitle(image_short_name + " (Analyzed)")
+        new_win.setCentralWidget(plotView)
+        new_win.setMinimumSize(600, 500)
         
-        self.imageViewWindows.append(newWin)
-        newWin.show()
-        newWin.setMinimumSize(0, 0)
+        self.imageView_windows.append(new_win)
+        new_win.show()
+        new_win.setMinimumSize(0, 0)
 
     def showShiftInfo(self):
-        self.shiftDialog = QMessageBox()
-        self.shiftDialog.setWindowTitle("BB Shift Instructions")
-        self.shiftDialog.setText("<p><span style=\" font-weight:700; font-size: 11pt;\">" \
+        self.shift_dialog = QMessageBox()
+        self.shift_dialog.setWindowTitle("BB Shift Instructions")
+        self.shift_dialog.setText("<p><span style=\" font-weight:700; font-size: 11pt;\">" \
                                  "To minimize the mean positioning error shift the ball-bearing as follows: </span></p>")
-        self.shiftDialog.setStandardButtons(QMessageBox.StandardButton.Ok)
-        self.shiftDialog.setTextFormat(Qt.TextFormat.RichText)
+        self.shift_dialog.setStandardButtons(QMessageBox.StandardButton.Ok)
+        self.shift_dialog.setTextFormat(Qt.TextFormat.RichText)
 
-        shifts = self.shiftInfo.split("; ")
-        self.shiftDialog.setInformativeText(f'{shifts[0].split(" ")[0]}: {shifts[0].split(" ")[1].replace("mm", " mm")}\n' \
+        shifts = self.shift_info.split("; ")
+        self.shift_dialog.setInformativeText(f'{shifts[0].split(" ")[0]}: {shifts[0].split(" ")[1].replace("mm", " mm")}\n' \
                                             f'{shifts[1].split(" ")[0]}: {shifts[1].split(" ")[1].replace("mm", " mm")}\n' \
                                             f'{shifts[2].split(" ")[0]}: {shifts[2].split(" ")[1].replace("mm", " mm")}')
 
-        shiftIcon = QPixmap(u":/colorIcons/icons/bb_shift.png")
-        self.shiftDialog.setIconPixmap(shiftIcon)
+        shift_icon = QPixmap(u":/colorIcons/icons/bb_shift.png")
+        self.shift_dialog.setIconPixmap(shift_icon)
 
-        self.shiftDialog.exec()
+        self.shift_dialog.exec()
 
-    def deleteFile(self):
+    def delete_file(self):
         listWidgetItem = self.ui.imageListWidget.currentItem()
 
-        self.deleteDialog = QMessageBox()
-        self.deleteDialog.setWindowTitle("Delete File")
-        self.deleteDialog.setText("<p><span style=\" font-weight:700; font-size: 11pt;\">" \
+        self.delete_dialog = QMessageBox()
+        self.delete_dialog.setWindowTitle("Delete File")
+        self.delete_dialog.setText("<p><span style=\" font-weight:700; font-size: 11pt;\">" \
                                   f"Are you sure you want to permanently delete \'{listWidgetItem.text()}\' ? </span></p>")
-        self.deleteDialog.setInformativeText("This action is irreversible!")
-        self.deleteDialog.setStandardButtons(QMessageBox.StandardButton.Yes | 
+        self.delete_dialog.setInformativeText("This action is irreversible!")
+        self.delete_dialog.setStandardButtons(QMessageBox.StandardButton.Yes | 
                                              QMessageBox.StandardButton.Cancel)
-        self.deleteDialog.setTextFormat(Qt.TextFormat.RichText)
+        self.delete_dialog.setTextFormat(Qt.TextFormat.RichText)
 
-        warningIcon = QPixmap(u":/colorIcons/icons/warning_48.png")
-        self.deleteDialog.setIconPixmap(warningIcon)
+        warning_icon = QPixmap(u":/colorIcons/icons/warning_48.png")
+        self.delete_dialog.setIconPixmap(warning_icon)
 
-        ret = self.deleteDialog.exec()
+        ret = self.delete_dialog.exec()
 
         if ret == QMessageBox.StandardButton.Yes:
             path = Path(listWidgetItem.data(Qt.UserRole)["file_path"])
@@ -415,12 +428,12 @@ class QWLutzWorksheet(QWidget):
             del listWidgetItem
 
 
-    def removeListCheckmarks(self):
+    def remove_list_checkmarks(self):
         for index in range(self.ui.imageListWidget.count()):
             listItemWidget = self.ui.imageListWidget.item(index)
             listItemWidget.setFlags(Qt.ItemFlag.ItemIsEnabled)
 
-    def restoreListCheckmarks(self):
+    def restore_list_checkmarks(self):
         for index in range(self.ui.imageListWidget.count()):
             listItemWidget = self.ui.imageListWidget.item(index)
             listItemWidget.setFlags(Qt.ItemFlag.ItemIsEnabled |
@@ -428,5 +441,5 @@ class QWLutzWorksheet(QWidget):
                                     Qt.ItemFlag.ItemIsDragEnabled |
                                     Qt.ItemFlag.ItemIsSelectable)
             
-            if listItemWidget.data(Qt.ItemDataRole.UserRole)["file_path"] in self.markedImages:
+            if listItemWidget.data(Qt.ItemDataRole.UserRole)["file_path"] in self.marked_images:
                 listItemWidget.setCheckState(Qt.CheckState.Checked)
