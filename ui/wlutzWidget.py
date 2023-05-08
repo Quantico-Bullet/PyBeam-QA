@@ -14,7 +14,7 @@ import pyqtgraph as pg
 import platform
 import subprocess
 
-pg.setConfigOptions(imageAxisOrder='row-major')
+pg.setConfigOptions(antialias=True, imageAxisOrder='row-major')
 
 class QWLutzWorksheet(QWidget):
 
@@ -280,16 +280,16 @@ class QWLutzWorksheet(QWidget):
         self.restoreListCheckmarks()
 
         # NB: Data change of list widgets items will auto enable analyzeBtn
-        resultsIndex = 0
         for index in range(self.ui.imageListWidget.count()):
             listItemWidget = self.ui.imageListWidget.item(index)
             itemData = listItemWidget.data(Qt.UserRole)
 
-            if itemData["file_path"] == self.markedImages[index]:
-                itemData["analysis_data"] = results["image_details"][resultsIndex]
-                resultsIndex += 1
-            else:
-                itemData["analysis_data"] = None
+            for imageDetails in results["image_details"]:
+                if itemData["file_path"] == imageDetails["file_path"]:
+                    itemData["analysis_data"] = imageDetails
+                    break
+                else:
+                    itemData["analysis_data"] = None
 
             listItemWidget.setData(Qt.UserRole, itemData)
 
@@ -310,7 +310,7 @@ class QWLutzWorksheet(QWidget):
         imageShortName = self.ui.imageListWidget.currentItem().text()
         imagePath = self.ui.imageListWidget.selectedItems()[0].data(Qt.UserRole)["file_path"]
         image = LinacDicomImage(imagePath)
-        
+
         imgView = pg.ImageView()
         imgView.setImage(image.array)
         imgView.setPredefinedGradient("viridis")
@@ -330,27 +330,43 @@ class QWLutzWorksheet(QWidget):
         imagePath = listWidgetItem.data(Qt.UserRole)["file_path"]
         imageData = listWidgetItem.data(Qt.UserRole)["analysis_data"]
         image = LinacDicomImage(imagePath)
-        
-        dataPlot = pg.ImageView()
-        dataPlot.setImage(image.array)
-        dataPlot.setPredefinedGradient("viridis")
 
-        bbX = []
-        bbX.append(imageData["bb_location"]["x"])
-
-        bbY = []
-        bbY.append(imageData["bb_location"]["y"])
-
-        bbPlotItem = pg.ScatterPlotItem()
-        bbPlotItem.setData(x=bbX, y=bbY, pen=None, size=10, brush=(255, 100, 100, 255))
+        plotView = pg.PlotWidget()
+        plotItem = plotView.getPlotItem()
+        plotItem.invertY(False)
         
-        dataPlotView = dataPlot.getView()
-        dataPlotView.addItem(bbPlotItem)
+        #This makes the image appear correctly somehow!
+        image.flipud()
+        imageItem = pg.ImageItem(image=image.array)
+
+        bbX = imageData["bb_location"]["x"]
+        bbY = imageData["bb_location"]["y"]
+        caxX = imageData["field_cax"]["x"]
+        caxY = imageData["field_cax"]["y"]
+        epidX = imageData["epid"]["x"]
+        epidY = imageData["epid"]["y"]
+
+        bbCaxPlotItem = pg.ScatterPlotItem()
+        bbCaxPlotItem.addPoints(pos=[(bbX, bbY)], pen=None, size=10, brush=(255, 0, 0, 255))
+        bbCaxPlotItem.addPoints(pos=[(caxX, caxY)], pen=None, size=10, brush=(0, 0, 255, 255),
+                                symbol="s")
         
+        epidXPlotItem = pg.InfiniteLine(movable=False, angle=90, pen = (0,255,0), label="EPID x = {value:0.2f}",
+                       labelOpts={'position': 0.1, 'color': (200,200,100), 'fill': (0,200,0,50), 'movable': False})
+        
+        epidYPlotItem = pg.InfiniteLine(movable=False, angle=0, pen = (0,255,0), label="EPID y = {value:0.2f}",
+                       labelOpts={'position': 0.1, 'color': (200,200,100), 'fill': (0,200,0,50), 'movable': False})
+        
+        epidXPlotItem.setPos([epidX,0])
+        epidYPlotItem.setPos([0,epidY])
+        plotItem.addItem(imageItem)
+        plotItem.addItem(bbCaxPlotItem)
+        plotItem.addItem(epidXPlotItem)
+        plotItem.addItem(epidYPlotItem)
 
         newWin = QMainWindow()
         newWin.setWindowTitle(imageShortName + " (Analyzed)")
-        newWin.setCentralWidget(dataPlot)
+        newWin.setCentralWidget(plotView)
         newWin.setMinimumSize(600, 500)
         
         self.imageViewWindows.append(newWin)

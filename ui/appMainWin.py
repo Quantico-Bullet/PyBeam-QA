@@ -2,7 +2,7 @@ from PySide6.QtWidgets import (QWidget, QMainWindow, QCheckBox)
 from PySide6.QtCore import QObject, QEvent
 
 from ui.py_ui.appMainWin_ui import Ui_MainWindow as Ui_AppMainWin
-from ui.photonsMainWin import QAToolsWin
+from ui.qaMainWin import QAToolsWin
 from core.tools.devices import DeviceManager, Linac
 
 class AppMainWin(QMainWindow):
@@ -156,7 +156,8 @@ class AppMainWin(QMainWindow):
         self.photonCalWin.showMaximized()
 
     def openElectronsCalibQA(self):
-        initData = {"institution": None,
+        initData = {"toolType": "electron_calibration",
+                    "institution": None,
                     "user": None,
                     "electronBeams": [],
                     "electronFFFBeams": [],
