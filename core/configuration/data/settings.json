@@ -35,5 +35,8 @@
                 "Victoreen 30-349"
             ]
         }
+    },
+    "winston_lutz": {
+        "tolerance": 1.0
     }
 }

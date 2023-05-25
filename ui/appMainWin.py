@@ -29,6 +29,8 @@ class AppMainWin(QMainWindow):
         self.__ui.mainStackWidget.setCurrentIndex(0)
         self.__ui.navigationStackedWidget.setCurrentIndex(0)
 
+        self.winston_lutz_win = None
+
     def setupCalibrationPage(self, calibType: str):
         self.currLinac = None
         self.beamCheckBoxList = []
@@ -56,12 +58,12 @@ class AppMainWin(QMainWindow):
             self.__ui.linacNameCB.currentTextChanged.connect(lambda x: self.setLinacDetails(calibType, x))
         
         # Add all available linacs
-        for linac in DeviceManager.deviceList["linacs"]:
-            self.__ui.linacNameCB.addItem(linac.getName())
+        for linac in DeviceManager.device_list["linacs"]:
+            self.__ui.linacNameCB.addItem(linac.name)
 
     def setLinacDetails(self, calibType: str, linacName: str):
-        for linac in DeviceManager.deviceList["linacs"]:
-            if linacName == linac.getName():
+        for linac in DeviceManager.device_list["linacs"]:
+            if linacName == linac.name:
                 self.currLinac = linac
         
         # check if there are beams added prior and remove them
@@ -74,29 +76,29 @@ class AppMainWin(QMainWindow):
             widget.deleteLater()
 
         # TODO check if these fields exist/make sure they exist but are empty
-        self.__ui.linacSerialNumField.setText(self.currLinac.getSerialNum())
-        self.__ui.linacModelField.setText(self.currLinac.getModelName())
-        self.__ui.linacManufacField.setText(self.currLinac.getManufacturer())
+        self.__ui.linacSerialNumField.setText(self.currLinac.serial_num)
+        self.__ui.linacModelField.setText(self.currLinac.model_name)
+        self.__ui.linacManufacField.setText(self.currLinac.manufacturer)
 
         # add new beams
         if calibType == "photons":
-            for i,beam in enumerate(self.currLinac.getBeams()["photons"]):
+            for i,beam in enumerate(self.currLinac.beams["photons"]):
                 checkBox = QCheckBox(f"{beam} MV")
                 self.__ui.linacBeamsField.addWidget(checkBox,i,0,1,1)
                 self.beamCheckBoxList.append(checkBox)
 
-            for i,beam in enumerate(self.currLinac.getBeams()["photonsFFF"]):
+            for i,beam in enumerate(self.currLinac.beams["photonsFFF"]):
                 checkBox = QCheckBox(f"{beam} MV FFF")
                 self.__ui.linacBeamsField.addWidget(checkBox,i,1,1,1)
                 self.beamCheckBoxList.append(checkBox)
 
         elif calibType == "electrons":
-            for i,beam in enumerate(self.currLinac.getBeams()["electrons"]):
+            for i,beam in enumerate(self.currLinac.beams["electrons"]):
                 checkBox = QCheckBox(f"{beam} MeV")
                 self.__ui.linacBeamsField.addWidget(checkBox,i,0,1,1)
                 self.beamCheckBoxList.append(checkBox)
 
-            for i,beam in enumerate(self.currLinac.getBeams()["electronsFFF"]):
+            for i,beam in enumerate(self.currLinac.beams["electronsFFF"]):
                 checkBox = QCheckBox(f"{beam} MeV FFF")
                 self.__ui.linacBeamsField.addWidget(checkBox,i,1,1,1)
                 self.beamCheckBoxList.append(checkBox)
@@ -127,8 +129,12 @@ class AppMainWin(QMainWindow):
 
         elif event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.winstonLutzAnalysis:
             initData = {"toolType": "winston_lutz"}
-            self.winston_lutz = QAToolsWin(initData = initData)
-            self.winston_lutz.showMaximized()
+
+            if self.winston_lutz_win is None:
+                self.winston_lutz_win = QAToolsWin(initData = initData)
+                self.winston_lutz_win.showMaximized()
+            else:
+                self.winston_lutz_win.addNewWorksheet()
     
         return super().eventFilter(source, event)
     
@@ -163,7 +169,7 @@ class AppMainWin(QMainWindow):
                     "electronFFFBeams": [],
                     "linac": self.currLinac}
         
-        # get CheckBoxes and select the checked ones
+        # retrieve checkboxes and select the checked ones
         for beamCheckBox in self.beamCheckBoxList:
             if beamCheckBox.isChecked():
                 if "FFF" in str(beamCheckBox.text()):
@@ -177,6 +183,3 @@ class AppMainWin(QMainWindow):
         initData["user"] = self.__ui.userLE.text()
         self.photonCalWin = QAToolsWin(initData = initData)
         self.photonCalWin.showMaximized()
-
-    def checkFields_for_openDailyPhotonsQA():
-        print()

@@ -1,22 +1,29 @@
-from PySide6.QtWidgets import (QWidget, QListWidgetItem, QMenu, QFileDialog, QFormLayout,
-                               QVBoxLayout, QLabel, QProgressBar, QMessageBox, QErrorMessage,
-                               QSizePolicy, QMainWindow)
+from PySide6.QtWidgets import (QWidget, QListWidgetItem, QMenu, QFileDialog, QDialog, 
+                               QFormLayout, QVBoxLayout, QHBoxLayout, QLabel, QProgressBar, 
+                               QMessageBox, QSizePolicy, QMainWindow, QGroupBox, 
+                               QLineEdit, QComboBox, QDialogButtonBox, QPushButton, QSpacerItem,
+                               QCheckBox)
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtCore import Qt, QSize, QEvent, QThread
 
 from ui.py_ui.wlutzWorksheet_ui import Ui_QWLutzWorksheet
 from ui.py_ui import icons_rc
 from core.analysis.wlutz import QWinstonLutzWorker
+from core.tools.report import WinstonLutzReport
+from core.tools.devices import DeviceManager
 
 from pylinac.core.image import LinacDicomImage
 from pathlib import Path
 import pyqtgraph as pg
 import platform
 import subprocess
+import webbrowser
 
 pg.setConfigOptions(antialias=True, imageAxisOrder='row-major')
 
 class QWLutzWorksheet(QWidget):
+
+    COORD_SYS = ["IEC61217", "Varian IEC", "Varian Standard"]
 
     def __init__(self):
         super().__init__()
@@ -31,11 +38,14 @@ class QWLutzWorksheet(QWidget):
         self.ui.analysisInfoVL.addLayout(self.form_layout)
         self.ui.stackedWidget.setCurrentIndex(0)
         self.ui.shiftInfoBtn.setEnabled(False)
+        self.ui.genReportBtn.setEnabled(False)
+        self.ui.coordSysCB.setEnabled(False)
+        self.ui.coordSysCB.addItems(self.COORD_SYS)
 
         # setup context menu for image list widget
         self.img_list_contextmenu = QMenu()
         self.img_list_contextmenu.addAction("View Original Image", self.view_dicom_image)
-        self.view_analyzed_img_action = self.img_list_contextmenu.addAction("View Analyzed Image", self.viewAnalyzedImage)
+        self.view_analyzed_img_action = self.img_list_contextmenu.addAction("View Analyzed Image", self.view_analyzed_image)
         self.view_analyzed_img_action.setEnabled(False)
         self.img_list_contextmenu.addAction("Show Containing Folder", self.open_file_folder)
         self.remove_file_action = self.img_list_contextmenu.addAction("Remove from List", self.remove_file)
@@ -73,12 +83,15 @@ class QWLutzWorksheet(QWidget):
         self.ui.addImgBtn.clicked.connect(self.add_files)
         self.ui.importImgBtn.clicked.connect(self.add_files)
         self.ui.analyzeBtn.clicked.connect(self.start_analysis)
-        self.ui.shiftInfoBtn.clicked.connect(self.showShiftInfo)
-        self.ui.imageListWidget.itemChanged.connect(lambda x: self.update_marked_images())
+        self.ui.shiftInfoBtn.clicked.connect(self.show_shift_info)
+        self.ui.genReportBtn.clicked.connect(self.generate_report)
+        self.ui.imageListWidget.itemChanged.connect(self.update_marked_images)
+        self.ui.toleranceDSB.valueChanged.connect(self.set_analysis_outcome)
 
         self.marked_images = []
         self.imageView_windows = []
         self.analysis_in_progress = False
+        self.maxLocError = None
 
         self.params = {
             "pylinac_version": "PyLinac version",
@@ -102,6 +115,9 @@ class QWLutzWorksheet(QWidget):
             "couch_2d_iso_diameter_mm": "Couch 2D isocenter diameter",
             "max_couch_rms_deviation_mm": "Maximum couch RMS deviation"
         }
+
+        self.analysis_summary = {}
+        self.set_analysis_outcome()
 
     def add_files(self):
         files, _ = QFileDialog.getOpenFileNames(
@@ -182,7 +198,6 @@ class QWLutzWorksheet(QWidget):
 
         self.update_marked_images()
 
-
     def eventFilter(self, source, event: QEvent):
         if (event.type() == QEvent.ContextMenu and source is self.ui.imageListWidget):
             pos = self.ui.imageListWidget.mapFromGlobal(event.globalPos())
@@ -252,34 +267,45 @@ class QWLutzWorksheet(QWidget):
         for i in range(row_count):
             self.form_layout.removeRow(row_count - (i+1))
 
+        self.ui.addImgBtn.setEnabled(False)
+        self.ui.genReportBtn.setEnabled(False)
         self.ui.analyzeBtn.setEnabled(False)
         self.ui.analyzeBtn.setText("Analysis in progress...")
 
-        self.analysis_worker = QWinstonLutzWorker(self.marked_images)
+        self.analysis_worker = QWinstonLutzWorker(self.marked_images, self.ui.useFilenameSCheckBox.isChecked())
     
-        self.thread = QThread()
-        self.analysis_worker.moveToThread(self.thread)
-        self.thread.started.connect(self.analysis_worker.analyze)
-        self.thread.finished.connect(self.thread.deleteLater)
+        self.qthread = QThread()
+        self.analysis_worker.moveToThread(self.qthread)
+        self.qthread.started.connect(self.analysis_worker.analyze)
+        self.qthread.finished.connect(self.qthread.deleteLater)
         self.analysis_worker.images_analyzed.connect(self.analysis_progress_bar.setValue)
         self.analysis_worker.images_analyzed.connect(lambda num:
                             self.analysis_message_label.setText(f"Analyzing images ({num} of {len(self.marked_images)} complete)"))
         self.analysis_worker.analysis_results_changed.connect(self.show_analysis_results)
         self.analysis_worker.bb_shift_info_changed.connect(self.update_bb_shift)
-        self.analysis_worker.thread_finished.connect(self.thread.quit)
+        self.analysis_worker.thread_finished.connect(self.qthread.quit)
         self.analysis_worker.thread_finished.connect(self.analysis_worker.deleteLater)
 
         self.analysis_progress_bar.setRange(0, len(self.marked_images))
         self.analysis_progress_bar.setValue(0)
         self.analysis_message_label.setText("Starting analysis...")
 
-        self.thread.start()
+        self.qthread.start()
 
     def show_analysis_results(self, results):
+        self.summary_plot = results["summary_plot"]
         self.analysis_in_progress = False
         self.restore_list_checkmarks()
+        self.analysis_summary = {}
+        self.maxLocError = results["max_2d_cax_to_bb_mm"]
 
-        # NB: Data change of list widgets items will auto enable analyzeBtn
+        self.analysis_progress_bar.hide()
+        self.analysis_message_label.hide()
+
+        # Analyze button is auto-enabled by update_marked_images() on item data change
+        self.ui.addImgBtn.setEnabled(True)
+        self.ui.genReportBtn.setEnabled(True)
+
         for index in range(self.ui.imageListWidget.count()):
             listItemWidget = self.ui.imageListWidget.item(index)
             item_data = listItemWidget.data(Qt.UserRole)
@@ -294,13 +320,48 @@ class QWLutzWorksheet(QWidget):
             listItemWidget.setData(Qt.UserRole, item_data)
 
         for key in self.params:
+            param = self.params[key]
             if "_mm" in key:
-                self.form_layout.addRow(f"{self.params[key]}:", QLabel(f"{round(float(results[key]),2)} mm"))
+                value = f"{round(float(results[key]),2)} mm"
+                self.form_layout.addRow(f"{param}:", QLabel(value))
+                self.analysis_summary[param] = value
             else:
-                self.form_layout.addRow(f"{self.params[key]}:", QLabel(str(results[key])))
+                self.form_layout.addRow(f"{param}:", QLabel(str(results[key])))
 
-        self.analysis_progress_bar.hide()
-        self.analysis_message_label.hide()
+        self.set_analysis_outcome()
+
+    def set_analysis_outcome(self):
+        if self.maxLocError is None:
+            self.ui.outcomeLE.setStyleSheet(u"border-color: rgba(0, 0, 0,0);\n"
+                "border-radius: 15px;\n"
+                "border-style: solid;\n"
+                "border-width: 2px;\n"
+                "background-color: rgba(0, 0, 0, 0);\n"
+                "padding-left: 15px;\n"
+                "height: 30px;\n"
+                "font-weight: bold;\n")
+            
+        elif self.maxLocError < self.ui.toleranceDSB.value():
+            self.ui.outcomeLE.setText("PASS")
+            self.ui.outcomeLE.setStyleSheet(u"border-color: rgb(95, 200, 26);\n"
+                "border-radius: 15px;\n"
+                "border-style: solid;\n"
+                "border-width: 2px;\n"
+                "background-color: rgba(95, 200, 26, 150);\n"
+                "padding-left: 15px;\n"
+                "height: 30px;\n"
+                "font-weight: bold;\n")
+            
+        else:
+            self.ui.outcomeLE.setText("FAIL")
+            self.ui.outcomeLE.setStyleSheet(u"border-color: rgb(231, 29, 14);\n"
+                "border-radius: 15px;\n"
+                "border-style: solid;\n"
+                "border-width: 2px;\n"
+                "background-color: rgba(231, 29, 14, 150);\n"
+                "padding-left: 15px;\n"
+                "height: 30px;\n"
+                "font-weight: bold;\n")
 
     def update_bb_shift(self, bb_shift_info: str):
         self.shift_info = bb_shift_info
@@ -324,7 +385,7 @@ class QWLutzWorksheet(QWidget):
         new_win.show()
         new_win.setMinimumSize(0, 0)
 
-    def viewAnalyzedImage(self):
+    def view_analyzed_image(self):
         listWidgetItem = self.ui.imageListWidget.currentItem()
         image_short_name = listWidgetItem.text()
         image_path = listWidgetItem.data(Qt.UserRole)["file_path"]
@@ -334,6 +395,8 @@ class QWLutzWorksheet(QWidget):
         plotView = pg.PlotWidget()
         plotView.setAspectLocked(True)
         plotItem = plotView.getPlotItem()
+        plotItem.setLimits(xMin=-150, xMax=image.array.shape[1]+150, yMin=-150, yMax=image.array.shape[0]+150)
+        plotItem.setRange(xRange=(-50, image.array.shape[1]+50), yRange=(-50, image.array.shape[0]+50))
         plotItem.invertY(False)
         
         #This makes the image appear correctly somehow!
@@ -349,8 +412,8 @@ class QWLutzWorksheet(QWidget):
 
         bb_plotItem = pg.ScatterPlotItem()
         cax_plotItem = pg.ScatterPlotItem()
-        bb_plotItem.addPoints(pos=[(bbX, bbY)], pen=None, size=10, brush=(255, 0, 0, 255), name="BB")
-        cax_plotItem.addPoints(pos=[(caxX, caxY)], pen=None, size=10, brush=(0, 0, 255, 255),
+        bb_plotItem.addPoints(pos=[(bbX, bbY)], pen=None, size=10, brush=(255,0,0,255), name="BB")
+        cax_plotItem.addPoints(pos=[(caxX, caxY)], pen=None, size=10, brush=(0,0,255,255),
                                 symbol="s", name="CAX")
         
         epidX_plotItem = pg.InfiniteLine(movable=False, angle=90, pen = (0,255,0), name="EPID X line",
@@ -386,7 +449,7 @@ class QWLutzWorksheet(QWidget):
         new_win.show()
         new_win.setMinimumSize(0, 0)
 
-    def showShiftInfo(self):
+    def show_shift_info(self):
         self.shift_dialog = QMessageBox()
         self.shift_dialog.setWindowTitle("BB Shift Instructions")
         self.shift_dialog.setText("<p><span style=\" font-weight:700; font-size: 11pt;\">" \
@@ -427,7 +490,6 @@ class QWLutzWorksheet(QWidget):
             self.ui.imageListWidget.takeItem(self.ui.imageListWidget.currentRow())
             del listWidgetItem
 
-
     def remove_list_checkmarks(self):
         for index in range(self.ui.imageListWidget.count()):
             listItemWidget = self.ui.imageListWidget.item(index)
@@ -443,3 +505,142 @@ class QWLutzWorksheet(QWidget):
             
             if listItemWidget.data(Qt.ItemDataRole.UserRole)["file_path"] in self.marked_images:
                 listItemWidget.setCheckState(Qt.CheckState.Checked)
+
+    def generate_report(self):
+        physicist_name_le = QLineEdit()
+        institution_name_le = QLineEdit()
+        treatment_unit_le = QComboBox()
+        treatment_unit_le.setEditable(True)
+        physicist_name_le.setMaximumWidth(250)
+        physicist_name_le.setMinimumWidth(250)
+        institution_name_le.setMaximumWidth(350)
+        institution_name_le.setMinimumWidth(350)
+        treatment_unit_le.setMaximumWidth(250)
+        treatment_unit_le.setMinimumWidth(250)
+
+        save_path_le = QLineEdit()
+        save_win_btn = QPushButton("Save to...")
+        save_path_le.setReadOnly(True)
+        save_location_layout = QHBoxLayout()
+        save_location_layout.addWidget(save_path_le)
+        save_location_layout.addWidget(save_win_btn)
+
+        show_report_checkbox = QCheckBox()
+        show_report_label = QLabel("Open report:")
+        show_report_checkbox.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        show_report_label.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        show_report_layout = QHBoxLayout()
+        show_report_layout.addWidget(show_report_label)
+        show_report_layout.addWidget(show_report_checkbox)
+
+        # get linac devices
+        linac_devices = DeviceManager.device_list["linacs"]
+        treatment_unit_le.addItems([linac.name for linac in linac_devices])
+
+        user_details_layout = QFormLayout()
+        user_details_layout.addRow("Physicist:", physicist_name_le)
+        user_details_layout.addRow("Treatment unit:", treatment_unit_le)
+        user_details_layout.addRow("Institution:", institution_name_le)
+        user_details_layout.addRow("Save location:", save_location_layout)
+        user_details_layout.addRow("",show_report_layout)
+        user_details_layout.addItem(QSpacerItem(1,10, QSizePolicy.Policy.Minimum,
+                                                QSizePolicy.Policy.Minimum))
+        
+        patient_name_le = QLineEdit()
+        patient_id_le = QLineEdit()
+        patient_name_le.setMaximumWidth(250)
+        patient_name_le.setMinimumWidth(250)
+        patient_id_le.setMaximumWidth(250)
+        patient_id_le.setMinimumWidth(250)
+        
+        self.patient_info_toggled = False
+        patient_info_group = QGroupBox("Patient Information")
+        patient_info_group.hide()
+        patient_info_layout = QFormLayout()
+        patient_info_layout.addRow("Patient name:", patient_name_le)
+        patient_info_layout.addRow("Patient id:", patient_id_le)
+        patient_info_group.setLayout(patient_info_layout)
+
+        layout = QVBoxLayout()
+        layout.addLayout(user_details_layout)
+        layout.addWidget(patient_info_group)
+
+        dialog_buttons = QDialogButtonBox()
+        save_button = dialog_buttons.addButton(QDialogButtonBox.StandardButton(
+            QDialogButtonBox.StandardButton.Save), )
+        save_button.setEnabled(False)
+        cancel_button = dialog_buttons.addButton(QDialogButtonBox.StandardButton(
+            QDialogButtonBox.StandardButton.Cancel))
+        patient_info_button = dialog_buttons.addButton("Add Patient Info", 
+                                QDialogButtonBox.ButtonRole.ActionRole)
+        
+        # enable the save button once we have a path to save the report to
+        save_path_le.textChanged.connect(lambda: save_button.setEnabled(True))
+        
+        layout.addWidget(dialog_buttons)
+
+        report_dialog = QDialog()
+        report_dialog.setWindowTitle("Generate Report ‒ PyBeam QA")
+        report_dialog.setLayout(layout)
+        report_dialog.setMinimumSize(report_dialog.sizeHint())
+        report_dialog.setMaximumSize(report_dialog.sizeHint())
+
+        patient_info_button.clicked.connect(lambda: self.toggle_patient_info(
+            patient_info_button, patient_info_group, report_dialog))
+        cancel_button.clicked.connect(report_dialog.reject)
+        save_button.clicked.connect(report_dialog.accept)
+        save_win_btn.clicked.connect(lambda: self.save_report_to(save_path_le))
+
+        result = report_dialog.exec()
+
+        if result == QDialog.DialogCode.Accepted:
+            physicist_name = "N/A" if physicist_name_le.text() == "" else physicist_name_le.text()
+            institution_name = "N/A" if institution_name_le.text() == "" else institution_name_le.text()
+            treatment_unit = "N/A" if treatment_unit_le.currentText() == "" else treatment_unit_le.currentText()
+
+            if self.patient_info_toggled:
+                patient_info = {"patient_name": patient_name_le.text(),
+                                "patient_id": patient_id_le.text()}
+            else:
+                patient_info = None
+
+            report = WinstonLutzReport(save_path_le.text(),
+                                   author = physicist_name,
+                                   institution = institution_name,
+                                   treatment_unit_name = treatment_unit,
+                                   summary_plot = self.summary_plot,
+                                   analysis_summary = self.analysis_summary,
+                                   report_status = self.ui.outcomeLE.text(),
+                                   patient_info = patient_info,
+                                   tolerance = self.ui.toleranceDSB.value())
+        
+            report.saveReport()
+
+            if show_report_checkbox.isChecked():
+                webbrowser.open(save_path_le.text())
+
+    def toggle_patient_info(self, button: QPushButton, layout_group: QGroupBox, dialog: QDialog):
+        if self.patient_info_toggled:
+            button.setText("Add Patient Info")
+            layout_group.hide()
+            self.patient_info_toggled = False
+            dialog.setMinimumSize(dialog.sizeHint())
+            dialog.setMaximumSize(dialog.sizeHint())
+
+        else:
+            button.setText("Remove Patient Info")
+            layout_group.show()
+            self.patient_info_toggled = True
+            dialog.setMinimumSize(dialog.sizeHint())
+            dialog.setMaximumSize(dialog.sizeHint())
+
+    def save_report_to(self, line_edit: QLineEdit):
+        file_path = QFileDialog.getSaveFileName(caption="Save To File...", filter="PDF (*.pdf)")
+        
+        if file_path[0] != "":
+            path = file_path[0].split("/")
+            
+            if not path[-1].endswith(".pdf"):
+                path[-1] = path[-1] + ".pdf"
+            
+            line_edit.setText("/".join(path))  

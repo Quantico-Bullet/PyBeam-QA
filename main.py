@@ -19,5 +19,5 @@ if __name__ == "__main__":
     QMainWin = AppMainWin()
     QMainWin.show()
 
-    app.setStyleSheet("QLineEdit, QDateEdit, QPushButton { min-height: 20px;}")
+    app.setStyleSheet("QLineEdit, QDateEdit, QPushButton, QDoubleSpinBox { min-height: 20px;}")
     app.exec()

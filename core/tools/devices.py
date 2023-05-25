@@ -5,50 +5,64 @@ class Device:
     '''
     def __init__(self, name: str, 
                  manufacturer: str,
-                 modelName: str, 
-                 serialNum: str):
+                 model_name: str, 
+                 serial_num: str):
         
-        self.__name = name
-        self.__manufacturer = manufacturer
-        self.__modelName = modelName
-        self.__serialNum = serialNum
+        self._name = name
+        self._manufacturer = manufacturer
+        self._model_name = model_name
+        self._serial_num = serial_num
     
-    def setName(self, name: str):
-        self.__name = name
+    @property
+    def name(self):
+        return self._name 
+
+    @name.setter
+    def name(self, name: str):
+        self._name = name
+
+    @property
+    def manufacturer(self):
+        return self._manufacturer 
     
-    def setManufacturer(self, manufacturer: str):
-        self.__manufacturer = manufacturer
+    @manufacturer.setter
+    def manufacturer(self, manufacturer: str):
+        self._manufacturer = manufacturer
 
-    def setModelName(self, modelName: str):
-        self.__modelName = modelName
+    @property
+    def model_name(self):
+        return self._model_name 
 
-    def setSerialNum(self, serialNum: str):
-        self.__serialNum = serialNum
+    @model_name.setter
+    def model_name(self, model_name: str):
+        self._model_name = model_name
 
-    def getName(self) -> str:
-        return self.__name 
-    
-    def getManufacturer(self) -> str:
-        return self.__manufacturer 
+    @property
+    def serial_num(self) -> str:
+        return self._serial_num
 
-    def getModelName(self) -> str:
-        return self.__modelName 
-
-    def getSerialNum(self) -> str:
-        return self.__serialNum
+    @serial_num.setter
+    def serial_num(self, serial_num: str):
+        self._serial_num = serial_num
 
 class Linac(Device):
     def __init__(self, name: str, 
                  manufacturer: str,
-                 modelName: str, 
-                 serialNum: str,
+                 model_name: str, 
+                 serial_num: str,
                  beams: dict):
-        super().__init__(name=name, manufacturer=manufacturer, serialNum=serialNum, modelName=modelName)
+        super().__init__(name=name, manufacturer=manufacturer, serial_num=serial_num,
+                         model_name=model_name)
 
-        self.__beams = beams
+        self._beams = beams
 
-    def getBeams(self) -> dict:
-        return self.__beams
+    @property
+    def beams(self):
+        return self._beams
+
+    @beams.setter
+    def beams(self, beams: dict):
+        self._beams = beams
     
     @classmethod
     def fromDictionary(cls, name: str, properties: dict):
@@ -58,14 +72,14 @@ class Linac(Device):
             if key == "manufacturer":
                 manufacturer = properties[key]
             elif key == "modelName":
-                modelName = properties[key]
+                model_name = properties[key]
             elif key == "serialNum":
-                serialNum = properties[key]
+                serial_num = properties[key]
             elif key == "beams":
                 beams = properties[key]
 
         #TODO check if the values exist
-        return cls(name, manufacturer, modelName, serialNum, beams)
+        return cls(name, manufacturer, model_name, serial_num, beams)
 
 class IonChamber(Device):
 
@@ -73,27 +87,43 @@ class IonChamber(Device):
 
     def __init__(self, name: str, 
                  manufacturer: str,
-                 modelName: str, 
-                 serialNum: str,
-                 calibrationLab: str,
-                 calibrationDate: str,
-                 calibrationSource: str,
-                 chamberType: str):
-        super().__init__(name=name, manufacturer=manufacturer, serialNum=serialNum, modelName=modelName)
+                 model_name: str, 
+                 serial_num: str,
+                 calibration_lab: str,
+                 calibration_date: str,
+                 calibration_source: str,
+                 chamber_type: str):
+        super().__init__(name=name, manufacturer=manufacturer, serial_num=serial_num,
+                         model_name=model_name)
 
-        self.__calibrationLab = calibrationLab
-        self.__calibrationDate = calibrationDate
-        self.__calibrationSource = calibrationSource
-        self.__chamberType = chamberType
+        self._calibration_lab = calibration_lab
+        self._calibration_date = calibration_date
+        self._calibration_source = calibration_source
+        self._chamber_type = chamber_type
 
-    def setCalibrationLab(self, calibrationDate: str):
-        self.__calibrationDate = calibrationDate
+    @property
+    def calibration_lab(self):
+        return self._calibration_lab
 
-    def setCalibrationDate(self, calibrationDate: str):
-        self.__calibrationDate = calibrationDate
+    @calibration_lab.setter
+    def calibration_lab(self, calibration_lab: str):
+        self._calibration_lab = calibration_lab
+
+    @property
+    def calibration_date(self):
+        return self._calibration_date
     
-    def setCalibrationSource(self, calibrationSource: str):
-        self.__calibrationSource = calibrationSource
+    @calibration_date.setter
+    def calibration_date(self, calibration_date: str):
+        self._calibration_date = calibration_date
+    
+    @property
+    def calibration_source(self):
+        return self._calibration_source
+    
+    @calibration_source.setter
+    def calibration_source(self, calibration_source: str):
+        self._calibration_source = calibration_source
     
     @classmethod
     def fromDictionary(cls, name: str, properties: dict):
@@ -103,49 +133,68 @@ class IonChamber(Device):
             if key == "manufacturer":
                 manufacturer = properties[key]
             elif key == "modelName":
-                modelName = properties[key]
+                model_name = properties[key]
             elif key == "serialNum":
-                serialNum = properties[key]
+                serial_num = properties[key]
             elif key == "calibrationDate":
-                calDate = properties[key]
+                cal_date = properties[key]
             elif key == "calibrationLab":
-                calLab = properties[key]
+                cal_lab = properties[key]
             elif key == "calibrationSource":
-                calSource = properties[key]
+                cal_source = properties[key]
 
         #TODO check if the values exist
-        return cls(name, manufacturer, modelName, serialNum, calLab, calDate, calSource)
+        return cls(name,
+                   manufacturer,
+                   model_name,
+                   serial_num,
+                   cal_lab,
+                   cal_date,
+                   cal_source)
 
 class Electrometer(Device):
     def __init__(self, name: str, 
                  manufacturer: str,
-                 modelName: str, 
-                 serialNum: str,
-                 calibrationLab: str,
-                 calibrationDate: str):
-        super().__init__(name=name, manufacturer=manufacturer, serialNum=serialNum, modelName=modelName)
+                 model_name: str, 
+                 serial_num: str,
+                 calibration_lab: str,
+                 calibration_date: str):
+        super().__init__(name=name, manufacturer=manufacturer, serial_num=serial_num, model_name=model_name)
 
-    def setCalibrationLab(self, calibrationDate: str):
-        self.calibrationDate = calibrationDate
+        self._calibration_lab = calibration_lab
+        self._calibration_date = calibration_date
 
-    def setCalibrationDate(self, calibrationDate: str):
-        self.calibrationDate = calibrationDate
+    @property
+    def calibration_lab(self):
+        return self.calibration_lab
+
+    @calibration_lab.setter
+    def calibration_lab(self, calibration_lab: str):
+        self.calibration_lab = calibration_lab
+
+    @property
+    def calibration_date(self):
+        return self._calibration_date
+    
+    @calibration_date.setter
+    def calibration_date(self, calibration_date: str):
+        self.calibration_date = calibration_date
 
 class DeviceManager:
-    deviceList = {"linacs": [], "ionChambers": [], "electrometer": []}
+    device_list = {"linacs": [], "ionChambers": [], "electrometer": []}
 
     @classmethod
-    def loadDevices(cls, pathToDevices: str):
-        with open(pathToDevices, 'r') as devicesFile:
-            savedDevices = json.load(devicesFile)
+    def loadDevices(cls, path: str):
+        with open(path, 'r') as devicesFile:
+            saved_devices = json.load(devicesFile)
         
-        for deviceType in set(savedDevices).intersection(set(cls.deviceList)):
-            if deviceType == "linacs":
-                for linac in savedDevices[deviceType]:
-                    cls.deviceList[deviceType].append(Linac.fromDictionary(linac,
-                                                    savedDevices[deviceType][linac]))
+        for device_type in set(saved_devices).intersection(set(cls.device_list)):
+            if device_type == "linacs":
+                for linac in saved_devices[device_type]:
+                    cls.device_list[device_type].append(Linac.fromDictionary(linac,
+                                                    saved_devices[device_type][linac]))
 
     @classmethod
     def addDevice(cls, device: Device):
         if isinstance(device, Linac):
-            cls.deviceList["linacs"] = device
+            cls.device_list["linacs"] = device

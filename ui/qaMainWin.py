@@ -14,9 +14,12 @@ class QAToolsWin(QMainWindow):
         self.__ui.setupUi(self)
         self.worksheetType = None
 
+        # disable the menu bar for now
+        self.__ui.menubar.setEnabled(False)
+
         if initData is not None:
             if initData["toolType"] == "photon_calibration":
-                self.setWindowTitle("PyBeam QA ‒ (TRS-398) Photon Output Calibration")
+                self.setWindowTitle("(TRS-398) Photon Output Calibration ‒ PyBeam QA")
 
                 # setup, add, and link photon calibration worksheets
                 self.worksheetList = []
@@ -34,9 +37,8 @@ class QAToolsWin(QMainWindow):
             elif initData["toolType"] == "winston_lutz":
                 self.worksheetType = "WL_WORKSHEET"
 
-                self.setWindowTitle("PyBeam QA ‒ Winston Lutz Analysis")
-                worksheet = QWLutzWorksheet()
-                self.__ui.tabWidget.addTab(worksheet, u"WL Analysis (Untitled)")
+                self.setWindowTitle("Winston Lutz Analysis ‒ PyBeam QA")
+                self.addNewWorksheet()
 
         # setup basic window functionality
         self.__ui.dockWidget.close()
@@ -130,11 +132,9 @@ class QAToolsWin(QMainWindow):
             worksheet.ui.calibSepYesRadioButton.toggle() if id == 0 else 
             worksheet.ui.calibSepNoRadioButton.toggle())
 
-        #TODO Finish adding signals
-
         if linac is not None:
-            worksheet.ui.linacNameLE.setText(f"{linac.getName()} ({linac.getManufacturer()} " +
-                                        f"{linac.getModelName()})")
+            worksheet.ui.linacNameLE.setText(f"{linac.name} ({linac.manufacturer} " +
+                                        f"{linac.model_name})")
             worksheet.ui.linacNameLE.setReadOnly(True)
             worksheet.ui.linacNameLE.setClearButtonEnabled(False)
     
@@ -142,7 +142,8 @@ class QAToolsWin(QMainWindow):
 
     def addNewWorksheet(self):
         if self.worksheetType == "WL_WORKSHEET":
-            print("Not yet implemented")
+            worksheet = QWLutzWorksheet()
+            self.__ui.tabWidget.addTab(worksheet, u"WL Analysis (Untitled)")
 
 class PhotonsCalModel(QObject):
     institution_changed = Signal(str)
@@ -164,5 +165,4 @@ class PhotonsCalModel(QObject):
     calSeparate_changed = Signal(int)
 
     def __init__(self):
-        super().__init__()
-   
+        super().__init__() 

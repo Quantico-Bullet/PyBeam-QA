@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>875</width>
+    <width>1236</width>
     <height>480</height>
    </rect>
   </property>
@@ -174,8 +174,288 @@ QPushButton:!enabled{
      <widget class="QWidget" name="analysisPage">
       <layout class="QGridLayout" name="gridLayout">
        <property name="horizontalSpacing">
-        <number>30</number>
+        <number>20</number>
        </property>
+       <item row="1" column="3">
+        <widget class="QFrame" name="frame_2">
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="Line" name="line">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>1</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(82, 142, 122)</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QFormLayout" name="formLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="toleranceLabel">
+              <property name="text">
+               <string>Tolerance:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <widget class="QDoubleSpinBox" name="toleranceDSB">
+                <property name="buttonSymbols">
+                 <enum>QAbstractSpinBox::NoButtons</enum>
+                </property>
+                <property name="suffix">
+                 <string> mm</string>
+                </property>
+                <property name="decimals">
+                 <number>2</number>
+                </property>
+                <property name="maximum">
+                 <double>2.500000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>Coordinate system:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QComboBox" name="coordSysCB"/>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="useFilenameSLabel">
+              <property name="text">
+               <string>Use filename(s)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QCheckBox" name="useFilenameSCheckBox"/>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="lowDensityBBLabel">
+              <property name="text">
+               <string>Low density BB:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QCheckBox" name="lowDensityBBCheckBox"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="font">
+             <font>
+              <pointsize>13</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Analysis Outcome&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line_3">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>1</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(82, 142, 122)</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="outcomeLE">
+            <property name="contextMenuPolicy">
+             <enum>Qt::NoContextMenu</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">border-color: rgb(95, 200, 26);
+border-radius: 15px;
+border-style: solid;
+border-width: 2px;
+background-color: rgba(95, 200, 26,150);
+padding-left: 15px;
+height: 30px;
+font-weight: bold;
+
+</string>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="placeholderText">
+             <string>N/A</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <layout class="QHBoxLayout" name="mainActionsHL">
+         <property name="spacing">
+          <number>10</number>
+         </property>
+         <item alignment="Qt::AlignLeft">
+          <widget class="QPushButton" name="analyzeBtn">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+	background-color: rgb(82, 142, 122);
+    min-width: 150px;
+	min-height:20px;
+    padding: 6px;
+	border-radius: 15px;
+	color: white;
+	font: bold;
+}
+
+QPushButton:pressed {
+	background-color: rgb(52, 91, 78);
+}
+
+QPushButton:!enabled{
+	background-color: rgba(52, 91, 78, 50);
+	color: rgba(255,255,255,100)
+}</string>
+           </property>
+           <property name="text">
+            <string>Analyze images</string>
+           </property>
+          </widget>
+         </item>
+         <item alignment="Qt::AlignLeft">
+          <widget class="QPushButton" name="shiftInfoBtn">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+	background-color: rgb(82, 142, 122);
+    min-width: 150px;
+	min-height:20px;
+    padding: 6px;
+	border-radius: 15px;
+	color: white;
+	font: bold;
+}
+
+QPushButton:pressed {
+	background-color: rgb(52, 91, 78);
+}
+
+QPushButton:!enabled{
+	background-color: rgba(52, 91, 78, 50);
+	color: rgba(255,255,255,100)
+}</string>
+           </property>
+           <property name="text">
+            <string>View shift instructions</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="genReportBtn">
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+	background-color: rgb(82, 142, 122);
+    min-width: 150px;
+	min-height:20px;
+    padding: 6px;
+	border-radius: 15px;
+	color: white;
+	font: bold;
+}
+
+QPushButton:pressed {
+	background-color: rgb(52, 91, 78);
+}
+
+QPushButton:!enabled{
+	background-color: rgba(52, 91, 78, 50);
+	color: rgba(255,255,255,100)
+}</string>
+           </property>
+           <property name="text">
+            <string>Generate report</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
        <item row="1" column="1">
         <widget class="QFrame" name="frame">
          <property name="sizePolicy">
@@ -263,6 +543,60 @@ QPushButton:!enabled{
          </property>
         </widget>
        </item>
+       <item row="1" column="4">
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="3">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="font">
+            <font>
+             <pointsize>13</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Configuration&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="0" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="analysisSumLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>13</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Analysis summary&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
        <item row="1" column="0">
         <widget class="QListWidget" name="imageListWidget">
          <property name="sizePolicy">
@@ -319,6 +653,7 @@ QPushButton:pressed {
 
 QPushButton:!enabled{
 	background-color: rgba(52, 91, 78, 50);
+	color: rgba(255,255,255,100)
 }</string>
          </property>
          <property name="text">
@@ -329,116 +664,12 @@ QPushButton:!enabled{
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
-          <widget class="QLabel" name="analysisSumLabel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>13</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Analysis summary&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="2" column="1">
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <property name="spacing">
-          <number>10</number>
-         </property>
-         <item alignment="Qt::AlignLeft">
-          <widget class="QPushButton" name="analyzeBtn">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
-	background-color: rgb(82, 142, 122);
-    min-width: 150px;
-	min-height:20px;
-    padding: 6px;
-	border-radius: 15px;
-	color: white;
-	font: bold;
-}
-
-QPushButton:pressed {
-	background-color: rgb(52, 91, 78);
-}
-
-QPushButton:!enabled{
-	background-color: rgba(52, 91, 78, 50);
-	color: rgba(255,255,255,100)
-}</string>
-           </property>
-           <property name="text">
-            <string>Analyze images</string>
-           </property>
-          </widget>
-         </item>
-         <item alignment="Qt::AlignLeft">
-          <widget class="QPushButton" name="shiftInfoBtn">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
-	background-color: rgb(82, 142, 122);
-    min-width: 150px;
-	min-height:20px;
-    padding: 6px;
-	border-radius: 15px;
-	color: white;
-	font: bold;
-}
-
-QPushButton:pressed {
-	background-color: rgb(52, 91, 78);
-}
-
-QPushButton:!enabled{
-	background-color: rgba(52, 91, 78, 50);
-	color: rgba(255,255,255,100)
-}</string>
-           </property>
-           <property name="text">
-            <string>View shift instructions</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
        <item row="1" column="2">
-        <spacer name="horizontalSpacer_3">
+        <widget class="Line" name="line_2">
          <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
+        </widget>
        </item>
       </layout>
      </widget>

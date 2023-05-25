@@ -3,6 +3,9 @@ from PySide6.QtCore import Signal, Slot, QObject
 from pylinac import WinstonLutz
 from pylinac.core.scale import MachineScale
 from pathlib import Path
+import io
+import matplotlib.pyplot as plt
+plt.switch_backend('agg') # switch to non-gui backend to avoid runtime error
 
 class QWinstonLutz(WinstonLutz):
 
@@ -47,19 +50,27 @@ class QWinstonLutzWorker(QObject):
     analysis_results_changed = Signal(dict)
     bb_shift_info_changed = Signal(str)
 
-    def __init__(self, images):
+    def __init__(self, images, use_filenames: bool = False):
         super().__init__()
         self.images = images
         self.image_data = []
+        self.use_filenames = use_filenames
 
     @Slot()
     def analyze(self):
         wl = QWinstonLutz(self.images, self.image_data, 
-                          update_signal=self.images_analyzed, use_filenames=True)
+                          update_signal=self.images_analyzed, use_filenames = self.use_filenames)
         wl.analyze()
         
         wl_data = wl.results_data(as_dict=True)
         wl_data["image_details"] = self.image_data
+
+
+        summary_image_data = io.BytesIO()
+        #image_data = wl.save_images_to_stream(dpi=120)
+        wl.save_summary(summary_image_data, dpi=120)
+        #wl_data["image_plots"] = image_data
+        wl_data["summary_plot"] = summary_image_data
 
         self.analysis_results_changed.emit(wl_data)
         self.bb_shift_info_changed.emit(wl.bb_shift_instructions())

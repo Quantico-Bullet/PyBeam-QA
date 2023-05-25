@@ -631,9 +631,6 @@ font-weight: bold;
 
 </string>
             </property>
-            <property name="text">
-             <string/>
-            </property>
             <property name="readOnly">
              <bool>true</bool>
             </property>
@@ -833,7 +830,7 @@ font-weight: bold;
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>-408</y>
+          <y>0</y>
           <width>605</width>
           <height>2144</height>
          </rect>
@@ -3515,12 +3512,12 @@ font-weight: bold;
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="beamQualityGroup"/>
-  <buttongroup name="beamTypeGroup"/>
-  <buttongroup name="userPolarityGroup"/>
   <buttongroup name="r50SourceGroup"/>
   <buttongroup name="calibSeparateGroup"/>
-  <buttongroup name="calibSetupGroup"/>
   <buttongroup name="calibPolarityGroup"/>
+  <buttongroup name="userPolarityGroup"/>
+  <buttongroup name="beamQualityGroup"/>
+  <buttongroup name="beamTypeGroup"/>
+  <buttongroup name="calibSetupGroup"/>
  </buttongroups>
 </ui>
