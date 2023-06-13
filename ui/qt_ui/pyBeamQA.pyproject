@@ -1,3 +1,4 @@
 {
-    "files": ["icons.qrc","wlutzWorksheet.ui","photonsWorksheet.ui","qaMainWin.ui","appMainWin.ui","electronsWorksheet.ui"]
+    "files": ["icons.qrc","wlutzWorksheet.ui","photonsWorksheet.ui","qaMainWin.ui","appMainWin.ui",
+    "electronsWorksheet.ui", "picketFenceWorksheet.ui"]
 }

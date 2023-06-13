@@ -57,7 +57,7 @@
          <bool>true</bool>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="linacQAPage">
          <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -276,8 +276,8 @@ QPushButton:checked {
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>614</width>
-                       <height>395</height>
+                       <width>600</width>
+                       <height>417</height>
                       </rect>
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout">
@@ -309,6 +309,22 @@ QFrame#electronCalib:hover {
 }
 
 QFrame#winstonLutzAnalysis:hover {
+	background-color: rgba(82, 142, 122,50);
+}
+
+QFrame#planarImagingAnalysis:hover {
+	background-color: rgba(82, 142, 122,50);
+}
+
+QFrame#starshotAnalysis:hover {
+	background-color: rgba(82, 142, 122,50);
+}
+
+QFrame#fieldAnalysis:hover {
+	background-color: rgba(82, 142, 122,50);
+}
+
+QFrame#picketFence:hover {
 	background-color: rgba(82, 142, 122,50);
 }</string>
                         </property>
@@ -503,6 +519,89 @@ border-style:solid;</string>
                             </widget>
                            </item>
                            <item>
+                            <widget class="QFrame" name="planarImagingAnalysis">
+                             <property name="sizePolicy">
+                              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                               <horstretch>0</horstretch>
+                               <verstretch>0</verstretch>
+                              </sizepolicy>
+                             </property>
+                             <property name="frameShape">
+                              <enum>QFrame::NoFrame</enum>
+                             </property>
+                             <property name="frameShadow">
+                              <enum>QFrame::Raised</enum>
+                             </property>
+                             <layout class="QHBoxLayout" name="horizontalLayout_19">
+                              <property name="topMargin">
+                               <number>0</number>
+                              </property>
+                              <property name="rightMargin">
+                               <number>0</number>
+                              </property>
+                              <property name="bottomMargin">
+                               <number>0</number>
+                              </property>
+                              <item alignment="Qt::AlignLeft|Qt::AlignVCenter">
+                               <widget class="QLabel" name="planarImagingIcon">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="maximumSize">
+                                 <size>
+                                  <width>32</width>
+                                  <height>32</height>
+                                 </size>
+                                </property>
+                                <property name="text">
+                                 <string/>
+                                </property>
+                                <property name="pixmap">
+                                 <pixmap resource="icons.qrc">:/colorIcons/icons/module.png</pixmap>
+                                </property>
+                                <property name="scaledContents">
+                                 <bool>true</bool>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QLabel" name="planarImagingLabel">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="minimumSize">
+                                 <size>
+                                  <width>0</width>
+                                  <height>48</height>
+                                 </size>
+                                </property>
+                                <property name="styleSheet">
+                                 <string notr="true">border-bottom-color: rgb(82, 142, 122);
+border-bottom-width: 1px;
+border-style: solid;
+</string>
+                                </property>
+                                <property name="text">
+                                 <string>Planar imaging analysis</string>
+                                </property>
+                                <property name="wordWrap">
+                                 <bool>false</bool>
+                                </property>
+                                <property name="margin">
+                                 <number>0</number>
+                                </property>
+                               </widget>
+                              </item>
+                             </layout>
+                            </widget>
+                           </item>
+                           <item>
                             <widget class="QFrame" name="winstonLutzAnalysis">
                              <property name="sizePolicy">
                               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
@@ -573,6 +672,255 @@ border-style: solid;
                                 </property>
                                 <property name="text">
                                  <string>Winston-Lutz analysis</string>
+                                </property>
+                                <property name="wordWrap">
+                                 <bool>false</bool>
+                                </property>
+                                <property name="margin">
+                                 <number>0</number>
+                                </property>
+                               </widget>
+                              </item>
+                             </layout>
+                            </widget>
+                           </item>
+                           <item>
+                            <widget class="QFrame" name="picketFence">
+                             <property name="sizePolicy">
+                              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                               <horstretch>0</horstretch>
+                               <verstretch>0</verstretch>
+                              </sizepolicy>
+                             </property>
+                             <property name="frameShape">
+                              <enum>QFrame::NoFrame</enum>
+                             </property>
+                             <property name="frameShadow">
+                              <enum>QFrame::Raised</enum>
+                             </property>
+                             <layout class="QHBoxLayout" name="horizontalLayout_17">
+                              <property name="topMargin">
+                               <number>0</number>
+                              </property>
+                              <property name="rightMargin">
+                               <number>0</number>
+                              </property>
+                              <property name="bottomMargin">
+                               <number>0</number>
+                              </property>
+                              <item alignment="Qt::AlignLeft|Qt::AlignVCenter">
+                               <widget class="QLabel" name="picketFenceIcon">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="maximumSize">
+                                 <size>
+                                  <width>32</width>
+                                  <height>32</height>
+                                 </size>
+                                </property>
+                                <property name="text">
+                                 <string/>
+                                </property>
+                                <property name="pixmap">
+                                 <pixmap resource="icons.qrc">:/colorIcons/icons/module.png</pixmap>
+                                </property>
+                                <property name="scaledContents">
+                                 <bool>true</bool>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QLabel" name="picketFenceLabel">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="minimumSize">
+                                 <size>
+                                  <width>0</width>
+                                  <height>48</height>
+                                 </size>
+                                </property>
+                                <property name="styleSheet">
+                                 <string notr="true">border-bottom-color: rgb(82, 142, 122);
+border-bottom-width: 1px;
+border-style: solid;
+</string>
+                                </property>
+                                <property name="text">
+                                 <string>Picket-fence analysis</string>
+                                </property>
+                                <property name="wordWrap">
+                                 <bool>false</bool>
+                                </property>
+                                <property name="margin">
+                                 <number>0</number>
+                                </property>
+                               </widget>
+                              </item>
+                             </layout>
+                            </widget>
+                           </item>
+                           <item>
+                            <widget class="QFrame" name="starshotAnalysis">
+                             <property name="sizePolicy">
+                              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                               <horstretch>0</horstretch>
+                               <verstretch>0</verstretch>
+                              </sizepolicy>
+                             </property>
+                             <property name="frameShape">
+                              <enum>QFrame::NoFrame</enum>
+                             </property>
+                             <property name="frameShadow">
+                              <enum>QFrame::Raised</enum>
+                             </property>
+                             <layout class="QHBoxLayout" name="horizontalLayout_18">
+                              <property name="topMargin">
+                               <number>0</number>
+                              </property>
+                              <property name="rightMargin">
+                               <number>0</number>
+                              </property>
+                              <property name="bottomMargin">
+                               <number>0</number>
+                              </property>
+                              <item alignment="Qt::AlignLeft|Qt::AlignVCenter">
+                               <widget class="QLabel" name="starshotIcon">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="maximumSize">
+                                 <size>
+                                  <width>32</width>
+                                  <height>32</height>
+                                 </size>
+                                </property>
+                                <property name="text">
+                                 <string/>
+                                </property>
+                                <property name="pixmap">
+                                 <pixmap resource="icons.qrc">:/colorIcons/icons/module.png</pixmap>
+                                </property>
+                                <property name="scaledContents">
+                                 <bool>true</bool>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QLabel" name="starhshotLabel">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="minimumSize">
+                                 <size>
+                                  <width>0</width>
+                                  <height>48</height>
+                                 </size>
+                                </property>
+                                <property name="styleSheet">
+                                 <string notr="true">border-bottom-color: rgb(82, 142, 122);
+border-bottom-width: 1px;
+border-style: solid;
+</string>
+                                </property>
+                                <property name="text">
+                                 <string>Star-shot analysis</string>
+                                </property>
+                                <property name="wordWrap">
+                                 <bool>false</bool>
+                                </property>
+                                <property name="margin">
+                                 <number>0</number>
+                                </property>
+                               </widget>
+                              </item>
+                             </layout>
+                            </widget>
+                           </item>
+                           <item>
+                            <widget class="QFrame" name="fieldAnalysis">
+                             <property name="sizePolicy">
+                              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                               <horstretch>0</horstretch>
+                               <verstretch>0</verstretch>
+                              </sizepolicy>
+                             </property>
+                             <property name="frameShape">
+                              <enum>QFrame::NoFrame</enum>
+                             </property>
+                             <property name="frameShadow">
+                              <enum>QFrame::Raised</enum>
+                             </property>
+                             <layout class="QHBoxLayout" name="horizontalLayout_21">
+                              <property name="topMargin">
+                               <number>0</number>
+                              </property>
+                              <property name="rightMargin">
+                               <number>0</number>
+                              </property>
+                              <property name="bottomMargin">
+                               <number>0</number>
+                              </property>
+                              <item alignment="Qt::AlignLeft|Qt::AlignVCenter">
+                               <widget class="QLabel" name="fieldAnalysisIcon">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="maximumSize">
+                                 <size>
+                                  <width>32</width>
+                                  <height>32</height>
+                                 </size>
+                                </property>
+                                <property name="text">
+                                 <string/>
+                                </property>
+                                <property name="pixmap">
+                                 <pixmap resource="icons.qrc">:/colorIcons/icons/module.png</pixmap>
+                                </property>
+                                <property name="scaledContents">
+                                 <bool>true</bool>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QLabel" name="fieldAnalysisLabel">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="minimumSize">
+                                 <size>
+                                  <width>0</width>
+                                  <height>48</height>
+                                 </size>
+                                </property>
+                                <property name="styleSheet">
+                                 <string notr="true">border-bottom-color: rgb(82, 142, 122);
+border-bottom-width: 1px;
+border-style: solid;
+</string>
+                                </property>
+                                <property name="text">
+                                 <string>Field analysis</string>
                                 </property>
                                 <property name="wordWrap">
                                  <bool>false</bool>
@@ -670,6 +1018,13 @@ border-style: solid;
                  </size>
                 </property>
                </spacer>
+              </item>
+              <item alignment="Qt::AlignHCenter">
+               <widget class="QLabel" name="label">
+                <property name="text">
+                 <string>PyBeam QA - v0.1.0 </string>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>

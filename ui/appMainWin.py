@@ -24,12 +24,17 @@ class AppMainWin(QMainWindow):
         self.__ui.photonCalib.installEventFilter(self)
         self.__ui.electronCalib.installEventFilter(self)
         self.__ui.winstonLutzAnalysis.installEventFilter(self)
+        self.__ui.planarImagingAnalysis.installEventFilter(self)
+        self.__ui.fieldAnalysis.installEventFilter(self)
+        self.__ui.starshotAnalysis.installEventFilter(self)
+        self.__ui.picketFence.installEventFilter(self)
 
         # setup defaults, useful to avoid defaults set by Qt designer
         self.__ui.mainStackWidget.setCurrentIndex(0)
         self.__ui.navigationStackedWidget.setCurrentIndex(0)
 
         self.winston_lutz_win = None
+        self.picket_fence_win = None
 
     def setupCalibrationPage(self, calibType: str):
         self.currLinac = None
@@ -49,7 +54,7 @@ class AppMainWin(QMainWindow):
 
         if calibType == "photons":
             self.__ui.calibPageTitle.setText("Photon Output Calibration")
-            self.__ui.calibStartBtn.clicked.connect(lambda: self.openPhotonsCalibQA())
+            self.__ui.calibStartBtn.clicked.connect(lambda: self.initPhotonsCalibQA())
             self.__ui.linacNameCB.currentTextChanged.connect(lambda x: self.setLinacDetails(calibType, x))   
 
         elif calibType == "electrons":
@@ -128,17 +133,26 @@ class AppMainWin(QMainWindow):
             self.changeMainPage(self.__ui.initCalibPage)
 
         elif event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.winstonLutzAnalysis:
-            initData = {"toolType": "winston_lutz"}
-
             if self.winston_lutz_win is None:
+                initData = {"toolType": "winston_lutz"}
+
                 self.winston_lutz_win = QAToolsWin(initData = initData)
                 self.winston_lutz_win.showMaximized()
             else:
                 self.winston_lutz_win.addNewWorksheet()
-    
+        
+        elif event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.picketFence:
+            if self.picket_fence_win is None:
+                initData = {"toolType": "picket_fence"}
+
+                self.picket_fence_win = QAToolsWin(initData = initData)
+                self.picket_fence_win.showMaximized()
+            else:
+                self.picket_fence_win.addNewWorksheet()
+            
         return super().eventFilter(source, event)
     
-    def openPhotonsCalibQA(self):
+    def initPhotonsCalibQA(self):
         initData = {"toolType": "photon_calibration",
                     "institution": None,
                     "user": None,
@@ -161,7 +175,7 @@ class AppMainWin(QMainWindow):
         self.photonCalWin = QAToolsWin(initData = initData)
         self.photonCalWin.showMaximized()
 
-    def openElectronsCalibQA(self):
+    def initElectronsCalibQA(self):
         initData = {"toolType": "electron_calibration",
                     "institution": None,
                     "user": None,

@@ -24,6 +24,17 @@ class BaseReport:
 
     def setReportName(self, report_name: str):
         self.report_name = report_name
+    
+    def titlePage(self, canvas: Canvas, document):
+        canvas.setAuthor(self._author)
+        canvas.setCreator("PyBeam QA")
+        canvas.setTitle(self.report_name)
+        canvas.setSubject("Radiotherapy QA")
+
+        canvas.saveState()
+        canvas.setFont("Helvetica-Bold", 20)
+        canvas.drawCentredString(A4[0]/2.0, 26.0 * cm , self.report_name)
+        canvas.restoreState()
 
 class WinstonLutzReport(BaseReport):
     """
@@ -56,22 +67,11 @@ class WinstonLutzReport(BaseReport):
 
         self.default_style = styles["Normal"]
 
-    def titlePage(self, canvas: Canvas, document):
-        canvas.setAuthor(self._author)
-        canvas.setCreator("PyBeam QA")
-        canvas.setTitle("WL Analysis Report")
-        canvas.setSubject("Radiotherapy QA")
-
-        canvas.saveState()
-        canvas.setFont("Helvetica-Bold", 20)
-        canvas.drawCentredString(A4[0]/2.0, 26.0 * cm , self.report_name)
-        canvas.restoreState()
-
     def userDetails(self, doc_contents: list):
         data = [[Paragraph("<b>Physicist</b>"), f": {self._author}"],
                 [Paragraph("<b>Institution</b>"), f": {self._institution}"],
                 [Paragraph("<b>Treatment Unit</b>"), f": {self._treatment_unit_name}"],
-                [Paragraph("<b>Analysis Date</b>"), f": {datetime.today().strftime('%d %b %Y')}"],
+                [Paragraph("<b>Analysis Date</b>"), f": {datetime.today().strftime('%d %B %Y')}"],
                 [Paragraph("<b>Test Tolerance</b>"), f": {self._tolerance} mm"],
                 [Paragraph("<b>Test Outcome</b>"), f": {self._report_status}"]]
         

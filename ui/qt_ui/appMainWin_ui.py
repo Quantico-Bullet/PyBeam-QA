@@ -177,7 +177,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 614, 395))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 600, 417))
         self.horizontalLayout = QHBoxLayout(self.scrollAreaWidgetContents)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Minimum, QSizePolicy.Minimum)
@@ -195,6 +195,22 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "QFrame#winstonLutzAnalysis:hover {\n"
+"	background-color: rgba(82, 142, 122,50);\n"
+"}\n"
+"\n"
+"QFrame#planarImagingAnalysis:hover {\n"
+"	background-color: rgba(82, 142, 122,50);\n"
+"}\n"
+"\n"
+"QFrame#starshotAnalysis:hover {\n"
+"	background-color: rgba(82, 142, 122,50);\n"
+"}\n"
+"\n"
+"QFrame#fieldAnalysis:hover {\n"
+"	background-color: rgba(82, 142, 122,50);\n"
+"}\n"
+"\n"
+"QFrame#picketFence:hover {\n"
 "	background-color: rgba(82, 142, 122,50);\n"
 "}")
         self.testListFrame.setFrameShape(QFrame.NoFrame)
@@ -288,6 +304,42 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_5.addWidget(self.electronCalib)
 
+        self.planarImagingAnalysis = QFrame(self.testListFrame)
+        self.planarImagingAnalysis.setObjectName(u"planarImagingAnalysis")
+        sizePolicy5.setHeightForWidth(self.planarImagingAnalysis.sizePolicy().hasHeightForWidth())
+        self.planarImagingAnalysis.setSizePolicy(sizePolicy5)
+        self.planarImagingAnalysis.setFrameShape(QFrame.NoFrame)
+        self.planarImagingAnalysis.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_19 = QHBoxLayout(self.planarImagingAnalysis)
+        self.horizontalLayout_19.setObjectName(u"horizontalLayout_19")
+        self.horizontalLayout_19.setContentsMargins(-1, 0, 0, 0)
+        self.planarImagingIcon = QLabel(self.planarImagingAnalysis)
+        self.planarImagingIcon.setObjectName(u"planarImagingIcon")
+        sizePolicy2.setHeightForWidth(self.planarImagingIcon.sizePolicy().hasHeightForWidth())
+        self.planarImagingIcon.setSizePolicy(sizePolicy2)
+        self.planarImagingIcon.setMaximumSize(QSize(32, 32))
+        self.planarImagingIcon.setPixmap(QPixmap(u":/colorIcons/icons/module.png"))
+        self.planarImagingIcon.setScaledContents(True)
+
+        self.horizontalLayout_19.addWidget(self.planarImagingIcon, 0, Qt.AlignLeft|Qt.AlignVCenter)
+
+        self.planarImagingLabel = QLabel(self.planarImagingAnalysis)
+        self.planarImagingLabel.setObjectName(u"planarImagingLabel")
+        sizePolicy6.setHeightForWidth(self.planarImagingLabel.sizePolicy().hasHeightForWidth())
+        self.planarImagingLabel.setSizePolicy(sizePolicy6)
+        self.planarImagingLabel.setMinimumSize(QSize(0, 48))
+        self.planarImagingLabel.setStyleSheet(u"border-bottom-color: rgb(82, 142, 122);\n"
+"border-bottom-width: 1px;\n"
+"border-style: solid;\n"
+"")
+        self.planarImagingLabel.setWordWrap(False)
+        self.planarImagingLabel.setMargin(0)
+
+        self.horizontalLayout_19.addWidget(self.planarImagingLabel)
+
+
+        self.verticalLayout_5.addWidget(self.planarImagingAnalysis)
+
         self.winstonLutzAnalysis = QFrame(self.testListFrame)
         self.winstonLutzAnalysis.setObjectName(u"winstonLutzAnalysis")
         sizePolicy5.setHeightForWidth(self.winstonLutzAnalysis.sizePolicy().hasHeightForWidth())
@@ -323,6 +375,114 @@ class Ui_MainWindow(object):
 
 
         self.verticalLayout_5.addWidget(self.winstonLutzAnalysis)
+
+        self.picketFence = QFrame(self.testListFrame)
+        self.picketFence.setObjectName(u"picketFence")
+        sizePolicy5.setHeightForWidth(self.picketFence.sizePolicy().hasHeightForWidth())
+        self.picketFence.setSizePolicy(sizePolicy5)
+        self.picketFence.setFrameShape(QFrame.NoFrame)
+        self.picketFence.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_17 = QHBoxLayout(self.picketFence)
+        self.horizontalLayout_17.setObjectName(u"horizontalLayout_17")
+        self.horizontalLayout_17.setContentsMargins(-1, 0, 0, 0)
+        self.picketFenceIcon = QLabel(self.picketFence)
+        self.picketFenceIcon.setObjectName(u"picketFenceIcon")
+        sizePolicy2.setHeightForWidth(self.picketFenceIcon.sizePolicy().hasHeightForWidth())
+        self.picketFenceIcon.setSizePolicy(sizePolicy2)
+        self.picketFenceIcon.setMaximumSize(QSize(32, 32))
+        self.picketFenceIcon.setPixmap(QPixmap(u":/colorIcons/icons/module.png"))
+        self.picketFenceIcon.setScaledContents(True)
+
+        self.horizontalLayout_17.addWidget(self.picketFenceIcon, 0, Qt.AlignLeft|Qt.AlignVCenter)
+
+        self.picketFenceLabel = QLabel(self.picketFence)
+        self.picketFenceLabel.setObjectName(u"picketFenceLabel")
+        sizePolicy6.setHeightForWidth(self.picketFenceLabel.sizePolicy().hasHeightForWidth())
+        self.picketFenceLabel.setSizePolicy(sizePolicy6)
+        self.picketFenceLabel.setMinimumSize(QSize(0, 48))
+        self.picketFenceLabel.setStyleSheet(u"border-bottom-color: rgb(82, 142, 122);\n"
+"border-bottom-width: 1px;\n"
+"border-style: solid;\n"
+"")
+        self.picketFenceLabel.setWordWrap(False)
+        self.picketFenceLabel.setMargin(0)
+
+        self.horizontalLayout_17.addWidget(self.picketFenceLabel)
+
+
+        self.verticalLayout_5.addWidget(self.picketFence)
+
+        self.starshotAnalysis = QFrame(self.testListFrame)
+        self.starshotAnalysis.setObjectName(u"starshotAnalysis")
+        sizePolicy5.setHeightForWidth(self.starshotAnalysis.sizePolicy().hasHeightForWidth())
+        self.starshotAnalysis.setSizePolicy(sizePolicy5)
+        self.starshotAnalysis.setFrameShape(QFrame.NoFrame)
+        self.starshotAnalysis.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_18 = QHBoxLayout(self.starshotAnalysis)
+        self.horizontalLayout_18.setObjectName(u"horizontalLayout_18")
+        self.horizontalLayout_18.setContentsMargins(-1, 0, 0, 0)
+        self.starshotIcon = QLabel(self.starshotAnalysis)
+        self.starshotIcon.setObjectName(u"starshotIcon")
+        sizePolicy2.setHeightForWidth(self.starshotIcon.sizePolicy().hasHeightForWidth())
+        self.starshotIcon.setSizePolicy(sizePolicy2)
+        self.starshotIcon.setMaximumSize(QSize(32, 32))
+        self.starshotIcon.setPixmap(QPixmap(u":/colorIcons/icons/module.png"))
+        self.starshotIcon.setScaledContents(True)
+
+        self.horizontalLayout_18.addWidget(self.starshotIcon, 0, Qt.AlignLeft|Qt.AlignVCenter)
+
+        self.starhshotLabel = QLabel(self.starshotAnalysis)
+        self.starhshotLabel.setObjectName(u"starhshotLabel")
+        sizePolicy6.setHeightForWidth(self.starhshotLabel.sizePolicy().hasHeightForWidth())
+        self.starhshotLabel.setSizePolicy(sizePolicy6)
+        self.starhshotLabel.setMinimumSize(QSize(0, 48))
+        self.starhshotLabel.setStyleSheet(u"border-bottom-color: rgb(82, 142, 122);\n"
+"border-bottom-width: 1px;\n"
+"border-style: solid;\n"
+"")
+        self.starhshotLabel.setWordWrap(False)
+        self.starhshotLabel.setMargin(0)
+
+        self.horizontalLayout_18.addWidget(self.starhshotLabel)
+
+
+        self.verticalLayout_5.addWidget(self.starshotAnalysis)
+
+        self.fieldAnalysis = QFrame(self.testListFrame)
+        self.fieldAnalysis.setObjectName(u"fieldAnalysis")
+        sizePolicy5.setHeightForWidth(self.fieldAnalysis.sizePolicy().hasHeightForWidth())
+        self.fieldAnalysis.setSizePolicy(sizePolicy5)
+        self.fieldAnalysis.setFrameShape(QFrame.NoFrame)
+        self.fieldAnalysis.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_21 = QHBoxLayout(self.fieldAnalysis)
+        self.horizontalLayout_21.setObjectName(u"horizontalLayout_21")
+        self.horizontalLayout_21.setContentsMargins(-1, 0, 0, 0)
+        self.fieldAnalysisIcon = QLabel(self.fieldAnalysis)
+        self.fieldAnalysisIcon.setObjectName(u"fieldAnalysisIcon")
+        sizePolicy2.setHeightForWidth(self.fieldAnalysisIcon.sizePolicy().hasHeightForWidth())
+        self.fieldAnalysisIcon.setSizePolicy(sizePolicy2)
+        self.fieldAnalysisIcon.setMaximumSize(QSize(32, 32))
+        self.fieldAnalysisIcon.setPixmap(QPixmap(u":/colorIcons/icons/module.png"))
+        self.fieldAnalysisIcon.setScaledContents(True)
+
+        self.horizontalLayout_21.addWidget(self.fieldAnalysisIcon, 0, Qt.AlignLeft|Qt.AlignVCenter)
+
+        self.fieldAnalysisLabel = QLabel(self.fieldAnalysis)
+        self.fieldAnalysisLabel.setObjectName(u"fieldAnalysisLabel")
+        sizePolicy6.setHeightForWidth(self.fieldAnalysisLabel.sizePolicy().hasHeightForWidth())
+        self.fieldAnalysisLabel.setSizePolicy(sizePolicy6)
+        self.fieldAnalysisLabel.setMinimumSize(QSize(0, 48))
+        self.fieldAnalysisLabel.setStyleSheet(u"border-bottom-color: rgb(82, 142, 122);\n"
+"border-bottom-width: 1px;\n"
+"border-style: solid;\n"
+"")
+        self.fieldAnalysisLabel.setWordWrap(False)
+        self.fieldAnalysisLabel.setMargin(0)
+
+        self.horizontalLayout_21.addWidget(self.fieldAnalysisLabel)
+
+
+        self.verticalLayout_5.addWidget(self.fieldAnalysis)
 
 
         self.verticalLayout_7.addLayout(self.verticalLayout_5)
@@ -364,6 +524,11 @@ class Ui_MainWindow(object):
         self.verticalSpacer_4 = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Preferred)
 
         self.verticalLayout_4.addItem(self.verticalSpacer_4)
+
+        self.label = QLabel(self.linacQAPage)
+        self.label.setObjectName(u"label")
+
+        self.verticalLayout_4.addWidget(self.label, 0, Qt.AlignHCenter)
 
 
         self.verticalLayout_3.addLayout(self.verticalLayout_4)
@@ -617,7 +782,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.mainStackWidget.setCurrentIndex(1)
+        self.mainStackWidget.setCurrentIndex(0)
         self.devicesBtn.setDefault(False)
         self.navigationStackedWidget.setCurrentIndex(0)
 
@@ -636,8 +801,17 @@ class Ui_MainWindow(object):
         self.photonCalibLabel.setText(QCoreApplication.translate("MainWindow", u"Photon output calibration", None))
         self.dailyElectronIcon.setText("")
         self.dailyElectronsLabel.setText(QCoreApplication.translate("MainWindow", u"Electron output calibration", None))
+        self.planarImagingIcon.setText("")
+        self.planarImagingLabel.setText(QCoreApplication.translate("MainWindow", u"Planar imaging analysis", None))
         self.winstonLutzIcon.setText("")
         self.winstonLutzLabel.setText(QCoreApplication.translate("MainWindow", u"Winston-Lutz analysis", None))
+        self.picketFenceIcon.setText("")
+        self.picketFenceLabel.setText(QCoreApplication.translate("MainWindow", u"Picket-fence analysis", None))
+        self.starshotIcon.setText("")
+        self.starhshotLabel.setText(QCoreApplication.translate("MainWindow", u"Star-shot analysis", None))
+        self.fieldAnalysisIcon.setText("")
+        self.fieldAnalysisLabel.setText(QCoreApplication.translate("MainWindow", u"Field analysis", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"PyBeam QA - v0.1.0 ", None))
         self.calibPageTitle.setText(QCoreApplication.translate("MainWindow", u"Page Title", None))
         self.institutionLabel.setText(QCoreApplication.translate("MainWindow", u"Institution:", None))
         self.userLabel.setText(QCoreApplication.translate("MainWindow", u"User:", None))

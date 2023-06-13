@@ -4,9 +4,10 @@ PyBeam QA is a graphical user interface tool for performing quality assurance te
 
 ## Dependencies
 As of current the program depends on the following:
+- python 3.10+
 - PySide6 (6.4+)
-- pylinac (3.9.0)
-- pyqtgraph (0.13.2)
+- pylinac (3.9.0+)
+- pyqtgraph (0.13.2+)
 
 ## Features
 The program is still in early development and will contain bugs as many of the QA tools are still under development. Tools are flagged as either 
@@ -15,7 +16,8 @@ The program is still in early development and will contain bugs as many of the Q
 | QA Tool | Status |
 | --------------- | --------------- |
 | TRS 398 Photon & Electron output calibration | In-progress |
+| Picket fence | In-progress |
 | Winston-Lutz analysis | In-progress |
-| Relative dosimetry analysis | Planned |
-| VMAT tests | Planned |
-| Picket Fence | Planned |
+| Planar imaging analysis | Planned |
+| Field analysis | Planned |
+| Star-shot analysis | Planned |

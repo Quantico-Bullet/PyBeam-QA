@@ -10,15 +10,15 @@ plt.switch_backend('agg') # switch to non-gui backend to avoid runtime error
 class QWinstonLutz(WinstonLutz):
 
     def __init__(self, directory: str | list[str] | Path,
-                 image_data: list = [],
-                 update_signal: Signal = Signal(int),
+                 update_signal: Signal =  Signal(int),
                  use_filenames: bool = False,
                  axis_mapping: dict[str, tuple[int, int, int]] | None = None):
         super().__init__(directory, use_filenames, axis_mapping)
-        self.update_signal = update_signal
-        self.image_data = image_data
 
-    def analyze(self, bb_size_mm: float = 5,
+        self.update_signal = update_signal
+        self.image_data = []
+
+    def analyze(self, bb_size_mm: float = 8,
                 machine_scale: MachineScale = MachineScale.IEC61217,
                 low_density_bb: bool = False):
         counter = 0
@@ -36,12 +36,9 @@ class QWinstonLutz(WinstonLutz):
 
             counter += 1
             self.update_signal.emit(counter)
-        self._is_analyzed = True
-
-        del self.update_signal
         
-    def get_update_signal(self) -> Signal:
-        return self.update_signal
+        self._is_analyzed = True
+        
 
 class QWinstonLutzWorker(QObject):
 
@@ -52,27 +49,24 @@ class QWinstonLutzWorker(QObject):
 
     def __init__(self, images, use_filenames: bool = False):
         super().__init__()
-        self.images = images
-        self.image_data = []
-        self.use_filenames = use_filenames
+
+        self._wl = QWinstonLutz(images, update_signal = self.images_analyzed,
+                          use_filenames = use_filenames)
 
     @Slot()
     def analyze(self):
-        wl = QWinstonLutz(self.images, self.image_data, 
-                          update_signal=self.images_analyzed, use_filenames = self.use_filenames)
-        wl.analyze()
+        self._wl.analyze()
         
-        wl_data = wl.results_data(as_dict=True)
-        wl_data["image_details"] = self.image_data
-
+        wl_data = self._wl.results_data(as_dict=True)
+        wl_data["image_details"] = self._wl.image_data
 
         summary_image_data = io.BytesIO()
         #image_data = wl.save_images_to_stream(dpi=120)
-        wl.save_summary(summary_image_data, dpi=120)
+        self._wl.save_summary(summary_image_data, dpi=120)
         #wl_data["image_plots"] = image_data
         wl_data["summary_plot"] = summary_image_data
 
         self.analysis_results_changed.emit(wl_data)
-        self.bb_shift_info_changed.emit(wl.bb_shift_instructions())
-        del wl
+        self.bb_shift_info_changed.emit(self._wl.bb_shift_instructions())
+        del self._wl
         self.thread_finished.emit()

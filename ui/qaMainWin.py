@@ -5,9 +5,11 @@ from PySide6.QtGui import QAction, QCursor, QActionGroup
 from ui.py_ui.photonsMainWin_ui import Ui_MainWindow as Ui_PhotonsMainWin
 from ui.photonsWidget import QPhotonsWorksheet
 from ui.wlutzWidget import QWLutzWorksheet
+from ui.picketFenceWidget import QPicketFenceWorksheet
 from core.tools.devices import Linac
 
 class QAToolsWin(QMainWindow):
+
     def __init__(self, initData: dict = None):
         super().__init__()
         self.__ui = Ui_PhotonsMainWin()
@@ -38,6 +40,12 @@ class QAToolsWin(QMainWindow):
                 self.worksheetType = "WL_WORKSHEET"
 
                 self.setWindowTitle("Winston Lutz Analysis ‒ PyBeam QA")
+                self.addNewWorksheet()
+
+            elif initData["toolType"] == "picket_fence":
+                self.worksheetType = "PICKET_FENCE_WORKSHEET"
+
+                self.setWindowTitle("Picket Fence Analysis ‒ PyBeam QA")
                 self.addNewWorksheet()
 
         # setup basic window functionality
@@ -142,8 +150,10 @@ class QAToolsWin(QMainWindow):
 
     def addNewWorksheet(self):
         if self.worksheetType == "WL_WORKSHEET":
-            worksheet = QWLutzWorksheet()
-            self.__ui.tabWidget.addTab(worksheet, u"WL Analysis (Untitled)")
+            self.__ui.tabWidget.addTab(QWLutzWorksheet(), u"WL Analysis (Untitled)")
+
+        elif self.worksheetType == "PICKET_FENCE_WORKSHEET":
+            self.__ui.tabWidget.addTab(QPicketFenceWorksheet(), u"Picket Fence (Untitled)")
 
 class PhotonsCalModel(QObject):
     institution_changed = Signal(str)
