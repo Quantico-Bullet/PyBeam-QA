@@ -25,6 +25,29 @@ class QWLutzWorksheet(QWidget):
 
     COORD_SYS = ["IEC61217", "Varian IEC", "Varian Standard"]
 
+    ANALYSIS_METRICS = {
+            "pylinac_version": "PyLinac version",
+            "num_gantry_images": "Number of gantry images",
+            "num_gantry_coll_images": "Number of gantry + collimator images",
+            "num_coll_images": "Number of collimator images",
+            "num_couch_images": "Number of couch images",
+            "num_total_images": "Total number of images",
+            "max_2d_cax_to_bb_mm": "Maximum 2D distance (CAX to BB)",
+            "median_2d_cax_to_bb_mm": "Median 2D distance (CAX to BB)",
+            "mean_2d_cax_to_bb_mm": "Mean 2D distance (CAX to BB)",
+            "max_2d_cax_to_epid_mm": "Maximum 2D distance (CAX to EPID)",
+            "median_2d_cax_to_epid_mm": "Median 2D distance (CAX to EPID)",
+            "mean_2d_cax_to_epid_mm": "Mean 2D distance (CAX to EPID)",
+            "gantry_3d_iso_diameter_mm": "Gantry 3D isocenter diameter",
+            "max_gantry_rms_deviation_mm": "Maximum gantry RMS deviation",
+            "max_epid_rms_deviation_mm": "Maximum EPID RMS deviation",
+            "gantry_coll_3d_iso_diameter_mm": "Gantry + Collimator 3D isocenter diameter",
+            "coll_2d_iso_diameter_mm": "Collimator 2D isocenter diameter",
+            "max_coll_rms_deviation_mm": "Maximum collimator RMS deviation",
+            "couch_2d_iso_diameter_mm": "Couch 2D isocenter diameter",
+            "max_couch_rms_deviation_mm": "Maximum couch RMS deviation"
+        }
+
     def __init__(self):
         super().__init__()
         self.ui = Ui_QWLutzWorksheet()
@@ -80,6 +103,7 @@ class QWLutzWorksheet(QWidget):
 
         self.ui.analysisInfoVL.addLayout(self.progress_vl)
 
+        # connect slots
         self.ui.addImgBtn.clicked.connect(self.add_files)
         self.ui.importImgBtn.clicked.connect(self.add_files)
         self.ui.analyzeBtn.clicked.connect(self.start_analysis)
@@ -92,29 +116,6 @@ class QWLutzWorksheet(QWidget):
         self.imageView_windows = []
         self.analysis_in_progress = False
         self.maxLocError = None
-
-        self.params = {
-            "pylinac_version": "PyLinac version",
-            "num_gantry_images": "Number of gantry images",
-            "num_gantry_coll_images": "Number of gantry + collimator images",
-            "num_coll_images": "Number of collimator images",
-            "num_couch_images": "Number of couch images",
-            "num_total_images": "Total number of images",
-            "max_2d_cax_to_bb_mm": "Maximum 2D distance (CAX to BB)",
-            "median_2d_cax_to_bb_mm": "Median 2D distance (CAX to BB)",
-            "mean_2d_cax_to_bb_mm": "Mean 2D distance (CAX to BB)",
-            "max_2d_cax_to_epid_mm": "Maximum 2D distance (CAX to EPID)",
-            "median_2d_cax_to_epid_mm": "Median 2D distance (CAX to EPID)",
-            "mean_2d_cax_to_epid_mm": "Mean 2D distance (CAX to EPID)",
-            "gantry_3d_iso_diameter_mm": "Gantry 3D isocenter diameter",
-            "max_gantry_rms_deviation_mm": "Maximum gantry RMS deviation",
-            "max_epid_rms_deviation_mm": "Maximum EPID RMS deviation",
-            "gantry_coll_3d_iso_diameter_mm": "Gantry + Collimator 3D isocenter diameter",
-            "coll_2d_iso_diameter_mm": "Collimator 2D isocenter diameter",
-            "max_coll_rms_deviation_mm": "Maximum collimator RMS deviation",
-            "couch_2d_iso_diameter_mm": "Couch 2D isocenter diameter",
-            "max_couch_rms_deviation_mm": "Maximum couch RMS deviation"
-        }
 
         self.analysis_summary = {}
         self.set_analysis_outcome()
@@ -279,8 +280,8 @@ class QWLutzWorksheet(QWidget):
         self.qthread.started.connect(self.analysis_worker.analyze)
         self.qthread.finished.connect(self.qthread.deleteLater)
         self.analysis_worker.images_analyzed.connect(self.analysis_progress_bar.setValue)
-        self.analysis_worker.images_analyzed.connect(lambda num:
-                            self.analysis_message_label.setText(f"Analyzing images ({num} of {len(self.marked_images)} complete)"))
+        self.analysis_worker.images_analyzed.connect(
+            lambda counter: self.analysis_message_label.setText(f"Analyzing images ({counter} of {len(self.marked_images)} complete)"))
         self.analysis_worker.analysis_results_changed.connect(self.show_analysis_results)
         self.analysis_worker.bb_shift_info_changed.connect(self.update_bb_shift)
         self.analysis_worker.thread_finished.connect(self.qthread.quit)
@@ -319,8 +320,8 @@ class QWLutzWorksheet(QWidget):
 
             listItemWidget.setData(Qt.UserRole, item_data)
 
-        for key in self.params:
-            param = self.params[key]
+        for key in self.ANALYSIS_METRICS:
+            param = self.ANALYSIS_METRICS[key]
             if "_mm" in key:
                 value = f"{round(float(results[key]),2)} mm"
                 self.form_layout.addRow(f"{param}:", QLabel(value))
@@ -416,32 +417,33 @@ class QWLutzWorksheet(QWidget):
         cax_plotItem.addPoints(pos=[(caxX, caxY)], pen=None, size=10, brush=(0,0,255,255),
                                 symbol="s", name="CAX")
         
-        epidX_plotItem = pg.InfiniteLine(movable=False, angle=90, pen = (0,255,0), name="EPID X line",
+        epidX_plot = pg.InfiniteLine(pos=[epidX,0],movable=False, angle=90, pen = (0,255,0), name="EPID X line",
                                         label="EPID x = {value:0.2f}", labelOpts={'position': 0.1,
                                         'color': (200,200,100), 'fill': (0,200,0,50), 'movable': False})
         
-        epidY_plotItem = pg.InfiniteLine(movable=False, angle=0, pen = (0,255,0), name="EPID Y line", 
+        epidY_plot = pg.InfiniteLine(pos=[0,epidY], movable=False, angle=0, pen = (0,255,0), name="EPID Y line", 
                                          label="EPID y = {value:0.2f}", labelOpts={'position': 0.1, 
                                         'color': (200,200,100), 'fill': (0,200,0,50), 'movable': False})
         
-        epidX_plotItem.setPos([epidX,0])
-        epidY_plotItem.setPos([0,epidY])
+        epidX_plot.opts = {"pen": epidX_plot.pen}
+        epidY_plot.opts = {"pen": epidY_plot.pen}
+        
         plotItem.addItem(imageItem)
         plotItem.addColorBar(imageItem, colorMap="viridis")
         plotItem.addItem(bb_plotItem)
         plotItem.addItem(cax_plotItem)
-        plotItem.addItem(epidX_plotItem)
-        plotItem.addItem(epidY_plotItem)
+        plotItem.addItem(epidX_plot)
+        plotItem.addItem(epidY_plot)
 
         legend = pg.LegendItem((50,50), offset=(50,50))
         legend.setParentItem(plotItem)
         legend.addItem(bb_plotItem, "BB")
         legend.addItem(cax_plotItem, "Field CAX")
-        legend.addItem(epidX_plotItem, "EPID-x line")
-        legend.addItem(epidY_plotItem, "EPID-y line")
+        legend.addItem(epidX_plot, "EPID-x line")
+        legend.addItem(epidY_plot, "EPID-y line")
 
         new_win = QMainWindow()
-        new_win.setWindowTitle(image_short_name + " (Analyzed)")
+        new_win.setWindowTitle(image_short_name + " (Analyzed Image) ")
         new_win.setCentralWidget(plotView)
         new_win.setMinimumSize(600, 500)
         
@@ -580,7 +582,7 @@ class QWLutzWorksheet(QWidget):
         layout.addWidget(dialog_buttons)
 
         report_dialog = QDialog()
-        report_dialog.setWindowTitle("Generate Report ‒ PyBeam QA")
+        report_dialog.setWindowTitle("Generate WL Report ‒ PyBeam QA")
         report_dialog.setLayout(layout)
         report_dialog.setMinimumSize(report_dialog.sizeHint())
         report_dialog.setMaximumSize(report_dialog.sizeHint())

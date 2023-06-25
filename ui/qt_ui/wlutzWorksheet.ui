@@ -252,7 +252,7 @@ QPushButton:!enabled{
             <item row="2" column="0">
              <widget class="QLabel" name="useFilenameSLabel">
               <property name="text">
-               <string>Use filename(s)</string>
+               <string>Use filename(s):</string>
               </property>
              </widget>
             </item>

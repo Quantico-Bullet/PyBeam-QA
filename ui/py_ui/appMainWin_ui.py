@@ -811,7 +811,7 @@ class Ui_MainWindow(object):
         self.starhshotLabel.setText(QCoreApplication.translate("MainWindow", u"Star-shot analysis", None))
         self.fieldAnalysisIcon.setText("")
         self.fieldAnalysisLabel.setText(QCoreApplication.translate("MainWindow", u"Field analysis", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"PyBeam QA - v0.1.0  ", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"PyBeam QA - v0.1.0 ", None))
         self.calibPageTitle.setText(QCoreApplication.translate("MainWindow", u"Page Title", None))
         self.institutionLabel.setText(QCoreApplication.translate("MainWindow", u"Institution:", None))
         self.userLabel.setText(QCoreApplication.translate("MainWindow", u"User:", None))

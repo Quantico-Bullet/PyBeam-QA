@@ -38,7 +38,6 @@ class QWinstonLutz(WinstonLutz):
             self.update_signal.emit(counter)
         
         self._is_analyzed = True
-        
 
 class QWinstonLutzWorker(QObject):
 
@@ -47,9 +46,10 @@ class QWinstonLutzWorker(QObject):
     analysis_results_changed = Signal(dict)
     bb_shift_info_changed = Signal(str)
 
-    def __init__(self, images, use_filenames: bool = False):
+    def __init__(self, images: list[str], use_filenames: bool = False):
         super().__init__()
 
+        #TODO take in a QWinstonLutz object
         self._wl = QWinstonLutz(images, update_signal = self.images_analyzed,
                           use_filenames = use_filenames)
 
@@ -61,9 +61,7 @@ class QWinstonLutzWorker(QObject):
         wl_data["image_details"] = self._wl.image_data
 
         summary_image_data = io.BytesIO()
-        #image_data = wl.save_images_to_stream(dpi=120)
         self._wl.save_summary(summary_image_data, dpi=120)
-        #wl_data["image_plots"] = image_data
         wl_data["summary_plot"] = summary_image_data
 
         self.analysis_results_changed.emit(wl_data)
