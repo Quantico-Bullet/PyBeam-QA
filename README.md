@@ -18,6 +18,6 @@ The program is still in early development and will contain bugs as many of the Q
 | TRS 398 Photon & Electron output calibration | In-progress |
 | Picket fence | In-progress |
 | Winston-Lutz analysis | In-progress |
+| Star-shot analysis | In-progress |
 | Planar imaging analysis | Planned |
 | Field analysis | Planned |
-| Star-shot analysis | Planned |
