@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>QPicketFenceWorksheet</class>
- <widget class="QWidget" name="QPicketFenceWorksheet">
+ <class>QStarshotWorksheet</class>
+ <widget class="QWidget" name="QStarshotWorksheet">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -106,64 +106,94 @@
              </layout>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="mLCTypeLabel">
+             <widget class="QLabel" name="cropLabel">
               <property name="text">
-               <string>MLC type:</string>
+               <string>Radius:</string>
               </property>
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QComboBox" name="mlcTypeCB"/>
+             <widget class="QDoubleSpinBox" name="radiusSB">
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::NoButtons</enum>
+              </property>
+              <property name="minimum">
+               <double>0.050000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>0.950000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.050000000000000</double>
+              </property>
+              <property name="value">
+               <double>0.850000000000000</double>
+              </property>
+             </widget>
             </item>
             <item row="2" column="0">
-             <widget class="QLabel" name="cropLabel">
+             <widget class="QLabel" name="minPeakHeightLabel">
               <property name="text">
-               <string>Crop:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="useFilenameSLabel">
-              <property name="text">
-               <string>Use filename(s):</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QCheckBox" name="useFilenameSCheckB">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
+               <string>Minimum peak height</string>
               </property>
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QSpinBox" name="cropSB">
+             <widget class="QDoubleSpinBox" name="miniPeakHeightDSB">
               <property name="buttonSymbols">
                <enum>QAbstractSpinBox::NoButtons</enum>
               </property>
-              <property name="suffix">
-               <string> mm</string>
+              <property name="minimum">
+               <double>0.050000000000000</double>
               </property>
               <property name="maximum">
-               <number>20</number>
+               <double>0.950000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.050000000000000</double>
               </property>
               <property name="value">
-               <number>3</number>
+               <double>0.250000000000000</double>
               </property>
              </widget>
             </item>
             <item row="4" column="0">
-             <widget class="QLabel" name="invertImageLabel">
+             <widget class="QLabel" name="recursiveSearchLabel">
               <property name="text">
-               <string>Invert image:</string>
+               <string>Recursive search:</string>
               </property>
              </widget>
             </item>
             <item row="4" column="1">
-             <widget class="QCheckBox" name="invertImageCB"/>
+             <widget class="QCheckBox" name="recursiveSearchCB">
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="forceImageInversionLabel">
+              <property name="text">
+               <string>Force image inversion:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QCheckBox" name="forceInvertCB"/>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="useFWHMLabel">
+              <property name="text">
+               <string>Use FWHM:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QCheckBox" name="useFWHMCB">
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -296,39 +326,6 @@ QPushButton:!enabled{
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QPushButton" name="advancedViewBtn">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">QPushButton {
-	background-color: rgb(82, 142, 122);
-    min-width: 150px;
-	min-height:20px;
-    padding: 6px;
-	border-radius: 15px;
-	color: white;
-	font: bold;
-}
-
-QPushButton:pressed {
-	background-color: rgb(52, 91, 78);
-}
-
-QPushButton:!enabled{
-	background-color: rgba(52, 91, 78, 50);
-	color: rgba(255,255,255,100)
-}</string>
-           </property>
-           <property name="text">
-            <string>Advanced results</string>
-           </property>
-          </widget>
-         </item>
          <item alignment="Qt::AlignLeft">
           <widget class="QPushButton" name="genReportBtn">
            <property name="sizePolicy">
@@ -449,8 +446,8 @@ QPushButton:!enabled{
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>20</width>
-              <height>40</height>
+              <width>10</width>
+              <height>0</height>
              </size>
             </property>
            </spacer>

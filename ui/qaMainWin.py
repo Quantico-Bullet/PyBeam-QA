@@ -4,6 +4,7 @@ from PySide6.QtGui import QAction, QCursor, QActionGroup
 
 from ui.py_ui.photonsMainWin_ui import Ui_MainWindow as Ui_PhotonsMainWin
 from ui.photonsWidget import QPhotonsWorksheet
+from ui.starshotWidget import QStarshotWorksheet
 from ui.wlutzWidget import QWLutzWorksheet
 from ui.picketFenceWidget import QPicketFenceWorksheet
 from core.tools.devices import Linac
@@ -46,6 +47,12 @@ class QAToolsWin(QMainWindow):
                 self.worksheetType = "PICKET_FENCE_WORKSHEET"
 
                 self.setWindowTitle("Picket Fence Analysis ‒ PyBeam QA")
+                self.addNewWorksheet()
+
+            elif initData["toolType"] == "starshot":
+                self.worksheetType = "STARSHOT_WORKSHEET"
+
+                self.setWindowTitle("Starshot Analysis ‒ PyBeam QA")
                 self.addNewWorksheet()
 
         # setup basic window functionality
@@ -154,6 +161,9 @@ class QAToolsWin(QMainWindow):
 
         elif self.worksheetType == "PICKET_FENCE_WORKSHEET":
             self.__ui.tabWidget.addTab(QPicketFenceWorksheet(), u"Picket Fence (Untitled)")
+
+        elif self.worksheetType == "STARSHOT_WORKSHEET":
+            self.__ui.tabWidget.addTab(QStarshotWorksheet(), u"Starshot (Untitled)")
 
 class PhotonsCalModel(QObject):
     institution_changed = Signal(str)

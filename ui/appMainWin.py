@@ -35,6 +35,7 @@ class AppMainWin(QMainWindow):
 
         self.winston_lutz_win = None
         self.picket_fence_win = None
+        self.starshot_win = None
 
     def setupCalibrationPage(self, calibType: str):
         self.currLinac = None
@@ -149,6 +150,15 @@ class AppMainWin(QMainWindow):
                 self.picket_fence_win.showMaximized()
             else:
                 self.picket_fence_win.addNewWorksheet()
+
+        elif event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.starshotAnalysis:
+            if self.starshot_win is None:
+                initData = {"toolType": "starshot"}
+
+                self.starshot_win = QAToolsWin(initData = initData)
+                self.starshot_win.showMaximized()
+            else:
+                self.starshot_win.addNewWorksheet()
             
         return super().eventFilter(source, event)
     

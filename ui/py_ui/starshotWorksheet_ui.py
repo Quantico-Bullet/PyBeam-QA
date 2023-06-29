@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'picketFenceWorksheet.ui'
+## Form generated from reading UI file 'starshotWorksheet.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.4.2
 ##
@@ -16,20 +16,19 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractItemView, QAbstractSpinBox, QApplication, QCheckBox,
-    QComboBox, QDoubleSpinBox, QFormLayout, QFrame,
-    QGridLayout, QHBoxLayout, QLabel, QLineEdit,
-    QListWidget, QListWidgetItem, QPushButton, QSizePolicy,
-    QSpacerItem, QSpinBox, QStackedWidget, QVBoxLayout,
-    QWidget)
+    QDoubleSpinBox, QFormLayout, QFrame, QGridLayout,
+    QHBoxLayout, QLabel, QLineEdit, QListWidget,
+    QListWidgetItem, QPushButton, QSizePolicy, QSpacerItem,
+    QStackedWidget, QVBoxLayout, QWidget)
 
-class Ui_QPicketFenceWorksheet(object):
-    def setupUi(self, QPicketFenceWorksheet):
-        if not QPicketFenceWorksheet.objectName():
-            QPicketFenceWorksheet.setObjectName(u"QPicketFenceWorksheet")
-        QPicketFenceWorksheet.resize(1237, 480)
-        self.verticalLayout = QVBoxLayout(QPicketFenceWorksheet)
+class Ui_QStarshotWorksheet(object):
+    def setupUi(self, QStarshotWorksheet):
+        if not QStarshotWorksheet.objectName():
+            QStarshotWorksheet.setObjectName(u"QStarshotWorksheet")
+        QStarshotWorksheet.resize(1237, 480)
+        self.verticalLayout = QVBoxLayout(QStarshotWorksheet)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.stackedWidget = QStackedWidget(QPicketFenceWorksheet)
+        self.stackedWidget = QStackedWidget(QStarshotWorksheet)
         self.stackedWidget.setObjectName(u"stackedWidget")
         sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -84,53 +83,67 @@ class Ui_QPicketFenceWorksheet(object):
 
         self.formLayout.setLayout(0, QFormLayout.FieldRole, self.horizontalLayout_4)
 
-        self.mLCTypeLabel = QLabel(self.frame_2)
-        self.mLCTypeLabel.setObjectName(u"mLCTypeLabel")
-
-        self.formLayout.setWidget(1, QFormLayout.LabelRole, self.mLCTypeLabel)
-
-        self.mlcTypeCB = QComboBox(self.frame_2)
-        self.mlcTypeCB.setObjectName(u"mlcTypeCB")
-
-        self.formLayout.setWidget(1, QFormLayout.FieldRole, self.mlcTypeCB)
-
         self.cropLabel = QLabel(self.frame_2)
         self.cropLabel.setObjectName(u"cropLabel")
 
-        self.formLayout.setWidget(2, QFormLayout.LabelRole, self.cropLabel)
+        self.formLayout.setWidget(1, QFormLayout.LabelRole, self.cropLabel)
 
-        self.useFilenameSLabel = QLabel(self.frame_2)
-        self.useFilenameSLabel.setObjectName(u"useFilenameSLabel")
+        self.radiusSB = QDoubleSpinBox(self.frame_2)
+        self.radiusSB.setObjectName(u"radiusSB")
+        self.radiusSB.setButtonSymbols(QAbstractSpinBox.NoButtons)
+        self.radiusSB.setMinimum(0.050000000000000)
+        self.radiusSB.setMaximum(0.950000000000000)
+        self.radiusSB.setSingleStep(0.050000000000000)
+        self.radiusSB.setValue(0.850000000000000)
 
-        self.formLayout.setWidget(3, QFormLayout.LabelRole, self.useFilenameSLabel)
+        self.formLayout.setWidget(1, QFormLayout.FieldRole, self.radiusSB)
 
-        self.useFilenameSCheckB = QCheckBox(self.frame_2)
-        self.useFilenameSCheckB.setObjectName(u"useFilenameSCheckB")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.useFilenameSCheckB.sizePolicy().hasHeightForWidth())
-        self.useFilenameSCheckB.setSizePolicy(sizePolicy2)
+        self.minPeakHeightLabel = QLabel(self.frame_2)
+        self.minPeakHeightLabel.setObjectName(u"minPeakHeightLabel")
 
-        self.formLayout.setWidget(3, QFormLayout.FieldRole, self.useFilenameSCheckB)
+        self.formLayout.setWidget(2, QFormLayout.LabelRole, self.minPeakHeightLabel)
 
-        self.cropSB = QSpinBox(self.frame_2)
-        self.cropSB.setObjectName(u"cropSB")
-        self.cropSB.setButtonSymbols(QAbstractSpinBox.NoButtons)
-        self.cropSB.setMaximum(20)
-        self.cropSB.setValue(3)
+        self.miniPeakHeightDSB = QDoubleSpinBox(self.frame_2)
+        self.miniPeakHeightDSB.setObjectName(u"miniPeakHeightDSB")
+        self.miniPeakHeightDSB.setButtonSymbols(QAbstractSpinBox.NoButtons)
+        self.miniPeakHeightDSB.setMinimum(0.050000000000000)
+        self.miniPeakHeightDSB.setMaximum(0.950000000000000)
+        self.miniPeakHeightDSB.setSingleStep(0.050000000000000)
+        self.miniPeakHeightDSB.setValue(0.250000000000000)
 
-        self.formLayout.setWidget(2, QFormLayout.FieldRole, self.cropSB)
+        self.formLayout.setWidget(2, QFormLayout.FieldRole, self.miniPeakHeightDSB)
 
-        self.invertImageLabel = QLabel(self.frame_2)
-        self.invertImageLabel.setObjectName(u"invertImageLabel")
+        self.recursiveSearchLabel = QLabel(self.frame_2)
+        self.recursiveSearchLabel.setObjectName(u"recursiveSearchLabel")
 
-        self.formLayout.setWidget(4, QFormLayout.LabelRole, self.invertImageLabel)
+        self.formLayout.setWidget(4, QFormLayout.LabelRole, self.recursiveSearchLabel)
 
-        self.invertImageCB = QCheckBox(self.frame_2)
-        self.invertImageCB.setObjectName(u"invertImageCB")
+        self.recursiveSearchCB = QCheckBox(self.frame_2)
+        self.recursiveSearchCB.setObjectName(u"recursiveSearchCB")
+        self.recursiveSearchCB.setChecked(True)
 
-        self.formLayout.setWidget(4, QFormLayout.FieldRole, self.invertImageCB)
+        self.formLayout.setWidget(4, QFormLayout.FieldRole, self.recursiveSearchCB)
+
+        self.forceImageInversionLabel = QLabel(self.frame_2)
+        self.forceImageInversionLabel.setObjectName(u"forceImageInversionLabel")
+
+        self.formLayout.setWidget(5, QFormLayout.LabelRole, self.forceImageInversionLabel)
+
+        self.forceInvertCB = QCheckBox(self.frame_2)
+        self.forceInvertCB.setObjectName(u"forceInvertCB")
+
+        self.formLayout.setWidget(5, QFormLayout.FieldRole, self.forceInvertCB)
+
+        self.useFWHMLabel = QLabel(self.frame_2)
+        self.useFWHMLabel.setObjectName(u"useFWHMLabel")
+
+        self.formLayout.setWidget(3, QFormLayout.LabelRole, self.useFWHMLabel)
+
+        self.useFWHMCB = QCheckBox(self.frame_2)
+        self.useFWHMCB.setObjectName(u"useFWHMCB")
+        self.useFWHMCB.setChecked(True)
+
+        self.formLayout.setWidget(3, QFormLayout.FieldRole, self.useFWHMCB)
 
 
         self.verticalLayout_4.addLayout(self.formLayout)
@@ -186,11 +199,11 @@ class Ui_QPicketFenceWorksheet(object):
         self.mainActionsHL.setObjectName(u"mainActionsHL")
         self.analyzeBtn = QPushButton(self.analysisPage)
         self.analyzeBtn.setObjectName(u"analyzeBtn")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.analyzeBtn.sizePolicy().hasHeightForWidth())
-        self.analyzeBtn.setSizePolicy(sizePolicy3)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.analyzeBtn.sizePolicy().hasHeightForWidth())
+        self.analyzeBtn.setSizePolicy(sizePolicy2)
         self.analyzeBtn.setStyleSheet(u"QPushButton {\n"
 "	background-color: rgb(82, 142, 122);\n"
 "    min-width: 150px;\n"
@@ -212,35 +225,10 @@ class Ui_QPicketFenceWorksheet(object):
 
         self.mainActionsHL.addWidget(self.analyzeBtn, 0, Qt.AlignLeft)
 
-        self.advancedViewBtn = QPushButton(self.analysisPage)
-        self.advancedViewBtn.setObjectName(u"advancedViewBtn")
-        sizePolicy3.setHeightForWidth(self.advancedViewBtn.sizePolicy().hasHeightForWidth())
-        self.advancedViewBtn.setSizePolicy(sizePolicy3)
-        self.advancedViewBtn.setStyleSheet(u"QPushButton {\n"
-"	background-color: rgb(82, 142, 122);\n"
-"    min-width: 150px;\n"
-"	min-height:20px;\n"
-"    padding: 6px;\n"
-"	border-radius: 15px;\n"
-"	color: white;\n"
-"	font: bold;\n"
-"}\n"
-"\n"
-"QPushButton:pressed {\n"
-"	background-color: rgb(52, 91, 78);\n"
-"}\n"
-"\n"
-"QPushButton:!enabled{\n"
-"	background-color: rgba(52, 91, 78, 50);\n"
-"	color: rgba(255,255,255,100)\n"
-"}")
-
-        self.mainActionsHL.addWidget(self.advancedViewBtn)
-
         self.genReportBtn = QPushButton(self.analysisPage)
         self.genReportBtn.setObjectName(u"genReportBtn")
-        sizePolicy3.setHeightForWidth(self.genReportBtn.sizePolicy().hasHeightForWidth())
-        self.genReportBtn.setSizePolicy(sizePolicy3)
+        sizePolicy2.setHeightForWidth(self.genReportBtn.sizePolicy().hasHeightForWidth())
+        self.genReportBtn.setSizePolicy(sizePolicy2)
         self.genReportBtn.setStyleSheet(u"QPushButton {\n"
 "	background-color: rgb(82, 142, 122);\n"
 "    min-width: 150px;\n"
@@ -271,11 +259,11 @@ class Ui_QPicketFenceWorksheet(object):
 
         self.frame = QFrame(self.analysisPage)
         self.frame.setObjectName(u"frame")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        sizePolicy4.setHorizontalStretch(0)
-        sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
-        self.frame.setSizePolicy(sizePolicy4)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
+        self.frame.setSizePolicy(sizePolicy3)
         self.frame.setFrameShape(QFrame.NoFrame)
         self.frame.setFrameShadow(QFrame.Plain)
         self.verticalLayout_3 = QVBoxLayout(self.frame)
@@ -283,11 +271,11 @@ class Ui_QPicketFenceWorksheet(object):
         self.verticalLayout_3.setContentsMargins(0, 0, -1, -1)
         self.analysisSummaryLabel = QFrame(self.frame)
         self.analysisSummaryLabel.setObjectName(u"analysisSummaryLabel")
-        sizePolicy5 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
-        sizePolicy5.setHorizontalStretch(0)
-        sizePolicy5.setVerticalStretch(0)
-        sizePolicy5.setHeightForWidth(self.analysisSummaryLabel.sizePolicy().hasHeightForWidth())
-        self.analysisSummaryLabel.setSizePolicy(sizePolicy5)
+        sizePolicy4 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
+        sizePolicy4.setHorizontalStretch(0)
+        sizePolicy4.setVerticalStretch(0)
+        sizePolicy4.setHeightForWidth(self.analysisSummaryLabel.sizePolicy().hasHeightForWidth())
+        self.analysisSummaryLabel.setSizePolicy(sizePolicy4)
         self.analysisSummaryLabel.setMaximumSize(QSize(16777215, 1))
         self.analysisSummaryLabel.setStyleSheet(u"background-color: rgb(82, 142, 122)")
         self.analysisSummaryLabel.setFrameShape(QFrame.HLine)
@@ -304,7 +292,7 @@ class Ui_QPicketFenceWorksheet(object):
 
         self.verticalLayout_3.addLayout(self.analysisInfoVL)
 
-        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.MinimumExpanding)
+        self.verticalSpacer_4 = QSpacerItem(10, 0, QSizePolicy.Minimum, QSizePolicy.MinimumExpanding)
 
         self.verticalLayout_3.addItem(self.verticalSpacer_4)
 
@@ -325,8 +313,8 @@ class Ui_QPicketFenceWorksheet(object):
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.label = QLabel(self.analysisPage)
         self.label.setObjectName(u"label")
-        sizePolicy4.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
-        self.label.setSizePolicy(sizePolicy4)
+        sizePolicy3.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
+        self.label.setSizePolicy(sizePolicy3)
         self.label.setFont(font)
 
         self.horizontalLayout_3.addWidget(self.label, 0, Qt.AlignLeft)
@@ -338,11 +326,11 @@ class Ui_QPicketFenceWorksheet(object):
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.analysisSumLabel = QLabel(self.analysisPage)
         self.analysisSumLabel.setObjectName(u"analysisSumLabel")
-        sizePolicy6 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        sizePolicy6.setHorizontalStretch(0)
-        sizePolicy6.setVerticalStretch(0)
-        sizePolicy6.setHeightForWidth(self.analysisSumLabel.sizePolicy().hasHeightForWidth())
-        self.analysisSumLabel.setSizePolicy(sizePolicy6)
+        sizePolicy5 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy5.setHorizontalStretch(0)
+        sizePolicy5.setVerticalStretch(0)
+        sizePolicy5.setHeightForWidth(self.analysisSumLabel.sizePolicy().hasHeightForWidth())
+        self.analysisSumLabel.setSizePolicy(sizePolicy5)
         self.analysisSumLabel.setFont(font)
 
         self.horizontalLayout_2.addWidget(self.analysisSumLabel)
@@ -352,11 +340,11 @@ class Ui_QPicketFenceWorksheet(object):
 
         self.imageListWidget = QListWidget(self.analysisPage)
         self.imageListWidget.setObjectName(u"imageListWidget")
-        sizePolicy7 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Expanding)
-        sizePolicy7.setHorizontalStretch(0)
-        sizePolicy7.setVerticalStretch(0)
-        sizePolicy7.setHeightForWidth(self.imageListWidget.sizePolicy().hasHeightForWidth())
-        self.imageListWidget.setSizePolicy(sizePolicy7)
+        sizePolicy6 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Expanding)
+        sizePolicy6.setHorizontalStretch(0)
+        sizePolicy6.setVerticalStretch(0)
+        sizePolicy6.setHeightForWidth(self.imageListWidget.sizePolicy().hasHeightForWidth())
+        self.imageListWidget.setSizePolicy(sizePolicy6)
         self.imageListWidget.setMinimumSize(QSize(350, 0))
         self.imageListWidget.setMaximumSize(QSize(350, 16777215))
         self.imageListWidget.setDragDropMode(QAbstractItemView.DragDrop)
@@ -367,8 +355,11 @@ class Ui_QPicketFenceWorksheet(object):
 
         self.addImgBtn = QPushButton(self.analysisPage)
         self.addImgBtn.setObjectName(u"addImgBtn")
-        sizePolicy2.setHeightForWidth(self.addImgBtn.sizePolicy().hasHeightForWidth())
-        self.addImgBtn.setSizePolicy(sizePolicy2)
+        sizePolicy7 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy7.setHorizontalStretch(0)
+        sizePolicy7.setVerticalStretch(0)
+        sizePolicy7.setHeightForWidth(self.addImgBtn.sizePolicy().hasHeightForWidth())
+        self.addImgBtn.setSizePolicy(sizePolicy7)
         self.addImgBtn.setStyleSheet(u"QPushButton {\n"
 "	background-color: rgb(82, 142, 122);\n"
 "    min-width: 150px;\n"
@@ -403,31 +394,30 @@ class Ui_QPicketFenceWorksheet(object):
         self.verticalLayout.addWidget(self.stackedWidget)
 
 
-        self.retranslateUi(QPicketFenceWorksheet)
+        self.retranslateUi(QStarshotWorksheet)
 
         self.stackedWidget.setCurrentIndex(0)
 
 
-        QMetaObject.connectSlotsByName(QPicketFenceWorksheet)
+        QMetaObject.connectSlotsByName(QStarshotWorksheet)
     # setupUi
 
-    def retranslateUi(self, QPicketFenceWorksheet):
-        QPicketFenceWorksheet.setWindowTitle(QCoreApplication.translate("QPicketFenceWorksheet", u"Form", None))
-        self.toleranceLabel.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"Tolerance:", None))
-        self.toleranceDSB.setSuffix(QCoreApplication.translate("QPicketFenceWorksheet", u" mm", None))
-        self.mLCTypeLabel.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"MLC type:", None))
-        self.cropLabel.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"Crop:", None))
-        self.useFilenameSLabel.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"Use filename(s):", None))
-        self.cropSB.setSuffix(QCoreApplication.translate("QPicketFenceWorksheet", u" mm", None))
-        self.invertImageLabel.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"Invert image:", None))
-        self.label_2.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"<html><head/><body><p><span style=\" font-weight:700;\">Analysis Outcome</span></p></body></html>", None))
-        self.outcomeLE.setPlaceholderText(QCoreApplication.translate("QPicketFenceWorksheet", u"N/A", None))
-        self.analyzeBtn.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"Analyze images", None))
-        self.advancedViewBtn.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"Advanced results", None))
-        self.genReportBtn.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"Generate report", None))
-        self.importedImgLabel.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"Imported images", None))
-        self.label.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"<html><head/><body><p><span style=\" font-weight:700;\">Configuration</span></p></body></html>", None))
-        self.analysisSumLabel.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"<html><head/><body><p><span style=\" font-weight:700;\">Analysis summary</span></p></body></html>", None))
-        self.addImgBtn.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"Add image(s)", None))
+    def retranslateUi(self, QStarshotWorksheet):
+        QStarshotWorksheet.setWindowTitle(QCoreApplication.translate("QStarshotWorksheet", u"Form", None))
+        self.toleranceLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Tolerance:", None))
+        self.toleranceDSB.setSuffix(QCoreApplication.translate("QStarshotWorksheet", u" mm", None))
+        self.cropLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Radius:", None))
+        self.minPeakHeightLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Minimum peak height", None))
+        self.recursiveSearchLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Recursive search:", None))
+        self.forceImageInversionLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Force image inversion:", None))
+        self.useFWHMLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Use FWHM:", None))
+        self.label_2.setText(QCoreApplication.translate("QStarshotWorksheet", u"<html><head/><body><p><span style=\" font-weight:700;\">Analysis Outcome</span></p></body></html>", None))
+        self.outcomeLE.setPlaceholderText(QCoreApplication.translate("QStarshotWorksheet", u"N/A", None))
+        self.analyzeBtn.setText(QCoreApplication.translate("QStarshotWorksheet", u"Analyze images", None))
+        self.genReportBtn.setText(QCoreApplication.translate("QStarshotWorksheet", u"Generate report", None))
+        self.importedImgLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Imported images", None))
+        self.label.setText(QCoreApplication.translate("QStarshotWorksheet", u"<html><head/><body><p><span style=\" font-weight:700;\">Configuration</span></p></body></html>", None))
+        self.analysisSumLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"<html><head/><body><p><span style=\" font-weight:700;\">Analysis summary</span></p></body></html>", None))
+        self.addImgBtn.setText(QCoreApplication.translate("QStarshotWorksheet", u"Add image(s)", None))
     # retranslateUi
 

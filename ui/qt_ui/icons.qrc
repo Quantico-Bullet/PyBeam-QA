@@ -16,6 +16,8 @@
         <file>icons/warning.png</file>
         <file>icons/warning_48.png</file>
         <file>icons/bb_shift.png</file>
+        <file>icons/error_round.png</file>
+        <file>icons/error_round_48.png</file>
     </qresource>
     <qresource prefix="/actionIcons">
         <file>icons/eye.png</file>
