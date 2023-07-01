@@ -1,6 +1,6 @@
 # PyBeam QA
 
-PyBeam QA is a graphical user interface tool for performing quality assurance tests in radiotherapy. The program is based on Pylinac and PySide6.
+PyBeam QA is a graphical user interface program for performing quality assurance tests in radiotherapy. The program is based on Pylinac and PySide6.
 
 ## Dependencies
 As of current the program depends on the following:
@@ -10,7 +10,7 @@ As of current the program depends on the following:
 - pyqtgraph (0.13.2+)
 
 ## Features
-The program is still in early development and will contain bugs as many of the QA tools are still under development. Tools are flagged as either 
+The program is still in early development and may contain bugs. Tools are flagged as either 
 'Complete', 'In-progress' or 'Planned'. Planned features are those not yet implemented.
 
 | QA Tool | Status |
@@ -19,5 +19,5 @@ The program is still in early development and will contain bugs as many of the Q
 | Picket fence | In-progress |
 | Winston-Lutz analysis | In-progress |
 | Star-shot analysis | In-progress |
+| Field analysis | In-progress |
 | Planar imaging analysis | Planned |
-| Field analysis | Planned |
