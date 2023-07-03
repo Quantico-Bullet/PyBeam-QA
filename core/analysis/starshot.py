@@ -5,9 +5,14 @@ import io
 import traceback
 import pyqtgraph as pg
 import numpy as np
-from typing import BinaryIO, Optional, Union
+from typing import BinaryIO
 from pylinac.core.geometry import Point
 from pylinac.starshot import Starshot
+from pylinac.settings import get_dicom_cmap
+
+import matplotlib.pyplot as plt
+
+pg.setConfigOptions(antialias = True, imageAxisOrder='row-major')
 
 class QStarshot(Starshot):
 
@@ -73,15 +78,40 @@ class QStarshot(Starshot):
         self.imagePlotWidget.addItem(pg.ScatterPlotItem(peak_x, peak_y,
                                                         size = 15, pxMode = False,
                                                         pen = pg.mkPen(None), brush = pg.mkBrush(255,0,255, 150)))
-        
 
     def get_publishable_plots(self) -> list[io.BytesIO()]:
-        
+        """
+        Custom plot implementation to get smaller, high quality pdf images
+        """
+
         full_plot_data = io.BytesIO()
         wobble_plot_data = io.BytesIO()
+        
+        fig, ax = plt.subplots()
+        # show analyzed image
+        ax.imshow(self.image.array, cmap = get_dicom_cmap())
+        self.lines.plot(ax)
+        self.wobble.plot2axes(ax, edgecolor="green")
+        self.circle_profile.plot2axes(ax, edgecolor="green")
 
-        self.save_analyzed_subimage(full_plot_data, subimage="full", dpi = 180)
-        self.save_analyzed_subimage(wobble_plot_data, dpi = 180)
+        ax.axis('off')
+        ax.set_aspect('auto')
+
+        # Ensure that we fill the entire pdf page (pad_inches = 0.0  and box_inches = 'tight')
+        fig.savefig(full_plot_data, format = "pdf", pad_inches = 0.0, bbox_inches='tight')
+
+        xlims = [self.wobble.center.x + self.wobble.diameter,
+                 self.wobble.center.x - self.wobble.diameter]
+        
+        ylims = [self.wobble.center.y + self.wobble.diameter,
+                 self.wobble.center.y - self.wobble.diameter]
+        
+        ax.set_xlim(xlims)
+        ax.set_ylim(ylims)
+
+        ax.axis('on')
+
+        fig.savefig(wobble_plot_data, format = "pdf", pad_inches = 0.0, bbox_inches='tight')
 
         return [full_plot_data, wobble_plot_data]
 
@@ -99,7 +129,8 @@ class QStarshotWorker(QObject):
                  fwhm: bool = True,
                  recursive: bool = True,
                  invert: bool = False,
-                 update_signal: Signal = None,):
+                 update_signal: Signal = None,
+                 **kwargs):
         super().__init__()
         
         self._filepath = filepath
@@ -112,9 +143,9 @@ class QStarshotWorker(QObject):
         self._update_signal = update_signal
 
         if type(self._filepath) == str:
-            self.starshot = QStarshot(self._filepath)
+            self.starshot = QStarshot(self._filepath, **kwargs)
         else:
-            self.starshot = QStarshot.from_multiple_images(self._filepath, kwargs=None)
+            self.starshot = QStarshot.from_multiple_images(self._filepath, **kwargs)
 
     def analyze(self):
         try:

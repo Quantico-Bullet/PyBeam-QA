@@ -12,6 +12,8 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import BinaryIO, Optional, Union
 
+pg.setConfigOptions(antialias = True, imageAxisOrder='row-major')
+
 class QPicketFence(PicketFence):
 
     def __init__(self, filename: Union[str, list[str], Path, BinaryIO],
@@ -319,7 +321,7 @@ class QPicketFenceWorker(QObject):
         self._crop_mm = crop_mm
         self._image_kwargs = image_kwargs
 
-        self.pf = QPicketFence(self._filename,
+        self._pf = QPicketFence(self._filename,
                           self._update_signal,
                           self._filter,
                           self._log,
@@ -336,17 +338,17 @@ class QPicketFenceWorker(QObject):
         Perform an analysis of a picket fence image or series of picket fence images
         """
         try:
-            self.pf.analyze(tolerance=self.pf.tolerance, action_tolerance= self.pf.action_tolerance)
+            self._pf.analyze(tolerance=self._pf.tolerance, action_tolerance= self._pf.action_tolerance)
 
-            summary_text = [["Gantry angle:", f"{self.pf.image.gantry_angle:2.2f}°"],
-                       ["Collimator angle:", f"{self.pf.image.collimator_angle:2.2f}°"],
-                       ["Leaves passing:", f"{self.pf.percent_passing:2.1f}%"],
-                       ["Absolute median error:", f"{self.pf.abs_median_error:2.2f} mm"],
-                       ["Mean picket spacing:", f"{self.pf.mean_picket_spacing:2.2f} mm"],
-                       ["Max Error:", f"{self.pf.max_error:2.3f} mm (Picket: {self.pf.max_error_picket + 1}, Leaf: {self.pf.max_error_leaf + 1})"]]
+            summary_text = [["Gantry angle:", f"{self._pf.image.gantry_angle:2.2f}°"],
+                       ["Collimator angle:", f"{self._pf.image.collimator_angle:2.2f}°"],
+                       ["Leaves passing:", f"{self._pf.percent_passing:2.1f}%"],
+                       ["Absolute median error:", f"{self._pf.abs_median_error:2.2f} mm"],
+                       ["Mean picket spacing:", f"{self._pf.mean_picket_spacing:2.2f} mm"],
+                       ["Max Error:", f"{self._pf.max_error:2.3f} mm (Picket: {self._pf.max_error_picket + 1}, Leaf: {self._pf.max_error_leaf + 1})"]]
             
             results = {"summary_text": summary_text,
-                       "picket_fence_obj": self.pf}
+                       "picket_fence_obj": self._pf}
 
             self.analysis_results_ready.emit(results)
             self.thread_finished.emit()

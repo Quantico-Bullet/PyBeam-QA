@@ -1,16 +1,23 @@
-from reportlab.platypus import SimpleDocTemplate, Paragraph, PageBreak, Spacer, Table, Image, TopPadder
+from reportlab.platypus import (SimpleDocTemplate, Paragraph, PageBreak, Spacer, Table,
+                                Image, TopPadder, Flowable)
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import cm
+from reportlab.lib.units import cm, inch
 from reportlab.lib import colors
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen.canvas import Canvas
+from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT
+from reportlab.rl_config import defaultPageSize
 
 from PIL import Image as pilImage
 
 from datetime import datetime
 
 import io
+from pdfrw import PdfReader, PdfDict
+from pdfrw.buildxobj import pagexobj
+
+from core.tools.toreportlab import makerl
 
 styles = getSampleStyleSheet()
 
@@ -102,7 +109,7 @@ class WinstonLutzReport(BaseReport):
         doc_contents.append(PageBreak())
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Summary plot:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 8 pts
-        doc_contents.append(Image(self._summary_plot, width=16*cm, height=16*cm))
+        doc_contents.append(PdfImage(self._summary_plot, width=16*cm, height=16*cm))
 
     def signature(self, doc_contents: list):
 
@@ -224,6 +231,105 @@ class PicketFenceReport(BaseReport):
         self.signature(doc_contents)
 
         document.build(doc_contents, onFirstPage=self.titlePage)
+
+class FieldAnalysisReport(BaseReport):
+    """
+    Class for generating Field Analysis reports
+    """
+
+    def __init__(
+        self, filename: str,
+        report_name: str = "Field Analysis Report",
+        author: str = "N/A",
+        institution: str = "N/A",
+        protocol: str = "N/A",
+        treatment_unit_name: str = None,
+        analysis_summary: dict = None,
+        summary_plots: list[io.BytesIO] = None,
+        comments: str | None = None
+        ):
+        super().__init__(filename, report_name)
+
+        self._author = author
+        self._institution = institution
+        self._treatment_unit_name = treatment_unit_name
+        self._protocol = protocol
+        self._analysis_summary = analysis_summary
+        self._summary_plots = summary_plots
+        self._comments = comments
+
+        self.default_style = styles["Normal"]
+
+    def userDetails(self, doc_contents: list):
+        data = [
+            [Paragraph("<b>Physicist</b>"), f": {self._author}"],
+            [Paragraph("<b>Institution</b>"), f": {self._institution}"],
+            [Paragraph("<b>Treatment unit</b>"), f": {self._treatment_unit_name}"],
+            [Paragraph("<b>Analysis date</b>"), f": {datetime.today().strftime('%d %B %Y')}"],
+            [],
+            [Paragraph("<b>Analysis protocol</b>"), f": {self._protocol}"]
+        ]
+        
+        doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT"))
+
+    def analysisDetails(self, doc_contents: list):
+        results = self._analysis_summary
+
+        for title in results.keys():
+            doc_contents.append(Spacer(1, 16)) # add spacing of 8 pts
+            doc_contents.append(Paragraph(f"<b><u><font size=11 color=\"darkblue\">{title}</font></u></b>"))
+            doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
+
+            data = []
+            data.insert(0, [Paragraph("<b>Parameter</b>"),
+                            Paragraph("<b>Value</b>")]
+                            )
+            
+            for item in results[title]:
+                data.append(item)
+
+            table = Table(data, colWidths=[8.0*cm, 5.0*cm], hAlign="LEFT",
+                      style=[('GRID', (0,0), (-1,-1), 0.5, colors.grey),
+                             ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+                             ('LINEABOVE', (0,0), (-1,0), 1, colors.black),
+                             ('LINEABOVE', (0,1), (-1,1), 1, colors.black)])
+        
+            doc_contents.append(table)
+
+    def plotSummary(self, doc_contents: list):
+        #doc_contents.append(PageBreak())
+        doc_contents.append(Spacer(1, 16))
+        doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Summary plots:</font></u></b>"))
+        doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
+
+        data = [[PdfImage(self._summary_plots[0], width=9.0*cm, height=9.0*cm), 
+                 PdfImage(self._summary_plots[1], width=9.0*cm, height=9.0*cm)]]
+
+        doc_contents.append(Table(data, colWidths=[9.0*cm, 9.0*cm], hAlign="CENTER"))
+
+    def signature(self, doc_contents: list):
+
+        data = [[Paragraph("<b>Performed by</b>"), ":", self._author],
+                [Paragraph("<b>Signature</b>"), ":", ""]]
+
+        table = Table(data, colWidths=[3.0*cm, 0.5*cm, 4*cm], hAlign="LEFT",
+                      style=[('LINEBELOW', (-1,-1), (-1,-1), 1, colors.black)])
+        doc_contents.append(TopPadder(table))
+
+    def saveReport(self):
+        document =  SimpleDocTemplate(self._filename)
+        doc_contents = [Spacer(1, 2.0*cm)]
+
+        # add document body and then build the PDF
+        self.userDetails(doc_contents)
+        self.analysisDetails(doc_contents)
+
+        if self._summary_plots is not None:
+            self.plotSummary(doc_contents)
+        
+        self.signature(doc_contents)
+
+        document.build(doc_contents, onFirstPage=self.titlePage)
        
 class StarshotReport(BaseReport):
     """
@@ -290,11 +396,10 @@ class StarshotReport(BaseReport):
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Summary plots:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
 
-        data = [[Image(self._summary_plots[0], width=8.0*cm, height=8.0*cm, hAlign="LEFT"),
-                     Image(self._summary_plots[1], width=8.0*cm, height=8.0*cm, hAlign="LEFT")]]
+        data = [[PdfImage(self._summary_plots[0], width=7.5*cm, height=7.5*cm), 
+                 PdfImage(self._summary_plots[1], width=7.5*cm, height=7.5*cm)]]
 
-        table = Table(data, colWidths=[8.5*cm, 8.5*cm], hAlign="CENTER")
-        doc_contents.append(table)
+        doc_contents.append(Table(data, colWidths=[8.0*cm, 8.0*cm], hAlign="CENTER"))
 
     def signature(self, doc_contents: list):
 
@@ -319,4 +424,40 @@ class StarshotReport(BaseReport):
         self.signature(doc_contents)
 
         document.build(doc_contents, onFirstPage=self.titlePage)
-       
+
+
+class PdfImage(Flowable):
+    def __init__(self, img_data: io.BytesIO, width=200, height=200):
+        self.img_width = width
+        self.img_height = height
+        img_data.seek(0)
+
+        self.img_data = self.form_xo_reader(img_data)
+
+    def form_xo_reader(self, imgdata):
+        page, = PdfReader(imgdata).pages
+        return pagexobj(page)
+
+    def wrap(self, width, height):
+        return self.img_width, self.img_height
+
+    def drawOn(self, canv, x, y, _sW=0):
+        if _sW > 0 and hasattr(self, 'hAlign'):
+            a = self.hAlign
+            if a in ('CENTER', 'CENTRE', TA_CENTER):
+                x += 0.5*_sW
+            elif a in ('RIGHT', TA_RIGHT):
+                x += _sW
+            elif a not in ('LEFT', TA_LEFT):
+                raise ValueError("Bad hAlign value " + str(a))
+        canv.saveState()
+        img = self.img_data
+        if isinstance(img, PdfDict):
+            xscale = self.img_width / img.BBox[2]
+            yscale = self.img_height / img.BBox[3]
+            canv.translate(x, y)
+            canv.scale(xscale, yscale)
+            canv.doForm(makerl(canv, img))
+        else:
+            canv.drawImage(img, x, y, self.img_width, self.img_height)
+        canv.restoreState()

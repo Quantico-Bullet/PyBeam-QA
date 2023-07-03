@@ -20,7 +20,7 @@ import webbrowser
 import subprocess
 import pyqtgraph as pg
 from pathlib import Path
-from pylinac.core.image import LinacDicomImage
+from pylinac.core.image import load
 
 class QStarshotWorksheet(QWidget):
 
@@ -94,15 +94,29 @@ class QStarshotWorksheet(QWidget):
         self.analysis_in_progress = False
         self.has_analysis = False
 
+        self.setup_config()
         self.update_marked_images()
         self.set_analysis_outcome()
-    
+
+    def setup_config(self):
+        self.ui.SIDValueCB.addItems(["Auto", "Manual"])
+        self.ui.SIDValueCB.currentIndexChanged.connect(self.on_config_change)
+
+        # call this one time to ensure correct config display
+        self.on_config_change()
+
+    def on_config_change(self):
+        if self.ui.SIDValueCB.currentText() == "Manual":
+            self.ui.configFormLayout.setRowVisible(4, True)
+        else:
+            self.ui.configFormLayout.setRowVisible(4, False)
+     
     def add_files(self):
         files, _ = QFileDialog.getOpenFileNames(
             self,
             "Select Starshot Images",
             "",
-            "DICOM Images (*.dcm)",
+            "DICOM Images (*.dcm);; TIFF Images (*.tiff *.tif);; PNG Image (*.png)",
         )
 
         if files:
@@ -197,7 +211,7 @@ class QStarshotWorksheet(QWidget):
     def view_dicom_image(self):
         image_short_name = self.ui.imageListWidget.currentItem().text()
         image_path = self.ui.imageListWidget.selectedItems()[0].data(Qt.UserRole)["file_path"]
-        image = LinacDicomImage(image_path)
+        image = load(image_path)
 
         imgView = pg.ImageView()
         imgView.setImage(image.array)
@@ -289,9 +303,9 @@ class QStarshotWorksheet(QWidget):
         self.analysis_message_label.hide()
 
         self.error_dialog = QMessageBox()
-        self.error_dialog.setWindowTitle("Error Encountered")
+        self.error_dialog.setWindowTitle("Analysis Error")
         self.error_dialog.setText("<p><span style=\" font-weight:700; font-size: 12pt;\">" \
-                                  "Oops! An error was encountered during the analysis</span></p>")
+                                  "Oops! An error was encountered </span></p>")
         self.error_dialog.setInformativeText(error_message)
         self.error_dialog.setStandardButtons(QMessageBox.StandardButton.Ok)
         self.error_dialog.setTextFormat(Qt.TextFormat.RichText)
@@ -335,7 +349,8 @@ class QStarshotWorksheet(QWidget):
                                       tolerance = self.ui.toleranceDSB.value(),
                                       fwhm = self.ui.useFWHMCB.isChecked(),
                                       recursive = self.ui.recursiveSearchCB.isChecked(),
-                                      invert = self.ui.forceInvertCB.isChecked()
+                                      invert = self.ui.forceInvertCB.isChecked(),
+                                      sid = self.ui.sIDDSB.value()
                                       )
         
         self.qthread = QThread()
@@ -379,7 +394,6 @@ class QStarshotWorksheet(QWidget):
         #Update the summary
         self.analysis_summary = [["Wobble (circle) diameter", f"{starshot.wobble.radius_mm*2.0:2.3f} mm"],
                                  ["Number of spokes detected", f"{len(starshot.lines)}"]]
-
 
     def remove_list_checkmarks(self):
         for index in range(self.ui.imageListWidget.count()):
@@ -492,7 +506,6 @@ class QStarshotWorksheet(QWidget):
         report_dialog.setMinimumSize(report_dialog.sizeHint())
         report_dialog.setMaximumSize(report_dialog.sizeHint())
 
-
         cancel_button.clicked.connect(report_dialog.reject)
         save_button.clicked.connect(report_dialog.accept)
         save_win_btn.clicked.connect(lambda: self.save_report_to(save_path_le))
@@ -519,7 +532,6 @@ class QStarshotWorksheet(QWidget):
 
             if show_report_checkbox.isChecked():
                 webbrowser.open(save_path_le.text())
-
 
     def save_report_to(self, line_edit: QLineEdit):
         file_path = QFileDialog.getSaveFileName(caption="Save To File...", filter="PDF (*.pdf)")

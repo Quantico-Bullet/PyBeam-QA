@@ -256,6 +256,29 @@ class QWLutzWorksheet(QWidget):
         else:
             self.ui.analyzeBtn.setText(f"Analyze images")
             self.ui.analyzeBtn.setEnabled(False)
+
+    def on_analysis_failed(self, error_message: str = "Unknown Error"):
+        self.analysis_in_progress = False
+        self.restore_list_checkmarks()
+
+        self.ui.analyzeBtn.setText(f"Analyze images")
+        self.ui.addImgBtn.setEnabled(True)
+    
+        self.analysis_progress_bar.hide()
+        self.analysis_message_label.hide()
+
+        self.error_dialog = QMessageBox()
+        self.error_dialog.setWindowTitle("Analysis Error")
+        self.error_dialog.setText("<p><span style=\" font-weight:700; font-size: 12pt;\">" \
+                                  "Oops! An error was encountered</span></p>")
+        self.error_dialog.setInformativeText(error_message)
+        self.error_dialog.setStandardButtons(QMessageBox.StandardButton.Ok)
+        self.error_dialog.setTextFormat(Qt.TextFormat.RichText)
+
+        error_icon = QPixmap(u":/colorIcons/icons/error_round_48.png")
+        self.error_dialog.setIconPixmap(error_icon)
+
+        self.error_dialog.exec()
     
     def start_analysis(self):
         self.analysis_in_progress = True
@@ -273,19 +296,22 @@ class QWLutzWorksheet(QWidget):
         self.ui.analyzeBtn.setEnabled(False)
         self.ui.analyzeBtn.setText("Analysis in progress...")
 
-        self.analysis_worker = QWinstonLutzWorker(self.marked_images, self.ui.useFilenameSCheckBox.isChecked())
+        self.worker = QWinstonLutzWorker(self.marked_images,
+                                                  self.ui.useFilenameSCheckBox.isChecked())
     
         self.qthread = QThread()
-        self.analysis_worker.moveToThread(self.qthread)
-        self.qthread.started.connect(self.analysis_worker.analyze)
+        self.worker.moveToThread(self.qthread)
+        self.qthread.started.connect(self.worker.analyze)
         self.qthread.finished.connect(self.qthread.deleteLater)
-        self.analysis_worker.images_analyzed.connect(self.analysis_progress_bar.setValue)
-        self.analysis_worker.images_analyzed.connect(
-            lambda counter: self.analysis_message_label.setText(f"Analyzing images ({counter} of {len(self.marked_images)} complete)"))
-        self.analysis_worker.analysis_results_changed.connect(self.show_analysis_results)
-        self.analysis_worker.bb_shift_info_changed.connect(self.update_bb_shift)
-        self.analysis_worker.thread_finished.connect(self.qthread.quit)
-        self.analysis_worker.thread_finished.connect(self.analysis_worker.deleteLater)
+        self.worker.analysis_failed.connect(self.qthread.quit)
+        self.worker.analysis_failed.connect(self.on_analysis_failed)
+        self.worker.images_analyzed.connect(self.analysis_progress_bar.setValue)
+        self.worker.images_analyzed.connect(lambda counter: self.analysis_message_label.setText(
+            f"Analyzing images ({counter} of {len(self.marked_images)} complete)"))
+        self.worker.analysis_results_changed.connect(self.show_analysis_results)
+        self.worker.bb_shift_info_changed.connect(self.update_bb_shift)
+        self.worker.thread_finished.connect(self.qthread.quit)
+        self.worker.thread_finished.connect(self.worker.deleteLater)
 
         self.analysis_progress_bar.setRange(0, len(self.marked_images))
         self.analysis_progress_bar.setValue(0)

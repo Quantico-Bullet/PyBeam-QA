@@ -27,12 +27,11 @@ class Ui_MainWindow(object):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(674, 600)
-        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
-        MainWindow.setMinimumSize(QSize(0, 600))
         MainWindow.setStyleSheet(u"")
         MainWindow.setAnimated(True)
         self.centralwidget = QWidget(MainWindow)
@@ -155,24 +154,21 @@ class Ui_MainWindow(object):
 
         self.navigationStackedWidget = QStackedWidget(self.linacQAPage)
         self.navigationStackedWidget.setObjectName(u"navigationStackedWidget")
-        sizePolicy3 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Expanding)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.navigationStackedWidget.sizePolicy().hasHeightForWidth())
-        self.navigationStackedWidget.setSizePolicy(sizePolicy3)
+        sizePolicy.setHeightForWidth(self.navigationStackedWidget.sizePolicy().hasHeightForWidth())
+        self.navigationStackedWidget.setSizePolicy(sizePolicy)
         self.dailyQAPage = QWidget()
         self.dailyQAPage.setObjectName(u"dailyQAPage")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
-        sizePolicy4.setHorizontalStretch(0)
-        sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.dailyQAPage.sizePolicy().hasHeightForWidth())
-        self.dailyQAPage.setSizePolicy(sizePolicy4)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.dailyQAPage.sizePolicy().hasHeightForWidth())
+        self.dailyQAPage.setSizePolicy(sizePolicy3)
         self.verticalLayout_6 = QVBoxLayout(self.dailyQAPage)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
         self.scrollArea = QScrollArea(self.dailyQAPage)
         self.scrollArea.setObjectName(u"scrollArea")
-        sizePolicy3.setHeightForWidth(self.scrollArea.sizePolicy().hasHeightForWidth())
-        self.scrollArea.setSizePolicy(sizePolicy3)
+        sizePolicy.setHeightForWidth(self.scrollArea.sizePolicy().hasHeightForWidth())
+        self.scrollArea.setSizePolicy(sizePolicy)
         self.scrollArea.setFrameShape(QFrame.NoFrame)
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
@@ -229,11 +225,11 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
         self.photonCalib = QFrame(self.testListFrame)
         self.photonCalib.setObjectName(u"photonCalib")
-        sizePolicy5 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
-        sizePolicy5.setHorizontalStretch(0)
-        sizePolicy5.setVerticalStretch(0)
-        sizePolicy5.setHeightForWidth(self.photonCalib.sizePolicy().hasHeightForWidth())
-        self.photonCalib.setSizePolicy(sizePolicy5)
+        sizePolicy4 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
+        sizePolicy4.setHorizontalStretch(0)
+        sizePolicy4.setVerticalStretch(0)
+        sizePolicy4.setHeightForWidth(self.photonCalib.sizePolicy().hasHeightForWidth())
+        self.photonCalib.setSizePolicy(sizePolicy4)
         self.photonCalib.setStyleSheet(u"")
         self.photonCalib.setFrameShape(QFrame.NoFrame)
         self.photonCalib.setFrameShadow(QFrame.Raised)
@@ -252,11 +248,8 @@ class Ui_MainWindow(object):
 
         self.photonCalibLabel = QLabel(self.photonCalib)
         self.photonCalibLabel.setObjectName(u"photonCalibLabel")
-        sizePolicy6 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
-        sizePolicy6.setHorizontalStretch(0)
-        sizePolicy6.setVerticalStretch(0)
-        sizePolicy6.setHeightForWidth(self.photonCalibLabel.sizePolicy().hasHeightForWidth())
-        self.photonCalibLabel.setSizePolicy(sizePolicy6)
+        sizePolicy.setHeightForWidth(self.photonCalibLabel.sizePolicy().hasHeightForWidth())
+        self.photonCalibLabel.setSizePolicy(sizePolicy)
         self.photonCalibLabel.setMinimumSize(QSize(0, 48))
         self.photonCalibLabel.setStyleSheet(u"border-bottom-color: rgb(82, 142, 122);\n"
 "border-bottom-width: 1px;\n"
@@ -272,8 +265,8 @@ class Ui_MainWindow(object):
 
         self.electronCalib = QFrame(self.testListFrame)
         self.electronCalib.setObjectName(u"electronCalib")
-        sizePolicy5.setHeightForWidth(self.electronCalib.sizePolicy().hasHeightForWidth())
-        self.electronCalib.setSizePolicy(sizePolicy5)
+        sizePolicy4.setHeightForWidth(self.electronCalib.sizePolicy().hasHeightForWidth())
+        self.electronCalib.setSizePolicy(sizePolicy4)
         self.electronCalib.setStyleSheet(u"")
         self.electronCalib.setFrameShape(QFrame.NoFrame)
         self.electronCalib.setFrameShadow(QFrame.Raised)
@@ -292,8 +285,8 @@ class Ui_MainWindow(object):
 
         self.dailyElectronsLabel = QLabel(self.electronCalib)
         self.dailyElectronsLabel.setObjectName(u"dailyElectronsLabel")
-        sizePolicy6.setHeightForWidth(self.dailyElectronsLabel.sizePolicy().hasHeightForWidth())
-        self.dailyElectronsLabel.setSizePolicy(sizePolicy6)
+        sizePolicy.setHeightForWidth(self.dailyElectronsLabel.sizePolicy().hasHeightForWidth())
+        self.dailyElectronsLabel.setSizePolicy(sizePolicy)
         self.dailyElectronsLabel.setMinimumSize(QSize(0, 48))
         self.dailyElectronsLabel.setStyleSheet(u"border-bottom-color: rgb(82, 142, 122);\n"
 "border-bottom-width: 1px;\n"
@@ -306,8 +299,8 @@ class Ui_MainWindow(object):
 
         self.planarImagingAnalysis = QFrame(self.testListFrame)
         self.planarImagingAnalysis.setObjectName(u"planarImagingAnalysis")
-        sizePolicy5.setHeightForWidth(self.planarImagingAnalysis.sizePolicy().hasHeightForWidth())
-        self.planarImagingAnalysis.setSizePolicy(sizePolicy5)
+        sizePolicy4.setHeightForWidth(self.planarImagingAnalysis.sizePolicy().hasHeightForWidth())
+        self.planarImagingAnalysis.setSizePolicy(sizePolicy4)
         self.planarImagingAnalysis.setFrameShape(QFrame.NoFrame)
         self.planarImagingAnalysis.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_19 = QHBoxLayout(self.planarImagingAnalysis)
@@ -325,8 +318,8 @@ class Ui_MainWindow(object):
 
         self.planarImagingLabel = QLabel(self.planarImagingAnalysis)
         self.planarImagingLabel.setObjectName(u"planarImagingLabel")
-        sizePolicy6.setHeightForWidth(self.planarImagingLabel.sizePolicy().hasHeightForWidth())
-        self.planarImagingLabel.setSizePolicy(sizePolicy6)
+        sizePolicy.setHeightForWidth(self.planarImagingLabel.sizePolicy().hasHeightForWidth())
+        self.planarImagingLabel.setSizePolicy(sizePolicy)
         self.planarImagingLabel.setMinimumSize(QSize(0, 48))
         self.planarImagingLabel.setStyleSheet(u"border-bottom-color: rgb(82, 142, 122);\n"
 "border-bottom-width: 1px;\n"
@@ -342,8 +335,8 @@ class Ui_MainWindow(object):
 
         self.winstonLutzAnalysis = QFrame(self.testListFrame)
         self.winstonLutzAnalysis.setObjectName(u"winstonLutzAnalysis")
-        sizePolicy5.setHeightForWidth(self.winstonLutzAnalysis.sizePolicy().hasHeightForWidth())
-        self.winstonLutzAnalysis.setSizePolicy(sizePolicy5)
+        sizePolicy4.setHeightForWidth(self.winstonLutzAnalysis.sizePolicy().hasHeightForWidth())
+        self.winstonLutzAnalysis.setSizePolicy(sizePolicy4)
         self.winstonLutzAnalysis.setFrameShape(QFrame.NoFrame)
         self.winstonLutzAnalysis.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_14 = QHBoxLayout(self.winstonLutzAnalysis)
@@ -361,8 +354,8 @@ class Ui_MainWindow(object):
 
         self.winstonLutzLabel = QLabel(self.winstonLutzAnalysis)
         self.winstonLutzLabel.setObjectName(u"winstonLutzLabel")
-        sizePolicy6.setHeightForWidth(self.winstonLutzLabel.sizePolicy().hasHeightForWidth())
-        self.winstonLutzLabel.setSizePolicy(sizePolicy6)
+        sizePolicy.setHeightForWidth(self.winstonLutzLabel.sizePolicy().hasHeightForWidth())
+        self.winstonLutzLabel.setSizePolicy(sizePolicy)
         self.winstonLutzLabel.setMinimumSize(QSize(0, 48))
         self.winstonLutzLabel.setStyleSheet(u"border-bottom-color: rgb(82, 142, 122);\n"
 "border-bottom-width: 1px;\n"
@@ -378,8 +371,8 @@ class Ui_MainWindow(object):
 
         self.picketFence = QFrame(self.testListFrame)
         self.picketFence.setObjectName(u"picketFence")
-        sizePolicy5.setHeightForWidth(self.picketFence.sizePolicy().hasHeightForWidth())
-        self.picketFence.setSizePolicy(sizePolicy5)
+        sizePolicy4.setHeightForWidth(self.picketFence.sizePolicy().hasHeightForWidth())
+        self.picketFence.setSizePolicy(sizePolicy4)
         self.picketFence.setFrameShape(QFrame.NoFrame)
         self.picketFence.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_17 = QHBoxLayout(self.picketFence)
@@ -397,8 +390,8 @@ class Ui_MainWindow(object):
 
         self.picketFenceLabel = QLabel(self.picketFence)
         self.picketFenceLabel.setObjectName(u"picketFenceLabel")
-        sizePolicy6.setHeightForWidth(self.picketFenceLabel.sizePolicy().hasHeightForWidth())
-        self.picketFenceLabel.setSizePolicy(sizePolicy6)
+        sizePolicy.setHeightForWidth(self.picketFenceLabel.sizePolicy().hasHeightForWidth())
+        self.picketFenceLabel.setSizePolicy(sizePolicy)
         self.picketFenceLabel.setMinimumSize(QSize(0, 48))
         self.picketFenceLabel.setStyleSheet(u"border-bottom-color: rgb(82, 142, 122);\n"
 "border-bottom-width: 1px;\n"
@@ -414,8 +407,8 @@ class Ui_MainWindow(object):
 
         self.starshotAnalysis = QFrame(self.testListFrame)
         self.starshotAnalysis.setObjectName(u"starshotAnalysis")
-        sizePolicy5.setHeightForWidth(self.starshotAnalysis.sizePolicy().hasHeightForWidth())
-        self.starshotAnalysis.setSizePolicy(sizePolicy5)
+        sizePolicy4.setHeightForWidth(self.starshotAnalysis.sizePolicy().hasHeightForWidth())
+        self.starshotAnalysis.setSizePolicy(sizePolicy4)
         self.starshotAnalysis.setFrameShape(QFrame.NoFrame)
         self.starshotAnalysis.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_18 = QHBoxLayout(self.starshotAnalysis)
@@ -433,8 +426,8 @@ class Ui_MainWindow(object):
 
         self.starhshotLabel = QLabel(self.starshotAnalysis)
         self.starhshotLabel.setObjectName(u"starhshotLabel")
-        sizePolicy6.setHeightForWidth(self.starhshotLabel.sizePolicy().hasHeightForWidth())
-        self.starhshotLabel.setSizePolicy(sizePolicy6)
+        sizePolicy.setHeightForWidth(self.starhshotLabel.sizePolicy().hasHeightForWidth())
+        self.starhshotLabel.setSizePolicy(sizePolicy)
         self.starhshotLabel.setMinimumSize(QSize(0, 48))
         self.starhshotLabel.setStyleSheet(u"border-bottom-color: rgb(82, 142, 122);\n"
 "border-bottom-width: 1px;\n"
@@ -450,8 +443,8 @@ class Ui_MainWindow(object):
 
         self.fieldAnalysis = QFrame(self.testListFrame)
         self.fieldAnalysis.setObjectName(u"fieldAnalysis")
-        sizePolicy5.setHeightForWidth(self.fieldAnalysis.sizePolicy().hasHeightForWidth())
-        self.fieldAnalysis.setSizePolicy(sizePolicy5)
+        sizePolicy4.setHeightForWidth(self.fieldAnalysis.sizePolicy().hasHeightForWidth())
+        self.fieldAnalysis.setSizePolicy(sizePolicy4)
         self.fieldAnalysis.setFrameShape(QFrame.NoFrame)
         self.fieldAnalysis.setFrameShadow(QFrame.Raised)
         self.horizontalLayout_21 = QHBoxLayout(self.fieldAnalysis)
@@ -469,8 +462,8 @@ class Ui_MainWindow(object):
 
         self.fieldAnalysisLabel = QLabel(self.fieldAnalysis)
         self.fieldAnalysisLabel.setObjectName(u"fieldAnalysisLabel")
-        sizePolicy6.setHeightForWidth(self.fieldAnalysisLabel.sizePolicy().hasHeightForWidth())
-        self.fieldAnalysisLabel.setSizePolicy(sizePolicy6)
+        sizePolicy.setHeightForWidth(self.fieldAnalysisLabel.sizePolicy().hasHeightForWidth())
+        self.fieldAnalysisLabel.setSizePolicy(sizePolicy)
         self.fieldAnalysisLabel.setMinimumSize(QSize(0, 48))
         self.fieldAnalysisLabel.setStyleSheet(u"border-bottom-color: rgb(82, 142, 122);\n"
 "border-bottom-width: 1px;\n"
@@ -509,11 +502,11 @@ class Ui_MainWindow(object):
         self.navigationStackedWidget.addWidget(self.dailyQAPage)
         self.annualQAPage = QWidget()
         self.annualQAPage.setObjectName(u"annualQAPage")
-        sizePolicy7 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
-        sizePolicy7.setHorizontalStretch(0)
-        sizePolicy7.setVerticalStretch(0)
-        sizePolicy7.setHeightForWidth(self.annualQAPage.sizePolicy().hasHeightForWidth())
-        self.annualQAPage.setSizePolicy(sizePolicy7)
+        sizePolicy5 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
+        sizePolicy5.setHorizontalStretch(0)
+        sizePolicy5.setVerticalStretch(0)
+        sizePolicy5.setHeightForWidth(self.annualQAPage.sizePolicy().hasHeightForWidth())
+        self.annualQAPage.setSizePolicy(sizePolicy5)
         self.navigationStackedWidget.addWidget(self.annualQAPage)
         self.monthlyQAPage = QWidget()
         self.monthlyQAPage.setObjectName(u"monthlyQAPage")
@@ -521,7 +514,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_4.addWidget(self.navigationStackedWidget)
 
-        self.verticalSpacer_4 = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Preferred)
+        self.verticalSpacer_4 = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
 
         self.verticalLayout_4.addItem(self.verticalSpacer_4)
 
@@ -562,18 +555,18 @@ class Ui_MainWindow(object):
 
         self.scrollArea_2 = QScrollArea(self.initCalibPage)
         self.scrollArea_2.setObjectName(u"scrollArea_2")
-        sizePolicy8 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding)
-        sizePolicy8.setHorizontalStretch(0)
-        sizePolicy8.setVerticalStretch(0)
-        sizePolicy8.setHeightForWidth(self.scrollArea_2.sizePolicy().hasHeightForWidth())
-        self.scrollArea_2.setSizePolicy(sizePolicy8)
+        sizePolicy6 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding)
+        sizePolicy6.setHorizontalStretch(0)
+        sizePolicy6.setVerticalStretch(0)
+        sizePolicy6.setHeightForWidth(self.scrollArea_2.sizePolicy().hasHeightForWidth())
+        self.scrollArea_2.setSizePolicy(sizePolicy6)
         self.scrollArea_2.setFrameShape(QFrame.NoFrame)
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollAreaWidgetContents_2 = QWidget()
         self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
-        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 418, 276))
-        sizePolicy6.setHeightForWidth(self.scrollAreaWidgetContents_2.sizePolicy().hasHeightForWidth())
-        self.scrollAreaWidgetContents_2.setSizePolicy(sizePolicy6)
+        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 450, 352))
+        sizePolicy.setHeightForWidth(self.scrollAreaWidgetContents_2.sizePolicy().hasHeightForWidth())
+        self.scrollAreaWidgetContents_2.setSizePolicy(sizePolicy)
         self.scrollAreaWidgetContents_2.setMaximumSize(QSize(600, 16777215))
         self.verticalLayout_9 = QVBoxLayout(self.scrollAreaWidgetContents_2)
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
@@ -587,8 +580,8 @@ class Ui_MainWindow(object):
 
         self.institutionLE = QLineEdit(self.scrollAreaWidgetContents_2)
         self.institutionLE.setObjectName(u"institutionLE")
-        sizePolicy5.setHeightForWidth(self.institutionLE.sizePolicy().hasHeightForWidth())
-        self.institutionLE.setSizePolicy(sizePolicy5)
+        sizePolicy4.setHeightForWidth(self.institutionLE.sizePolicy().hasHeightForWidth())
+        self.institutionLE.setSizePolicy(sizePolicy4)
 
         self.siteDetails.setWidget(0, QFormLayout.FieldRole, self.institutionLE)
 
@@ -611,8 +604,8 @@ class Ui_MainWindow(object):
 
         self.treatmentUnitLabel = QLabel(self.scrollAreaWidgetContents_2)
         self.treatmentUnitLabel.setObjectName(u"treatmentUnitLabel")
-        sizePolicy5.setHeightForWidth(self.treatmentUnitLabel.sizePolicy().hasHeightForWidth())
-        self.treatmentUnitLabel.setSizePolicy(sizePolicy5)
+        sizePolicy4.setHeightForWidth(self.treatmentUnitLabel.sizePolicy().hasHeightForWidth())
+        self.treatmentUnitLabel.setSizePolicy(sizePolicy4)
         font1 = QFont()
         font1.setPointSize(13)
         self.treatmentUnitLabel.setFont(font1)
@@ -630,8 +623,8 @@ class Ui_MainWindow(object):
 
         self.linacNameCB = QComboBox(self.scrollAreaWidgetContents_2)
         self.linacNameCB.setObjectName(u"linacNameCB")
-        sizePolicy5.setHeightForWidth(self.linacNameCB.sizePolicy().hasHeightForWidth())
-        self.linacNameCB.setSizePolicy(sizePolicy5)
+        sizePolicy4.setHeightForWidth(self.linacNameCB.sizePolicy().hasHeightForWidth())
+        self.linacNameCB.setSizePolicy(sizePolicy4)
         self.linacNameCB.setDuplicatesEnabled(False)
 
         self.treatmentUnitFL.setWidget(0, QFormLayout.FieldRole, self.linacNameCB)
@@ -643,11 +636,11 @@ class Ui_MainWindow(object):
 
         self.linacSerialNumField = QLabel(self.scrollAreaWidgetContents_2)
         self.linacSerialNumField.setObjectName(u"linacSerialNumField")
-        sizePolicy9 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
-        sizePolicy9.setHorizontalStretch(0)
-        sizePolicy9.setVerticalStretch(0)
-        sizePolicy9.setHeightForWidth(self.linacSerialNumField.sizePolicy().hasHeightForWidth())
-        self.linacSerialNumField.setSizePolicy(sizePolicy9)
+        sizePolicy7 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+        sizePolicy7.setHorizontalStretch(0)
+        sizePolicy7.setVerticalStretch(0)
+        sizePolicy7.setHeightForWidth(self.linacSerialNumField.sizePolicy().hasHeightForWidth())
+        self.linacSerialNumField.setSizePolicy(sizePolicy7)
 
         self.treatmentUnitFL.setWidget(1, QFormLayout.FieldRole, self.linacSerialNumField)
 
@@ -658,8 +651,8 @@ class Ui_MainWindow(object):
 
         self.linacModelField = QLabel(self.scrollAreaWidgetContents_2)
         self.linacModelField.setObjectName(u"linacModelField")
-        sizePolicy9.setHeightForWidth(self.linacModelField.sizePolicy().hasHeightForWidth())
-        self.linacModelField.setSizePolicy(sizePolicy9)
+        sizePolicy7.setHeightForWidth(self.linacModelField.sizePolicy().hasHeightForWidth())
+        self.linacModelField.setSizePolicy(sizePolicy7)
 
         self.treatmentUnitFL.setWidget(2, QFormLayout.FieldRole, self.linacModelField)
 
@@ -670,8 +663,8 @@ class Ui_MainWindow(object):
 
         self.linacManufacField = QLabel(self.scrollAreaWidgetContents_2)
         self.linacManufacField.setObjectName(u"linacManufacField")
-        sizePolicy9.setHeightForWidth(self.linacManufacField.sizePolicy().hasHeightForWidth())
-        self.linacManufacField.setSizePolicy(sizePolicy9)
+        sizePolicy7.setHeightForWidth(self.linacManufacField.sizePolicy().hasHeightForWidth())
+        self.linacManufacField.setSizePolicy(sizePolicy7)
 
         self.treatmentUnitFL.setWidget(3, QFormLayout.FieldRole, self.linacManufacField)
 
@@ -811,7 +804,7 @@ class Ui_MainWindow(object):
         self.starhshotLabel.setText(QCoreApplication.translate("MainWindow", u"Star-shot analysis", None))
         self.fieldAnalysisIcon.setText("")
         self.fieldAnalysisLabel.setText(QCoreApplication.translate("MainWindow", u"Field analysis", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"PyBeam QA - v0.1.0 ( Copyright \u00a9 2023 Kagiso Lebang)  ", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"PyBeam QA - v0.1.0 (Copyright \u00a9 2023 Kagiso Lebang)  ", None))
         self.calibPageTitle.setText(QCoreApplication.translate("MainWindow", u"Page Title", None))
         self.institutionLabel.setText(QCoreApplication.translate("MainWindow", u"Institution:", None))
         self.userLabel.setText(QCoreApplication.translate("MainWindow", u"User:", None))

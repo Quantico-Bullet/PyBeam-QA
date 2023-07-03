@@ -8,43 +8,58 @@ from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtCore import Qt, QSize, QEvent, QThread
 
 from ui.py_ui import icons_rc
-from ui.py_ui.picketFenceWorksheet_ui import Ui_QPicketFenceWorksheet
-from core.analysis.picket_fence import QPicketFence, QPicketFenceWorker
-from core.tools.report import PicketFenceReport
+from ui.py_ui.fieldAnalysisWorksheet_ui import Ui_QFieldAnalysisWorksheet
+from core.analysis.field_analysis import QFieldAnalysis, QFieldAnalysisWorker
+from core.tools.report import FieldAnalysisReport
 from core.tools.devices import DeviceManager
 
-import traceback
 import platform
 import webbrowser
 import subprocess
 import pyqtgraph as pg
 from pathlib import Path
 from pylinac.core.image import LinacDicomImage
-from pylinac.picketfence import MLC
+from pylinac.field_analysis import Protocol, Centering, Interpolation, Normalization, Edge
 
-class QPicketFenceWorksheet(QWidget):
+class QFieldAnalysisWorksheet(QWidget):
+
+    DEFAULT_PROTOCOLS = {"Varian": Protocol.VARIAN,
+                         "Elekta": Protocol.ELEKTA,
+                         "Siemens": Protocol.SIEMENS}
+    
+    CENTERING = {"Beam center": Centering.BEAM_CENTER,
+                 "Geometric center": Centering.GEOMETRIC_CENTER,
+                 "Manual": Centering.MANUAL}
+    
+    INTERPOLATION = {"Linear": Interpolation.LINEAR,
+                     "Spline": Interpolation.SPLINE}
+    
+    EDGE_DETECTION = {"FWHM": Edge.FWHM,
+                      "Inflection Derivative": Edge.INFLECTION_DERIVATIVE,
+                      "Inflection Hill": Edge.INFLECTION_HILL}
+    
+    NORMALIZATION = {"Beam center": Normalization.BEAM_CENTER,
+                     "Geometric center": Normalization.GEOMETRIC_CENTER,
+                     "Max": Normalization.MAX}
 
     def __init__(self):
         super().__init__()
 
-        self.ui = Ui_QPicketFenceWorksheet()
+        self.ui = Ui_QFieldAnalysisWorksheet()
         self.ui.setupUi(self)
 
         self.image_icon = QIcon()
         self.image_icon.addFile(u":/colorIcons/icons/picture.png", QSize(), QIcon.Normal, QIcon.Off)
 
-        self.form_layout = QFormLayout()
-        self.form_layout.setHorizontalSpacing(40)
-        self.ui.analysisInfoVL.addLayout(self.form_layout)
-
         self.ui.analyzeBtn.setText("Analyze image(s)")
         self.ui.advancedViewBtn.setEnabled(False)
         self.ui.genReportBtn.setEnabled(False)
-        self.ui.mlcTypeCB.addItems([mlc.value["name"] for mlc in MLC])
+        self.ui.summaryTE.setReadOnly(True)
 
         #--------  add widgets --------
         self.progress_vl = QVBoxLayout()
         self.progress_vl.setSpacing(10)
+        self.ui.analysisOutcomeFrame.hide()
 
         self.ui.analysisInfoVL.addLayout(self.progress_vl)
 
@@ -86,7 +101,6 @@ class QPicketFenceWorksheet(QWidget):
         self.ui.advancedViewBtn.clicked.connect(self.show_advanced_results_view)
         self.ui.genReportBtn.clicked.connect(self.generate_report)
         self.ui.imageListWidget.itemChanged.connect(self.update_marked_images)
-        self.ui.toleranceDSB.valueChanged.connect(self.set_analysis_outcome)
 
         #-------- init defaults --------
         self.marked_images = []
@@ -96,13 +110,99 @@ class QPicketFenceWorksheet(QWidget):
         self.analysis_in_progress = False
         self.has_analysis = False
 
+        self.setup_config()
         self.update_marked_images()
-        self.set_analysis_outcome()
-    
+
+    def setup_config(self):
+        """
+        Setup field analysis configuration options and values.
+        """
+        self.ui.protocolCB.clear()
+        self.ui.centeringCB.clear()
+        self.ui.interpolationCB.clear()
+
+        self.ui.protocolCB.addItems([key for key in self.DEFAULT_PROTOCOLS.keys()])
+        self.ui.centeringCB.addItems([key for key in self.CENTERING.keys()])
+        self.ui.interpolationCB.addItems([key for key in self.INTERPOLATION.keys()])
+        self.ui.edgeDetCB.addItems([key for key in self.EDGE_DETECTION.keys()])
+        self.ui.normalizationCB.addItems([key for key in self.NORMALIZATION.keys()])
+
+        self.ui.centeringCB.currentIndexChanged.connect(self.on_config_change)
+        self.ui.interpolationCB.currentIndexChanged.connect(self.on_config_change)
+        self.ui.edgeDetCB.currentIndexChanged.connect(self.on_config_change)
+        self.ui.normalizationCB.currentIndexChanged.connect(self.on_config_change)
+        self.ui.fffBeamCheckB.stateChanged.connect(self.on_config_change)
+
+        # call this manually the first time to display correct config options
+        self.on_config_change()
+
+        self.set_default_values()
+
+    def set_default_values(self):
+        """
+        Set default values for configuration fields, useful for restoring defaults.
+        """
+        self.ui.centeringCB.setCurrentIndex(0)
+
+        self.ui.vertPosDSB.setValue(0.50)
+        self.ui.horPosDSB.setValue(0.50)
+        self.ui.edgeSmoothDSB.setValue(0.003)
+        self.ui.hillWinRatioDSB.setValue(0.15)
+        self.ui.interpolationResDSB.setValue(0.10)
+        self.ui.inFieldRatioDSB.setValue(0.80)
+        self.ui.slopeExclRatioDSB.setValue(0.20)
+
+        self.ui.groundCheckB.setChecked(True)
+        self.ui.invertImageCheckB.setChecked(False)
+        self.ui.fffBeamCheckB.setChecked(False)
+
+    def on_config_change(self):
+        """
+        Checks the current config values and adjusts fields and displays warnings if any issues
+        are encountered
+        """
+
+        if self.ui.centeringCB.currentText() == "Manual":
+            self.ui.configFormLayout.setRowVisible(2, True)
+        else:
+            self.ui.configFormLayout.setRowVisible(2, False)
+
+        if self.ui.edgeDetCB.currentText() == "Inflection Hill":
+            self.ui.hillWinRatioLabel.show()
+            self.ui.hillWinRatioDSB.show()
+        else:
+            self.ui.hillWinRatioLabel.hide()
+            self.ui.hillWinRatioDSB.hide()
+
+            if self.ui.edgeDetCB.currentText() == "FWHM" and self.ui.fffBeamCheckB.isChecked():
+               self.show_warning("Oh-oh! Becareful with your parameters",
+                                 "Using FWHM as an edge detection method for a FFF beam is not advised. "
+                                 "Consider using 'Inflection Derivative' or 'Inflection Hill'")
+
+        if self.ui.interpolationCB.currentText() == "None":
+            self.ui.configFormLayout.setRowVisible(7, False)
+        else:
+            self.ui.configFormLayout.setRowVisible(7, True)
+
+    def show_warning(self, title_text:str, message: str):
+        self.warning_dialog = QMessageBox()
+        self.warning_dialog.resize(400,0)
+        self.warning_dialog.setWindowTitle("Warning")
+        self.warning_dialog.setText("<p><span style=\" font-weight:700; font-size: 12pt;\">" \
+                                  f"{title_text}</span></p>")
+        self.warning_dialog.setInformativeText(message)
+        self.warning_dialog.setStandardButtons(QMessageBox.StandardButton.Ok)
+        self.warning_dialog.setTextFormat(Qt.TextFormat.RichText)
+
+        error_icon = QPixmap(u":/colorIcons/icons/warning_48.png")
+        self.warning_dialog.setIconPixmap(error_icon)
+
+        self.warning_dialog.exec()
+
     def add_files(self):
         files, _ = QFileDialog.getOpenFileNames(
             self,
-            "Select DICOM Picket Fence Images",
+            "Select DICOM Field Analysis Images",
             "",
             "DICOM Images (*.dcm)",
         )
@@ -184,13 +284,6 @@ class QPicketFenceWorksheet(QWidget):
         
         if len(self.marked_images) > 0:
             self.ui.analyzeBtn.setEnabled(True)
-
-            if len(self.marked_images) > 1:
-                self.analysis_message_label.setText(f"{len(self.marked_images)} images will be merged and analyzed")
-                self.analysis_message_label.show()
-
-            else:
-                self.analysis_message_label.hide()
 
         else:
             self.ui.analyzeBtn.setEnabled(False)
@@ -280,9 +373,7 @@ class QPicketFenceWorksheet(QWidget):
 
         return super().eventFilter(source, event)
 
-    def on_error_encountered(self,
-                             title_text: str = "Oops! An error was encountered",
-                             error_message: str = "Unknown Error"):
+    def on_analysis_failed(self, error_message: str = "Unknown Error"):
         self.analysis_in_progress = False
         self.restore_list_checkmarks()
 
@@ -292,29 +383,27 @@ class QPicketFenceWorksheet(QWidget):
         self.analysis_progress_bar.hide()
         self.analysis_message_label.hide()
 
-        self.error_dialog = QMessageBox()
-        self.error_dialog.setWindowTitle("Analysis Error")
-        self.error_dialog.setText("<p><span style=\" font-weight:700; font-size: 12pt;\">" \
-                                  f"{title_text}</span></p>")
-        self.error_dialog.setInformativeText(error_message)
-        self.error_dialog.setStandardButtons(QMessageBox.StandardButton.Ok)
-        self.error_dialog.setTextFormat(Qt.TextFormat.RichText)
+        self.warning_dialog = QMessageBox()
+        self.warning_dialog.setWindowTitle("Analysis Error")
+        self.warning_dialog.setText("<p><span style=\" font-weight:700; font-size: 12pt;\">" \
+                                  "Oops! An error was encountered</span></p>")
+        self.warning_dialog.setInformativeText(error_message)
+        self.warning_dialog.setStandardButtons(QMessageBox.StandardButton.Ok)
+        self.warning_dialog.setTextFormat(Qt.TextFormat.RichText)
 
         error_icon = QPixmap(u":/colorIcons/icons/error_round_48.png")
-        self.error_dialog.setIconPixmap(error_icon)
+        self.warning_dialog.setIconPixmap(error_icon)
 
-        self.error_dialog.exec()
+        self.warning_dialog.exec()
 
     def start_analysis(self):
         self.analysis_in_progress = True
         self.ui.advancedViewBtn.setEnabled(False)
         self.ui.genReportBtn.setEnabled(False)
         self.remove_list_checkmarks()
-        self.set_analysis_outcome()
 
-        row_count = self.form_layout.rowCount()
-        for i in range(row_count):
-            self.form_layout.removeRow(row_count - (i+1))
+        self.ui.summaryTE.hide()
+        self.ui.summaryTE.clear()
 
         self.ui.addImgBtn.setEnabled(False)
         self.ui.genReportBtn.setEnabled(False)
@@ -323,34 +412,34 @@ class QPicketFenceWorksheet(QWidget):
         self.analysis_message_label.setText("Analysis in progress")
         self.analysis_progress_bar.show()
         self.analysis_message_label.show()
-
-        if len(self.marked_images) < 2:
-            images = self.marked_images[0]
             
-        else:
-            images = self.marked_images
+        self.worker = QFieldAnalysisWorker(path = self.marked_images[0],
+                                           protocol = self.DEFAULT_PROTOCOLS[self.ui.protocolCB.currentText()],
+                                           centering = self.ui.centeringCB.currentText(),
+                                           vert_position = self.ui.vertPosDSB.value(),
+                                           horiz_position = self.ui.horPosDSB.value(),
+                                           normalization_method = self.ui.normalizationCB.currentText(),
+                                           edge_detection_method = self.ui.edgeDetCB.currentText(),
+                                           edge_smoothing_ratio = self.ui.edgeSmoothDSB.value(),
+                                           hill_window_ratio = self.ui.hillWinRatioDSB.value(),
+                                           interpolation = self.ui.interpolationCB.currentText(),
+                                           in_field_ratio = self.ui.inFieldRatioDSB.value(),
+                                           slope_exclusion_ratio = self.ui.slopeExclRatioDSB.value(),
+                                           is_FFF = self.ui.fffBeamCheckB.isChecked(),
+                                           invert = self.ui.invertImageCheckB.isChecked(),
+                                           ground = self.ui.groundCheckB.isChecked()
+                                           )
         
-        try:
-            self.worker = QPicketFenceWorker(filename = images,
-                               use_filename = self.ui.useFilenameSCheckB.isChecked(),
-                               mlc = self.ui.mlcTypeCB.currentText(),
-                               crop_mm = self.ui.cropSB.value(),
-                               invert = self.ui.invertImageCB.isChecked(),
-                               tolerance = self.ui.toleranceDSB.value())
-        
-            self.qthread = QThread()
-            self.worker.moveToThread(self.qthread)
-            self.worker.analysis_failed.connect(self.qthread.quit)
-            self.worker.analysis_failed.connect(lambda x: self.on_error_encountered(error_message = x))
-            self.worker.thread_finished.connect(self.qthread.quit)
-            self.worker.analysis_results_ready.connect(lambda results: self.show_analysis_results(results))
-            self.qthread.started.connect(self.worker.analyze)
-            self.qthread.finished.connect(self.qthread.deleteLater)
+        self.qthread = QThread()
+        self.worker.moveToThread(self.qthread)
+        self.worker.analysis_failed.connect(self.qthread.quit)
+        self.worker.analysis_failed.connect(self.on_analysis_failed)
+        self.worker.thread_finished.connect(self.qthread.quit)
+        self.worker.analysis_results_ready.connect(lambda results: self.show_analysis_results(results))
+        self.qthread.started.connect(self.worker.analyze)
+        self.qthread.finished.connect(self.qthread.deleteLater)
 
-            self.qthread.start()
-
-        except Exception as err:
-            self.on_error_encountered(error_message = traceback.format_exception_only(err)[-1])
+        self.qthread.start()
 
     def show_analysis_results(self, results: dict):
         self.has_analysis = True
@@ -368,24 +457,11 @@ class QPicketFenceWorksheet(QWidget):
         self.analysis_progress_bar.hide()
         self.analysis_message_label.hide()
 
-        for summary_item in results["summary_text"]:
-            self.form_layout.addRow(summary_item[0], QLabel(summary_item[1]))
-
-        #set outcome
-        self.set_analysis_outcome()
-
         # Update the report summary
-        pf = results["picket_fence_obj"]
-        self.analysis_summary = [["Gantry angle", f"{pf.image.gantry_angle:2.2f}°", ""],
-                      ["Collimator angle", f"{pf.image.collimator_angle:2.2f}°", ""],
-                      ["Number of pickets found", f"{len(pf.pickets)}", ""],
-                      ["Number of leaf pairs found", f"{int(len(pf.mlc_meas) / len(pf.pickets))}"],
-                      ["Mean picket spacing:", f"{pf.mean_picket_spacing:2.2f} mm"],
-                      ["Absolute median error", f"{pf.abs_median_error:2.3f} mm"],
-                      ["Maximum error", f"{pf.max_error:2.3f} mm",
-                       f"Max error at picket {pf.max_error_picket + 1} and leaf {pf.max_error_leaf + 1}"],
-                      ["Percentage of passing leafs", f"{pf.percent_passing:2.0f}%", ""],
-                      ["Number of failed leafs", f"{len(pf.failed_leaves())}", ""]]
+        pf = results["field_analysis_obj"]
+
+        self.ui.summaryTE.setText(results["summary_text"])
+        self.ui.summaryTE.show()
 
         # Update the advanced view
         if self.advanced_results_view is not None:
@@ -409,44 +485,11 @@ class QPicketFenceWorksheet(QWidget):
 
     def show_advanced_results_view(self):
         if self.advanced_results_view is None:
-            self.advanced_results_view = AdvancedPFView(pf = self.current_results["picket_fence_obj"])
+            self.advanced_results_view = AdvancedFAView(fa = self.current_results["field_analysis_obj"])
             self.advanced_results_view.show()
 
         else: 
             self.advanced_results_view.show()
-    
-    def set_analysis_outcome(self):
-        if not self.has_analysis or self.analysis_in_progress:
-            self.ui.outcomeLE.setStyleSheet(u"border-color: rgba(0, 0, 0,0);\n"
-                "border-radius: 15px;\n"
-                "border-style: solid;\n"
-                "border-width: 2px;\n"
-                "background-color: rgba(0, 0, 0, 0);\n"
-                "padding-left: 15px;\n"
-                "height: 30px;\n"
-                "font-weight: bold;\n")
-            
-        elif self.current_results["picket_fence_obj"].max_error < self.ui.toleranceDSB.value():
-            self.ui.outcomeLE.setText("PASS")
-            self.ui.outcomeLE.setStyleSheet(u"border-color: rgb(95, 200, 26);\n"
-                "border-radius: 15px;\n"
-                "border-style: solid;\n"
-                "border-width: 2px;\n"
-                "background-color: rgba(95, 200, 26, 150);\n"
-                "padding-left: 15px;\n"
-                "height: 30px;\n"
-                "font-weight: bold;\n")
-            
-        else:
-            self.ui.outcomeLE.setText("FAIL")
-            self.ui.outcomeLE.setStyleSheet(u"border-color: rgb(231, 29, 14);\n"
-                "border-radius: 15px;\n"
-                "border-style: solid;\n"
-                "border-width: 2px;\n"
-                "background-color: rgba(231, 29, 14, 150);\n"
-                "padding-left: 15px;\n"
-                "height: 30px;\n"
-                "font-weight: bold;\n")
     
     def generate_report(self):
         physicist_name_le = QLineEdit()
@@ -504,11 +547,10 @@ class QPicketFenceWorksheet(QWidget):
         layout.addWidget(dialog_buttons)
 
         report_dialog = QDialog()
-        report_dialog.setWindowTitle("Generate Picket Fence Report ‒ PyBeam QA")
+        report_dialog.setWindowTitle("Generate Field Analysis Report ‒ PyBeam QA")
         report_dialog.setLayout(layout)
         report_dialog.setMinimumSize(report_dialog.sizeHint())
         report_dialog.setMaximumSize(report_dialog.sizeHint())
-
 
         cancel_button.clicked.connect(report_dialog.reject)
         save_button.clicked.connect(report_dialog.accept)
@@ -521,15 +563,16 @@ class QPicketFenceWorksheet(QWidget):
             institution_name = "N/A" if institution_name_le.text() == "" else institution_name_le.text()
             treatment_unit = "N/A" if treatment_unit_le.currentText() == "" else treatment_unit_le.currentText()
 
-            report = PicketFenceReport(save_path_le.text(),
+            fa = self.current_results["field_analysis_obj"]
+
+            report = FieldAnalysisReport(save_path_le.text(),
                                    author = physicist_name,
                                    institution = institution_name,
                                    treatment_unit_name = treatment_unit,
-                                   mlc_type = self.current_results["picket_fence_obj"].mlc_type,
-                                   analysis_summary = self.analysis_summary,
-                                   report_status = self.ui.outcomeLE.text(),
-                                   max_error = self.current_results["picket_fence_obj"].max_error,
-                                   tolerance = self.ui.toleranceDSB.value())
+                                   protocol = "Varian",
+                                   analysis_summary = fa.get_publishable_results(),
+                                   summary_plots = fa.get_publishable_plots(),
+            )
         
             report.saveReport()
 
@@ -548,16 +591,16 @@ class QPicketFenceWorksheet(QWidget):
             
             line_edit.setText("/".join(path))
             
-class AdvancedPFView(QMainWindow):
+class AdvancedFAView(QMainWindow):
 
-    def __init__(self, parent: QWidget | None = None, pf: QPicketFence = None):
+    def __init__(self, parent: QWidget | None = None, fa: QFieldAnalysis = None):
         super().__init__(parent = parent)
 
-        self.pf = pf
+        self.fa = fa
 
         self.initComplete = False
 
-        self.setWindowTitle("Picket Fence Analysis (Advanced Results) ‒ PyBeam QA")
+        self.setWindowTitle("Field Analysis (Advanced Results) ‒ PyBeam QA")
         self.resize(720, 480)
 
         self.central_widget = QWidget(self)
@@ -575,107 +618,35 @@ class AdvancedPFView(QMainWindow):
         self.central_widget.setSizePolicy(size_policy)
         self.tab_widget.setSizePolicy(size_policy)
 
-        #-----  Setup details tab content
-        self.details_qSplitter = QSplitter()
-        self.details_qSplitter.setContentsMargins(0, 10, 0, 0)
-        self.details_qSplitter.setSizePolicy(size_policy)
-
-        self.details_tree_widget = QTreeWidget(self.details_qSplitter)
-        self.details_tree_widget.setColumnCount(3)
-        self.details_tree_widget.setHeaderLabels(["Parameter", "Value", "Comment"])
-        self.details_tree_widget.setColumnWidth(0, 300)
-        self.details_tree_widget.setSizePolicy(size_policy)
-
-        self.details_qSplitter.addWidget(self.details_tree_widget)
-
         #----- Setup analyzed image tab content
         self.analyzed_img_qSplitter = QSplitter()
         self.analyzed_img_qSplitter.setSizePolicy(size_policy)
 
-        #----- Setup leaf profile tab content
-        self.leaf_profiles_qSplitter = QSplitter()
-        self.leaf_profiles_qSplitter.setSizePolicy(size_policy)
-
-        self.leaf_profiles_frame = QFrame()
-        self.leaf_profiles_fl = QFormLayout()
-        self.leaf_profiles_frame.setLayout(self.leaf_profiles_fl)
-        self.leafs_cb = QComboBox()
-        self.leafs_cb.currentIndexChanged.connect(lambda: self.plot_leaf_profile())
-        self.pickets_cb = QComboBox()
-        self.pickets_cb.currentIndexChanged.connect(lambda: self.plot_leaf_profile())
-
-        self.leaf_profiles_fl.addRow("Picket number:", self.pickets_cb)
-        self.leaf_profiles_fl.addRow("Leaf number:", self.leafs_cb)
-
-        self.leaf_profiles_qSplitter.addWidget(self.leaf_profiles_frame)
-
         self.tab_widget.addTab(self.analyzed_img_qSplitter, "Analyzed Image")
-        self.tab_widget.addTab(self.leaf_profiles_qSplitter, "Leaf Profiles")
-        self.tab_widget.addTab(self.details_qSplitter, "Details")
 
         self.top_layout.addWidget(self.tab_widget, 0, 0, 1, 1)
 
-        self.curr_leaf_profile_widget = None
         self.curr_analyzed_image_widget = None
 
-        if pf is not None:
-            self.init_details()
-            self.init_leaf_profiles()
+        if fa is not None:
             self.init_analyzed_image()
 
         self.initComplete = True
     
-    def update_picket_fence(self, pf: QPicketFence):
-        self.pf = pf
+    def update_picket_fence(self, fa: QFieldAnalysis):
+        self.fa = fa
 
         self.initComplete = False
 
-        self.init_details()
-        self.init_leaf_profiles()
         self.init_analyzed_image()
 
         self.initComplete = True
-
-    def init_details(self):
-        self.details_tree_widget.clear()
-
-        details = [["Gantry angle", f"{self.pf.image.gantry_angle:2.2f}°", ""],
-                      ["Collimator angle", f"{self.pf.image.collimator_angle:2.2f}°", ""],
-                      ["Number of pickets found", f"{len(self.pf.pickets)}", ""],
-                      ["Number of leaf pairs found", f"{int(len(self.pf.mlc_meas) / len(self.pf.pickets))}"],
-                      ["Maximum error", f"{self.pf.max_error:2.3f} mm",
-                       f"Max error at picket {self.pf.max_error_picket + 1} and leaf {self.pf.max_error_leaf + 1}"],
-                      ["Percentage of passing leafs", f"{self.pf.percent_passing:2.0f}%", ""],
-                      ["Number of failed leafs", f"{len(self.pf.failed_leaves())}", ""]]
-        
-        self.details_tree_widget.addTopLevelItems([QTreeWidgetItem(detail) for detail in details])
-    
-    def init_leaf_profiles(self):
-        self.pickets_cb.clear()
-        self.leafs_cb.clear()
-
-        if self.curr_leaf_profile_widget is not None:
-            self.curr_leaf_profile_widget.deleteLater()
-
-        self.curr_leaf_profile_widget = self.pf.profile_plot_widget
-        self.leaf_profiles_qSplitter.addWidget(self.curr_leaf_profile_widget)
-
-        self.pickets_cb.addItems([str(x) for x in range(1,self.pf.num_pickets+1)])
-        self.leafs_cb.addItems([str(x) for x in sorted({mlc.leaf_num + 1 for mlc in self.pf.mlc_meas})])
-
-        self.plot_leaf_profile(True)
-        
-    def plot_leaf_profile(self, force_plot: bool = False):
-
-        if self.initComplete or force_plot:
-            self.pf.qplot_leaf_profile(int(self.leafs_cb.currentText())-1,
-                                       int(self.pickets_cb.currentText())-1)
             
     def init_analyzed_image(self):
         if self.curr_analyzed_image_widget is not None:
             self.curr_analyzed_image_widget.deleteLater()
 
-        self.curr_analyzed_image_widget = self.pf.analyzed_image_plot_widget
+        self.curr_analyzed_image_widget = self.fa.analyzed_image_plot_widget
         self.analyzed_img_qSplitter.addWidget(self.curr_analyzed_image_widget)
 
-        self.pf.qplot_analyzed_image()
+        self.fa.qplot_analyzed_image()

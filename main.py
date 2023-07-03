@@ -21,4 +21,5 @@ if __name__ == "__main__":
 
     app.setStyleSheet("QLineEdit, QDateEdit, QPushButton, QDoubleSpinBox,"
                       "QComboBox, QSpinBox { min-height: 20px;}")
+    app.setStyle('Fusion')
     app.exec()

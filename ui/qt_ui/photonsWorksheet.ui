@@ -830,7 +830,7 @@ font-weight: bold;
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>0</y>
+          <y>-434</y>
           <width>605</width>
           <height>1902</height>
          </rect>
@@ -1415,7 +1415,7 @@ font-weight: bold;
               <item row="5" column="0">
                <widget class="QLabel" name="chamberWallMatLabel">
                 <property name="text">
-                 <string>Chamber wall</string>
+                 <string>Chamber wall:</string>
                 </property>
                </widget>
               </item>
@@ -1504,7 +1504,7 @@ font-weight: bold;
               <item row="6" column="0">
                <widget class="QLabel" name="wSleeveLabel">
                 <property name="text">
-                 <string>Waterproof sleeve</string>
+                 <string>Waterproof sleeve:</string>
                 </property>
                </widget>
               </item>
@@ -1698,7 +1698,7 @@ font-weight: bold;
               <item row="9" column="0">
                <widget class="QLabel" name="refConditionsLabel">
                 <property name="text">
-                 <string>Reference conditions </string>
+                 <string>Reference conditions: </string>
                 </property>
                </widget>
               </item>
@@ -2326,7 +2326,7 @@ font-weight: bold;
               <item row="4" column="0">
                <widget class="QLabel" name="tempPressCorrLabel">
                 <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; text-decoration: underline;&quot;&gt;(A)&lt;/span&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt; Temp. and pressure correction&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline;&quot;&gt;(A)&lt;/span&gt;&lt;span style=&quot; font-weight:700; font-style:italic; text-decoration: underline;&quot;&gt; Temp. and pressure correction&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                </widget>
               </item>
@@ -2473,7 +2473,7 @@ font-weight: bold;
               <item row="6" column="0">
                <widget class="QLabel" name="polarCorrLabel">
                 <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; text-decoration: underline;&quot;&gt;(B)&lt;/span&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt; Polarity correction&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline;&quot;&gt;(B)&lt;/span&gt;&lt;span style=&quot; font-weight:700; font-style:italic; text-decoration: underline;&quot;&gt; Polarity correction&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                </widget>
               </item>
@@ -2580,7 +2580,7 @@ font-weight: bold;
               <item row="8" column="0">
                <widget class="QLabel" name="ionRecombCorrLabel">
                 <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; text-decoration: underline;&quot;&gt;(C)&lt;/span&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt; Ion recombination correction&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline;&quot;&gt;(C)&lt;/span&gt;&lt;span style=&quot; font-weight:700; font-style:italic; text-decoration: underline;&quot;&gt; Ion recombination correction&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                </widget>
               </item>
@@ -2794,7 +2794,7 @@ font-weight: bold;
               <item row="10" column="0">
                <widget class="QLabel" name="electmeterCorrLabel">
                 <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;(D) Electrometer correction:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700; font-style:italic; text-decoration: underline;&quot;&gt;(D) Electrometer correction:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                </widget>
               </item>
@@ -3178,11 +3178,11 @@ font-weight: bold;
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="beamQualityGroup"/>
-  <buttongroup name="beamTypeGroup"/>
-  <buttongroup name="userPolarityGroup"/>
   <buttongroup name="calibSeparateGroup"/>
   <buttongroup name="calibSetupGroup"/>
+  <buttongroup name="beamTypeGroup"/>
+  <buttongroup name="userPolarityGroup"/>
+  <buttongroup name="beamQualityGroup"/>
   <buttongroup name="calibPolarityGroup"/>
  </buttongroups>
 </ui>

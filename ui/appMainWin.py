@@ -36,6 +36,14 @@ class AppMainWin(QMainWindow):
         self.winston_lutz_win = None
         self.picket_fence_win = None
         self.starshot_win = None
+        self.field_analysis_win = None
+
+        self.qa_windows = {"photon_cal": None,
+                      "electron_cal": None,
+                      "picket_fence": None,
+                      "starshot": None,
+                      "winston_lutz": None,
+                      "field_analysis": None}
 
     def setupCalibrationPage(self, calibType: str):
         self.currLinac = None
@@ -60,7 +68,7 @@ class AppMainWin(QMainWindow):
 
         elif calibType == "electrons":
             self.__ui.calibPageTitle.setText("Electron Output Calibration")
-            self.__ui.calibStartBtn.clicked.connect(lambda: self.openElectronsCalibQA())
+            self.__ui.calibStartBtn.clicked.connect(lambda: self.initElectronsCalibQA())
             self.__ui.linacNameCB.currentTextChanged.connect(lambda x: self.setLinacDetails(calibType, x))
         
         # Add all available linacs
@@ -125,6 +133,7 @@ class AppMainWin(QMainWindow):
     
     def eventFilter(self, source: QObject, event: QEvent) -> bool:
         # Catch all sub-navigation component clicks here
+        # TODO remove too many if else checks
         if event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.photonCalib:
             self.setupCalibrationPage("photons")
             self.changeMainPage(self.__ui.initCalibPage)
@@ -134,36 +143,37 @@ class AppMainWin(QMainWindow):
             self.changeMainPage(self.__ui.initCalibPage)
 
         elif event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.winstonLutzAnalysis:
-            if self.winston_lutz_win is None:
-                initData = {"toolType": "winston_lutz"}
-
-                self.winston_lutz_win = QAToolsWin(initData = initData)
-                self.winston_lutz_win.showMaximized()
-            else:
-                self.winston_lutz_win.addNewWorksheet()
+            self.open_window({"winType": "winston_lutz"})
         
         elif event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.picketFence:
-            if self.picket_fence_win is None:
-                initData = {"toolType": "picket_fence"}
-
-                self.picket_fence_win = QAToolsWin(initData = initData)
-                self.picket_fence_win.showMaximized()
-            else:
-                self.picket_fence_win.addNewWorksheet()
+            self.open_window({"winType": "picket_fence"})
 
         elif event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.starshotAnalysis:
-            if self.starshot_win is None:
-                initData = {"toolType": "starshot"}
+            self.open_window({"winType": "starshot"})
 
-                self.starshot_win = QAToolsWin(initData = initData)
-                self.starshot_win.showMaximized()
-            else:
-                self.starshot_win.addNewWorksheet()
+        elif event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.fieldAnalysis:
+            self.open_window({"winType": "field_analysis"})
             
         return super().eventFilter(source, event)
     
+    def open_window(self, params: dict):
+        if self.qa_windows[params["winType"]] is None:
+
+            self.qa_windows[params["winType"]] = QAToolsWin(params)
+            self.qa_windows[params["winType"]].showMaximized()
+                
+            self.qa_windows[params["winType"]].windowClosing.connect(
+                lambda: self.window_closed(params["winType"]))
+              
+        else:
+            self.qa_windows[params["winType"]].addNewWorksheet()
+            self.qa_windows[params["winType"]].activateWindow()
+    
+    def window_closed(self, winType: str):
+        self.qa_windows[winType] = None
+    
     def initPhotonsCalibQA(self):
-        initData = {"toolType": "photon_calibration",
+        initData = {"winType": "photon_cal",
                     "institution": None,
                     "user": None,
                     "photonBeams": [],
@@ -182,11 +192,11 @@ class AppMainWin(QMainWindow):
                     
         initData["institution"] = self.__ui.institutionLE.text()
         initData["user"] = self.__ui.userLE.text()
-        self.photonCalWin = QAToolsWin(initData = initData)
-        self.photonCalWin.showMaximized()
+        
+        self.open_window(initData)
 
     def initElectronsCalibQA(self):
-        initData = {"toolType": "electron_calibration",
+        initData = {"winType": "electron_cal",
                     "institution": None,
                     "user": None,
                     "electronBeams": [],
@@ -205,5 +215,5 @@ class AppMainWin(QMainWindow):
                     
         initData["institution"] = self.__ui.institutionLE.text()
         initData["user"] = self.__ui.userLE.text()
-        self.photonCalWin = QAToolsWin(initData = initData)
-        self.photonCalWin.showMaximized()
+        
+        self.open_window(initData)

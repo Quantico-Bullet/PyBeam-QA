@@ -1,11 +1,15 @@
+import traceback
 from PySide6.QtCore import Signal, Slot, QObject
 
+import pyqtgraph as pg
 from pylinac import WinstonLutz
 from pylinac.core.scale import MachineScale
 from pathlib import Path
 import io
 import matplotlib.pyplot as plt
 plt.switch_backend('agg') # switch to non-gui backend to avoid runtime error
+
+pg.setConfigOptions(antialias = True, imageAxisOrder='row-major')
 
 class QWinstonLutz(WinstonLutz):
 
@@ -44,6 +48,7 @@ class QWinstonLutzWorker(QObject):
     images_analyzed = Signal(int)
     thread_finished = Signal()
     analysis_results_changed = Signal(dict)
+    analysis_failed = Signal(str)
     bb_shift_info_changed = Signal(str)
 
     def __init__(self, images: list[str], use_filenames: bool = False):
@@ -55,16 +60,21 @@ class QWinstonLutzWorker(QObject):
 
     @Slot()
     def analyze(self):
-        self._wl.analyze()
+        try:
+            self._wl.analyze()
         
-        wl_data = self._wl.results_data(as_dict=True)
-        wl_data["image_details"] = self._wl.image_data
+            wl_data = self._wl.results_data(as_dict=True)
+            wl_data["image_details"] = self._wl.image_data
 
-        summary_image_data = io.BytesIO()
-        self._wl.save_summary(summary_image_data, dpi=120)
-        wl_data["summary_plot"] = summary_image_data
+            summary_image_data = io.BytesIO()
+            self._wl.save_summary(summary_image_data, dpi=120, format = "pdf")
+            wl_data["summary_plot"] = summary_image_data
 
-        self.analysis_results_changed.emit(wl_data)
-        self.bb_shift_info_changed.emit(self._wl.bb_shift_instructions())
-        del self._wl
-        self.thread_finished.emit()
+            self.analysis_results_changed.emit(wl_data)
+            self.bb_shift_info_changed.emit(self._wl.bb_shift_instructions())
+            del self._wl
+            self.thread_finished.emit()
+
+        except Exception as err:
+            self.analysis_failed.emit(traceback.format_exception_only(err)[-1])
+            self.thread_finished.emit()

@@ -1,15 +1,18 @@
 from PySide6.QtWidgets import QMainWindow, QPushButton, QApplication, QToolButton, QMenu
 from PySide6.QtCore import QObject, Signal, QDate, QPoint
-from PySide6.QtGui import QAction, QCursor, QActionGroup
+from PySide6.QtGui import QAction, QCursor, QActionGroup, QCloseEvent
 
 from ui.py_ui.photonsMainWin_ui import Ui_MainWindow as Ui_PhotonsMainWin
 from ui.photonsWidget import QPhotonsWorksheet
 from ui.starshotWidget import QStarshotWorksheet
 from ui.wlutzWidget import QWLutzWorksheet
 from ui.picketFenceWidget import QPicketFenceWorksheet
+from ui.fieldAnalysisWidget import QFieldAnalysisWorksheet
 from core.tools.devices import Linac
 
 class QAToolsWin(QMainWindow):
+
+    windowClosing = Signal()
 
     def __init__(self, initData: dict = None):
         super().__init__()
@@ -21,7 +24,7 @@ class QAToolsWin(QMainWindow):
         self.__ui.menubar.setEnabled(False)
 
         if initData is not None:
-            if initData["toolType"] == "photon_calibration":
+            if initData["winType"] == "photon_cal":
                 self.setWindowTitle("(TRS-398) Photon Output Calibration ‒ PyBeam QA")
 
                 # setup, add, and link photon calibration worksheets
@@ -37,22 +40,28 @@ class QAToolsWin(QMainWindow):
                 self.dataModel.institution_changed.emit(initData["institution"])
                 self.dataModel.userName_changed.emit(initData["user"])
 
-            elif initData["toolType"] == "winston_lutz":
+            elif initData["winType"] == "winston_lutz":
                 self.worksheetType = "WL_WORKSHEET"
 
                 self.setWindowTitle("Winston Lutz Analysis ‒ PyBeam QA")
                 self.addNewWorksheet()
 
-            elif initData["toolType"] == "picket_fence":
+            elif initData["winType"] == "picket_fence":
                 self.worksheetType = "PICKET_FENCE_WORKSHEET"
 
                 self.setWindowTitle("Picket Fence Analysis ‒ PyBeam QA")
                 self.addNewWorksheet()
 
-            elif initData["toolType"] == "starshot":
+            elif initData["winType"] == "starshot":
                 self.worksheetType = "STARSHOT_WORKSHEET"
 
                 self.setWindowTitle("Starshot Analysis ‒ PyBeam QA")
+                self.addNewWorksheet()
+
+            elif initData["winType"] == "field_analysis":
+                self.worksheetType = "FIELD_ANALYSIS_WORKSHEET"
+
+                self.setWindowTitle("Field Analysis ‒ PyBeam QA")
                 self.addNewWorksheet()
 
         # setup basic window functionality
@@ -157,13 +166,22 @@ class QAToolsWin(QMainWindow):
 
     def addNewWorksheet(self):
         if self.worksheetType == "WL_WORKSHEET":
-            self.__ui.tabWidget.addTab(QWLutzWorksheet(), u"WL Analysis (Untitled)")
+            index = self.__ui.tabWidget.addTab(QWLutzWorksheet(), u"WL Analysis (Untitled)")
 
         elif self.worksheetType == "PICKET_FENCE_WORKSHEET":
-            self.__ui.tabWidget.addTab(QPicketFenceWorksheet(), u"Picket Fence (Untitled)")
+            index = self.__ui.tabWidget.addTab(QPicketFenceWorksheet(), u"Picket Fence (Untitled)")
 
         elif self.worksheetType == "STARSHOT_WORKSHEET":
-            self.__ui.tabWidget.addTab(QStarshotWorksheet(), u"Starshot (Untitled)")
+            index = self.__ui.tabWidget.addTab(QStarshotWorksheet(), u"Starshot (Untitled)")
+
+        elif self.worksheetType == "FIELD_ANALYSIS_WORKSHEET":
+            index = self.__ui.tabWidget.addTab(QFieldAnalysisWorksheet(), u"Field Analysis (Untitled)")
+
+        self.__ui.tabWidget.setCurrentIndex(index)
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        self.windowClosing.emit()
+        return super().closeEvent(event)
 
 class PhotonsCalModel(QObject):
     institution_changed = Signal(str)
