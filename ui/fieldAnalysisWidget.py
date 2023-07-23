@@ -194,7 +194,8 @@ class QFieldAnalysisWorksheet(QWidget):
         self.warning_dialog.setStandardButtons(QMessageBox.StandardButton.Ok)
         self.warning_dialog.setTextFormat(Qt.TextFormat.RichText)
 
-        error_icon = QPixmap(u":/colorIcons/icons/warning_48.png")
+        error_icon = QPixmap(u":/colorIcons/icons/error_round.png")
+        error_icon = error_icon.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
         self.warning_dialog.setIconPixmap(error_icon)
 
         self.warning_dialog.exec()
@@ -319,7 +320,8 @@ class QFieldAnalysisWorksheet(QWidget):
                                              QMessageBox.StandardButton.Cancel)
         self.delete_dialog.setTextFormat(Qt.TextFormat.RichText)
 
-        warning_icon = QPixmap(u":/colorIcons/icons/warning_48.png")
+        warning_icon = QPixmap(u":/colorIcons/icons/warning.png")
+        warning_icon = warning_icon.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
         self.delete_dialog.setIconPixmap(warning_icon)
 
         ret = self.delete_dialog.exec()
@@ -391,7 +393,8 @@ class QFieldAnalysisWorksheet(QWidget):
         self.warning_dialog.setStandardButtons(QMessageBox.StandardButton.Ok)
         self.warning_dialog.setTextFormat(Qt.TextFormat.RichText)
 
-        error_icon = QPixmap(u":/colorIcons/icons/error_round_48.png")
+        error_icon = QPixmap(u":/colorIcons/icons/error_round.png")
+        error_icon = error_icon.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
         self.warning_dialog.setIconPixmap(error_icon)
 
         self.warning_dialog.exec()
@@ -597,7 +600,7 @@ class AdvancedFAView(QMainWindow):
         super().__init__(parent = parent)
 
         self.fa = fa
-
+ 
         self.initComplete = False
 
         self.setWindowTitle("Field Analysis (Advanced Results) ‒ PyBeam QA")

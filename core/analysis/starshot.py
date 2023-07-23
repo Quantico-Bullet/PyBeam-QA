@@ -23,6 +23,7 @@ class QStarshot(Starshot):
         self.imagePlotWidget.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         self.imagePlotWidget.setFixedSize(600, 400)
         self.imagePlotWidget.setAspectLocked(lock=True)
+        self.imagePlotWidget.invertY(True)
 
     def analyze(self, 
                 radius: float = 0.85,

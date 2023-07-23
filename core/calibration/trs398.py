@@ -98,6 +98,7 @@ class TRS398:
                         return self.kS
                     
                     uParam = u
+                    
         elif self.ksCalcMethod == "interpolate":
             minRatio = 2.0
             maxRatio = 5.0

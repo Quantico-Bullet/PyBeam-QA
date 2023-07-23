@@ -25,7 +25,7 @@ class Ui_QStarshotWorksheet(object):
     def setupUi(self, QStarshotWorksheet):
         if not QStarshotWorksheet.objectName():
             QStarshotWorksheet.setObjectName(u"QStarshotWorksheet")
-        QStarshotWorksheet.resize(1237, 480)
+        QStarshotWorksheet.resize(1237, 534)
         self.verticalLayout = QVBoxLayout(QStarshotWorksheet)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.stackedWidget = QStackedWidget(QStarshotWorksheet)
@@ -110,47 +110,15 @@ class Ui_QStarshotWorksheet(object):
 
         self.configFormLayout.setWidget(2, QFormLayout.FieldRole, self.miniPeakHeightDSB)
 
-        self.recursiveSearchLabel = QLabel(self.frame_2)
-        self.recursiveSearchLabel.setObjectName(u"recursiveSearchLabel")
+        self.SIDInputLabel = QLabel(self.frame_2)
+        self.SIDInputLabel.setObjectName(u"SIDInputLabel")
 
-        self.configFormLayout.setWidget(6, QFormLayout.LabelRole, self.recursiveSearchLabel)
+        self.configFormLayout.setWidget(3, QFormLayout.LabelRole, self.SIDInputLabel)
 
-        self.recursiveSearchCB = QCheckBox(self.frame_2)
-        self.recursiveSearchCB.setObjectName(u"recursiveSearchCB")
-        self.recursiveSearchCB.setChecked(True)
+        self.SIDInputCB = QComboBox(self.frame_2)
+        self.SIDInputCB.setObjectName(u"SIDInputCB")
 
-        self.configFormLayout.setWidget(6, QFormLayout.FieldRole, self.recursiveSearchCB)
-
-        self.forceImageInversionLabel = QLabel(self.frame_2)
-        self.forceImageInversionLabel.setObjectName(u"forceImageInversionLabel")
-
-        self.configFormLayout.setWidget(7, QFormLayout.LabelRole, self.forceImageInversionLabel)
-
-        self.forceInvertCB = QCheckBox(self.frame_2)
-        self.forceInvertCB.setObjectName(u"forceInvertCB")
-
-        self.configFormLayout.setWidget(7, QFormLayout.FieldRole, self.forceInvertCB)
-
-        self.useFWHMLabel = QLabel(self.frame_2)
-        self.useFWHMLabel.setObjectName(u"useFWHMLabel")
-
-        self.configFormLayout.setWidget(5, QFormLayout.LabelRole, self.useFWHMLabel)
-
-        self.useFWHMCB = QCheckBox(self.frame_2)
-        self.useFWHMCB.setObjectName(u"useFWHMCB")
-        self.useFWHMCB.setChecked(True)
-
-        self.configFormLayout.setWidget(5, QFormLayout.FieldRole, self.useFWHMCB)
-
-        self.SIDValueLabel = QLabel(self.frame_2)
-        self.SIDValueLabel.setObjectName(u"SIDValueLabel")
-
-        self.configFormLayout.setWidget(3, QFormLayout.LabelRole, self.SIDValueLabel)
-
-        self.SIDValueCB = QComboBox(self.frame_2)
-        self.SIDValueCB.setObjectName(u"SIDValueCB")
-
-        self.configFormLayout.setWidget(3, QFormLayout.FieldRole, self.SIDValueCB)
+        self.configFormLayout.setWidget(3, QFormLayout.FieldRole, self.SIDInputCB)
 
         self.sIDConfigVL = QVBoxLayout()
         self.sIDConfigVL.setObjectName(u"sIDConfigVL")
@@ -171,6 +139,68 @@ class Ui_QStarshotWorksheet(object):
 
 
         self.configFormLayout.setLayout(4, QFormLayout.FieldRole, self.sIDConfigVL)
+
+        self.DPIInputLabel = QLabel(self.frame_2)
+        self.DPIInputLabel.setObjectName(u"DPIInputLabel")
+
+        self.configFormLayout.setWidget(5, QFormLayout.LabelRole, self.DPIInputLabel)
+
+        self.DPIInputCB = QComboBox(self.frame_2)
+        self.DPIInputCB.setObjectName(u"DPIInputCB")
+
+        self.configFormLayout.setWidget(5, QFormLayout.FieldRole, self.DPIInputCB)
+
+        self.sADConfigVL = QVBoxLayout()
+        self.sADConfigVL.setObjectName(u"sADConfigVL")
+        self.DPIValueLabel = QLabel(self.frame_2)
+        self.DPIValueLabel.setObjectName(u"DPIValueLabel")
+
+        self.sADConfigVL.addWidget(self.DPIValueLabel)
+
+        self.dPIDSB = QDoubleSpinBox(self.frame_2)
+        self.dPIDSB.setObjectName(u"dPIDSB")
+        self.dPIDSB.setDecimals(0)
+        self.dPIDSB.setMinimum(1.000000000000000)
+        self.dPIDSB.setMaximum(1080.000000000000000)
+        self.dPIDSB.setSingleStep(10.000000000000000)
+        self.dPIDSB.setValue(20.000000000000000)
+
+        self.sADConfigVL.addWidget(self.dPIDSB)
+
+
+        self.configFormLayout.setLayout(6, QFormLayout.FieldRole, self.sADConfigVL)
+
+        self.useFWHMLabel = QLabel(self.frame_2)
+        self.useFWHMLabel.setObjectName(u"useFWHMLabel")
+
+        self.configFormLayout.setWidget(7, QFormLayout.LabelRole, self.useFWHMLabel)
+
+        self.useFWHMCB = QCheckBox(self.frame_2)
+        self.useFWHMCB.setObjectName(u"useFWHMCB")
+        self.useFWHMCB.setChecked(True)
+
+        self.configFormLayout.setWidget(7, QFormLayout.FieldRole, self.useFWHMCB)
+
+        self.recursiveSearchLabel = QLabel(self.frame_2)
+        self.recursiveSearchLabel.setObjectName(u"recursiveSearchLabel")
+
+        self.configFormLayout.setWidget(8, QFormLayout.LabelRole, self.recursiveSearchLabel)
+
+        self.recursiveSearchCB = QCheckBox(self.frame_2)
+        self.recursiveSearchCB.setObjectName(u"recursiveSearchCB")
+        self.recursiveSearchCB.setChecked(True)
+
+        self.configFormLayout.setWidget(8, QFormLayout.FieldRole, self.recursiveSearchCB)
+
+        self.forceImageInversionLabel = QLabel(self.frame_2)
+        self.forceImageInversionLabel.setObjectName(u"forceImageInversionLabel")
+
+        self.configFormLayout.setWidget(9, QFormLayout.LabelRole, self.forceImageInversionLabel)
+
+        self.forceInvertCB = QCheckBox(self.frame_2)
+        self.forceInvertCB.setObjectName(u"forceInvertCB")
+
+        self.configFormLayout.setWidget(9, QFormLayout.FieldRole, self.forceInvertCB)
 
 
         self.verticalLayout_4.addLayout(self.configFormLayout)
@@ -435,12 +465,14 @@ class Ui_QStarshotWorksheet(object):
         self.toleranceDSB.setSuffix(QCoreApplication.translate("QStarshotWorksheet", u" mm", None))
         self.cropLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Radius:", None))
         self.minPeakHeightLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Minimum peak height", None))
+        self.SIDInputLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"SID input:", None))
+        self.sIDLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"SID value:", None))
+        self.sIDDSB.setSuffix(QCoreApplication.translate("QStarshotWorksheet", u" mm", None))
+        self.DPIInputLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"DPI input:", None))
+        self.DPIValueLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"DPI value:", None))
+        self.useFWHMLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Use FWHM:", None))
         self.recursiveSearchLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Recursive search:", None))
         self.forceImageInversionLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Force image inversion:", None))
-        self.useFWHMLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Use FWHM:", None))
-        self.SIDValueLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"SID value:", None))
-        self.sIDLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"SID:", None))
-        self.sIDDSB.setSuffix(QCoreApplication.translate("QStarshotWorksheet", u" mm", None))
         self.label_2.setText(QCoreApplication.translate("QStarshotWorksheet", u"<html><head/><body><p><span style=\" font-weight:700;\">Analysis Outcome</span></p></body></html>", None))
         self.outcomeLE.setPlaceholderText(QCoreApplication.translate("QStarshotWorksheet", u"N/A", None))
         self.analyzeBtn.setText(QCoreApplication.translate("QStarshotWorksheet", u"Analyze images", None))

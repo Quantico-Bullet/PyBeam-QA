@@ -138,9 +138,9 @@ class AppMainWin(QMainWindow):
             self.setupCalibrationPage("photons")
             self.changeMainPage(self.__ui.initCalibPage)
 
-        elif event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.electronCalib:
-            self.setupCalibrationPage("electrons")
-            self.changeMainPage(self.__ui.initCalibPage)
+        #elif event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.electronCalib:
+            #self.setupCalibrationPage("electrons")
+            #self.changeMainPage(self.__ui.initCalibPage)
 
         elif event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.winstonLutzAnalysis:
             self.open_window({"winType": "winston_lutz"})

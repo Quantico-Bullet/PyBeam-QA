@@ -36,7 +36,7 @@ class QFieldAnalysis(FieldAnalysis):
                                                                   row = 0,
                                                                   rowspan = 2,
                                                                   col = 0)
-        
+        image_plot_item.invertY(True)
         image_plot_item.setLabel('left', 'Pixels')
         image_plot_item.setLabel('bottom', 'Pixels')
         
@@ -79,11 +79,20 @@ class QFieldAnalysis(FieldAnalysis):
                                                                   col = 1)
         hor_plot_item.setLimits(yMin = -0.1, yMax = 1.5)
 
-        self.plot_profile(vert_plot_item, self.vert_profile)
-        self.plot_profile(hor_plot_item, self.horiz_profile)
+        self.plot_profile(vert_plot_item, "vertical")
+        self.plot_profile(hor_plot_item, "horizontal")
 
-    def plot_profile(self, profile_plot: pg.PlotItem, profile: SingleProfile):
+    def plot_profile(self, profile_plot: pg.PlotItem, profile_type: str):
         #------ Plot the profile
+
+        if profile_type == "vertical":
+            profile = self.vert_profile
+            profile_labels = ["Top field edge", "Bottom field edge",
+                              "T: In-field slope", "B: In-field slope"]
+        else:
+            profile = self.horiz_profile
+            profile_labels = ["Left field edge", "Right field edge",
+                              "L: In-field slope", "R: In-field slope"]
         
         profile_plot.setLabel('left', 'Normalized Response')
         profile_plot.setLabel('bottom', 'Pixels')
@@ -173,11 +182,11 @@ class QFieldAnalysis(FieldAnalysis):
 
         profile_plot.plot([data["left index (rounded)"]], [data["left value (@rounded)"]],
                             symbolBrush = pg.mkBrush(128, 222, 217), symbolPen = 'w',
-                            symbol='d', symbolSize = 14, name = "Bottom field edge")
+                            symbol='d', symbolSize = 14, name = profile_labels[0])
         
         profile_plot.plot([data["right index (rounded)"]], [data["right value (@rounded)"]],
                             symbolBrush = pg.mkBrush(128, 222, 217), symbolPen = 'w',
-                            symbol='d', symbolSize = 14, name = "Top field edge")
+                            symbol='d', symbolSize = 14, name = profile_labels[1])
         
         if self._is_FFF:
             data = profile.field_data(self._in_field_ratio, self._slope_exclusion_ratio)
@@ -202,21 +211,21 @@ class QFieldAnalysis(FieldAnalysis):
                                 symbolBrush = pg.mkBrush(242, 222, 44), symbolPen = 'w',
                                 symbol='t', symbolSize = 14, name = "Top (T) position")
             
-            # Plot left slope
+            # Plot top/left slope
             left_x_values = range(data["left index (rounded)"], data["left inner index (rounded)"])
             left_y_values = data["left slope"] * left_x_values + data["left intercept"]
 
             profile_plot.plot(left_x_values, left_y_values,
                                      pen = pg.mkPen((25, 43, 194, 150), width = 8, connect= 'finite'),
-                                     name = "B: In-field slope")
+                                     name = profile_labels[2])
 
-            # Plot right slope
+            # Plot bottom/right slope
             right_x_values = range(data["right inner index (rounded)"], data["right index (rounded)"])
             right_y_values = data["right slope"] * right_x_values + data["right intercept"]
 
             profile_plot.plot(right_x_values, right_y_values,
                                      pen = pg.mkPen((25, 43, 194, 150), width = 8, connect= 'finite'),
-                                     name = "T: In-field slope")
+                                     name = profile_labels[3])
 
     def format_text(self, text: str, font_size: int = 11, font_weight: str = "normal") -> str:
         text = f"<p><span style=\" font-weight: {font_weight}; font-size: {font_size}pt;\">" \

@@ -15,11 +15,12 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QButtonGroup, QCheckBox, QComboBox,
-    QDateEdit, QFormLayout, QFrame, QGridLayout,
-    QGroupBox, QHBoxLayout, QLabel, QLayout,
-    QLineEdit, QRadioButton, QScrollArea, QSizePolicy,
-    QSpacerItem, QStackedWidget, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractSpinBox, QApplication, QButtonGroup, QCheckBox,
+    QComboBox, QDateEdit, QDoubleSpinBox, QFormLayout,
+    QFrame, QGridLayout, QGroupBox, QHBoxLayout,
+    QLabel, QLayout, QLineEdit, QPushButton,
+    QRadioButton, QScrollArea, QSizePolicy, QSpacerItem,
+    QStackedWidget, QVBoxLayout, QWidget)
 
 class Ui_QPhotonsWorksheet(object):
     def setupUi(self, QPhotonsWorksheet):
@@ -462,7 +463,7 @@ class Ui_QPhotonsWorksheet(object):
         self.worksheetScrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, -434, 605, 1902))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 605, 1903))
         sizePolicy2.setHeightForWidth(self.scrollAreaWidgetContents.sizePolicy().hasHeightForWidth())
         self.scrollAreaWidgetContents.setSizePolicy(sizePolicy2)
         self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents)
@@ -661,14 +662,13 @@ class Ui_QPhotonsWorksheet(object):
 
         self.refDepthHL = QHBoxLayout()
         self.refDepthHL.setObjectName(u"refDepthHL")
-        self.refDepthLE = QLineEdit(self.sectionOneGB)
-        self.refDepthLE.setObjectName(u"refDepthLE")
-        sizePolicy2.setHeightForWidth(self.refDepthLE.sizePolicy().hasHeightForWidth())
-        self.refDepthLE.setSizePolicy(sizePolicy2)
-        self.refDepthLE.setMinimumSize(QSize(100, 0))
-        self.refDepthLE.setMaximumSize(QSize(100, 16777215))
+        self.doubleSpinBox = QDoubleSpinBox(self.sectionOneGB)
+        self.doubleSpinBox.setObjectName(u"doubleSpinBox")
+        self.doubleSpinBox.setMinimumSize(QSize(100, 0))
+        self.doubleSpinBox.setButtonSymbols(QAbstractSpinBox.NoButtons)
+        self.doubleSpinBox.setSpecialValueText(u"#")
 
-        self.refDepthHL.addWidget(self.refDepthLE)
+        self.refDepthHL.addWidget(self.doubleSpinBox)
 
         self.refDepthUnit = QLabel(self.sectionOneGB)
         self.refDepthUnit.setObjectName(u"refDepthUnit")
@@ -1814,6 +1814,30 @@ class Ui_QPhotonsWorksheet(object):
 
         self.worksheetGrid.addWidget(self.worksheetScrollArea, 1, 0, 1, 1)
 
+        self.pushButton = QPushButton(QPhotonsWorksheet)
+        self.pushButton.setObjectName(u"pushButton")
+        self.pushButton.setEnabled(False)
+        self.pushButton.setStyleSheet(u"QPushButton {\n"
+"	background-color: rgb(82, 142, 122);\n"
+"    min-width: 150px;\n"
+"	min-height:20px;\n"
+"    padding: 6px;\n"
+"	border-radius: 15px;\n"
+"	color: white;\n"
+"	font: bold;\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"	background-color: rgb(52, 91, 78);\n"
+"}\n"
+"\n"
+"QPushButton:!enabled{\n"
+"	background-color: rgba(52, 91, 78, 50);\n"
+"	color: rgba(255,255,255,100)\n"
+"}")
+
+        self.worksheetGrid.addWidget(self.pushButton, 0, 2, 1, 1, Qt.AlignLeft)
+
         self.worksheetGrid.setColumnStretch(0, 3)
         self.worksheetGrid.setColumnStretch(2, 1)
 
@@ -1966,5 +1990,6 @@ class Ui_QPhotonsWorksheet(object):
         self.pddUnit.setText(QCoreApplication.translate("QPhotonsWorksheet", u"%", None))
         self.sadSetupLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic; text-decoration: underline;\">SAD set-up</span></p></body></html>", None))
         self.tmrLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">TMR</span> at  <span style=\" font-style:italic;\">z</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">ref </span>:</p></body></html>", None))
+        self.pushButton.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Generate report", None))
     # retranslateUi
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>674</width>
-    <height>600</height>
+    <height>621</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -15,15 +15,6 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
-  </property>
-  <property name="windowTitle">
-   <string>MainWindow</string>
-  </property>
-  <property name="styleSheet">
-   <string notr="true"/>
-  </property>
-  <property name="animated">
-   <bool>true</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -270,8 +261,8 @@ QPushButton:checked {
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>600</width>
-                       <height>417</height>
+                       <width>614</width>
+                       <height>401</height>
                       </rect>
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout">
@@ -435,6 +426,9 @@ border-style: solid;
                            </item>
                            <item>
                             <widget class="QFrame" name="electronCalib">
+                             <property name="enabled">
+                              <bool>false</bool>
+                             </property>
                              <property name="sizePolicy">
                               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                                <horstretch>0</horstretch>
@@ -514,6 +508,9 @@ border-style:solid;</string>
                            </item>
                            <item>
                             <widget class="QFrame" name="planarImagingAnalysis">
+                             <property name="enabled">
+                              <bool>false</bool>
+                             </property>
                              <property name="sizePolicy">
                               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                                <horstretch>0</horstretch>
@@ -930,22 +927,6 @@ border-style: solid;
                           </layout>
                          </item>
                          <item>
-                          <spacer name="verticalSpacer_8">
-                           <property name="orientation">
-                            <enum>Qt::Vertical</enum>
-                           </property>
-                           <property name="sizeType">
-                            <enum>QSizePolicy::MinimumExpanding</enum>
-                           </property>
-                           <property name="sizeHint" stdset="0">
-                            <size>
-                             <width>20</width>
-                             <height>10</height>
-                            </size>
-                           </property>
-                          </spacer>
-                         </item>
-                         <item>
                           <spacer name="verticalSpacer_3">
                            <property name="orientation">
                             <enum>Qt::Vertical</enum>
@@ -1111,8 +1092,8 @@ border-style: solid;
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>450</width>
-                 <height>352</height>
+                 <width>418</width>
+                 <height>276</height>
                 </rect>
                </property>
                <property name="sizePolicy">

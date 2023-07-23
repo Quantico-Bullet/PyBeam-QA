@@ -82,6 +82,8 @@ class QPicketFence(PicketFence):
             self.analyzed_image_plot_widget.addLabel('Average error (mm)',
                                                      col = 1)
             
+            image_plot_item.invertY(True)
+            error_plot_item.invertY(True)
             error_plot_item.setLimits(xMin = -0.01, xMax = self.tolerance + 1.5)
             error_plot_item.setYLink('Image_Plot')
             

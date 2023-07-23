@@ -26,14 +26,12 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(674, 600)
+        MainWindow.resize(674, 621)
         sizePolicy = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
-        MainWindow.setStyleSheet(u"")
-        MainWindow.setAnimated(True)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -173,7 +171,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 600, 417))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 614, 401))
         self.horizontalLayout = QHBoxLayout(self.scrollAreaWidgetContents)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Minimum, QSizePolicy.Minimum)
@@ -265,6 +263,7 @@ class Ui_MainWindow(object):
 
         self.electronCalib = QFrame(self.testListFrame)
         self.electronCalib.setObjectName(u"electronCalib")
+        self.electronCalib.setEnabled(False)
         sizePolicy4.setHeightForWidth(self.electronCalib.sizePolicy().hasHeightForWidth())
         self.electronCalib.setSizePolicy(sizePolicy4)
         self.electronCalib.setStyleSheet(u"")
@@ -299,6 +298,7 @@ class Ui_MainWindow(object):
 
         self.planarImagingAnalysis = QFrame(self.testListFrame)
         self.planarImagingAnalysis.setObjectName(u"planarImagingAnalysis")
+        self.planarImagingAnalysis.setEnabled(False)
         sizePolicy4.setHeightForWidth(self.planarImagingAnalysis.sizePolicy().hasHeightForWidth())
         self.planarImagingAnalysis.setSizePolicy(sizePolicy4)
         self.planarImagingAnalysis.setFrameShape(QFrame.NoFrame)
@@ -480,10 +480,6 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_7.addLayout(self.verticalLayout_5)
 
-        self.verticalSpacer_8 = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.MinimumExpanding)
-
-        self.verticalLayout_7.addItem(self.verticalSpacer_8)
-
         self.verticalSpacer_3 = QSpacerItem(20, 0, QSizePolicy.Minimum, QSizePolicy.Fixed)
 
         self.verticalLayout_7.addItem(self.verticalSpacer_3)
@@ -564,7 +560,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollAreaWidgetContents_2 = QWidget()
         self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
-        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 450, 352))
+        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 418, 276))
         sizePolicy.setHeightForWidth(self.scrollAreaWidgetContents_2.sizePolicy().hasHeightForWidth())
         self.scrollAreaWidgetContents_2.setSizePolicy(sizePolicy)
         self.scrollAreaWidgetContents_2.setMaximumSize(QSize(600, 16777215))
@@ -784,7 +780,6 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
         self.currentPageTitle.setText(QCoreApplication.translate("MainWindow", u"QA Tools", None))
         self.qaToolsBtn.setText(QCoreApplication.translate("MainWindow", u"QA Tools", None))
         self.qaReportsBtn.setText(QCoreApplication.translate("MainWindow", u"Reports", None))
@@ -819,5 +814,6 @@ class Ui_MainWindow(object):
         self.linacBeamsLabel.setText(QCoreApplication.translate("MainWindow", u"Beams to calibrate:", None))
         self.backBtn.setText("")
         self.calibStartBtn.setText(QCoreApplication.translate("MainWindow", u"Start QA", None))
+        pass
     # retranslateUi
 

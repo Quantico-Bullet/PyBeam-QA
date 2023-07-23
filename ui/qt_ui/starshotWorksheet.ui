@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1237</width>
-    <height>480</height>
+    <height>534</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -148,60 +148,22 @@
               </property>
              </widget>
             </item>
-            <item row="6" column="0">
-             <widget class="QLabel" name="recursiveSearchLabel">
-              <property name="text">
-               <string>Recursive search:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="1">
-             <widget class="QCheckBox" name="recursiveSearchCB">
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="0">
-             <widget class="QLabel" name="forceImageInversionLabel">
-              <property name="text">
-               <string>Force image inversion:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="1">
-             <widget class="QCheckBox" name="forceInvertCB"/>
-            </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="useFWHMLabel">
-              <property name="text">
-               <string>Use FWHM:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <widget class="QCheckBox" name="useFWHMCB">
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
             <item row="3" column="0">
-             <widget class="QLabel" name="SIDValueLabel">
+             <widget class="QLabel" name="SIDInputLabel">
               <property name="text">
-               <string>SID value:</string>
+               <string>SID input:</string>
               </property>
              </widget>
             </item>
             <item row="3" column="1">
-             <widget class="QComboBox" name="SIDValueCB"/>
+             <widget class="QComboBox" name="SIDInputCB"/>
             </item>
             <item row="4" column="1">
              <layout class="QVBoxLayout" name="sIDConfigVL">
               <item>
                <widget class="QLabel" name="sIDLabel">
                 <property name="text">
-                 <string>SID:</string>
+                 <string>SID value:</string>
                 </property>
                </widget>
               </item>
@@ -228,6 +190,84 @@
                </widget>
               </item>
              </layout>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="DPIInputLabel">
+              <property name="text">
+               <string>DPI input:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QComboBox" name="DPIInputCB"/>
+            </item>
+            <item row="6" column="1">
+             <layout class="QVBoxLayout" name="sADConfigVL">
+              <item>
+               <widget class="QLabel" name="DPIValueLabel">
+                <property name="text">
+                 <string>DPI value:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="dPIDSB">
+                <property name="decimals">
+                 <number>0</number>
+                </property>
+                <property name="minimum">
+                 <double>1.000000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>1080.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>10.000000000000000</double>
+                </property>
+                <property name="value">
+                 <double>20.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="7" column="0">
+             <widget class="QLabel" name="useFWHMLabel">
+              <property name="text">
+               <string>Use FWHM:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="1">
+             <widget class="QCheckBox" name="useFWHMCB">
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="0">
+             <widget class="QLabel" name="recursiveSearchLabel">
+              <property name="text">
+               <string>Recursive search:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="1">
+             <widget class="QCheckBox" name="recursiveSearchCB">
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="0">
+             <widget class="QLabel" name="forceImageInversionLabel">
+              <property name="text">
+               <string>Force image inversion:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="1">
+             <widget class="QCheckBox" name="forceInvertCB"/>
             </item>
            </layout>
           </item>

@@ -33,9 +33,16 @@ class QWinstonLutz(WinstonLutz):
 
             self.image_data.append({
                 "file_path": str(img.path),
+                "filename": Path(str(img.path)).name,
                 "bb_location": {"x": img.bb.x, "y": img.bb.y},
                 "field_cax": {"x": img.field_cax.x, "y": img.field_cax.y},
-                "epid": {"x": img.epid.x, "y": img.epid.y}
+                "epid": {"x": img.epid.x, "y": img.epid.y},
+                "cax_to_bb_dist": img.cax2bb_vector.as_scalar(),
+                "gantry_angle": f"{img.gantry_angle:2.2f}",
+                "collimator_angle": f"{img.collimator_angle:2.2f}",
+                "couch_angle": f"{img.couch_angle:2.2f}",
+                "delta_u": f"{(img.bb.y - img.field_cax.y) / img.dpmm:2.2f}",
+                "delta_v": f"{(img.bb.x - img.field_cax.x) / img.dpmm:2.2f}"
             })
 
             counter += 1
@@ -54,7 +61,6 @@ class QWinstonLutzWorker(QObject):
     def __init__(self, images: list[str], use_filenames: bool = False):
         super().__init__()
 
-        #TODO take in a QWinstonLutz object
         self._wl = QWinstonLutz(images, update_signal = self.images_analyzed,
                           use_filenames = use_filenames)
 

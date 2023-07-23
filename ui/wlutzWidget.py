@@ -1,9 +1,11 @@
+from typing import Optional
 from PySide6.QtWidgets import (QWidget, QListWidgetItem, QMenu, QFileDialog, QDialog, 
                                QFormLayout, QVBoxLayout, QHBoxLayout, QLabel, QProgressBar, 
                                QMessageBox, QSizePolicy, QMainWindow, QGroupBox, 
                                QLineEdit, QComboBox, QDialogButtonBox, QPushButton, QSpacerItem,
-                               QCheckBox)
-from PySide6.QtGui import QIcon, QPixmap
+                               QCheckBox, QGridLayout, QTabWidget, QSplitter, QTableWidget,
+                               QHeaderView, QTableWidgetItem)
+from PySide6.QtGui import QIcon, QPixmap, QColor
 from PySide6.QtCore import Qt, QSize, QEvent, QThread
 
 from ui.py_ui.wlutzWorksheet_ui import Ui_QWLutzWorksheet
@@ -23,7 +25,7 @@ pg.setConfigOptions(antialias=True, imageAxisOrder='row-major')
 
 class QWLutzWorksheet(QWidget):
 
-    COORD_SYS = ["IEC61217", "Varian IEC", "Varian Standard"]
+    COORD_SYS = ["IEC 61217", "Varian IEC", "Varian Standard"]
 
     ANALYSIS_METRICS = {
             "pylinac_version": "PyLinac version",
@@ -62,6 +64,7 @@ class QWLutzWorksheet(QWidget):
         self.ui.stackedWidget.setCurrentIndex(0)
         self.ui.shiftInfoBtn.setEnabled(False)
         self.ui.genReportBtn.setEnabled(False)
+        self.ui.advancedViewBtn.setEnabled(False)
         self.ui.coordSysCB.setEnabled(False)
         self.ui.coordSysCB.addItems(self.COORD_SYS)
 
@@ -108,14 +111,18 @@ class QWLutzWorksheet(QWidget):
         self.ui.importImgBtn.clicked.connect(self.add_files)
         self.ui.analyzeBtn.clicked.connect(self.start_analysis)
         self.ui.shiftInfoBtn.clicked.connect(self.show_shift_info)
+        self.ui.advancedViewBtn.clicked.connect(self.show_advanced_results_view)
         self.ui.genReportBtn.clicked.connect(self.generate_report)
         self.ui.imageListWidget.itemChanged.connect(self.update_marked_images)
         self.ui.toleranceDSB.valueChanged.connect(self.set_analysis_outcome)
+        self.ui.toleranceDSB.valueChanged.connect(lambda: self.show_advanced_results_view(True))
 
         self.marked_images = []
         self.imageView_windows = []
         self.analysis_in_progress = False
         self.maxLocError = None
+        self.current_results = None
+        self.advanced_results_view = None
 
         self.analysis_summary = {}
         self.set_analysis_outcome()
@@ -275,7 +282,8 @@ class QWLutzWorksheet(QWidget):
         self.error_dialog.setStandardButtons(QMessageBox.StandardButton.Ok)
         self.error_dialog.setTextFormat(Qt.TextFormat.RichText)
 
-        error_icon = QPixmap(u":/colorIcons/icons/error_round_48.png")
+        error_icon = QPixmap(u":/colorIcons/icons/error_round.png")
+        error_icon = error_icon.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
         self.error_dialog.setIconPixmap(error_icon)
 
         self.error_dialog.exec()
@@ -293,6 +301,8 @@ class QWLutzWorksheet(QWidget):
 
         self.ui.addImgBtn.setEnabled(False)
         self.ui.genReportBtn.setEnabled(False)
+        self.ui.advancedViewBtn.setEnabled(False)
+        self.ui.shiftInfoBtn.setEnabled(False)
         self.ui.analyzeBtn.setEnabled(False)
         self.ui.analyzeBtn.setText("Analysis in progress...")
 
@@ -319,7 +329,8 @@ class QWLutzWorksheet(QWidget):
 
         self.qthread.start()
 
-    def show_analysis_results(self, results):
+    def show_analysis_results(self, results: dict):
+        self.current_results = results
         self.summary_plot = results["summary_plot"]
         self.analysis_in_progress = False
         self.restore_list_checkmarks()
@@ -332,6 +343,8 @@ class QWLutzWorksheet(QWidget):
         # Analyze button is auto-enabled by update_marked_images() on item data change
         self.ui.addImgBtn.setEnabled(True)
         self.ui.genReportBtn.setEnabled(True)
+        self.ui.advancedViewBtn.setEnabled(True)
+        self.ui.shiftInfoBtn.setEnabled(True)
 
         for index in range(self.ui.imageListWidget.count()):
             listItemWidget = self.ui.imageListWidget.item(index)
@@ -355,7 +368,23 @@ class QWLutzWorksheet(QWidget):
             else:
                 self.form_layout.addRow(f"{param}:", QLabel(str(results[key])))
 
+        self.show_advanced_results_view(True)
         self.set_analysis_outcome()
+
+    def show_advanced_results_view(self, only_update: bool = False):
+        if self.current_results is not None:
+            if self.advanced_results_view is None:
+                self.advanced_results_view = AdvancedWLView(results = self.current_results["image_details"],
+                                                            tolerance = self.ui.toleranceDSB.value())
+            if not only_update:
+                self.advanced_results_view.show()
+
+            else:
+                self.advanced_results_view.update_analysis_data(self.current_results["image_details"],
+                                                                self.ui.toleranceDSB.value())
+
+                if not only_update: 
+                    self.advanced_results_view.show()
 
     def set_analysis_outcome(self):
         if self.maxLocError is None:
@@ -424,10 +453,8 @@ class QWLutzWorksheet(QWidget):
         plotItem = plotView.getPlotItem()
         plotItem.setLimits(xMin=-150, xMax=image.array.shape[1]+150, yMin=-150, yMax=image.array.shape[0]+150)
         plotItem.setRange(xRange=(-50, image.array.shape[1]+50), yRange=(-50, image.array.shape[0]+50))
-        plotItem.invertY(False)
+        plotItem.invertY(True)
         
-        #This makes the image appear correctly somehow!
-        image.flipud()
         imageItem = pg.ImageItem(image=image.array)
 
         bbX = image_data["bb_location"]["x"]
@@ -445,11 +472,11 @@ class QWLutzWorksheet(QWidget):
         
         epidX_plot = pg.InfiniteLine(pos=[epidX,0],movable=False, angle=90, pen = (0,255,0), name="EPID X line",
                                         label="EPID x = {value:0.2f}", labelOpts={'position': 0.1,
-                                        'color': (200,200,100), 'fill': (0,200,0,50), 'movable': False})
+                                        'color': (200,200,100), 'fill': (0,200,0,50), 'movable': True})
         
         epidY_plot = pg.InfiniteLine(pos=[0,epidY], movable=False, angle=0, pen = (0,255,0), name="EPID Y line", 
                                          label="EPID y = {value:0.2f}", labelOpts={'position': 0.1, 
-                                        'color': (200,200,100), 'fill': (0,200,0,50), 'movable': False})
+                                        'color': (200,200,100), 'fill': (0,200,0,50), 'movable': True})
         
         epidX_plot.opts = {"pen": epidX_plot.pen}
         epidY_plot.opts = {"pen": epidY_plot.pen}
@@ -491,6 +518,7 @@ class QWLutzWorksheet(QWidget):
                                             f'{shifts[2].split(" ")[0]}: {shifts[2].split(" ")[1].replace("mm", " mm")}')
 
         shift_icon = QPixmap(u":/colorIcons/icons/bb_shift.png")
+        shift_icon = shift_icon.scaled(48, 48, mode = Qt.TransformationMode.SmoothTransformation)
         self.shift_dialog.setIconPixmap(shift_icon)
 
         self.shift_dialog.exec()
@@ -507,7 +535,8 @@ class QWLutzWorksheet(QWidget):
                                              QMessageBox.StandardButton.Cancel)
         self.delete_dialog.setTextFormat(Qt.TextFormat.RichText)
 
-        warning_icon = QPixmap(u":/colorIcons/icons/warning_48.png")
+        warning_icon = QPixmap(u":/colorIcons/icons/warning.png")
+        warning_icon = warning_icon.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
         self.delete_dialog.setIconPixmap(warning_icon)
 
         ret = self.delete_dialog.exec()
@@ -671,4 +700,105 @@ class QWLutzWorksheet(QWidget):
             if not path[-1].endswith(".pdf"):
                 path[-1] = path[-1] + ".pdf"
             
-            line_edit.setText("/".join(path))  
+            line_edit.setText("/".join(path))
+
+class AdvancedWLView(QMainWindow):
+
+    def __init__(self, parent: QWidget | None = None,
+                 results: list | None = None,
+                 tolerance: float = 1.00) -> None:
+        super().__init__(parent)
+
+        self.initComplete = False
+
+        self.setWindowTitle("Winston Lutz Analysis (Advanced Results) ‒ PyBeam QA")
+        self.resize(916, 480)
+
+        self.central_widget = QWidget(self)
+        self.setCentralWidget(self.central_widget)
+
+        self.top_layout = QGridLayout(self.central_widget)
+        self.top_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.tab_widget = QTabWidget(self.central_widget)
+        self.tab_widget.setTabsClosable(False)
+
+        size_policy = QSizePolicy(QSizePolicy.Expanding,
+                                  QSizePolicy.Expanding)
+        size_policy.setVerticalStretch(0)
+        size_policy.setHorizontalStretch(0)
+        self.central_widget.setSizePolicy(size_policy)
+        self.tab_widget.setSizePolicy(size_policy)
+
+        #----- Setup table content
+        self.analyzed_img_qSplitter = QSplitter()
+        self.analyzed_img_qSplitter.setSizePolicy(size_policy)
+
+        self.tab_widget.addTab(self.analyzed_img_qSplitter, "Advanced analysis data")
+
+        self.top_layout.addWidget(self.tab_widget, 0, 0, 1, 1)
+
+        self.table_widget = QTableWidget(self.analyzed_img_qSplitter)
+        size_policy = QSizePolicy(QSizePolicy.Policy.MinimumExpanding,
+                                  QSizePolicy.Policy.MinimumExpanding)
+        self.table_widget.setSizePolicy(size_policy)
+
+        self.update_analysis_data(results, tolerance)
+        
+    def update_analysis_data(self, results: list, tolerance: float):
+        self.table_widget.clear()
+
+        headers = ["Filename", "Gantry angle (°)", "Collimator angle (°)",
+                   "Couch angle (°)",  "𝚫u (mm)", "𝚫v (mm)",
+                   "CAX to EPID distance (mm)", "Outcome (Pass/Fail)"]
+        
+        self.table_widget.setColumnCount(len(headers))
+        self.table_widget.setRowCount(len(results))
+        self.table_widget.setHorizontalHeaderLabels(headers)
+        self.table_widget.horizontalHeader().setStretchLastSection(True)
+        self.table_widget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+        self.table_widget.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Fixed)
+
+        for row, result in enumerate(results):
+
+            filename_item = QTableWidgetItem(result["filename"])
+            gantry_angle_item = QTableWidgetItem(result["gantry_angle"])
+            coll_angle_item = QTableWidgetItem(result["collimator_angle"])
+            couch_angle_item = QTableWidgetItem(result["couch_angle"])
+            delta_u_item = QTableWidgetItem(result["delta_u"])
+            delta_v_item = QTableWidgetItem(result["delta_v"])
+            cax_2_bb_item = QTableWidgetItem(f"{result['cax_to_bb_dist']:2.2f}")
+
+            if result["cax_to_bb_dist"] < tolerance:
+                outcome_item = QTableWidgetItem("PASS")
+                outcome_item.setBackground(QColor(95, 200, 26))
+
+            else:
+                outcome_item = QTableWidgetItem("FAIL")
+                outcome_item.setBackground(QColor(231, 29, 14))
+
+            filename_item.setFlags(filename_item.flags() ^ Qt.ItemFlag.ItemIsEditable)
+            gantry_angle_item.setFlags(gantry_angle_item.flags() ^ Qt.ItemFlag.ItemIsEditable)
+            coll_angle_item.setFlags(coll_angle_item.flags() ^ Qt.ItemFlag.ItemIsEditable)
+            couch_angle_item.setFlags(couch_angle_item.flags() ^ Qt.ItemFlag.ItemIsEditable)
+            delta_u_item.setFlags(delta_u_item.flags() ^ Qt.ItemFlag.ItemIsEditable)
+            delta_v_item.setFlags(delta_v_item.flags() ^ Qt.ItemFlag.ItemIsEditable)
+            cax_2_bb_item.setFlags(cax_2_bb_item.flags() ^ Qt.ItemFlag.ItemIsEditable)
+            outcome_item.setFlags(outcome_item.flags() ^ Qt.ItemFlag.ItemIsEditable)
+
+            gantry_angle_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            coll_angle_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            couch_angle_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            delta_u_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            delta_v_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            cax_2_bb_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            outcome_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+
+            self.table_widget.setItem(row, 0, filename_item)
+            self.table_widget.setItem(row, 1, gantry_angle_item)
+            self.table_widget.setItem(row, 2, coll_angle_item)
+            self.table_widget.setItem(row, 3, couch_angle_item)
+            self.table_widget.setItem(row, 4, delta_u_item)
+            self.table_widget.setItem(row, 5, delta_v_item)
+            self.table_widget.setItem(row, 6, cax_2_bb_item)
+            self.table_widget.setItem(row, 7, outcome_item)

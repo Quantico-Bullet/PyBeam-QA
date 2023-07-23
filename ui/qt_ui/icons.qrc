@@ -18,6 +18,7 @@
         <file>icons/bb_shift.png</file>
         <file>icons/error_round.png</file>
         <file>icons/error_round_48.png</file>
+        <file>icons/pie_chart_report.png</file>
     </qresource>
     <qresource prefix="/actionIcons">
         <file>icons/eye.png</file>

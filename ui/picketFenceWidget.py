@@ -226,7 +226,8 @@ class QPicketFenceWorksheet(QWidget):
                                              QMessageBox.StandardButton.Cancel)
         self.delete_dialog.setTextFormat(Qt.TextFormat.RichText)
 
-        warning_icon = QPixmap(u":/colorIcons/icons/warning_48.png")
+        warning_icon = QPixmap(u":/colorIcons/icons/warning.png")
+        warning_icon = warning_icon.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
         self.delete_dialog.setIconPixmap(warning_icon)
 
         ret = self.delete_dialog.exec()
@@ -300,7 +301,8 @@ class QPicketFenceWorksheet(QWidget):
         self.error_dialog.setStandardButtons(QMessageBox.StandardButton.Ok)
         self.error_dialog.setTextFormat(Qt.TextFormat.RichText)
 
-        error_icon = QPixmap(u":/colorIcons/icons/error_round_48.png")
+        error_icon = QPixmap(u":/colorIcons/icons/error_round.png")
+        error_icon = error_icon.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
         self.error_dialog.setIconPixmap(error_icon)
 
         self.error_dialog.exec()

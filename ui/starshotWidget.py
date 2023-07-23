@@ -15,6 +15,7 @@ from core.analysis.starshot import QStarshot, QStarshotWorker
 from core.tools.report import StarshotReport
 from core.tools.devices import DeviceManager
 
+import traceback
 import platform
 import webbrowser
 import subprocess
@@ -99,17 +100,24 @@ class QStarshotWorksheet(QWidget):
         self.set_analysis_outcome()
 
     def setup_config(self):
-        self.ui.SIDValueCB.addItems(["Auto", "Manual"])
-        self.ui.SIDValueCB.currentIndexChanged.connect(self.on_config_change)
+        self.ui.SIDInputCB.addItems(["Auto", "Manual"])
+        self.ui.DPIInputCB.addItems(["Auto", "Manual"])
+        self.ui.DPIInputCB.currentIndexChanged.connect(self.on_config_change)
+        self.ui.SIDInputCB.currentIndexChanged.connect(self.on_config_change)
 
         # call this one time to ensure correct config display
         self.on_config_change()
 
     def on_config_change(self):
-        if self.ui.SIDValueCB.currentText() == "Manual":
+        if self.ui.SIDInputCB.currentText() == "Manual":
             self.ui.configFormLayout.setRowVisible(4, True)
         else:
             self.ui.configFormLayout.setRowVisible(4, False)
+
+        if self.ui.DPIInputCB.currentText() == "Manual":
+            self.ui.configFormLayout.setRowVisible(6, True)
+        else:
+            self.ui.configFormLayout.setRowVisible(6, False)
      
     def add_files(self):
         files, _ = QFileDialog.getOpenFileNames(
@@ -238,7 +246,8 @@ class QStarshotWorksheet(QWidget):
                                              QMessageBox.StandardButton.Cancel)
         self.error_dialog.setTextFormat(Qt.TextFormat.RichText)
 
-        warning_icon = QPixmap(u":/colorIcons/icons/warning_48.png")
+        warning_icon = QPixmap(u":/colorIcons/icons/warning.png")
+        warning_icon = warning_icon.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
         self.error_dialog.setIconPixmap(warning_icon)
 
         ret = self.error_dialog.exec()
@@ -310,7 +319,8 @@ class QStarshotWorksheet(QWidget):
         self.error_dialog.setStandardButtons(QMessageBox.StandardButton.Ok)
         self.error_dialog.setTextFormat(Qt.TextFormat.RichText)
 
-        error_icon = QPixmap(u":/colorIcons/icons/error_round_48.png")
+        error_icon = QPixmap(u":/colorIcons/icons/error_round.png")
+        error_icon = error_icon.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
         self.error_dialog.setIconPixmap(error_icon)
 
         self.error_dialog.exec()
@@ -343,26 +353,38 @@ class QStarshotWorksheet(QWidget):
         else:
             images = self.marked_images
 
-        self.worker = QStarshotWorker(filepath = images,
-                                      radius = self.ui.radiusSB.value(),
-                                      min_peak_height = self.ui.miniPeakHeightDSB.value(),
-                                      tolerance = self.ui.toleranceDSB.value(),
-                                      fwhm = self.ui.useFWHMCB.isChecked(),
-                                      recursive = self.ui.recursiveSearchCB.isChecked(),
-                                      invert = self.ui.forceInvertCB.isChecked(),
-                                      sid = self.ui.sIDDSB.value()
-                                      )
-        
-        self.qthread = QThread()
-        self.worker.moveToThread(self.qthread)
-        self.worker.analysis_failed.connect(self.qthread.quit)
-        self.worker.analysis_failed.connect(self.on_analysis_failed)
-        self.worker.thread_finished.connect(self.qthread.quit)
-        self.worker.analysis_results_ready.connect(lambda results: self.show_analysis_results(results))
-        self.qthread.started.connect(self.worker.analyze)
-        self.qthread.finished.connect(self.qthread.deleteLater)
+        params = {}
 
-        self.qthread.start()
+        if self.ui.SIDInputCB.currentText() == "Manual":
+            params["sid"] = self.ui.sIDDSB.value()
+
+        if self.ui.DPIInputCB.currentText() == "Manual":
+            params["dpi"] = self.ui.dPIDSB.value()
+
+        # Top level try clause catches file IO errors
+        try:
+            self.worker = QStarshotWorker(filepath = images,
+                                          radius = self.ui.radiusSB.value(),
+                                          min_peak_height = self.ui.miniPeakHeightDSB.value(),
+                                          tolerance = self.ui.toleranceDSB.value(),
+                                          fwhm = self.ui.useFWHMCB.isChecked(),
+                                          recursive = self.ui.recursiveSearchCB.isChecked(),
+                                          invert = self.ui.forceInvertCB.isChecked(),
+                                          **params
+                                          )
+            self.qthread = QThread()
+            self.worker.moveToThread(self.qthread)
+            self.worker.analysis_failed.connect(self.qthread.quit)
+            self.worker.analysis_failed.connect(self.on_analysis_failed)
+            self.worker.thread_finished.connect(self.qthread.quit)
+            self.worker.analysis_results_ready.connect(lambda results: self.show_analysis_results(results))
+            self.qthread.started.connect(self.worker.analyze)
+            self.qthread.finished.connect(self.qthread.deleteLater)
+
+            self.qthread.start()
+
+        except Exception as err:
+            self.on_analysis_failed(traceback.format_exception_only(err)[-1])
 
     def show_analysis_results(self, results: dict):
         self.has_analysis = True

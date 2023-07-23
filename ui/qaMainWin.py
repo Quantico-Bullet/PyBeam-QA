@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QMainWindow, QPushButton, QApplication, QToolButton, QMenu
-from PySide6.QtCore import QObject, Signal, QDate, QPoint
-from PySide6.QtGui import QAction, QCursor, QActionGroup, QCloseEvent
+from PySide6.QtCore import Qt, QObject, Signal, QDate, QPoint
+from PySide6.QtGui import QAction, QCursor, QActionGroup, QCloseEvent, QPixmap
 
 from ui.py_ui.photonsMainWin_ui import Ui_MainWindow as Ui_PhotonsMainWin
 from ui.photonsWidget import QPhotonsWorksheet
@@ -9,6 +9,8 @@ from ui.wlutzWidget import QWLutzWorksheet
 from ui.picketFenceWidget import QPicketFenceWorksheet
 from ui.fieldAnalysisWidget import QFieldAnalysisWorksheet
 from core.tools.devices import Linac
+
+from ui.py_ui import icons_rc
 
 class QAToolsWin(QMainWindow):
 
@@ -177,7 +179,11 @@ class QAToolsWin(QMainWindow):
         elif self.worksheetType == "FIELD_ANALYSIS_WORKSHEET":
             index = self.__ui.tabWidget.addTab(QFieldAnalysisWorksheet(), u"Field Analysis (Untitled)")
 
+        tab_icon = QPixmap(u":/colorIcons/icons/tools.png")
+        tab_icon = tab_icon.scaled(16, 16, mode = Qt.TransformationMode.SmoothTransformation)
+
         self.__ui.tabWidget.setCurrentIndex(index)
+        self.__ui.tabWidget.setTabIcon(index, tab_icon)
 
     def closeEvent(self, event: QCloseEvent) -> None:
         self.windowClosing.emit()
