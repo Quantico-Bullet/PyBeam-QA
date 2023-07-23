@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QMainWindow, QPushButton, QApplication, QToolButton, QMenu
+from PySide6.QtWidgets import QMainWindow, QPushButton, QApplication, QToolButton, QMenu, QLabel
 from PySide6.QtCore import Qt, QObject, Signal, QDate, QPoint
 from PySide6.QtGui import QAction, QCursor, QActionGroup, QCloseEvent, QPixmap
 
@@ -68,6 +68,12 @@ class QAToolsWin(QMainWindow):
 
         # setup basic window functionality
         self.__ui.dockWidget.close()
+
+        copyright_text = QLabel("PyBeam QA - v0.1.0 (Copyright © 2023 Kagiso Lebang)")
+        copyright_text.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.__ui.statusbar.addPermanentWidget(
+            copyright_text, 1)
         """
         self.sheetsCurrentViewButton = QPushButton()
         self.__ui.statusbar.addPermanentWidget(self.sheetsCurrentViewButton)

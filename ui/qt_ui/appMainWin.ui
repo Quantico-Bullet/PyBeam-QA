@@ -232,9 +232,9 @@ QPushButton:checked {
                  </sizepolicy>
                 </property>
                 <property name="currentIndex">
-                 <number>0</number>
+                 <number>1</number>
                 </property>
-                <widget class="QWidget" name="dailyQAPage">
+                <widget class="QWidget" name="QAToolsPage">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                    <horstretch>0</horstretch>
@@ -967,15 +967,34 @@ border-style: solid;
                   </item>
                  </layout>
                 </widget>
-                <widget class="QWidget" name="annualQAPage">
+                <widget class="QWidget" name="reportsPage">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_11">
+                  <item alignment="Qt::AlignHCenter">
+                   <widget class="QLabel" name="label_3">
+                    <property name="text">
+                     <string>No content here!</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
-                <widget class="QWidget" name="monthlyQAPage"/>
+                <widget class="QWidget" name="devicesPage">
+                 <layout class="QVBoxLayout" name="verticalLayout_10">
+                  <item alignment="Qt::AlignHCenter">
+                   <widget class="QLabel" name="label_2">
+                    <property name="text">
+                     <string>No content here!</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
                </widget>
               </item>
               <item>
@@ -1092,8 +1111,8 @@ border-style: solid;
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>418</width>
-                 <height>276</height>
+                 <width>450</width>
+                 <height>373</height>
                 </rect>
                </property>
                <property name="sizePolicy">
