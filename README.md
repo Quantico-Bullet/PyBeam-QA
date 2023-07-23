@@ -9,10 +9,10 @@ The program is still in early development and may contain bugs. Tools are flagge
 | QA Tool | Status |
 | --------------- | --------------- |
 | TRS 398 Photon & Electron output calibration | In-progress |
-| Picket fence | In-progress |
-| Winston-Lutz analysis | In-progress |
-| Star-shot analysis | In-progress |
-| Field analysis | In-progress |
+| Picket fence | Complete |
+| Winston-Lutz analysis | Complete |
+| Star-shot analysis | Complete |
+| Field analysis | Complete |
 | Planar imaging analysis | Planned |
 
 ## Requirements
