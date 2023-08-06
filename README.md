@@ -13,7 +13,7 @@ The program is still in early development and may contain bugs. Tools are flagge
 | Winston-Lutz analysis | Complete |
 | Star-shot analysis | Complete |
 | Field analysis | Complete |
-| Planar imaging analysis | Planned |
+| Planar imaging analysis | Complete |
 
 ## Requirements
 As of current the program depends on the following:
