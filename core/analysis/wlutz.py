@@ -1,5 +1,5 @@
 import traceback
-from PySide6.QtCore import Signal, Slot, QObject
+from PySide6.QtCore import Signal, Slot, QObject, QRunnable
 
 import pyqtgraph as pg
 from pylinac import WinstonLutz
@@ -37,7 +37,8 @@ class QWinstonLutz(WinstonLutz):
                 "bb_location": {"x": img.bb.x, "y": img.bb.y},
                 "field_cax": {"x": img.field_cax.x, "y": img.field_cax.y},
                 "epid": {"x": img.epid.x, "y": img.epid.y},
-                "cax_to_bb_dist": img.cax2bb_vector.as_scalar(),
+                "cax_to_bb_dist": img.cax2bb_distance,
+                "cax_to_epid_dist": img.cax2epid_distance,
                 "gantry_angle": f"{img.gantry_angle:2.2f}",
                 "collimator_angle": f"{img.collimator_angle:2.2f}",
                 "couch_angle": f"{img.couch_angle:2.2f}",

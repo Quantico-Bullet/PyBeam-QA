@@ -179,7 +179,7 @@ class PicketFenceReport(BaseReport):
         
         if self._max_error is not None:
             data.append([Paragraph("<b>Test outcome</b>"),
-                         f": {self._report_status} (Max. error = {self._max_error:2.2f} mm)"])
+                         f": {self._report_status} (Max. error = {self._max_error:2.3f} mm)"])
             
         else:
             data.append([Paragraph("<b>Test outcome</b>"), f": {self._report_status}"])

@@ -298,7 +298,6 @@ class Ui_MainWindow(object):
 
         self.planarImagingAnalysis = QFrame(self.testListFrame)
         self.planarImagingAnalysis.setObjectName(u"planarImagingAnalysis")
-        self.planarImagingAnalysis.setEnabled(False)
         sizePolicy4.setHeightForWidth(self.planarImagingAnalysis.sizePolicy().hasHeightForWidth())
         self.planarImagingAnalysis.setSizePolicy(sizePolicy4)
         self.planarImagingAnalysis.setFrameShape(QFrame.NoFrame)
@@ -574,7 +573,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollAreaWidgetContents_2 = QWidget()
         self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
-        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 450, 373))
+        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 418, 276))
         sizePolicy.setHeightForWidth(self.scrollAreaWidgetContents_2.sizePolicy().hasHeightForWidth())
         self.scrollAreaWidgetContents_2.setSizePolicy(sizePolicy)
         self.scrollAreaWidgetContents_2.setMaximumSize(QSize(600, 16777215))
@@ -787,7 +786,7 @@ class Ui_MainWindow(object):
 
         self.mainStackWidget.setCurrentIndex(0)
         self.devicesBtn.setDefault(False)
-        self.navigationStackedWidget.setCurrentIndex(1)
+        self.navigationStackedWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)

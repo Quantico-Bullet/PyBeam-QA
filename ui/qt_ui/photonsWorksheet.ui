@@ -42,7 +42,7 @@
      </property>
      <item row="1" column="2">
       <layout class="QVBoxLayout" name="calibSummaryVL">
-       <item>
+       <item alignment="Qt::AlignTop">
         <widget class="QWidget" name="calibSummaryWidget" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -806,7 +806,7 @@ font-weight: bold;
      <item row="1" column="0">
       <widget class="QScrollArea" name="worksheetScrollArea">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+        <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -832,7 +832,7 @@ font-weight: bold;
           <x>0</x>
           <y>0</y>
           <width>605</width>
-          <height>1903</height>
+          <height>1902</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -1159,6 +1159,9 @@ font-weight: bold;
                     <height>16777215</height>
                    </size>
                   </property>
+                  <property name="inputMethodHints">
+                   <set>Qt::ImhDigitsOnly</set>
+                  </property>
                  </widget>
                 </item>
                 <item>
@@ -1180,18 +1183,24 @@ font-weight: bold;
               <item row="8" column="1">
                <layout class="QHBoxLayout" name="refDepthHL">
                 <item>
-                 <widget class="QDoubleSpinBox" name="doubleSpinBox">
+                 <widget class="QLineEdit" name="refDepthLE">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="minimumSize">
                    <size>
                     <width>100</width>
                     <height>0</height>
                    </size>
                   </property>
-                  <property name="buttonSymbols">
-                   <enum>QAbstractSpinBox::NoButtons</enum>
-                  </property>
-                  <property name="specialValueText">
-                   <string notr="true">#</string>
+                  <property name="maximumSize">
+                   <size>
+                    <width>100</width>
+                    <height>16777215</height>
+                   </size>
                   </property>
                  </widget>
                 </item>
@@ -3202,11 +3211,11 @@ QPushButton:!enabled{
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="calibPolarityGroup"/>
+  <buttongroup name="calibSetupGroup"/>
+  <buttongroup name="calibSeparateGroup"/>
   <buttongroup name="userPolarityGroup"/>
   <buttongroup name="beamTypeGroup"/>
   <buttongroup name="beamQualityGroup"/>
-  <buttongroup name="calibSetupGroup"/>
-  <buttongroup name="calibSeparateGroup"/>
+  <buttongroup name="calibPolarityGroup"/>
  </buttongroups>
 </ui>

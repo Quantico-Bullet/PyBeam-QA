@@ -6,7 +6,7 @@ from PySide6.QtWidgets import (QWidget, QListWidgetItem, QMenu, QFileDialog, QDi
                                QCheckBox, QGridLayout, QTabWidget, QSplitter, QTableWidget,
                                QHeaderView, QTableWidgetItem)
 from PySide6.QtGui import QIcon, QPixmap, QColor
-from PySide6.QtCore import Qt, QSize, QEvent, QThread
+from PySide6.QtCore import Qt, QSize, QEvent, QThread, QThreadPool
 
 from ui.py_ui.wlutzWorksheet_ui import Ui_QWLutzWorksheet
 from ui.py_ui import icons_rc
@@ -28,7 +28,6 @@ class QWLutzWorksheet(QWidget):
     COORD_SYS = ["IEC 61217", "Varian IEC", "Varian Standard"]
 
     ANALYSIS_METRICS = {
-            "pylinac_version": "PyLinac version",
             "num_gantry_images": "Number of gantry images",
             "num_gantry_coll_images": "Number of gantry + collimator images",
             "num_coll_images": "Number of collimator images",
@@ -311,8 +310,6 @@ class QWLutzWorksheet(QWidget):
     
         self.qthread = QThread()
         self.worker.moveToThread(self.qthread)
-        self.qthread.started.connect(self.worker.analyze)
-        self.qthread.finished.connect(self.qthread.deleteLater)
         self.worker.analysis_failed.connect(self.qthread.quit)
         self.worker.analysis_failed.connect(self.on_analysis_failed)
         self.worker.images_analyzed.connect(self.analysis_progress_bar.setValue)
@@ -322,6 +319,8 @@ class QWLutzWorksheet(QWidget):
         self.worker.bb_shift_info_changed.connect(self.update_bb_shift)
         self.worker.thread_finished.connect(self.qthread.quit)
         self.worker.thread_finished.connect(self.worker.deleteLater)
+        self.qthread.started.connect(self.worker.analyze)
+        self.qthread.finished.connect(self.qthread.deleteLater)
 
         self.analysis_progress_bar.setRange(0, len(self.marked_images))
         self.analysis_progress_bar.setValue(0)
@@ -369,15 +368,15 @@ class QWLutzWorksheet(QWidget):
                 self.form_layout.addRow(f"{param}:", QLabel(str(results[key])))
 
         self.show_advanced_results_view(True)
-        self.set_analysis_outcome()
+        self.set_analysis_outcome()    
 
     def show_advanced_results_view(self, only_update: bool = False):
         if self.current_results is not None:
             if self.advanced_results_view is None:
                 self.advanced_results_view = AdvancedWLView(results = self.current_results["image_details"],
                                                             tolerance = self.ui.toleranceDSB.value())
-            if not only_update:
-                self.advanced_results_view.show()
+                if not only_update:
+                    self.advanced_results_view.showMaximized()
 
             else:
                 self.advanced_results_view.update_analysis_data(self.current_results["image_details"],
@@ -712,7 +711,7 @@ class AdvancedWLView(QMainWindow):
         self.initComplete = False
 
         self.setWindowTitle("Winston Lutz Analysis (Advanced Results) ‒ PyBeam QA")
-        self.resize(916, 480)
+        self.resize(720, 480)
 
         self.central_widget = QWidget(self)
         self.setCentralWidget(self.central_widget)
@@ -748,9 +747,12 @@ class AdvancedWLView(QMainWindow):
     def update_analysis_data(self, results: list, tolerance: float):
         self.table_widget.clear()
 
+        # Disable sorting before data population to avoid weird behaviour when sorting later
+        self.table_widget.setSortingEnabled(False)
+
         headers = ["Filename", "Gantry angle (°)", "Collimator angle (°)",
-                   "Couch angle (°)",  "𝚫u (mm)", "𝚫v (mm)",
-                   "CAX to EPID distance (mm)", "Outcome (Pass/Fail)"]
+                   "Couch angle (°)", "CAX to EPID distance (mm)", "𝚫u (mm)",
+                   "𝚫v (mm)", "CAX to BB distance (mm)", "Outcome (Pass/Fail)"]
         
         self.table_widget.setColumnCount(len(headers))
         self.table_widget.setRowCount(len(results))
@@ -765,6 +767,7 @@ class AdvancedWLView(QMainWindow):
             gantry_angle_item = QTableWidgetItem(result["gantry_angle"])
             coll_angle_item = QTableWidgetItem(result["collimator_angle"])
             couch_angle_item = QTableWidgetItem(result["couch_angle"])
+            cax_2_epid_item = QTableWidgetItem(f"{result['cax_to_epid_dist']:2.2f}")
             delta_u_item = QTableWidgetItem(result["delta_u"])
             delta_v_item = QTableWidgetItem(result["delta_v"])
             cax_2_bb_item = QTableWidgetItem(f"{result['cax_to_bb_dist']:2.2f}")
@@ -781,6 +784,7 @@ class AdvancedWLView(QMainWindow):
             gantry_angle_item.setFlags(gantry_angle_item.flags() ^ Qt.ItemFlag.ItemIsEditable)
             coll_angle_item.setFlags(coll_angle_item.flags() ^ Qt.ItemFlag.ItemIsEditable)
             couch_angle_item.setFlags(couch_angle_item.flags() ^ Qt.ItemFlag.ItemIsEditable)
+            cax_2_epid_item.setFlags(cax_2_epid_item.flags() ^ Qt.ItemFlag.ItemIsEditable)
             delta_u_item.setFlags(delta_u_item.flags() ^ Qt.ItemFlag.ItemIsEditable)
             delta_v_item.setFlags(delta_v_item.flags() ^ Qt.ItemFlag.ItemIsEditable)
             cax_2_bb_item.setFlags(cax_2_bb_item.flags() ^ Qt.ItemFlag.ItemIsEditable)
@@ -789,6 +793,7 @@ class AdvancedWLView(QMainWindow):
             gantry_angle_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             coll_angle_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             couch_angle_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            cax_2_epid_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             delta_u_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             delta_v_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             cax_2_bb_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -798,7 +803,10 @@ class AdvancedWLView(QMainWindow):
             self.table_widget.setItem(row, 1, gantry_angle_item)
             self.table_widget.setItem(row, 2, coll_angle_item)
             self.table_widget.setItem(row, 3, couch_angle_item)
-            self.table_widget.setItem(row, 4, delta_u_item)
-            self.table_widget.setItem(row, 5, delta_v_item)
-            self.table_widget.setItem(row, 6, cax_2_bb_item)
-            self.table_widget.setItem(row, 7, outcome_item)
+            self.table_widget.setItem(row, 4, cax_2_epid_item)
+            self.table_widget.setItem(row, 5, delta_u_item)
+            self.table_widget.setItem(row, 6, delta_v_item)
+            self.table_widget.setItem(row, 7, cax_2_bb_item)
+            self.table_widget.setItem(row, 8, outcome_item)
+    
+        self.table_widget.setSortingEnabled(True)

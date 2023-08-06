@@ -232,7 +232,7 @@ QPushButton:checked {
                  </sizepolicy>
                 </property>
                 <property name="currentIndex">
-                 <number>1</number>
+                 <number>0</number>
                 </property>
                 <widget class="QWidget" name="QAToolsPage">
                  <property name="sizePolicy">
@@ -508,9 +508,6 @@ border-style:solid;</string>
                            </item>
                            <item>
                             <widget class="QFrame" name="planarImagingAnalysis">
-                             <property name="enabled">
-                              <bool>false</bool>
-                             </property>
                              <property name="sizePolicy">
                               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                                <horstretch>0</horstretch>
@@ -1111,8 +1108,8 @@ border-style: solid;
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>450</width>
-                 <height>373</height>
+                 <width>418</width>
+                 <height>276</height>
                 </rect>
                </property>
                <property name="sizePolicy">

@@ -363,7 +363,7 @@ class Ui_QFieldAnalysisWorksheet(object):
         self.verticalLayout_2 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.verticalLayout_2.setContentsMargins(0, 0, 10, 0)
+        self.verticalLayout_2.setContentsMargins(0, 0, -1, 0)
         self.frame_3 = QFrame(self.scrollAreaWidgetContents)
         self.frame_3.setObjectName(u"frame_3")
         sizePolicy4.setHeightForWidth(self.frame_3.sizePolicy().hasHeightForWidth())

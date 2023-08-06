@@ -54,12 +54,12 @@ class QStarshot(Starshot):
         radius = self.circle_profile.radius
         center_x = self.circle_profile.center.x
         center_y = self.circle_profile.center.y
-        x_outer = radius * (1 + width_ratio) * np.cos(np.linspace(0, 2*np.pi, 1000)) + center_x
-        y_outer = radius * (1 + width_ratio) * np.sin(np.linspace(0, 2*np.pi, 1000)) + center_y
+        x_outer = radius * (1 + width_ratio) * np.cos(np.linspace(0, 2*np.pi, 500)) + center_x
+        y_outer = radius * (1 + width_ratio) * np.sin(np.linspace(0, 2*np.pi, 500)) + center_y
         self.imagePlotWidget.plot(x_outer, y_outer, pen = pg.mkPen((0, 255, 0), width = 2))
 
-        x_outer = radius * (1 - width_ratio) * np.cos(np.linspace(0, 2*np.pi, 1000)) + center_x
-        y_outer = radius * (1 - width_ratio) * np.sin(np.linspace(0, 2*np.pi, 1000)) + center_y
+        x_outer = radius * (1 - width_ratio) * np.cos(np.linspace(0, 2*np.pi, 500)) + center_x
+        y_outer = radius * (1 - width_ratio) * np.sin(np.linspace(0, 2*np.pi, 500)) + center_y
 
         self.imagePlotWidget.plot(x_outer, y_outer, pen = pg.mkPen((0, 255, 0), width = 2))
 

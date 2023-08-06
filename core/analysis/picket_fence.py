@@ -79,7 +79,7 @@ class QPicketFence(PicketFence):
             
             self.analyzed_image_plot_widget.nextRow()
 
-            self.analyzed_image_plot_widget.addLabel('Average error (mm)',
+            self.analyzed_image_plot_widget.addLabel('Maximum leaf pair error (mm)',
                                                      col = 1)
             
             image_plot_item.invertY(True)
@@ -106,7 +106,7 @@ class QPicketFence(PicketFence):
             
             self.analyzed_image_plot_widget.nextRow()
 
-            self.analyzed_image_plot_widget.addLabel('Average error (mm)',
+            self.analyzed_image_plot_widget.addLabel('Maximum leaf pair error (mm)',
                                                      row = 2,
                                                      col = 0,
                                                      angle = -90)
@@ -182,9 +182,10 @@ class QPicketFence(PicketFence):
 
         error_stdev = []
         error_vals = []
+        
         for leaf_num in {m.leaf_num for m in self.mlc_meas}:
             error_vals.append(
-                np.mean(
+                np.max(
                     [np.abs(m.error) for m in self.mlc_meas if m.leaf_num == leaf_num]
                 )
             )
@@ -206,7 +207,7 @@ class QPicketFence(PicketFence):
                                    y = pos, y0 = pos - 2.5, y1 = pos + 2.5,
                                    brush= bar_brush)
 
-            error_plot_item.addItem(error_bars)
+            #error_plot_item.addItem(error_bars)
             error_plot_item.addItem(bars)
             
         else:
@@ -215,7 +216,7 @@ class QPicketFence(PicketFence):
             
             bars = pg.BarGraphItem(x=pos, height = error_vals, width = 5, brush= bar_brush)
             
-            error_plot_item.addItem(error_bars)
+            #error_plot_item.addItem(error_bars)
             error_plot_item.addItem(bars)
         
     def qplot_leaf_profile(self, leaf: int, picket: int):
@@ -244,7 +245,7 @@ class QPicketFence(PicketFence):
         #plot the mlc position
         pos = mlc.get_peak_positions()[0]
         mlc_pos_plot = pg.InfiniteLine(pos=pos,movable=False, angle=90, 
-                       pen = (135,206,235), label=f'MLC position ({pos:2.2f})', 
+                       pen = mlc.bg_color[0], label=f'MLC position ({pos:2.2f})', 
                        labelOpts={'position':0.1, 'color': (135,206,235), 
                                   'fill': (135,206,235,50), 'movable': True})
 
@@ -340,7 +341,8 @@ class QPicketFenceWorker(QObject):
         Perform an analysis of a picket fence image or series of picket fence images
         """
         try:
-            self._pf.analyze(tolerance=self._pf.tolerance, action_tolerance= self._pf.action_tolerance)
+            self._pf.analyze(tolerance=self._pf.tolerance, action_tolerance= self._pf.action_tolerance,
+                             invert=self._invert)
 
             summary_text = [["Gantry angle:", f"{self._pf.image.gantry_angle:2.2f}°"],
                        ["Collimator angle:", f"{self._pf.image.collimator_angle:2.2f}°"],

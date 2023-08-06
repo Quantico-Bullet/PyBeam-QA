@@ -43,7 +43,8 @@ class AppMainWin(QMainWindow):
                       "picket_fence": None,
                       "starshot": None,
                       "winston_lutz": None,
-                      "field_analysis": None}
+                      "field_analysis": None,
+                      "planar_imaging_analysis": None}
 
     def setupCalibrationPage(self, calibType: str):
         self.currLinac = None
@@ -153,6 +154,9 @@ class AppMainWin(QMainWindow):
 
         elif event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.fieldAnalysis:
             self.open_window({"winType": "field_analysis"})
+
+        elif event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.planarImagingAnalysis:
+            self.open_window({"winType": "planar_imaging_analysis"})
             
         return super().eventFilter(source, event)
     

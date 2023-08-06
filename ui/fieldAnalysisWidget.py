@@ -1,9 +1,8 @@
 from PySide6.QtWidgets import (QWidget, QLabel, QProgressBar, QVBoxLayout, QFileDialog,
                                QListWidgetItem, QMenu, QSizePolicy, QMessageBox, 
-                               QMainWindow, QFormLayout, QTabWidget, QFrame, QGridLayout,
-                               QSplitter, QTreeWidgetItem, QTreeWidget, QComboBox,
-                               QDialog, QDialogButtonBox, QLineEdit, QSpacerItem,
-                               QPushButton, QCheckBox, QHBoxLayout)
+                               QMainWindow, QFormLayout, QTabWidget, QGridLayout,
+                               QSplitter, QComboBox, QDialog, QDialogButtonBox, QLineEdit,
+                               QSpacerItem,QPushButton, QCheckBox, QHBoxLayout)
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtCore import Qt, QSize, QEvent, QThread
 

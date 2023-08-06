@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import QMainWindow, QPushButton, QApplication, QToolButton, QMenu, QLabel
 from PySide6.QtCore import Qt, QObject, Signal, QDate, QPoint
 from PySide6.QtGui import QAction, QCursor, QActionGroup, QCloseEvent, QPixmap
+from ui.planarImagingWidget import QPlanarImagingWorksheet
 
 from ui.py_ui.photonsMainWin_ui import Ui_MainWindow as Ui_PhotonsMainWin
 from ui.photonsWidget import QPhotonsWorksheet
@@ -64,6 +65,12 @@ class QAToolsWin(QMainWindow):
                 self.worksheetType = "FIELD_ANALYSIS_WORKSHEET"
 
                 self.setWindowTitle("Field Analysis ‒ PyBeam QA")
+                self.addNewWorksheet()
+
+            elif initData["winType"] == "planar_imaging_analysis":
+                self.worksheetType = "PLANAR_IMAGING_WORKSHEET"
+
+                self.setWindowTitle("Planar Imaging Analysis ‒ PyBeam QA")
                 self.addNewWorksheet()
 
         # setup basic window functionality
@@ -174,7 +181,7 @@ class QAToolsWin(QMainWindow):
 
     def addNewWorksheet(self):
         if self.worksheetType == "WL_WORKSHEET":
-            index = self.__ui.tabWidget.addTab(QWLutzWorksheet(), u"WL Analysis (Untitled)")
+            index = self.__ui.tabWidget.addTab(QWLutzWorksheet(), u"Winston-Lutz (Untitled)")
 
         elif self.worksheetType == "PICKET_FENCE_WORKSHEET":
             index = self.__ui.tabWidget.addTab(QPicketFenceWorksheet(), u"Picket Fence (Untitled)")
@@ -184,6 +191,9 @@ class QAToolsWin(QMainWindow):
 
         elif self.worksheetType == "FIELD_ANALYSIS_WORKSHEET":
             index = self.__ui.tabWidget.addTab(QFieldAnalysisWorksheet(), u"Field Analysis (Untitled)")
+
+        elif self.worksheetType == "PLANAR_IMAGING_WORKSHEET":
+            index = self.__ui.tabWidget.addTab(QPlanarImagingWorksheet(), u"Planar Imaging (Untitled)")
 
         tab_icon = QPixmap(u":/colorIcons/icons/tools.png")
         tab_icon = tab_icon.scaled(16, 16, mode = Qt.TransformationMode.SmoothTransformation)

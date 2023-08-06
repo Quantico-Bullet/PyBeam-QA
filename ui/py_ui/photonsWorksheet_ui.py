@@ -15,12 +15,12 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractSpinBox, QApplication, QButtonGroup, QCheckBox,
-    QComboBox, QDateEdit, QDoubleSpinBox, QFormLayout,
-    QFrame, QGridLayout, QGroupBox, QHBoxLayout,
-    QLabel, QLayout, QLineEdit, QPushButton,
-    QRadioButton, QScrollArea, QSizePolicy, QSpacerItem,
-    QStackedWidget, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QButtonGroup, QCheckBox, QComboBox,
+    QDateEdit, QFormLayout, QFrame, QGridLayout,
+    QGroupBox, QHBoxLayout, QLabel, QLayout,
+    QLineEdit, QPushButton, QRadioButton, QScrollArea,
+    QSizePolicy, QSpacerItem, QStackedWidget, QVBoxLayout,
+    QWidget)
 
 class Ui_QPhotonsWorksheet(object):
     def setupUi(self, QPhotonsWorksheet):
@@ -369,7 +369,7 @@ class Ui_QPhotonsWorksheet(object):
         self.verticalLayout_12.addWidget(self.outcomeLE)
 
 
-        self.calibSummaryVL.addWidget(self.calibSummaryWidget)
+        self.calibSummaryVL.addWidget(self.calibSummaryWidget, 0, Qt.AlignTop)
 
 
         self.worksheetGrid.addLayout(self.calibSummaryVL, 1, 2, 1, 1)
@@ -455,15 +455,15 @@ class Ui_QPhotonsWorksheet(object):
 
         self.worksheetScrollArea = QScrollArea(QPhotonsWorksheet)
         self.worksheetScrollArea.setObjectName(u"worksheetScrollArea")
-        sizePolicy7.setHeightForWidth(self.worksheetScrollArea.sizePolicy().hasHeightForWidth())
-        self.worksheetScrollArea.setSizePolicy(sizePolicy7)
+        sizePolicy4.setHeightForWidth(self.worksheetScrollArea.sizePolicy().hasHeightForWidth())
+        self.worksheetScrollArea.setSizePolicy(sizePolicy4)
         self.worksheetScrollArea.setMaximumSize(QSize(630, 16777215))
         self.worksheetScrollArea.setStyleSheet(u"")
         self.worksheetScrollArea.setFrameShape(QFrame.StyledPanel)
         self.worksheetScrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 605, 1903))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 605, 1902))
         sizePolicy2.setHeightForWidth(self.scrollAreaWidgetContents.sizePolicy().hasHeightForWidth())
         self.scrollAreaWidgetContents.setSizePolicy(sizePolicy2)
         self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents)
@@ -644,6 +644,7 @@ class Ui_QPhotonsWorksheet(object):
         self.refDistanceLE.setSizePolicy(sizePolicy2)
         self.refDistanceLE.setMinimumSize(QSize(100, 0))
         self.refDistanceLE.setMaximumSize(QSize(100, 16777215))
+        self.refDistanceLE.setInputMethodHints(Qt.ImhDigitsOnly)
 
         self.refDistanceHL.addWidget(self.refDistanceLE)
 
@@ -662,13 +663,14 @@ class Ui_QPhotonsWorksheet(object):
 
         self.refDepthHL = QHBoxLayout()
         self.refDepthHL.setObjectName(u"refDepthHL")
-        self.doubleSpinBox = QDoubleSpinBox(self.sectionOneGB)
-        self.doubleSpinBox.setObjectName(u"doubleSpinBox")
-        self.doubleSpinBox.setMinimumSize(QSize(100, 0))
-        self.doubleSpinBox.setButtonSymbols(QAbstractSpinBox.NoButtons)
-        self.doubleSpinBox.setSpecialValueText(u"#")
+        self.refDepthLE = QLineEdit(self.sectionOneGB)
+        self.refDepthLE.setObjectName(u"refDepthLE")
+        sizePolicy2.setHeightForWidth(self.refDepthLE.sizePolicy().hasHeightForWidth())
+        self.refDepthLE.setSizePolicy(sizePolicy2)
+        self.refDepthLE.setMinimumSize(QSize(100, 0))
+        self.refDepthLE.setMaximumSize(QSize(100, 16777215))
 
-        self.refDepthHL.addWidget(self.doubleSpinBox)
+        self.refDepthHL.addWidget(self.refDepthLE)
 
         self.refDepthUnit = QLabel(self.sectionOneGB)
         self.refDepthUnit.setObjectName(u"refDepthUnit")
