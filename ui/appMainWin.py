@@ -1,15 +1,22 @@
 from PySide6.QtWidgets import (QWidget, QMainWindow, QCheckBox)
 from PySide6.QtCore import QObject, QEvent
+from ui.trs398Widgets import PhotonsMainWindow
 
 from ui.py_ui.appMainWin_ui import Ui_MainWindow as Ui_AppMainWin
-from ui.qaMainWin import QAToolsWin
+from ui.qaToolsWindow import QAToolsWindow
 from core.tools.devices import DeviceManager, Linac
+
+from ui.starshotWidgets import StarshotMainWindow
+from ui.wlutzWidgets import WinstonLutzMainWindow
+from ui.fieldAnalysisWidgets import FieldAnalysisMainWindow
+from ui.picketFenceWidgets import PicketFenceMainWindow
+from ui.planarImagingWidgets import PlanarImagingMainWindow
 
 class AppMainWin(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.__ui = Ui_AppMainWin()
-        self.__ui.setupUi(self)
+        self._ui = Ui_AppMainWin()
+        self._ui.setupUi(self)
 
         self.initSetupComplete = False
 
@@ -20,23 +27,18 @@ class AppMainWin(QMainWindow):
 
     def setupPages(self):
         # setup main page
-        self.__ui.navTabBtnGroup.buttonClicked.connect(self.changeNavPage)
-        self.__ui.photonCalib.installEventFilter(self)
-        self.__ui.electronCalib.installEventFilter(self)
-        self.__ui.winstonLutzAnalysis.installEventFilter(self)
-        self.__ui.planarImagingAnalysis.installEventFilter(self)
-        self.__ui.fieldAnalysis.installEventFilter(self)
-        self.__ui.starshotAnalysis.installEventFilter(self)
-        self.__ui.picketFence.installEventFilter(self)
+        self._ui.navTabBtnGroup.buttonClicked.connect(self.changeNavPage)
+        self._ui.photonCalib.installEventFilter(self)
+        self._ui.electronCalib.installEventFilter(self)
+        self._ui.winstonLutzAnalysis.installEventFilter(self)
+        self._ui.planarImagingAnalysis.installEventFilter(self)
+        self._ui.fieldAnalysis.installEventFilter(self)
+        self._ui.starshotAnalysis.installEventFilter(self)
+        self._ui.picketFence.installEventFilter(self)
 
         # setup defaults, useful to avoid defaults set by Qt designer
-        self.__ui.mainStackWidget.setCurrentIndex(0)
-        self.__ui.navigationStackedWidget.setCurrentIndex(0)
-
-        self.winston_lutz_win = None
-        self.picket_fence_win = None
-        self.starshot_win = None
-        self.field_analysis_win = None
+        self._ui.mainStackWidget.setCurrentIndex(0)
+        self._ui.navigationStackedWidget.setCurrentIndex(0)
 
         self.qa_windows = {"photon_cal": None,
                       "electron_cal": None,
@@ -51,30 +53,30 @@ class AppMainWin(QMainWindow):
         self.beamCheckBoxList = []
 
         # setup daily/monthly photons page functionality
-        self.__ui.calibStartBtn.clicked.connect(lambda: "fake slot") # use fake slots so that we can disconnect past slots without errors
-        self.__ui.backBtn.clicked.connect(lambda: "fake slot")
-        self.__ui.linacNameCB.currentTextChanged.connect(lambda x: "fake slot")
-        self.__ui.backBtn.clicked.disconnect()
-        self.__ui.backBtn.clicked.connect(lambda: self.changeMainPage(self.__ui.linacQAPage))
-        self.__ui.calibStartBtn.clicked.disconnect()
-        self.__ui.linacNameCB.currentTextChanged.disconnect()
-        self.__ui.institutionLE.clear()
-        self.__ui.userLE.clear()
-        self.__ui.linacNameCB.clear()
+        self._ui.calibStartBtn.clicked.connect(lambda: "fake slot") # use fake slots so that we can disconnect past slots without errors
+        self._ui.backBtn.clicked.connect(lambda: "fake slot")
+        self._ui.linacNameCB.currentTextChanged.connect(lambda x: "fake slot")
+        self._ui.backBtn.clicked.disconnect()
+        self._ui.backBtn.clicked.connect(lambda: self.changeMainPage(self._ui.linacQAPage))
+        self._ui.calibStartBtn.clicked.disconnect()
+        self._ui.linacNameCB.currentTextChanged.disconnect()
+        self._ui.institutionLE.clear()
+        self._ui.userLE.clear()
+        self._ui.linacNameCB.clear()
 
         if calibType == "photons":
-            self.__ui.calibPageTitle.setText("Photon Output Calibration")
-            self.__ui.calibStartBtn.clicked.connect(lambda: self.initPhotonsCalibQA())
-            self.__ui.linacNameCB.currentTextChanged.connect(lambda x: self.setLinacDetails(calibType, x))   
+            self._ui.calibPageTitle.setText("Photon Output Calibration")
+            self._ui.calibStartBtn.clicked.connect(lambda: self.initPhotonsCalibQA())
+            self._ui.linacNameCB.currentTextChanged.connect(lambda x: self.setLinacDetails(calibType, x))   
 
         elif calibType == "electrons":
-            self.__ui.calibPageTitle.setText("Electron Output Calibration")
-            self.__ui.calibStartBtn.clicked.connect(lambda: self.initElectronsCalibQA())
-            self.__ui.linacNameCB.currentTextChanged.connect(lambda x: self.setLinacDetails(calibType, x))
+            self._ui.calibPageTitle.setText("Electron Output Calibration")
+            self._ui.calibStartBtn.clicked.connect(lambda: self.initElectronsCalibQA())
+            self._ui.linacNameCB.currentTextChanged.connect(lambda x: self.setLinacDetails(calibType, x))
         
         # Add all available linacs
         for linac in DeviceManager.device_list["linacs"]:
-            self.__ui.linacNameCB.addItem(linac.name)
+            self._ui.linacNameCB.addItem(linac.name)
 
     def setLinacDetails(self, calibType: str, linacName: str):
         for linac in DeviceManager.device_list["linacs"]:
@@ -83,102 +85,101 @@ class AppMainWin(QMainWindow):
         
         # check if there are beams added prior and remove them
         self.beamCheckBoxList.clear()
-        addedPrior = self.__ui.linacBeamsField.count()
+        addedPrior = self._ui.linacBeamsField.count()
                 
         for i in range(addedPrior):
-            layout = self.__ui.linacBeamsField.takeAt(0)
+            layout = self._ui.linacBeamsField.takeAt(0)
             widget = layout.widget()
             widget.deleteLater()
 
         # TODO check if these fields exist/make sure they exist but are empty
-        self.__ui.linacSerialNumField.setText(self.currLinac.serial_num)
-        self.__ui.linacModelField.setText(self.currLinac.model_name)
-        self.__ui.linacManufacField.setText(self.currLinac.manufacturer)
+        self._ui.linacSerialNumField.setText(self.currLinac.serial_num)
+        self._ui.linacModelField.setText(self.currLinac.model_name)
+        self._ui.linacManufacField.setText(self.currLinac.manufacturer)
 
         # add new beams
         if calibType == "photons":
             for i,beam in enumerate(self.currLinac.beams["photons"]):
                 checkBox = QCheckBox(f"{beam} MV")
-                self.__ui.linacBeamsField.addWidget(checkBox,i,0,1,1)
+                self._ui.linacBeamsField.addWidget(checkBox,i,0,1,1)
                 self.beamCheckBoxList.append(checkBox)
 
             for i,beam in enumerate(self.currLinac.beams["photonsFFF"]):
                 checkBox = QCheckBox(f"{beam} MV FFF")
-                self.__ui.linacBeamsField.addWidget(checkBox,i,1,1,1)
+                self._ui.linacBeamsField.addWidget(checkBox,i,1,1,1)
                 self.beamCheckBoxList.append(checkBox)
 
         elif calibType == "electrons":
             for i,beam in enumerate(self.currLinac.beams["electrons"]):
                 checkBox = QCheckBox(f"{beam} MeV")
-                self.__ui.linacBeamsField.addWidget(checkBox,i,0,1,1)
+                self._ui.linacBeamsField.addWidget(checkBox,i,0,1,1)
                 self.beamCheckBoxList.append(checkBox)
 
             for i,beam in enumerate(self.currLinac.beams["electronsFFF"]):
                 checkBox = QCheckBox(f"{beam} MeV FFF")
-                self.__ui.linacBeamsField.addWidget(checkBox,i,1,1,1)
+                self._ui.linacBeamsField.addWidget(checkBox,i,1,1,1)
                 self.beamCheckBoxList.append(checkBox)
 
     def changeMainPage(self, currWidget: QWidget):
-        self.__ui.mainStackWidget.setCurrentWidget(currWidget)
+        self._ui.mainStackWidget.setCurrentWidget(currWidget)
 
     def changeNavPage(self):
-        if self.__ui.navTabBtnGroup.checkedButton() == self.__ui.qaToolsBtn:
-            self.__ui.currentPageTitle.setText("QA Tools")
-            self.__ui.navigationStackedWidget.setCurrentIndex(0)
-        elif self.__ui.navTabBtnGroup.checkedButton() == self.__ui.qaReportsBtn:
-            self.__ui.currentPageTitle.setText("Reports")
-            self.__ui.navigationStackedWidget.setCurrentIndex(1)
+        if self._ui.navTabBtnGroup.checkedButton() == self._ui.qaToolsBtn:
+            self._ui.currentPageTitle.setText("QA Tools")
+            self._ui.navigationStackedWidget.setCurrentIndex(0)
+        elif self._ui.navTabBtnGroup.checkedButton() == self._ui.qaReportsBtn:
+            self._ui.currentPageTitle.setText("Reports")
+            self._ui.navigationStackedWidget.setCurrentIndex(1)
         else:
-            self.__ui.currentPageTitle.setText("Devices")
-            self.__ui.navigationStackedWidget.setCurrentIndex(2)
+            self._ui.currentPageTitle.setText("Devices")
+            self._ui.navigationStackedWidget.setCurrentIndex(2)
     
     def eventFilter(self, source: QObject, event: QEvent) -> bool:
         # Catch all sub-navigation component clicks here
         # TODO remove too many if else checks
-        if event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.photonCalib:
+        if event.type() == QEvent.Type.MouseButtonPress and source is self._ui.photonCalib:
             self.setupCalibrationPage("photons")
-            self.changeMainPage(self.__ui.initCalibPage)
+            self.changeMainPage(self._ui.initCalibPage)
 
         #elif event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.electronCalib:
             #self.setupCalibrationPage("electrons")
             #self.changeMainPage(self.__ui.initCalibPage)
 
-        elif event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.winstonLutzAnalysis:
-            self.open_window({"winType": "winston_lutz"})
+        elif event.type() == QEvent.Type.MouseButtonPress and source is self._ui.winstonLutzAnalysis:
+            self.open_window("winston_lutz", WinstonLutzMainWindow)
         
-        elif event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.picketFence:
-            self.open_window({"winType": "picket_fence"})
+        elif event.type() == QEvent.Type.MouseButtonPress and source is self._ui.picketFence:
+            self.open_window("picket_fence", PicketFenceMainWindow)
 
-        elif event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.starshotAnalysis:
-            self.open_window({"winType": "starshot"})
+        elif event.type() == QEvent.Type.MouseButtonPress and source is self._ui.starshotAnalysis:
+            self.open_window("starshot", StarshotMainWindow)
 
-        elif event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.fieldAnalysis:
-            self.open_window({"winType": "field_analysis"})
+        elif event.type() == QEvent.Type.MouseButtonPress and source is self._ui.fieldAnalysis:
+            self.open_window("field_analysis", FieldAnalysisMainWindow)
 
-        elif event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.planarImagingAnalysis:
-            self.open_window({"winType": "planar_imaging_analysis"})
+        elif event.type() == QEvent.Type.MouseButtonPress and source is self._ui.planarImagingAnalysis:
+            self.open_window("planar_imaging_analysis", PlanarImagingMainWindow)
             
         return super().eventFilter(source, event)
     
-    def open_window(self, params: dict):
-        if self.qa_windows[params["winType"]] is None:
+    def open_window(self, window_type: str, window: QAToolsWindow, data: dict | None = None):
+        if self.qa_windows[window_type] is None:
 
-            self.qa_windows[params["winType"]] = QAToolsWin(params)
-            self.qa_windows[params["winType"]].showMaximized()
+            self.qa_windows[window_type] = window(data)
+            self.qa_windows[window_type].showMaximized()
                 
-            self.qa_windows[params["winType"]].windowClosing.connect(
-                lambda: self.window_closed(params["winType"]))
+            self.qa_windows[window_type].windowClosing.connect(
+                lambda: self.window_closed(window_type))
               
         else:
-            self.qa_windows[params["winType"]].addNewWorksheet()
-            self.qa_windows[params["winType"]].activateWindow()
+            self.qa_windows[window_type].add_new_worksheet()
+            self.qa_windows[window_type].activateWindow()
     
     def window_closed(self, winType: str):
         self.qa_windows[winType] = None
     
     def initPhotonsCalibQA(self):
-        initData = {"winType": "photon_cal",
-                    "institution": None,
+        initData = {"institution": None,
                     "user": None,
                     "photonBeams": [],
                     "photonFFFBeams": [],
@@ -194,14 +195,13 @@ class AppMainWin(QMainWindow):
                     initData["photonBeams"].append(int(str(beamCheckBox.text())
                                     .split(" ")[0]))
                     
-        initData["institution"] = self.__ui.institutionLE.text()
-        initData["user"] = self.__ui.userLE.text()
+        initData["institution"] = self._ui.institutionLE.text()
+        initData["user"] = self._ui.userLE.text()
         
-        self.open_window(initData)
+        self.open_window("photon_cal", PhotonsMainWindow, initData)
 
     def initElectronsCalibQA(self):
-        initData = {"winType": "electron_cal",
-                    "institution": None,
+        initData = {"institution": None,
                     "user": None,
                     "electronBeams": [],
                     "electronFFFBeams": [],
@@ -217,7 +217,7 @@ class AppMainWin(QMainWindow):
                     initData["electronBeams"].append(int(str(beamCheckBox.text())
                                     .split(" ")[0]))
                     
-        initData["institution"] = self.__ui.institutionLE.text()
-        initData["user"] = self.__ui.userLE.text()
+        initData["institution"] = self._ui.institutionLE.text()
+        initData["user"] = self._ui.userLE.text()
         
-        self.open_window(initData)
+        #self.open_window("electron_cal", ElectronsMainWindow)

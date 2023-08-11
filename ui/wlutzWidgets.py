@@ -1,4 +1,3 @@
-from typing import Optional
 from PySide6.QtWidgets import (QWidget, QListWidgetItem, QMenu, QFileDialog, QDialog, 
                                QFormLayout, QVBoxLayout, QHBoxLayout, QLabel, QProgressBar, 
                                QMessageBox, QSizePolicy, QMainWindow, QGroupBox, 
@@ -6,8 +5,9 @@ from PySide6.QtWidgets import (QWidget, QListWidgetItem, QMenu, QFileDialog, QDi
                                QCheckBox, QGridLayout, QTabWidget, QSplitter, QTableWidget,
                                QHeaderView, QTableWidgetItem)
 from PySide6.QtGui import QIcon, QPixmap, QColor
-from PySide6.QtCore import Qt, QSize, QEvent, QThread, QThreadPool
+from PySide6.QtCore import Qt, QSize, QEvent, QThread
 
+from ui.qaToolsWindow import QAToolsWindow
 from ui.py_ui.wlutzWorksheet_ui import Ui_QWLutzWorksheet
 from ui.py_ui import icons_rc
 from core.analysis.wlutz import QWinstonLutzWorker
@@ -22,6 +22,23 @@ import subprocess
 import webbrowser
 
 pg.setConfigOptions(antialias=True, imageAxisOrder='row-major')
+
+class WinstonLutzMainWindow(QAToolsWindow):
+    
+    def __init__(self, initData: dict = None):
+        super().__init__(initData)
+
+        self.window_title = "Winston Lutz ‒ PyBeam QA"
+        self.setWindowTitle(self.window_title)
+
+        self.add_new_worksheet()
+
+    def add_new_worksheet(self, worksheet_name: str = None, enable_icon: bool = True):
+        if worksheet_name is None:
+            self.untitled_counter = self.untitled_counter + 1
+            worksheet_name = f"Winston Lutz (Untitled-{self.untitled_counter})"
+
+        return super().add_new_worksheet(QWLutzWorksheet(), worksheet_name, enable_icon)
 
 class QWLutzWorksheet(QWidget):
 

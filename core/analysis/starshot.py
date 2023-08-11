@@ -110,8 +110,6 @@ class QStarshot(Starshot):
         ax.set_xlim(xlims)
         ax.set_ylim(ylims)
 
-        ax.axis('on')
-
         fig.savefig(wobble_plot_data, format = "pdf", pad_inches = 0.0, bbox_inches='tight')
 
         return [full_plot_data, wobble_plot_data]

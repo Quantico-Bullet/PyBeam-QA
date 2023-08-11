@@ -7,6 +7,7 @@ from PySide6.QtWidgets import (QWidget, QLabel, QProgressBar, QVBoxLayout, QFile
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtCore import Qt, QSize, QEvent, QThread
 
+from ui.qaToolsWindow import QAToolsWindow
 from ui.py_ui import icons_rc
 from ui.py_ui.picketFenceWorksheet_ui import Ui_QPicketFenceWorksheet
 from core.analysis.picket_fence import QPicketFence, QPicketFenceWorker
@@ -21,6 +22,23 @@ import pyqtgraph as pg
 from pathlib import Path
 from pylinac.core.image import LinacDicomImage
 from pylinac.picketfence import MLC
+
+class PicketFenceMainWindow(QAToolsWindow):
+    
+    def __init__(self, initData: dict = None):
+        super().__init__(initData)
+
+        self.window_title = "Picket Fence ‒ PyBeam QA"
+        self.setWindowTitle(self.window_title)
+
+        self.add_new_worksheet()
+
+    def add_new_worksheet(self, worksheet_name: str = None, enable_icon: bool = True):
+        if worksheet_name is None:
+            self.untitled_counter = self.untitled_counter + 1
+            worksheet_name = f"Picket Fence (Untitled-{self.untitled_counter})"
+
+        return super().add_new_worksheet(QPicketFenceWorksheet(), worksheet_name, enable_icon)
 
 class QPicketFenceWorksheet(QWidget):
 
@@ -89,7 +107,7 @@ class QPicketFenceWorksheet(QWidget):
 
         #-------- init defaults --------
         self.marked_images = []
-        self.current_results = None
+        self.current_results: dict = None
         self.imageView_windows = []
         self.advanced_results_view = None
         self.analysis_in_progress = False
@@ -337,6 +355,9 @@ class QPicketFenceWorksheet(QWidget):
         self.remove_list_checkmarks()
         self.set_analysis_outcome()
 
+        if self.current_results is not None:
+            self.clear_analysis_data()
+
         row_count = self.form_layout.rowCount()
         for i in range(row_count):
             self.form_layout.removeRow(row_count - (i+1))
@@ -349,33 +370,31 @@ class QPicketFenceWorksheet(QWidget):
         self.analysis_progress_bar.show()
         self.analysis_message_label.show()
 
-        if len(self.marked_images) > 1:
+        if len(self.marked_images) > 0:
             images = self.marked_images[0]
             
-        else:
-            images = self.marked_images
+            try:
+                self.worker = QPicketFenceWorker(filename = images,
+                                use_filename = self.ui.useFilenameSCheckB.isChecked(),
+                                mlc = self.ui.mlcTypeCB.currentText(),
+                                crop_mm = self.ui.cropDSB.value(),
+                                invert = self.ui.invertImageCheckB.isChecked(),
+                                tolerance = self.ui.toleranceDSB.value())
         
-        try:
-            self.worker = QPicketFenceWorker(filename = images,
-                               use_filename = self.ui.useFilenameSCheckB.isChecked(),
-                               mlc = self.ui.mlcTypeCB.currentText(),
-                               crop_mm = self.ui.cropDSB.value(),
-                               invert = self.ui.invertImageCheckB.isChecked(),
-                               tolerance = self.ui.toleranceDSB.value())
-        
-            self.qthread = QThread()
-            self.worker.moveToThread(self.qthread)
-            self.worker.analysis_failed.connect(self.qthread.quit)
-            self.worker.analysis_failed.connect(lambda x: self.on_error_encountered(error_message = x))
-            self.worker.thread_finished.connect(self.qthread.quit)
-            self.worker.analysis_results_ready.connect(lambda results: self.show_analysis_results(results))
-            self.qthread.started.connect(self.worker.analyze)
-            self.qthread.finished.connect(self.qthread.deleteLater)
+                self.qthread = QThread()
+                self.worker.moveToThread(self.qthread)
+                self.worker.analysis_failed.connect(self.qthread.quit)
+                self.worker.analysis_failed.connect(lambda x: self.on_error_encountered(error_message = x))
+                self.worker.thread_finished.connect(self.qthread.quit)
+                self.worker.thread_finished.connect(self.worker.deleteLater)
+                self.worker.analysis_results_ready.connect(lambda results: self.show_analysis_results(results))
+                self.qthread.started.connect(self.worker.analyze)
+                self.qthread.finished.connect(self.qthread.deleteLater)
 
-            self.qthread.start()
+                self.qthread.start()
 
-        except Exception as err:
-            self.on_error_encountered(error_message = traceback.format_exception_only(err)[-1])
+            except Exception as err:
+                self.on_error_encountered(error_message = traceback.format_exception_only(err)[-1])
 
     def show_analysis_results(self, results: dict):
         self.has_analysis = True
@@ -411,10 +430,10 @@ class QPicketFenceWorksheet(QWidget):
                        f"Max error at picket {pf.max_error_picket + 1} and leaf {pf.max_error_leaf + 1}"],
                       ["Percentage of passing leafs", f"{pf.percent_passing:2.0f}%", ""],
                       ["Number of failed leafs", f"{len(pf.failed_leaves())}", ""]]
-
+        
         # Update the advanced view
         if self.advanced_results_view is not None:
-            self.advanced_results_view.update_picket_fence(pf)
+            self.advanced_results_view.update_picket_fence(results["picket_fence_obj"])
 
     def remove_list_checkmarks(self):
         for index in range(self.ui.imageListWidget.count()):
@@ -475,6 +494,9 @@ class QPicketFenceWorksheet(QWidget):
                 "font-weight: bold;\n")
     
     def generate_report(self):
+
+        #self.clear_analysis_data()
+
         physicist_name_le = QLineEdit()
         institution_name_le = QLineEdit()
         treatment_unit_le = QComboBox()
@@ -573,6 +595,10 @@ class QPicketFenceWorksheet(QWidget):
                 path[-1] = path[-1] + ".pdf"
             
             line_edit.setText("/".join(path))
+
+    def clear_analysis_data(self):
+        del self.current_results
+        self.current_results = None
             
 class AdvancedPFView(QMainWindow):
 

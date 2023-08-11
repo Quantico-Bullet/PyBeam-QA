@@ -1,14 +1,15 @@
 from PySide6.QtWidgets import (QWidget, QLabel, QProgressBar, QVBoxLayout, QFileDialog,
                                QListWidgetItem, QMenu, QSizePolicy, QMessageBox, 
                                QMainWindow, QFormLayout, QTabWidget, QGridLayout,
-                               QSplitter, QComboBox, QDialog, QDialogButtonBox, QLineEdit, 
-                               QSpacerItem, QPushButton, QCheckBox, QHBoxLayout)
+                               QSplitter, QComboBox, QDialog, QDialogButtonBox, QLineEdit,
+                               QSpacerItem,QPushButton, QCheckBox, QHBoxLayout)
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtCore import Qt, QSize, QEvent, QThread
 
-from ui.py_ui.planarImagingWorksheet_ui import Ui_QPlanarImagingWorksheet
+from ui.qaToolsWindow import QAToolsWindow
 from ui.py_ui import icons_rc
-from core.analysis.planar_imaging import QPlanarImaging, QPlanarImagingWorker
+from ui.py_ui.fieldAnalysisWorksheet_ui import Ui_QFieldAnalysisWorksheet
+from core.analysis.field_analysis import QFieldAnalysis, QFieldAnalysisWorker
 from core.tools.report import FieldAnalysisReport
 from core.tools.devices import DeviceManager
 
@@ -18,39 +19,64 @@ import subprocess
 import pyqtgraph as pg
 from pathlib import Path
 from pylinac.core.image import LinacDicomImage
+from pylinac.field_analysis import Protocol, Centering, Interpolation, Normalization, Edge
 
-from pylinac.core.contrast import Contrast
-
-class QPlanarImagingWorksheet(QWidget):
-
-    PHANTOMS = ["Leeds TOR 18 (Red)", "Leeds TOR 18 (Blue)", "Standard Imaging QC-3 MV", 
-                "Standard Imaging QC kV", "Doselab MC2 MV", "Doselab MC2 kV",
-                "SNC kV", "SNC MV", "SNC MV (12510)", "PTW EPID QC", "Las Vegas",
-                "IBA Primus A"]
+class FieldAnalysisMainWindow(QAToolsWindow):
     
-    PARAM_OVERRIDE_OPTS = ["Auto", "Manual"]
+    def __init__(self, initData: dict = None):
+        super().__init__(initData)
+
+        self.window_title = "Field Analysis ‒ PyBeam QA"
+        self.setWindowTitle(self.window_title)
+
+        self.add_new_worksheet()
+
+    def add_new_worksheet(self, worksheet_name: str = None, enable_icon: bool = True):
+        if worksheet_name is None:
+            self.untitled_counter = self.untitled_counter + 1
+            worksheet_name = f"Field Analysis (Untitled-{self.untitled_counter})"
+
+        return super().add_new_worksheet(QFieldAnalysisWorksheet(), worksheet_name, enable_icon)
+
+class QFieldAnalysisWorksheet(QWidget):
+
+    DEFAULT_PROTOCOLS = {"Varian": Protocol.VARIAN,
+                         "Elekta": Protocol.ELEKTA,
+                         "Siemens": Protocol.SIEMENS}
+    
+    CENTERING = {"Beam center": Centering.BEAM_CENTER,
+                 "Geometric center": Centering.GEOMETRIC_CENTER,
+                 "Manual": Centering.MANUAL}
+    
+    INTERPOLATION = {"Linear": Interpolation.LINEAR,
+                     "Spline": Interpolation.SPLINE}
+    
+    EDGE_DETECTION = {"FWHM": Edge.FWHM,
+                      "Inflection Derivative": Edge.INFLECTION_DERIVATIVE,
+                      "Inflection Hill": Edge.INFLECTION_HILL}
+    
+    NORMALIZATION = {"Beam center": Normalization.BEAM_CENTER,
+                     "Geometric center": Normalization.GEOMETRIC_CENTER,
+                     "Max": Normalization.MAX}
 
     def __init__(self):
         super().__init__()
 
-        self.ui = Ui_QPlanarImagingWorksheet()
+        self.ui = Ui_QFieldAnalysisWorksheet()
         self.ui.setupUi(self)
 
         self.image_icon = QIcon()
         self.image_icon.addFile(u":/colorIcons/icons/picture.png", QSize(), QIcon.Normal, QIcon.Off)
 
-        self.form_layout = QFormLayout()
-        self.form_layout.setHorizontalSpacing(40)
-        self.ui.analysisInfoVL.addLayout(self.form_layout)
-
         self.ui.analyzeBtn.setText("Analyze image(s)")
         self.ui.advancedViewBtn.setEnabled(False)
         self.ui.genReportBtn.setEnabled(False)
-        self.ui.outcomeFrame.hide()
+        self.ui.summaryTE.setReadOnly(True)
 
         #--------  add widgets --------
         self.progress_vl = QVBoxLayout()
         self.progress_vl.setSpacing(10)
+        self.ui.analysisOutcomeFrame.hide()
 
         self.ui.analysisInfoVL.addLayout(self.progress_vl)
 
@@ -108,20 +134,21 @@ class QPlanarImagingWorksheet(QWidget):
         """
         Setup field analysis configuration options and values.
         """
-        self.ui.phantomTypeCB.clear()
-        self.ui.lConstrastMethodCB.clear()
-        self.ui.phantomAngleOverrCB.clear()
-        self.ui.phantomCenterOverrCB.clear()
+        self.ui.protocolCB.clear()
+        self.ui.centeringCB.clear()
+        self.ui.interpolationCB.clear()
 
-        self.ui.phantomTypeCB.addItems(sorted(self.PHANTOMS))
-        self.ui.lConstrastMethodCB.addItems(Contrast.options())
-        self.ui.phantomAngleOverrCB.addItems(self.PARAM_OVERRIDE_OPTS)
-        self.ui.phantomCenterOverrCB.addItems(self.PARAM_OVERRIDE_OPTS)
+        self.ui.protocolCB.addItems([key for key in self.DEFAULT_PROTOCOLS.keys()])
+        self.ui.centeringCB.addItems([key for key in self.CENTERING.keys()])
+        self.ui.interpolationCB.addItems([key for key in self.INTERPOLATION.keys()])
+        self.ui.edgeDetCB.addItems([key for key in self.EDGE_DETECTION.keys()])
+        self.ui.normalizationCB.addItems([key for key in self.NORMALIZATION.keys()])
 
-        self.ui.phantomTypeCB.currentIndexChanged.connect(self.on_config_change)
-        self.ui.lConstrastMethodCB.currentIndexChanged.connect(self.on_config_change)
-        self.ui.phantomAngleOverrCB.currentIndexChanged.connect(self.on_config_change)
-        self.ui.phantomCenterOverrCB.currentIndexChanged.connect(self.on_config_change)
+        self.ui.centeringCB.currentIndexChanged.connect(self.on_config_change)
+        self.ui.interpolationCB.currentIndexChanged.connect(self.on_config_change)
+        self.ui.edgeDetCB.currentIndexChanged.connect(self.on_config_change)
+        self.ui.normalizationCB.currentIndexChanged.connect(self.on_config_change)
+        self.ui.fffBeamCheckB.stateChanged.connect(self.on_config_change)
 
         # call this manually the first time to display correct config options
         self.on_config_change()
@@ -132,15 +159,19 @@ class QPlanarImagingWorksheet(QWidget):
         """
         Set default values for configuration fields, useful for restoring defaults.
         """
-        self.ui.phantomAngleOverrCB.setCurrentIndex(0)
-        self.ui.phantomCenterOverrCB.setCurrentIndex(0)
+        self.ui.centeringCB.setCurrentIndex(0)
 
-        self.ui.lConstrastThresholdDSB.setValue(0.05)
-        self.ui.hConstrastThresholdDSB.setValue(0.5)
-        self.ui.visThresholdDSB.setValue(100.0)
-        self.ui.sSDDSB.setValue(1000.0)
+        self.ui.vertPosDSB.setValue(0.50)
+        self.ui.horPosDSB.setValue(0.50)
+        self.ui.edgeSmoothDSB.setValue(0.003)
+        self.ui.hillWinRatioDSB.setValue(0.15)
+        self.ui.interpolationResDSB.setValue(0.10)
+        self.ui.inFieldRatioDSB.setValue(0.80)
+        self.ui.slopeExclRatioDSB.setValue(0.20)
 
+        self.ui.groundCheckB.setChecked(True)
         self.ui.invertImageCheckB.setChecked(False)
+        self.ui.fffBeamCheckB.setChecked(False)
 
     def on_config_change(self):
         """
@@ -148,15 +179,27 @@ class QPlanarImagingWorksheet(QWidget):
         are encountered
         """
 
-        if self.ui.phantomAngleOverrCB.currentText() == "Manual":
-            self.ui.configFormLayout.setRowVisible(7, True)
+        if self.ui.centeringCB.currentText() == "Manual":
+            self.ui.configFormLayout.setRowVisible(2, True)
         else:
-            self.ui.configFormLayout.setRowVisible(7, False)
+            self.ui.configFormLayout.setRowVisible(2, False)
 
-        if self.ui.phantomCenterOverrCB.currentText() == "Manual":
-            self.ui.configFormLayout.setRowVisible(9, True)
+        if self.ui.edgeDetCB.currentText() == "Inflection Hill":
+            self.ui.hillWinRatioLabel.show()
+            self.ui.hillWinRatioDSB.show()
         else:
-            self.ui.configFormLayout.setRowVisible(9, False)
+            self.ui.hillWinRatioLabel.hide()
+            self.ui.hillWinRatioDSB.hide()
+
+            if self.ui.edgeDetCB.currentText() == "FWHM" and self.ui.fffBeamCheckB.isChecked():
+               self.show_warning("Oh-oh! Becareful with your parameters",
+                                 "Using FWHM as an edge detection method for a FFF beam is not advised. "
+                                 "Consider using 'Inflection Derivative' or 'Inflection Hill'")
+
+        if self.ui.interpolationCB.currentText() == "None":
+            self.ui.configFormLayout.setRowVisible(7, False)
+        else:
+            self.ui.configFormLayout.setRowVisible(7, True)
 
     def show_warning(self, title_text:str, message: str):
         self.warning_dialog = QMessageBox()
@@ -379,9 +422,8 @@ class QPlanarImagingWorksheet(QWidget):
         self.ui.genReportBtn.setEnabled(False)
         self.remove_list_checkmarks()
 
-        row_count = self.form_layout.rowCount()
-        for i in range(row_count):
-            self.form_layout.removeRow(row_count - (i+1))
+        self.ui.summaryTE.hide()
+        self.ui.summaryTE.clear()
 
         self.ui.addImgBtn.setEnabled(False)
         self.ui.genReportBtn.setEnabled(False)
@@ -390,38 +432,22 @@ class QPlanarImagingWorksheet(QWidget):
         self.analysis_message_label.setText("Analysis in progress")
         self.analysis_progress_bar.show()
         self.analysis_message_label.show()
-
-        if len(self.marked_images) > 1:
-            images = self.marked_images[0]
             
-        else:
-            images = self.marked_images
-
-        size_override = None
-
-        if self.ui.phantomAngleOverrCB.currentText() == "Manual":
-            angle_override = self.ui.phantomAngleDSB.value()
-
-        else:
-            angle_override = None
-        
-        if self.ui.phantomCenterOverrCB.currentText() == "Manual":
-            center_override = (self.ui.xCenterDSB.value(), self.ui.yCenterDSB.value())
-
-        else:
-            center_override = None
-            
-        self.worker = QPlanarImagingWorker(filepath = self.marked_images[0],
-                                           phantom_name = self.ui.phantomTypeCB.currentText(),
-                                           low_contrast_threshold = self.ui.lConstrastThresholdDSB.value(),
-                                           low_contrast_method = self.ui.lConstrastMethodCB.currentText(),
-                                           high_contrast_threshold = self.ui.hConstrastThresholdDSB.value(),
-                                           visibility_threshold = self.ui.visThresholdDSB.value(),
+        self.worker = QFieldAnalysisWorker(path = self.marked_images[0],
+                                           protocol = self.DEFAULT_PROTOCOLS[self.ui.protocolCB.currentText()],
+                                           centering = self.ui.centeringCB.currentText(),
+                                           vert_position = self.ui.vertPosDSB.value(),
+                                           horiz_position = self.ui.horPosDSB.value(),
+                                           normalization_method = self.ui.normalizationCB.currentText(),
+                                           edge_detection_method = self.ui.edgeDetCB.currentText(),
+                                           edge_smoothing_ratio = self.ui.edgeSmoothDSB.value(),
+                                           hill_window_ratio = self.ui.hillWinRatioDSB.value(),
+                                           interpolation = self.ui.interpolationCB.currentText(),
+                                           in_field_ratio = self.ui.inFieldRatioDSB.value(),
+                                           slope_exclusion_ratio = self.ui.slopeExclRatioDSB.value(),
+                                           is_FFF = self.ui.fffBeamCheckB.isChecked(),
                                            invert = self.ui.invertImageCheckB.isChecked(),
-                                           ssd = self.ui.sSDDSB.value(),
-                                           angle_override = angle_override,
-                                           center_override = center_override,
-                                           size_override = size_override
+                                           ground = self.ui.groundCheckB.isChecked()
                                            )
         
         self.qthread = QThread()
@@ -451,15 +477,15 @@ class QPlanarImagingWorksheet(QWidget):
         self.analysis_progress_bar.hide()
         self.analysis_message_label.hide()
 
-        for summary_item in results["summary_text"]:
-            self.form_layout.addRow(summary_item[0], QLabel(summary_item[1]))
-
         # Update the report summary
-        pi = results["planar_img_obj"]
+        pf = results["field_analysis_obj"]
+
+        self.ui.summaryTE.setText(results["summary_text"])
+        self.ui.summaryTE.show()
 
         # Update the advanced view
         if self.advanced_results_view is not None:
-            self.advanced_results_view.update_planar_image(pi)
+            self.advanced_results_view.update_picket_fence(pf)
 
     def remove_list_checkmarks(self):
         for index in range(self.ui.imageListWidget.count()):
@@ -479,7 +505,7 @@ class QPlanarImagingWorksheet(QWidget):
 
     def show_advanced_results_view(self):
         if self.advanced_results_view is None:
-            self.advanced_results_view = AdvancedPIView(pi = self.current_results["planar_img_obj"])
+            self.advanced_results_view = AdvancedFAView(fa = self.current_results["field_analysis_obj"])
             self.advanced_results_view.show()
 
         else: 
@@ -541,7 +567,7 @@ class QPlanarImagingWorksheet(QWidget):
         layout.addWidget(dialog_buttons)
 
         report_dialog = QDialog()
-        report_dialog.setWindowTitle("Generate Planar Imaging Report ‒ PyBeam QA")
+        report_dialog.setWindowTitle("Generate Field Analysis Report ‒ PyBeam QA")
         report_dialog.setLayout(layout)
         report_dialog.setMinimumSize(report_dialog.sizeHint())
         report_dialog.setMaximumSize(report_dialog.sizeHint())
@@ -585,12 +611,12 @@ class QPlanarImagingWorksheet(QWidget):
             
             line_edit.setText("/".join(path))
             
-class AdvancedPIView(QMainWindow):
+class AdvancedFAView(QMainWindow):
 
-    def __init__(self, parent: QWidget | None = None, pi: QPlanarImaging = None):
+    def __init__(self, parent: QWidget | None = None, fa: QFieldAnalysis = None):
         super().__init__(parent = parent)
 
-        self.pi = pi
+        self.fa = fa
  
         self.initComplete = False
 
@@ -622,13 +648,13 @@ class AdvancedPIView(QMainWindow):
 
         self.curr_analyzed_image_widget = None
 
-        if pi is not None:
+        if fa is not None:
             self.init_analyzed_image()
 
         self.initComplete = True
     
-    def update_planar_image(self, pi: QPlanarImaging):
-        self.pi = pi
+    def update_picket_fence(self, fa: QFieldAnalysis):
+        self.fa = fa
 
         self.initComplete = False
 
@@ -640,7 +666,7 @@ class AdvancedPIView(QMainWindow):
         if self.curr_analyzed_image_widget is not None:
             self.curr_analyzed_image_widget.deleteLater()
 
-        self.curr_analyzed_image_widget = self.pi.analyzed_image_plot_widget
+        self.curr_analyzed_image_widget = self.fa.analyzed_image_plot_widget
         self.analyzed_img_qSplitter.addWidget(self.curr_analyzed_image_widget)
 
-        self.pi.qplot_analyzed_image()
+        self.fa.qplot_analyzed_image()

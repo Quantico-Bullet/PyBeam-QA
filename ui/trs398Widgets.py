@@ -1,9 +1,125 @@
 from PySide6.QtWidgets import QWidget
-from PySide6.QtCore import QDate
+from PySide6.QtCore import Signal, QDate
+from core.tools.devices import Linac
 
 from ui.py_ui.photonsWorksheet_ui import Ui_QPhotonsWorksheet
 from core.calibration.trs398 import TRS398Photons
 from core.configuration.config import ChambersConfig, SettingsConfig
+from ui.qaToolsWindow import QAToolsWindow
+
+#TODO Move TRS398 Electrons here!
+
+class BaseTRS398Window(QAToolsWindow):
+
+    institution_changed = Signal(str)
+    userName_changed = Signal(str)
+    testDate_changed = Signal(QDate)
+    nomDoseRate_changed = Signal(str)
+    ionChamber_changed = Signal(int)
+    chamberCalFactor_changed = Signal(str)
+    chamberSerial_changed = Signal(str)
+    chamberCalLab_changed = Signal(str)
+    chamberCalDate_changed = Signal(QDate)
+    chamberCalQual_changed = Signal(int)
+    calPolPotent_changed = Signal(str)
+    electroMModel_changed = Signal(str)
+    electroMSerial_changed = Signal(str)
+    electroMCalLab_changed = Signal(str)
+    electroMCalDate_changed = Signal(QDate)
+    rangeSett_changed = Signal(str)
+    calSeparate_changed = Signal(int)
+    
+    def __init__(self, initData: dict = None):
+        super().__init__(initData)
+
+        self.calibration_worksheets = []
+
+class PhotonsMainWindow(BaseTRS398Window):
+    
+    def __init__(self, initData: dict = None):
+        super().__init__(initData)
+
+        self.window_title = "(TRS-398) Photon Output Calibration ‒ PyBeam QA"
+        self.setWindowTitle(self.window_title)
+
+        if initData is not None:
+            for beam in initData["photonBeams"]:
+                    self.setup_worksheets(initData["linac"], beam, False)
+
+            for beam in initData["photonFFFBeams"]:
+                self.setup_worksheets(initData["linac"], beam, True)
+
+            self.institution_changed.emit(initData["institution"])
+            self.userName_changed.emit(initData["user"])
+
+    def setup_worksheets(self, linac: Linac, beam_energy: int, isFFF: bool):
+        worksheet = QPhotonsWorksheet()
+        worksheet.ui.nomAccPotLE.setText(f"{beam_energy}")
+        worksheet.ui.nomAccPotLE.setReadOnly(True)
+
+        if isFFF:
+            self._ui.tabWidget.addTab(worksheet, f"{beam_energy} MV FFF beam")
+            worksheet.ui.nomAccPotUnit.setText("MV (Flattening filter-free)")
+        else:
+            self._ui.tabWidget.addTab(worksheet, f"{beam_energy} MV beam")
+
+        #set ids for button group buttons
+        worksheet.ui.beamQualityGroup.setId(worksheet.ui.cobaltRadioButton, 0)
+        worksheet.ui.beamQualityGroup.setId(worksheet.ui.photonBeamRadioButton, 1)
+        worksheet.ui.calibSeparateGroup.setId(worksheet.ui.calibSepYesRadioButton, 0)
+        worksheet.ui.calibSeparateGroup.setId(worksheet.ui.calibSepNoRadioButton, 1)
+
+        #send data changes to model
+        worksheet.ui.institutionLE.textChanged.connect(self.institution_changed)
+        worksheet.ui.userLE.textChanged.connect(self.userName_changed)
+        worksheet.ui.dateDE.dateChanged.connect(self.testDate_changed)
+        worksheet.ui.nomDoseRateLE.textChanged.connect(self.nomDoseRate_changed)
+        worksheet.ui.IonChamberModelComboB.currentIndexChanged.connect(self.ionChamber_changed)
+        worksheet.ui.calibFactorLE.textChanged.connect(self.chamberCalFactor_changed)
+        worksheet.ui.chamberSerialNoLE.textChanged.connect(self.chamberSerial_changed)
+        worksheet.ui.calibLabLE.textChanged.connect(self.chamberCalLab_changed)
+        worksheet.ui.chamberCalibDE.dateChanged.connect(self.chamberCalDate_changed)
+        worksheet.ui.beamQualityGroup.buttonClicked.connect(lambda button:
+            self.chamberCalQual_changed.emit(worksheet.ui.beamQualityGroup.id(button)))
+        worksheet.ui.polarPotV1LE.textChanged.connect(self.calPolPotent_changed)
+        worksheet.ui.electModelLE.textChanged.connect(self.electroMModel_changed)
+        worksheet.ui.electSerialNoLE.textChanged.connect(self.electroMSerial_changed)
+        worksheet.ui.electCalLabLE.textChanged.connect(self.electroMCalLab_changed)
+        worksheet.ui.electCalDateDE.dateChanged.connect(self.electroMCalDate_changed)
+        worksheet.ui.electRangeSettLE.textChanged.connect(self.rangeSett_changed)
+        worksheet.ui.calibSeparateGroup.buttonClicked.connect(lambda button:
+            self.calSeparate_changed.emit(worksheet.ui.calibSeparateGroup.id(button)))
+
+        #receive data changes from model
+        self.institution_changed.connect(worksheet.ui.institutionLE.setText)
+        self.userName_changed.connect(worksheet.ui.userLE.setText)
+        self.testDate_changed.connect(worksheet.ui.dateDE.setDate)
+        self.nomDoseRate_changed.connect(worksheet.ui.nomDoseRateLE.setText)
+        self.ionChamber_changed.connect(worksheet.ui.IonChamberModelComboB.setCurrentIndex)
+        self.chamberCalFactor_changed.connect(worksheet.ui.calibFactorLE.setText)
+        self.chamberSerial_changed.connect(worksheet.ui.chamberSerialNoLE.setText)
+        self.chamberCalLab_changed.connect(worksheet.ui.calibLabLE.setText)
+        self.chamberCalDate_changed.connect(worksheet.ui.chamberCalibDE.setDate)
+        self.chamberCalQual_changed.connect(lambda id: 
+            worksheet.ui.cobaltRadioButton.toggle() if id == 0 else 
+            worksheet.ui.photonBeamRadioButton.toggle())
+        self.calPolPotent_changed.connect(worksheet.ui.polarPotV1LE.setText)
+        self.electroMModel_changed.connect(worksheet.ui.electModelLE.setText)
+        self.electroMSerial_changed.connect(worksheet.ui.electSerialNoLE.setText)
+        self.electroMCalLab_changed.connect(worksheet.ui.electCalLabLE.setText)
+        self.electroMCalDate_changed.connect(worksheet.ui.electCalDateDE.setDate)
+        self.rangeSett_changed.connect(worksheet.ui.electRangeSettLE.setText)
+        self.calSeparate_changed.connect(lambda id: 
+            worksheet.ui.calibSepYesRadioButton.toggle() if id == 0 else 
+            worksheet.ui.calibSepNoRadioButton.toggle())
+
+        if linac is not None:
+            worksheet.ui.linacNameLE.setText(f"{linac.name} ({linac.manufacturer} " +
+                                        f"{linac.model_name})")
+            worksheet.ui.linacNameLE.setReadOnly(True)
+            worksheet.ui.linacNameLE.setClearButtonEnabled(False)
+    
+        self.calibration_worksheets.append(worksheet)
 
 class QPhotonsWorksheet(QWidget):
 

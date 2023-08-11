@@ -74,7 +74,8 @@ class QWinstonLutzWorker(QObject):
             wl_data["image_details"] = self._wl.image_data
 
             summary_image_data = io.BytesIO()
-            self._wl.save_summary(summary_image_data, dpi=120, format = "pdf")
+            self._wl.save_summary(summary_image_data, format = "pdf",
+                                  pad_inches = 0.0, bbox_inches='tight')
             wl_data["summary_plot"] = summary_image_data
 
             self.analysis_results_changed.emit(wl_data)

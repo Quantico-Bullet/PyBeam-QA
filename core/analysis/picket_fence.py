@@ -24,7 +24,7 @@ class QPicketFence(PicketFence):
                  mlc: Union[MLC, MLCArrangement, str] = MLC.MILLENNIUM,
                  crop_mm: int = 3,
                  tolerance: float = 0.5,
-                 image_kwargs: Optional[dict] = None,):
+                 image_kwargs: Optional[dict] = None):
         
         # Widgets for leaf profile plots
         self.profile_plot_widget = pg.PlotWidget()
@@ -41,10 +41,10 @@ class QPicketFence(PicketFence):
                                      kwargs = image_kwargs).save(temp_file)
 
                 super().__init__(temp_file, filter, log,
-                                 use_filename, mlc, crop_mm, image_kwargs,)
+                                 use_filename, mlc, crop_mm, image_kwargs)
         else:
             super().__init__(filename, filter, log,
-                        use_filename, mlc, crop_mm, image_kwargs,)
+                        use_filename, mlc, crop_mm, image_kwargs)
             
         self.action_tolerance = tolerance
         self.tolerance = tolerance
@@ -332,7 +332,7 @@ class QPicketFenceWorker(QObject):
                           self._mlc,
                           self._crop_mm,
                           self._tolerance,
-                          self._image_kwargs,)
+                          image_kwargs = self._image_kwargs)
         
 
     @Slot()
@@ -353,7 +353,7 @@ class QPicketFenceWorker(QObject):
             
             results = {"summary_text": summary_text,
                        "picket_fence_obj": self._pf}
-
+            
             self.analysis_results_ready.emit(results)
             self.thread_finished.emit()
         
