@@ -11,6 +11,7 @@ from ui.py_ui import icons_rc
 from ui.py_ui.starshotWorksheet_ui import Ui_QStarshotWorksheet
 from core.analysis.starshot import QStarshotWorker
 
+from scipy import ndimage
 from core.tools.report import StarshotReport
 from core.tools.devices import DeviceManager
 
@@ -20,7 +21,15 @@ import webbrowser
 import subprocess
 import pyqtgraph as pg
 from pathlib import Path
+
 from pylinac.core.image import load
+from pylinac.core.image_generator import (GaussianFilterLayer,
+                                          FilteredFieldLayer,
+                                          AS500Image,
+                                          AS1000Image,
+                                          AS1200Image)
+
+from ui.starshot_test_dialog import StarshotTestDialog
 
 class StarshotMainWindow(QAToolsWindow):
     
@@ -31,6 +40,46 @@ class StarshotMainWindow(QAToolsWindow):
         self.setWindowTitle(self.window_title)
 
         self.add_new_worksheet()
+
+        self.ui.menuFile.addAction("Add images(s)", self.ui.tabWidget.currentWidget().add_files)
+        self.ui.menuFile.addSeparator()
+        self.ui.menuFile.addAction("Add new worksheet")
+        self.ui.menuTools.addAction("Benchmark test", self.init_test_dialog, "Ctrl+T")
+        self.ui.menubar.setEnabled(True)
+
+    def init_test_dialog(self):
+        dialog = StarshotTestDialog()
+        result = dialog.exec()
+
+        if result == QDialog.DialogCode.Accepted:
+            sim_image = dialog.ui.sim_image_cb.currentText()
+            
+            if sim_image == "AS500":
+                sim_image = AS500Image()
+            
+            elif sim_image == "AS1000":
+                sim_image = AS1000Image()
+            
+            else: sim_image = AS1200Image()
+
+            num_spokes = dialog.ui.num_spokes_sb.value()
+            cax_offset = dialog.ui.cax_offset_dsb.value()
+
+            for _ in range(num_spokes):
+                sim_image.add_layer(FilteredFieldLayer((200, 5),
+                                    alpha=0.5,
+                                    cax_offset_mm = (cax_offset, cax_offset)))
+                
+                sim_image.image = ndimage.rotate(sim_image.image,
+                                                 360 / num_spokes,
+                                                 reshape = False,
+                                                 mode = 'nearest')
+                
+            sim_image.add_layer(GaussianFilterLayer(sigma_mm = 3))
+            sim_image.generate_dicom(dialog.ui.out_file_le.text())
+
+        self.add_new_worksheet(dialog.ui.test_name_le.text() + " (Test)")
+        self.ui.tabWidget.currentWidget().add_files([dialog.ui.out_file_le.text()])
 
     def add_new_worksheet(self, worksheet_name: str = None, enable_icon: bool = True):
         if worksheet_name is None:
@@ -135,13 +184,15 @@ class QStarshotWorksheet(QWidget):
         else:
             self.ui.configFormLayout.setRowVisible(6, False)
      
-    def add_files(self):
-        files, _ = QFileDialog.getOpenFileNames(
-            self,
-            "Select Starshot Images",
-            "",
-            "DICOM Images (*.dcm);; TIFF Images (*.tiff *.tif);; PNG Image (*.png)",
-        )
+    def add_files(self, files: tuple | list | None = None):
+
+        if not files:
+            files, _ = QFileDialog.getOpenFileNames(
+                self,
+                "Select Starshot Images",
+                "",
+                "DICOM Images (*.dcm);; TIFF Images (*.tiff *.tif);; PNG Image (*.png)",
+                )
 
         if files:
             for file in files:

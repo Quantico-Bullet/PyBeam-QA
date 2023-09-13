@@ -25,7 +25,7 @@ class Ui_QStarshotWorksheet(object):
     def setupUi(self, QStarshotWorksheet):
         if not QStarshotWorksheet.objectName():
             QStarshotWorksheet.setObjectName(u"QStarshotWorksheet")
-        QStarshotWorksheet.resize(1237, 534)
+        QStarshotWorksheet.resize(1237, 535)
         self.verticalLayout = QVBoxLayout(QStarshotWorksheet)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.stackedWidget = QStackedWidget(QStarshotWorksheet)

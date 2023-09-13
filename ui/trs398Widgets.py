@@ -58,10 +58,10 @@ class PhotonsMainWindow(BaseTRS398Window):
         worksheet.ui.nomAccPotLE.setReadOnly(True)
 
         if isFFF:
-            self._ui.tabWidget.addTab(worksheet, f"{beam_energy} MV FFF beam")
+            self.ui.tabWidget.addTab(worksheet, f"{beam_energy} MV FFF beam")
             worksheet.ui.nomAccPotUnit.setText("MV (Flattening filter-free)")
         else:
-            self._ui.tabWidget.addTab(worksheet, f"{beam_energy} MV beam")
+            self.ui.tabWidget.addTab(worksheet, f"{beam_energy} MV beam")
 
         #set ids for button group buttons
         worksheet.ui.beamQualityGroup.setId(worksheet.ui.cobaltRadioButton, 0)

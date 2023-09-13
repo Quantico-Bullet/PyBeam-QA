@@ -21,10 +21,15 @@
         <file>icons/pie_chart_report.png</file>
         <file>icons/down_button.png</file>
         <file>icons/up_button.png</file>
+        <file>icons/test.png</file>
     </qresource>
     <qresource prefix="/actionIcons">
         <file>icons/eye.png</file>
         <file>icons/remove.png</file>
         <file>icons/delete.png</file>
+        <file>icons/logo-github.svg</file>
+    </qresource>
+    <qresource prefix="/misc_icons">
+        <file>icons/ic_app.svg</file>
     </qresource>
 </RCC>

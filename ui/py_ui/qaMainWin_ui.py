@@ -26,9 +26,6 @@ class Ui_MainWindow(object):
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(640, 480)
         MainWindow.setStyleSheet(u"")
-        self.actionDetailedView = QAction(MainWindow)
-        self.actionDetailedView.setObjectName(u"actionDetailedView")
-        self.actionDetailedView.setCheckable(True)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.gridLayout = QGridLayout(self.centralwidget)
@@ -83,7 +80,6 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuTools.menuAction())
         self.menubar.addAction(self.menuWindow.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
-        self.menuView.addAction(self.actionDetailedView)
 
         self.retranslateUi(MainWindow)
 
@@ -95,7 +91,6 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
-        self.actionDetailedView.setText(QCoreApplication.translate("MainWindow", u"Detailed View", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuView.setTitle(QCoreApplication.translate("MainWindow", u"View", None))
         self.menuTools.setTitle(QCoreApplication.translate("MainWindow", u"Tools", None))

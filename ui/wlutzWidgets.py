@@ -5,7 +5,7 @@ from PySide6.QtWidgets import (QWidget, QListWidgetItem, QMenu, QFileDialog, QDi
                                QCheckBox, QGridLayout, QTabWidget, QSplitter, QTableWidget,
                                QHeaderView, QTableWidgetItem)
 from PySide6.QtGui import QIcon, QPixmap, QColor
-from PySide6.QtCore import Qt, QSize, QEvent, QThread
+from PySide6.QtCore import Qt, QSize, QEvent, QThread, QKeyCombination
 
 from ui.qaToolsWindow import QAToolsWindow
 from ui.py_ui.wlutzWorksheet_ui import Ui_QWLutzWorksheet
@@ -14,12 +14,30 @@ from core.analysis.wlutz import QWinstonLutzWorker
 from core.tools.report import WinstonLutzReport
 from core.tools.devices import DeviceManager
 
+from pylinac.core.image_generator import (ConstantLayer,
+                                          FilteredFieldLayer,
+                                          FilterFreeConeLayer,
+                                          FilterFreeFieldLayer,
+                                          GaussianFilterLayer,
+                                          PerfectBBLayer,
+                                          PerfectConeLayer,
+                                          PerfectFieldLayer,
+                                          RandomNoiseLayer,
+                                          AS500Image,
+                                          AS1000Image,
+                                          AS1200Image,
+                                          generate_winstonlutz,
+                                          generate_winstonlutz_cone
+)
 from pylinac.core.image import LinacDicomImage
 from pathlib import Path
 import pyqtgraph as pg
 import platform
 import subprocess
 import webbrowser
+
+from ui.utilsWidgets.dialogs import MessageDialog
+from ui.wl_test_dialog import WLTestDialog
 
 pg.setConfigOptions(antialias=True, imageAxisOrder='row-major')
 
@@ -28,10 +46,18 @@ class WinstonLutzMainWindow(QAToolsWindow):
     def __init__(self, initData: dict = None):
         super().__init__(initData)
 
+        self.tests_counter = 0
+
         self.window_title = "Winston Lutz ‒ PyBeam QA"
         self.setWindowTitle(self.window_title)
 
         self.add_new_worksheet()
+
+        self.ui.menuFile.addAction("Add images(s)", self.ui.tabWidget.currentWidget().add_files)
+        self.ui.menuFile.addSeparator()
+        self.ui.menuFile.addAction("Add new worksheet")
+        self.ui.menuTools.addAction("Benchmark test", self.init_test_dialog, "Ctrl+T")
+        self.ui.menubar.setEnabled(True)
 
     def add_new_worksheet(self, worksheet_name: str = None, enable_icon: bool = True):
         if worksheet_name is None:
@@ -39,6 +65,86 @@ class WinstonLutzMainWindow(QAToolsWindow):
             worksheet_name = f"Winston Lutz (Untitled-{self.untitled_counter})"
 
         return super().add_new_worksheet(QWLutzWorksheet(), worksheet_name, enable_icon)
+
+    def init_test_dialog(self):
+        dialog = WLTestDialog()
+        result = dialog.exec()
+
+        if result == QDialog.DialogCode.Accepted:
+            self.tests_counter = self.tests_counter + 1
+
+            field_layer = dialog.ui.field_layer_cb.currentText()
+
+            # Set the field layer
+            if field_layer == "Filtered field":
+                field_layer = FilteredFieldLayer
+
+            elif field_layer == "Filter free field":
+                field_layer = FilterFreeFieldLayer
+
+            elif field_layer == "Perfect field":
+                field_layer = PerfectFieldLayer
+
+            elif field_layer == "Filter free cone":
+                field_layer = FilterFreeConeLayer
+
+            else: field_layer = PerfectConeLayer
+
+            # Set the simulation image
+            sim_image = dialog.ui.sim_image_cb.currentText()
+            
+            if sim_image == "AS500":
+                sim_image = AS500Image()
+            
+            elif sim_image == "AS1000":
+                sim_image = AS1000Image()
+            
+            else: sim_image = AS1200Image()
+
+            # Get the field size
+            if dialog.ui.field_type_cb.currentText() == "Rectangle":
+                field_size = (dialog.ui.rec_field_width_dsb.value(),
+                              dialog.ui.rec_field_height_dsb.value())
+                
+                images = generate_winstonlutz(
+                    simulator = sim_image,
+                    field_layer = field_layer,
+                    dir_out = dialog.ui.out_dir_le.text(),
+                    field_size_mm = field_size,
+                    final_layers = [GaussianFilterLayer()],
+                    bb_size_mm = dialog.ui.bb_size_dsb.value(),
+                    offset_mm_left = dialog.ui.left_offset_dsb.value(),
+                    offset_mm_up = dialog.ui.up_offset_dsb.value(),
+                    offset_mm_in = dialog.ui.in_offset_dsb.value(),
+                    image_axes = dialog.image_axes,
+                    gantry_tilt = dialog.ui.gantry_tilt_dsb.value(),
+                    gantry_sag = dialog.ui.gantry_sag_dsb.value(),
+                    clean_dir = False
+                )
+
+            else:
+                field_size = dialog.ui.cone_field_size_dsb.value()
+
+                images = generate_winstonlutz_cone(
+                    simulator = sim_image,
+                    cone_layer = field_layer,
+                    dir_out = dialog.ui.out_dir_le.text(),
+                    cone_size_mm = field_size,
+                    final_layers = [GaussianFilterLayer()],
+                    bb_size_mm = dialog.ui.bb_size_dsb.value(),
+                    offset_mm_left = dialog.ui.left_offset_dsb.value(),
+                    offset_mm_up = dialog.ui.up_offset_dsb.value(),
+                    offset_mm_in = dialog.ui.in_offset_dsb.value(),
+                    image_axes = dialog.image_axes,
+                    gantry_tilt = dialog.ui.gantry_tilt_dsb.value(),
+                    gantry_sag = dialog.ui.gantry_sag_dsb.value(),
+                    clean_dir = False
+                )
+
+            images = [dialog.ui.out_dir_le.text() + "/" + image for image in images]
+
+            self.add_new_worksheet(dialog.ui.test_name_le.text() + " (Test)")
+            self.ui.tabWidget.currentWidget().add_files(images)
 
 class QWLutzWorksheet(QWidget):
 
@@ -143,13 +249,14 @@ class QWLutzWorksheet(QWidget):
         self.analysis_summary = {}
         self.set_analysis_outcome()
 
-    def add_files(self):
-        files, _ = QFileDialog.getOpenFileNames(
-            self,
-            "Select DICOM WL Images",
-            "",
-            "DICOM Images (*.dcm)",
-        )
+    def add_files(self, files: tuple | list | None = None):
+        if not files:
+            files, _ = QFileDialog.getOpenFileNames(
+                self,
+                "Select DICOM WL Images",
+                "",
+                "DICOM Images (*.dcm)",
+                )
 
         if files:
             for file in files:
@@ -521,12 +628,10 @@ class QWLutzWorksheet(QWidget):
         new_win.setMinimumSize(0, 0)
 
     def show_shift_info(self):
-        self.shift_dialog = QMessageBox()
-        self.shift_dialog.setWindowTitle("BB Shift Instructions")
-        self.shift_dialog.setText("<p><span style=\" font-weight:700; font-size: 11pt;\">" \
-                                 "To minimize the mean positioning error shift the ball-bearing as follows: </span></p>")
+        self.shift_dialog = MessageDialog()
+        self.shift_dialog.set_title("BB Shift Instructions")
+        self.shift_dialog.set_text("To minimize the mean positioning error shift the ball-bearing as follows:")
         self.shift_dialog.setStandardButtons(QMessageBox.StandardButton.Ok)
-        self.shift_dialog.setTextFormat(Qt.TextFormat.RichText)
 
         shifts = self.shift_info.split("; ")
         self.shift_dialog.setInformativeText(f'{shifts[0].split(" ")[0]}: {shifts[0].split(" ")[1].replace("mm", " mm")}\n' \
@@ -534,26 +639,20 @@ class QWLutzWorksheet(QWidget):
                                             f'{shifts[2].split(" ")[0]}: {shifts[2].split(" ")[1].replace("mm", " mm")}')
 
         shift_icon = QPixmap(u":/colorIcons/icons/bb_shift.png")
-        shift_icon = shift_icon.scaled(48, 48, mode = Qt.TransformationMode.SmoothTransformation)
-        self.shift_dialog.setIconPixmap(shift_icon)
+        self.shift_dialog.set_icon(shift_icon)
 
         self.shift_dialog.exec()
 
     def delete_file(self):
         listWidgetItem = self.ui.imageListWidget.currentItem()
 
-        self.delete_dialog = QMessageBox()
-        self.delete_dialog.setWindowTitle("Delete File")
-        self.delete_dialog.setText("<p><span style=\" font-weight:700; font-size: 11pt;\">" \
-                                  f"Are you sure you want to permanently delete \'{listWidgetItem.text()}\' ? </span></p>")
-        self.delete_dialog.setInformativeText("This action is irreversible!")
+        self.delete_dialog = MessageDialog()
+        self.delete_dialog.set_title("Delete File")
+        self.delete_dialog.set_icon(MessageDialog.WARNING_ICON)
+        self.delete_dialog.set_text(f"Are you sure you want to permanently delete {listWidgetItem.text()}")
+        self.delete_dialog.set_info_text("This action is irreversible!")
         self.delete_dialog.setStandardButtons(QMessageBox.StandardButton.Yes | 
                                              QMessageBox.StandardButton.Cancel)
-        self.delete_dialog.setTextFormat(Qt.TextFormat.RichText)
-
-        warning_icon = QPixmap(u":/colorIcons/icons/warning.png")
-        warning_icon = warning_icon.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
-        self.delete_dialog.setIconPixmap(warning_icon)
 
         ret = self.delete_dialog.exec()
 
