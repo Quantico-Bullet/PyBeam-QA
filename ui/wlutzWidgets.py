@@ -29,6 +29,21 @@ from pylinac.core.image_generator import (ConstantLayer,
                                           generate_winstonlutz,
                                           generate_winstonlutz_cone
 )
+from pylinac.core.image_generator import (ConstantLayer,
+                                          FilteredFieldLayer,
+                                          FilterFreeConeLayer,
+                                          FilterFreeFieldLayer,
+                                          GaussianFilterLayer,
+                                          PerfectBBLayer,
+                                          PerfectConeLayer,
+                                          PerfectFieldLayer,
+                                          RandomNoiseLayer,
+                                          AS500Image,
+                                          AS1000Image,
+                                          AS1200Image,
+                                          generate_winstonlutz,
+                                          generate_winstonlutz_cone
+)
 from pylinac.core.image import LinacDicomImage
 from pathlib import Path
 import pyqtgraph as pg
@@ -53,10 +68,10 @@ class WinstonLutzMainWindow(QAToolsWindow):
 
         self.add_new_worksheet()
 
-        self.ui.menuFile.addAction("Add images(s)", self.ui.tabWidget.currentWidget().add_files)
+        self.ui.menuFile.addAction("Add Images(s)", self.ui.tabWidget.currentWidget().add_files)
         self.ui.menuFile.addSeparator()
-        self.ui.menuFile.addAction("Add new worksheet")
-        self.ui.menuTools.addAction("Benchmark test", self.init_test_dialog, "Ctrl+T")
+        self.ui.menuFile.addAction("Add New Worksheet", self.add_new_worksheet)
+        self.ui.menuTools.addAction("Benchmark Test", self.init_test_dialog, "Ctrl+T")
         self.ui.menubar.setEnabled(True)
 
     def add_new_worksheet(self, worksheet_name: str = None, enable_icon: bool = True):

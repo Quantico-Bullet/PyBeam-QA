@@ -45,6 +45,8 @@ class QPlanarImaging():
                                                                   row = 1,
                                                                   col = 0,
                                                                   colspan=2)
+        self.image_plot.setLabel("left", "Pixel")
+        self.image_plot.setLabel("bottom", "Pixel")
         self.image_plot.invertY(True)
         self.image_plot.addLegend(size = (50,50), pen=pg.mkPen(13, 27, 42),
                                   labelTextColor='w', brush=pg.mkBrush((27, 38, 59, 200)))

@@ -6,6 +6,10 @@ from PySide6.QtSvg import QSvgRenderer
 from ui.py_ui.about_dialog_ui import Ui_AboutDialog
 from ui.py_ui import icons_rc
 
+from pylinac import __version__ as pylinac_version
+from pdfrw import __version__ as pdfrw_version
+from PySide6 import __version__ as pyside6_version
+from pyqtgraph import __version__ as pyqtgraph_version
 
 class AboutDialog(QDialog):
 
@@ -28,7 +32,12 @@ class AboutDialog(QDialog):
         self.app_icon = QPixmap.fromImage(self.app_img)
         self.app_icon = self.app_icon.scaled(QSize(128, 128),
                                mode = Qt.TransformationMode.SmoothTransformation)
-        self.ui.app_icon.setPixmap(self.app_icon)
+        self.ui.app_icon.setPixmap(self.app_icon) 
+
+        self.ui.open_source_te.setText(f"⊹ PySide6 ({pyside6_version})\n" \
+                                       f"⊹ Pylinac ({pylinac_version})\n" \
+                                       f"⊹ Pyqtgraph ({pyqtgraph_version})\n" \
+                                       f"⊹ Pdfrw ({pdfrw_version})") 
 
         self.setFixedSize(self.size())
 

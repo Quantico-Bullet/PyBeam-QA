@@ -41,11 +41,10 @@ class StarshotMainWindow(QAToolsWindow):
 
         self.add_new_worksheet()
 
-        self.ui.menuFile.addAction("Add images(s)", self.ui.tabWidget.currentWidget().add_files)
+        self.ui.menuFile.addAction("Add Images(s)", self.ui.tabWidget.currentWidget().add_files)
         self.ui.menuFile.addSeparator()
-        self.ui.menuFile.addAction("Add new worksheet")
-        self.ui.menuTools.addAction("Benchmark test", self.init_test_dialog, "Ctrl+T")
-        self.ui.menubar.setEnabled(True)
+        self.ui.menuFile.addAction("Add New Worksheet", self.add_new_worksheet)
+        self.ui.menuTools.addAction("Benchmark Test", self.init_test_dialog, "Ctrl+T")
 
     def init_test_dialog(self):
         dialog = StarshotTestDialog()
