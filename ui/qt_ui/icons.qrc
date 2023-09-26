@@ -31,5 +31,6 @@
     </qresource>
     <qresource prefix="/misc_icons">
         <file>icons/ic_app.svg</file>
+        <file>icons/ic_app_alt.svg</file>
     </qresource>
 </RCC>

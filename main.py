@@ -24,5 +24,5 @@ if __name__ == "__main__":
                       "QComboBox, QSpinBox { min-height: 20px;}")
     app.setStyle('Fusion')
 
-    app.setWindowIcon(QIcon(u":/misc_icons/icons/ic_app.svg").pixmap(48))
+    app.setWindowIcon(QIcon(u":/misc_icons/icons/ic_app_alt.svg").pixmap(48))
     app.exec()
