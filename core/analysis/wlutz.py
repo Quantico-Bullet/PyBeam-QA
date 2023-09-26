@@ -22,7 +22,7 @@ class QWinstonLutz(WinstonLutz):
         self.update_signal = update_signal
         self.image_data = []
 
-    def analyze(self, bb_size_mm: float = 8,
+    def analyze(self, bb_size_mm: float = 5,
                 machine_scale: MachineScale = MachineScale.IEC61217,
                 low_density_bb: bool = False):
         counter = 0
@@ -39,11 +39,11 @@ class QWinstonLutz(WinstonLutz):
                 "epid": {"x": img.epid.x, "y": img.epid.y},
                 "cax_to_bb_dist": img.cax2bb_distance,
                 "cax_to_epid_dist": img.cax2epid_distance,
-                "gantry_angle": f"{img.gantry_angle:2.2f}",
-                "collimator_angle": f"{img.collimator_angle:2.2f}",
-                "couch_angle": f"{img.couch_angle:2.2f}",
-                "delta_u": f"{(img.bb.y - img.field_cax.y) / img.dpmm:2.2f}",
-                "delta_v": f"{(img.bb.x - img.field_cax.x) / img.dpmm:2.2f}"
+                "gantry_angle": f"{img.gantry_angle:3.2f}",
+                "collimator_angle": f"{img.collimator_angle:3.2f}",
+                "couch_angle": f"{img.couch_angle:3.2f}",
+                "delta_u": f"{(img.bb.y - img.field_cax.y) / img.dpmm:3.2f}",
+                "delta_v": f"{(img.bb.x - img.field_cax.x) / img.dpmm:3.2f}"
             })
 
             counter += 1

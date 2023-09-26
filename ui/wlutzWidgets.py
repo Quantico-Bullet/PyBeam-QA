@@ -568,7 +568,7 @@ class QWLutzWorksheet(QWidget):
 
         imgView = pg.ImageView()
         imgView.setImage(image.array)
-        imgView.setPredefinedGradient("viridis")
+        imgView.setPredefinedGradient("grey")
 
         new_win = QMainWindow()
         new_win.setWindowTitle(image_short_name)
@@ -591,7 +591,9 @@ class QWLutzWorksheet(QWidget):
         plotItem = plotView.getPlotItem()
         plotItem.setLimits(xMin=-150, xMax=image.array.shape[1]+150, yMin=-150, yMax=image.array.shape[0]+150)
         plotItem.setRange(xRange=(-50, image.array.shape[1]+50), yRange=(-50, image.array.shape[0]+50))
-        plotItem.invertY(True)
+        #plotItem.invertY(True)
+
+        image.flipud() # WL images are flip up-side down in Pylinac
         
         imageItem = pg.ImageItem(image=image.array)
 
@@ -620,7 +622,7 @@ class QWLutzWorksheet(QWidget):
         epidY_plot.opts = {"pen": epidY_plot.pen}
         
         plotItem.addItem(imageItem)
-        plotItem.addColorBar(imageItem, colorMap="viridis")
+        plotItem.addColorBar(imageItem, colorMap=pg.colormap.getFromMatplotlib('gray'))
         plotItem.addItem(bb_plotItem)
         plotItem.addItem(cax_plotItem)
         plotItem.addItem(epidX_plot)

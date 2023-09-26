@@ -200,7 +200,7 @@ class QPlanarImagingWorksheet(QWidget):
     def add_files(self):
         files, _ = QFileDialog.getOpenFileNames(
             self,
-            "Select DICOM Field Analysis Images",
+            "Select DICOM kV or MV Images",
             "",
             "DICOM Images (*.dcm)",
         )
@@ -294,7 +294,7 @@ class QPlanarImagingWorksheet(QWidget):
 
         imgView = pg.ImageView()
         imgView.setImage(image.array)
-        imgView.setPredefinedGradient("viridis")
+        imgView.setPredefinedGradient("grey")
 
         new_win = QMainWindow()
         new_win.setWindowTitle(image_short_name)

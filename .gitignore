@@ -2,4 +2,5 @@
 .vscode
 *.code-workspace
 **/pyBeamQA.pyproject.user
+ui/qt_ui/*.py
 ui/qt_ui/pyBeamQA.pyproject

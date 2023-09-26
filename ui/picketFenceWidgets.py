@@ -244,7 +244,7 @@ class QPicketFenceWorksheet(QWidget):
 
         imgView = pg.ImageView()
         imgView.setImage(image.array)
-        imgView.setPredefinedGradient("viridis")
+        imgView.setPredefinedGradient("grey")
 
         new_win = QMainWindow()
         new_win.setWindowTitle(image_short_name)
@@ -424,7 +424,7 @@ class QPicketFenceWorksheet(QWidget):
                       ["Collimator angle", f"{pf.image.collimator_angle:2.2f}°", ""],
                       ["Number of pickets found", f"{len(pf.pickets)}", ""],
                       ["Number of leaf pairs found", f"{int(len(pf.mlc_meas) / len(pf.pickets))}"],
-                      ["Mean picket spacing:", f"{pf.mean_picket_spacing:2.2f} mm"],
+                      ["Mean picket spacing", f"{pf.mean_picket_spacing:2.2f} mm"],
                       ["Absolute median error", f"{pf.abs_median_error:2.3f} mm"],
                       ["Maximum error", f"{pf.max_error:2.3f} mm",
                        f"Max error at picket {pf.max_error_picket + 1} and leaf {pf.max_error_leaf + 1}"],
