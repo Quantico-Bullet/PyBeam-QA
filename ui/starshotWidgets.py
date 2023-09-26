@@ -289,7 +289,7 @@ class QStarshotWorksheet(QWidget):
 
         imgView = pg.ImageView()
         imgView.setImage(image.array)
-        imgView.setPredefinedGradient("viridis")
+        imgView.setPredefinedGradient("grey")
 
         new_win = QMainWindow()
         new_win.setWindowTitle(image_short_name)
