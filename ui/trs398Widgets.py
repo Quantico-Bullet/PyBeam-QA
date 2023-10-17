@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QWidget
-from PySide6.QtCore import Signal, QDate
+from PySide6.QtCore import Qt, Signal, QDate
+from PySide6.QtGui import QPixmap
 from core.tools.devices import Linac
 
 from ui.py_ui.photonsWorksheet_ui import Ui_QPhotonsWorksheet
@@ -133,11 +134,11 @@ class QPhotonsWorksheet(QWidget):
         self.chambersConfig = ChambersConfig()
         self.settingsConfig = SettingsConfig()
 
-        self.hideOutcome()
+        self.hide_cal_outcome()
 
         # Load all ionization chambers
         self.allChambers = []
-        self.setIonChamberList()
+        self.set_ion_chamber_list()
 
         #--- Set up basic functionality ---
         self.ui.dateDE.setDate(QDate.currentDate())
@@ -145,44 +146,45 @@ class QPhotonsWorksheet(QWidget):
         self.ui.chamberCalibDE.setMaximumDate(QDate.currentDate())
         self.ui.electCalDateDE.setMaximumDate(QDate.currentDate())
 
-        self.ui.calibSetupGroup.buttonClicked.connect(self.setupChanged)
-        self.setupChanged()
-        self.ui.calibSeparateGroup.idToggled.connect(self.sameCalib) # use idToggled to allow other tab signals to enable fields
-        self.sameCalib()
-        self.ui.IonChamberModelComboB.currentIndexChanged.connect(self.chamberModelChanged)
-        self.chamberModelChanged()
-        self.ui.calibSetupGroup.buttonClicked.connect(self.setZmaxDepthDose)
-        self.ui.IonChamberModelComboB.currentIndexChanged.connect(self.calcKQ)
-        self.ui.beamQualityLE.textChanged.connect(self.calcKQ)
-        self.ui.refPressureLE.textChanged.connect(self.calcKTP)
-        self.ui.refTempLE.textChanged.connect(self.calcKTP)
-        self.ui.refHumidityLE.textChanged.connect(self.calcKTP)
-        self.ui.userPressureLE.textChanged.connect(self.calcKTP)
-        self.ui.userTempLE.textChanged.connect(self.calcKTP)
-        self.ui.userHumidityLE.textChanged.connect(self.calcKTP)
-        self.ui.kElecLE_2.textChanged.connect(self.setKElec)
-        self.ui.kElecLE_2.textChanged.connect(self.setRefDepthDose)
-        self.ui.userPolarityGroup.buttonClicked.connect(self.calKPol)
-        self.ui.readMPosLE.textChanged.connect(self.calKPol)
-        self.ui.readMNegLE.textChanged.connect(self.calKPol)
-        self.ui.beamTypeGroup.buttonClicked.connect(self.calcKS)
-        self.ui.normReadLE.textChanged.connect(self.calcKS)
-        self.ui.redReadLE.textChanged.connect(self.calcKS)
-        self.ui.normVoltageLE.textChanged.connect(self.calcKS)
-        self.ui.redVoltageLE.textChanged.connect(self.calcKS)
-        self.ui.rawDosReadLE.textChanged.connect(self.setRatioReadMU)
-        self.ui.corrLinacMULE.textChanged.connect(self.setRatioReadMU)
+        self.ui.calibSetupGroup.buttonClicked.connect(self.cal_setup_changed)
+        self.cal_setup_changed()
+        self.ui.calibSeparateGroup.idToggled.connect(self.same_calib) # use idToggled to allow other tab signals to enable fields
+        self.same_calib()
+        self.ui.IonChamberModelComboB.currentIndexChanged.connect(self.chamber_model_changed)
+        self.chamber_model_changed()
+        self.ui.calibSetupGroup.buttonClicked.connect(self.set_zmax_depth_dose)
+        self.ui.IonChamberModelComboB.currentIndexChanged.connect(self.calc_kq)
+        self.ui.beamQualityLE.textChanged.connect(self.calc_kq)
+        self.ui.refPressureLE.textChanged.connect(self.calc_ktp)
+        self.ui.refTempLE.textChanged.connect(self.calc_ktp)
+        self.ui.refHumidityLE.textChanged.connect(self.calc_ktp)
+        self.ui.userPressureLE.textChanged.connect(self.calc_ktp)
+        self.ui.userTempLE.textChanged.connect(self.calc_ktp)
+        self.ui.userHumidityLE.textChanged.connect(self.calc_ktp)
+        self.ui.kElecLE_2.textChanged.connect(self.set_kelec)
+        self.ui.kElecLE_2.textChanged.connect(self.set_ref_depth_dose)
+        self.ui.userPolarityGroup.buttonClicked.connect(self.cal_kpol)
+        self.ui.readMPosLE.textChanged.connect(self.cal_kpol)
+        self.ui.readMNegLE.textChanged.connect(self.cal_kpol)
+        self.ui.beamTypeGroup.buttonClicked.connect(self.calc_ks)
+        self.ui.normReadLE.textChanged.connect(self.calc_ks)
+        self.ui.redReadLE.textChanged.connect(self.calc_ks)
+        self.ui.normVoltageLE.textChanged.connect(self.calc_ks)
+        self.ui.redVoltageLE.textChanged.connect(self.calc_ks)
+        self.ui.rawDosReadLE.textChanged.connect(self.set_ratio_read_mu)
+        self.ui.corrLinacMULE.textChanged.connect(self.set_ratio_read_mu)
         self.ui.ratioReadMULE.setReadOnly(True)
-        self.ui.ratioReadMULE.textChanged.connect(self.setRefDepthDose)
-        self.ui.calibFactorLE.textChanged.connect(self.setNdw)
-        self.ui.calibFactorLE.textChanged.connect(self.setRefDepthDose)
-        self.ui.kQLE.textChanged.connect(self.setRefDepthDose)
-        self.ui.kSLE.textChanged.connect(self.setRefDepthDose)
-        self.ui.kTPLE.textChanged.connect(self.setRefDepthDose)
-        self.ui.kElecLE.textChanged.connect(self.setRefDepthDose)
-        self.ui.kPolLE.textChanged.connect(self.setRefDepthDose)
-        self.ui.zrefDoseLE.textChanged.connect(self.setZmaxDepthDose)
-        self.ui.pddLE.textChanged.connect(self.setZmaxDepthDose)
+        self.ui.ratioReadMULE.textChanged.connect(self.set_ref_depth_dose)
+        self.ui.calibFactorLE.textChanged.connect(self.set_ndw)
+        self.ui.calibFactorLE.textChanged.connect(self.set_ref_depth_dose)
+        self.ui.kQLE.textChanged.connect(self.set_ref_depth_dose)
+        self.ui.kSLE.textChanged.connect(self.set_ref_depth_dose)
+        self.ui.kSLE.textChanged.connect(self.check_ks_value)
+        self.ui.kTPLE.textChanged.connect(self.set_ref_depth_dose)
+        self.ui.kElecLE.textChanged.connect(self.set_ref_depth_dose)
+        self.ui.kPolLE.textChanged.connect(self.set_ref_depth_dose)
+        self.ui.zrefDoseLE.textChanged.connect(self.set_zmax_depth_dose)
+        self.ui.pddLE.textChanged.connect(self.set_zmax_depth_dose)
 
         # set reference condition values
         self.ui.refTempLE.setText(f"{self.trs398.refTemp}")
@@ -191,14 +193,14 @@ class QPhotonsWorksheet(QWidget):
         self.initSetupComplete = True
         self.calibStatus = None
 
-    def setIonChamberList(self):
+    def set_ion_chamber_list(self):
         self.chambers = self.chambersConfig.getConfig()
         self.allChambers.extend(self.chambers["cylindrical"])
 
         self.allChambers.sort()   
         self.ui.IonChamberModelComboB.addItems(self.allChambers)
 
-    def chamberModelChanged(self):
+    def chamber_model_changed(self):
         currentChamber = self.ui.IonChamberModelComboB.currentText()
 
         for type in self.chambers:
@@ -206,12 +208,12 @@ class QPhotonsWorksheet(QWidget):
                 self.ui.cWallMatLE.setText(self.chambers[type][currentChamber]["wall_material"])
                 self.ui.cWallThickLE.setText(str(self.chambers[type][currentChamber]["wall_thickness"]))
 
-    def setupChanged(self):
+    def cal_setup_changed(self):
         if self.ui.calibSetupGroup.checkedButton() == self.ui.ssdRadioButton:
             self.ui.setupSW.setCurrentIndex(0)
         else: self.ui.setupSW.setCurrentIndex(1)
 
-    def sameCalib(self):
+    def same_calib(self):
         if self.ui.calibSeparateGroup.checkedButton() == self.ui.calibSepNoRadioButton:
             self.ui.electCalDateDE.setDate(self.ui.chamberCalibDE.date())
             self.ui.electCalDateDE.setEnabled(False)
@@ -234,7 +236,7 @@ class QPhotonsWorksheet(QWidget):
             self.ui.kElecLE_2.show()
             self.ui.kElecLE.clear() # kElec will still be 1.00 in TRS class until set
 
-    def calcKQ(self):
+    def calc_kq(self):
         currChamber = self.ui.IonChamberModelComboB.currentText()
         tprValue = self.ui.beamQualityLE.text()
 
@@ -249,7 +251,7 @@ class QPhotonsWorksheet(QWidget):
         else:
             self.ui.kQLE.clear()
 
-    def calcKTP(self):
+    def calc_ktp(self):
         userTemp = self.ui.userTempLE.text()
         userPress = self.ui.userPressureLE.text()
         userHumid = self.ui.userHumidityLE.text()
@@ -260,7 +262,7 @@ class QPhotonsWorksheet(QWidget):
         else:
             self.ui.kTPLE.clear()
 
-    def calKPol(self):
+    def cal_kpol(self):
         mPos = self.ui.readMPosLE.text()
         mNeg = self.ui.readMNegLE.text()
 
@@ -275,7 +277,7 @@ class QPhotonsWorksheet(QWidget):
         else:
             self.ui.kPolLE.clear()
 
-    def calcKS(self):
+    def calc_ks(self):
         vNorm = self.ui.normVoltageLE.text()
         vRed = self.ui.redVoltageLE.text()
         mNorm = self.ui.normReadLE.text()
@@ -292,8 +294,34 @@ class QPhotonsWorksheet(QWidget):
             self.ui.kSLE.setText("%.3f" % kS)
         else:
             self.ui.kSLE.clear()
+
+    def check_ks_value(self):
+        if self.ui.kSLE.text() != "":
+            kS = float(self.ui.kSLE.text())
+            vNorm = float(self.ui.normVoltageLE.text())
+            vRed = float(self.ui.redVoltageLE.text())
+            mNorm = float(self.ui.normReadLE.text())
+            mRed = float(self.ui.redReadLE.text())
+
+            kS = kS - 1.0
+            kS_test = ((mNorm/mRed) - 1.0) / ((vNorm/vRed) - 1.0)
+
+            if abs(kS - kS_test) <= 0.01:
+                pixmap = QPixmap(u":/colorIcons/icons/correct.png")
+                pixmap = pixmap.scaled(24, 24, mode = Qt.TransformationMode.SmoothTransformation)
+                self.ui.ks_status_icon.setPixmap(pixmap)
+
+            else:
+                pixmap = QPixmap(u":/colorIcons/icons/warning.png")
+                pixmap = pixmap.scaled(24, 24, mode = Qt.TransformationMode.SmoothTransformation)
+                self.ui.ks_status_icon.setPixmap(pixmap)
+
+            self.ui.ks_status_icon.show()
+
+        else:
+            self.ui.ks_status_icon.hide()
     
-    def setKElec(self):
+    def set_kelec(self):
         kElec = self.ui.kElecLE_2.text()
 
         if kElec != "":
@@ -301,7 +329,7 @@ class QPhotonsWorksheet(QWidget):
         else:
             self.ui.kElecLE.clear()
 
-    def setRatioReadMU(self):
+    def set_ratio_read_mu(self):
         rawRead = self.ui.rawDosReadLE.text()
         linacMU = self.ui.corrLinacMULE.text()
 
@@ -314,13 +342,13 @@ class QPhotonsWorksheet(QWidget):
         else:
             self.ui.ratioReadMULE.clear()
 
-    def setNdw(self):
+    def set_ndw(self):
         nDw = self.ui.calibFactorLE.text()
 
         if nDw != "":
             self.trs398.nDW = float(nDw)
 
-    def setRefDepthDose(self):
+    def set_ref_depth_dose(self):
         # use fields for checking validity, otherwise TRS398 values used for accuracy
         kTP = self.ui.kTPLE.text()
         kS = self.ui.kSLE.text()
@@ -338,7 +366,7 @@ class QPhotonsWorksheet(QWidget):
         else:
             self.ui.zrefDoseLE.clear()
 
-    def setZmaxDepthDose(self):
+    def set_zmax_depth_dose(self):
         if self.ui.calibSetupGroup.checkedButton() == self.ui.ssdRadioButton:
             zRefDD = self.ui.zrefDoseLE.text()
             pddzRef = self.ui.pddLE.text()
@@ -350,7 +378,7 @@ class QPhotonsWorksheet(QWidget):
             else:
                 self.ui.zmaxDoseLE.clear()
                 self.ui.outcomeLE.clear()
-                self.hideOutcome()
+                self.hide_cal_outcome()
         else:
             zRefDD = self.ui.zrefDoseLE.text()
             tmrRef = self.ui.tmrLE.text()
@@ -362,7 +390,7 @@ class QPhotonsWorksheet(QWidget):
             else:
                 self.ui.zmaxDoseLE.clear()
                 self.ui.outcomeLE.clear()
-                self.hideOutcome()
+                self.hide_cal_outcome()
 
     def setOutcome(self, dMax: float):
         tol = self.settingsConfig.getConfig()["trs398"]["tolerance"]
@@ -393,7 +421,7 @@ class QPhotonsWorksheet(QWidget):
                 "height: 30px;\n"
                 "font-weight: bold;\n")
         
-    def hideOutcome(self):
+    def hide_cal_outcome(self):
         self.ui.outcomeLE.setStyleSheet(u"border-color: rgba(0, 0, 0,0);\n"
                 "border-radius: 15px;\n"
                 "border-style: solid;\n"
@@ -421,7 +449,7 @@ class QPhotonsWorksheet(QWidget):
         for row in rowsToHide:
             self.ui.depthDMaxFL.setRowVisible(row, False)
 
-    def toggleDetailedView(self):
+    def toggle_detailed_view(self):
         #show section one fields
         for row in range(self.ui.sectionOneFL.rowCount()):
             self.ui.sectionOneFL.setRowVisible(row, True)

@@ -25,6 +25,7 @@ class Ui_QWLutzWorksheet(object):
     def setupUi(self, QWLutzWorksheet):
         if not QWLutzWorksheet.objectName():
             QWLutzWorksheet.setObjectName(u"QWLutzWorksheet")
+        QWLutzWorksheet.resize(1268, 405)
         self.verticalLayout = QVBoxLayout(QWLutzWorksheet)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.stackedWidget = QStackedWidget(QWLutzWorksheet)
@@ -158,6 +159,7 @@ class Ui_QWLutzWorksheet(object):
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
         self.toleranceDSB = QDoubleSpinBox(self.frame_2)
         self.toleranceDSB.setObjectName(u"toleranceDSB")
+        self.toleranceDSB.setMaximumSize(QSize(100, 16777215))
         self.toleranceDSB.setButtonSymbols(QAbstractSpinBox.NoButtons)
         self.toleranceDSB.setDecimals(2)
         self.toleranceDSB.setMaximum(3.000000000000000)
@@ -179,16 +181,6 @@ class Ui_QWLutzWorksheet(object):
 
         self.formLayout.setWidget(1, QFormLayout.FieldRole, self.coordSysCB)
 
-        self.useFilenameSLabel = QLabel(self.frame_2)
-        self.useFilenameSLabel.setObjectName(u"useFilenameSLabel")
-
-        self.formLayout.setWidget(2, QFormLayout.LabelRole, self.useFilenameSLabel)
-
-        self.useFilenameSCheckBox = QCheckBox(self.frame_2)
-        self.useFilenameSCheckBox.setObjectName(u"useFilenameSCheckBox")
-
-        self.formLayout.setWidget(2, QFormLayout.FieldRole, self.useFilenameSCheckBox)
-
         self.lowDensityBBLabel = QLabel(self.frame_2)
         self.lowDensityBBLabel.setObjectName(u"lowDensityBBLabel")
 
@@ -198,6 +190,31 @@ class Ui_QWLutzWorksheet(object):
         self.lowDensityBBCheckBox.setObjectName(u"lowDensityBBCheckBox")
 
         self.formLayout.setWidget(3, QFormLayout.FieldRole, self.lowDensityBBCheckBox)
+
+        self.useFilenameSLabel = QLabel(self.frame_2)
+        self.useFilenameSLabel.setObjectName(u"useFilenameSLabel")
+
+        self.formLayout.setWidget(4, QFormLayout.LabelRole, self.useFilenameSLabel)
+
+        self.useFilenameSCheckBox = QCheckBox(self.frame_2)
+        self.useFilenameSCheckBox.setObjectName(u"useFilenameSCheckBox")
+
+        self.formLayout.setWidget(4, QFormLayout.FieldRole, self.useFilenameSCheckBox)
+
+        self.bb_size_label = QLabel(self.frame_2)
+        self.bb_size_label.setObjectName(u"bb_size_label")
+
+        self.formLayout.setWidget(2, QFormLayout.LabelRole, self.bb_size_label)
+
+        self.bb_size_dsb = QDoubleSpinBox(self.frame_2)
+        self.bb_size_dsb.setObjectName(u"bb_size_dsb")
+        self.bb_size_dsb.setMaximumSize(QSize(100, 16777215))
+        self.bb_size_dsb.setDecimals(1)
+        self.bb_size_dsb.setMinimum(1.000000000000000)
+        self.bb_size_dsb.setMaximum(20.000000000000000)
+        self.bb_size_dsb.setValue(5.000000000000000)
+
+        self.formLayout.setWidget(2, QFormLayout.FieldRole, self.bb_size_dsb)
 
 
         self.verticalLayout_4.addLayout(self.formLayout)
@@ -502,8 +519,10 @@ class Ui_QWLutzWorksheet(object):
         self.toleranceLabel.setText(QCoreApplication.translate("QWLutzWorksheet", u"Tolerance:", None))
         self.toleranceDSB.setSuffix(QCoreApplication.translate("QWLutzWorksheet", u" mm", None))
         self.label_3.setText(QCoreApplication.translate("QWLutzWorksheet", u"Coordinate system:", None))
-        self.useFilenameSLabel.setText(QCoreApplication.translate("QWLutzWorksheet", u"Use filename(s):", None))
         self.lowDensityBBLabel.setText(QCoreApplication.translate("QWLutzWorksheet", u"Low density BB:", None))
+        self.useFilenameSLabel.setText(QCoreApplication.translate("QWLutzWorksheet", u"Use filename(s):", None))
+        self.bb_size_label.setText(QCoreApplication.translate("QWLutzWorksheet", u"Ball bearing size:", None))
+        self.bb_size_dsb.setSuffix(QCoreApplication.translate("QWLutzWorksheet", u" mm", None))
         self.label_2.setText(QCoreApplication.translate("QWLutzWorksheet", u"<html><head/><body><p><span style=\" font-weight:700;\">Analysis Outcome</span></p></body></html>", None))
         self.outcomeLE.setPlaceholderText(QCoreApplication.translate("QWLutzWorksheet", u"N/A", None))
         self.importedImgLabel.setText(QCoreApplication.translate("QWLutzWorksheet", u"Imported images", None))

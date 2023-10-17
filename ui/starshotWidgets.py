@@ -77,8 +77,8 @@ class StarshotMainWindow(QAToolsWindow):
             sim_image.add_layer(GaussianFilterLayer(sigma_mm = 3))
             sim_image.generate_dicom(dialog.ui.out_file_le.text())
 
-        self.add_new_worksheet(dialog.ui.test_name_le.text() + " (Test)")
-        self.ui.tabWidget.currentWidget().add_files([dialog.ui.out_file_le.text()])
+            self.add_new_worksheet(dialog.ui.test_name_le.text() + " (Test)")
+            self.ui.tabWidget.currentWidget().add_files([dialog.ui.out_file_le.text()])
 
     def add_new_worksheet(self, worksheet_name: str = None, enable_icon: bool = True):
         if worksheet_name is None:

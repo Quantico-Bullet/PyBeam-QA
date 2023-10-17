@@ -1,5 +1,6 @@
 {
     "files": ["icons.qrc","wlutzWorksheet.ui","photonsWorksheet.ui","qaMainWin.ui","appMainWin.ui",
     "electronsWorksheet.ui", "picketFenceWorksheet.ui", "starshotWorksheet.ui", "fieldAnalysisWorksheet.ui",
-    "planarImagingWorksheet.ui", "wl_test_dialog.ui", "about_dialog.ui", "starshot_test_dialog.ui"]
+    "planarImagingWorksheet.ui", "wl_test_dialog.ui", "about_dialog.ui", "starshot_test_dialog.ui", 
+    "picket_fence_test_dialog.ui", "pf_offsets_dialog.ui"]
 }

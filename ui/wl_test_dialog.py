@@ -80,20 +80,18 @@ class WLTestDialog(QDialog):
                                 self.apply_btn.setEnabled(True)
 
                         else:
-                            self.apply_btn.setEnabled(False)
-                            return
+                            return self.apply_btn.setEnabled(False)
+
                     except Exception as err:
-                        self.apply_btn.setEnabled(False)
-                        return
+                        return self.apply_btn.setEnabled(False)
 
             else: 
-                self.apply_btn.setEnabled(False)
-                return
+                return self.apply_btn.setEnabled(False)
+            
         else: return
 
         if self.ui.test_name_le.text() == "" or self.ui.out_dir_le.text() == "":
-            self.apply_btn.setEnabled(False)
-            return
+            return self.apply_btn.setEnabled(False)
 
         else:
             self.apply_btn.setEnabled(True)

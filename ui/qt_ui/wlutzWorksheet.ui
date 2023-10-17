@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>QWLutzWorksheet</class>
  <widget class="QWidget" name="QWLutzWorksheet">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1268</width>
+    <height>405</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
@@ -253,6 +261,12 @@ QPushButton:!enabled{
              <layout class="QHBoxLayout" name="horizontalLayout_4">
               <item>
                <widget class="QDoubleSpinBox" name="toleranceDSB">
+                <property name="maximumSize">
+                 <size>
+                  <width>100</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
                 <property name="buttonSymbols">
                  <enum>QAbstractSpinBox::NoButtons</enum>
                 </property>
@@ -285,16 +299,6 @@ QPushButton:!enabled{
             <item row="1" column="1">
              <widget class="QComboBox" name="coordSysCB"/>
             </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="useFilenameSLabel">
-              <property name="text">
-               <string>Use filename(s):</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QCheckBox" name="useFilenameSCheckBox"/>
-            </item>
             <item row="3" column="0">
              <widget class="QLabel" name="lowDensityBBLabel">
               <property name="text">
@@ -304,6 +308,48 @@ QPushButton:!enabled{
             </item>
             <item row="3" column="1">
              <widget class="QCheckBox" name="lowDensityBBCheckBox"/>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="useFilenameSLabel">
+              <property name="text">
+               <string>Use filename(s):</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QCheckBox" name="useFilenameSCheckBox"/>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="bb_size_label">
+              <property name="text">
+               <string>Ball bearing size:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QDoubleSpinBox" name="bb_size_dsb">
+              <property name="maximumSize">
+               <size>
+                <width>100</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="suffix">
+               <string> mm</string>
+              </property>
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="minimum">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>20.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>5.000000000000000</double>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>

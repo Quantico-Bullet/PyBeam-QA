@@ -2,35 +2,11 @@
     "linacs": {
         "Test Linac 1": {
             "serialNum": "SERIAL NUMBER XXX1",
-             "modelName": "Versa HD",
-            "manufacturer": "Elekta",
-            "beams": {
-                "photons": [1, 2, 3, 4],
-                "photonsFFF": [12, 13, 14, 15],
-                "electrons": [2, 4, 6, 8],
-                "electronsFFF": [2, 4, 8, 16]
-            }
-        },
-        "Test Linac 2": {
-            "serialNum": "SERIAL NUMBER XXX2",
             "modelName": "Versa HD",
             "manufacturer": "Elekta",
             "beams": {
-                "photons": [8, 10, 15, 21],
-                "photonsFFF": [8, 10, 15, 21],
-                "electrons": [6, 9, 12, 15],
-                "electronsFFF": [6, 9, 12, 15]
-            }
-        },
-        "Test Linac 3": {
-            "serialNum": "SERIAL NUMBER XXX3",
-            "modelName": "Versa HD",
-            "manufacturer": "Elekta",
-            "beams": {
-                "photons": [8, 10, 15, 21],
-                "photonsFFF": [],
-                "electrons": [6, 9, 12, 15],
-                "electronsFFF": [6, 9, 12, 15]
+                "photons": [6, 9, 12, 18],
+                "photonsFFF": [6, 9, 12]
             }
         }
     }

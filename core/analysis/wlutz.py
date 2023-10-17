@@ -1,5 +1,5 @@
 import traceback
-from PySide6.QtCore import Signal, Slot, QObject, QRunnable
+from PySide6.QtCore import Signal, Slot, QObject
 
 import pyqtgraph as pg
 from pylinac import WinstonLutz
@@ -59,16 +59,19 @@ class QWinstonLutzWorker(QObject):
     analysis_failed = Signal(str)
     bb_shift_info_changed = Signal(str)
 
-    def __init__(self, images: list[str], use_filenames: bool = False):
+    def __init__(self, images: list[str],
+                 bb_size: float = 5.0,
+                 use_filenames: bool = False):
         super().__init__()
 
+        self.bb_size = bb_size
         self._wl = QWinstonLutz(images, update_signal = self.images_analyzed,
                           use_filenames = use_filenames)
 
     @Slot()
     def analyze(self):
         try:
-            self._wl.analyze()
+            self._wl.analyze(bb_size_mm = self.bb_size)
         
             wl_data = self._wl.results_data(as_dict=True)
             wl_data["image_details"] = self._wl.image_data

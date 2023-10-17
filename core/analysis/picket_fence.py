@@ -1,16 +1,22 @@
 from PySide6.QtCore import Signal, Slot, QObject
 
 from pylinac.core import image
+from pylinac.core.image_generator.simulators import Simulator
+from pylinac.core.image_generator.layers import (FilteredFieldLayer,
+                                                 FilterFreeFieldLayer,
+                                                 PerfectFieldLayer, 
+                                                 Layer)
 from pylinac.picketfence import PicketFence, MLC, MLCArrangement, Orientation
 
 import traceback
 import os.path as osp
 import numpy as np
 import pyqtgraph as pg
+from scipy import ndimage
 from py_linq import Enumerable
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import BinaryIO, Optional, Union
+from typing import BinaryIO, Optional, Union, Sequence
 
 pg.setConfigOptions(antialias = True, imageAxisOrder='row-major')
 
@@ -360,3 +366,47 @@ class QPicketFenceWorker(QObject):
         except Exception as err:
             self.analysis_failed.emit(traceback.format_exception_only(err)[-1])
             self.thread_finished.emit()
+
+def generate_picket_fence(
+        simulator: Simulator,
+        field_layer: type[FilterFreeFieldLayer | FilteredFieldLayer | PerfectFieldLayer],
+        file_out: str,
+        final_layers: list[Layer] = None,
+        pickets: int = 11,
+        picket_spacing_mm: int = 20,
+        picket_width_mm: int = 2,
+        picket_height_mm: int = 300,
+        gantry_angle: int = 0,
+        orientation: Orientation = Orientation.UP_DOWN,
+        picket_offset_error: Sequence | None = None,
+        image_rotation: float = 0.0
+    ):
+
+    picket_pos_mm = range(
+        -int((pickets - 1) * picket_spacing_mm / 2),
+        int((pickets - 1) * picket_spacing_mm / 2) + 1,
+        picket_spacing_mm,
+    )
+    for idx, pos in enumerate(picket_pos_mm):
+        if picket_offset_error is not None:
+            if len(picket_offset_error) != pickets:
+                raise ValueError(
+                    "The length of the error array must be the same as the number of pickets."
+                )
+            pos += picket_offset_error[idx]
+        if orientation == orientation.UP_DOWN:
+            position = (0, pos)
+            layout = (picket_height_mm, picket_width_mm)
+        else:
+            position = (pos, 0)
+            layout = (picket_width_mm, picket_height_mm)
+        simulator.add_layer(field_layer(layout, cax_offset_mm=position))
+    if final_layers is not None:
+        for layer in final_layers:
+            simulator.add_layer(layer)
+
+    # Rotate the image before DICOM generation
+    simulator.image = ndimage.rotate(simulator.image, -image_rotation,
+                                     reshape = False, mode = 'nearest')
+
+    simulator.generate_dicom(file_out, gantry_angle=gantry_angle)

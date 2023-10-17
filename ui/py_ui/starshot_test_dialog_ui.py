@@ -182,7 +182,7 @@ class Ui_StarshotTestDialog(object):
     def retranslateUi(self, StarshotTestDialog):
         self.test_name_label.setText(QCoreApplication.translate("StarshotTestDialog", u"Test name:", None))
         self.output_file_label.setText(QCoreApplication.translate("StarshotTestDialog", u"Output file:", None))
-        self.select_file_btn.setText(QCoreApplication.translate("StarshotTestDialog", u"Select file", None))
+        self.select_file_btn.setText(QCoreApplication.translate("StarshotTestDialog", u"Save to...", None))
         self.sim_image_label.setText(QCoreApplication.translate("StarshotTestDialog", u"Simulation image:", None))
         self.num_spokes_label.setText(QCoreApplication.translate("StarshotTestDialog", u"Number of spokes:", None))
         self.cax_offset_label.setText(QCoreApplication.translate("StarshotTestDialog", u"CAX offset", None))

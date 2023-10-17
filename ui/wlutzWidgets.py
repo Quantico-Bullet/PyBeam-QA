@@ -445,7 +445,8 @@ class QWLutzWorksheet(QWidget):
         self.ui.analyzeBtn.setText("Analysis in progress...")
 
         self.worker = QWinstonLutzWorker(self.marked_images,
-                                                  self.ui.useFilenameSCheckBox.isChecked())
+                                         self.ui.bb_size_dsb.value(),
+                                         self.ui.useFilenameSCheckBox.isChecked())
     
         self.qthread = QThread()
         self.worker.moveToThread(self.qthread)
@@ -591,7 +592,13 @@ class QWLutzWorksheet(QWidget):
         plotItem = plotView.getPlotItem()
         plotItem.setLimits(xMin=-150, xMax=image.array.shape[1]+150, yMin=-150, yMax=image.array.shape[0]+150)
         plotItem.setRange(xRange=(-50, image.array.shape[1]+50), yRange=(-50, image.array.shape[0]+50))
+        plotItem.setLabel('left', 'Pixel')
+        plotItem.setLabel('bottom', 'Pixel')
         #plotItem.invertY(True)
+
+        plot_legend = plotItem.addLegend(size = (50,50), offset=(30,20), 
+                                         labelTextColor=(255,255,255),
+                                         brush=pg.mkBrush((27, 38, 59, 200)))
 
         image.flipud() # WL images are flip up-side down in Pylinac
         
@@ -606,17 +613,20 @@ class QWLutzWorksheet(QWidget):
 
         bb_plotItem = pg.ScatterPlotItem()
         cax_plotItem = pg.ScatterPlotItem()
-        bb_plotItem.addPoints(pos=[(bbX, bbY)], pen=None, size=10, brush=(255,0,0,255), name="BB")
+        bb_plotItem.addPoints(pos=[(bbX, bbY)], pen=None, size=10, brush=(255,0,0,255), name="BB center")
         cax_plotItem.addPoints(pos=[(caxX, caxY)], pen=None, size=10, brush=(0,0,255,255),
-                                symbol="s", name="CAX")
+                                symbol="s", name="Field CAX")
         
-        epidX_plot = pg.InfiniteLine(pos=[epidX,0],movable=False, angle=90, pen = (0,255,0), name="EPID X line",
-                                        label="EPID x = {value:0.2f}", labelOpts={'position': 0.1,
-                                        'color': (200,200,100), 'fill': (0,200,0,50), 'movable': True})
+        epidX_plot = pg.InfiniteLine(pos=[epidX,0],movable=False, angle=90, pen = (0,255,0), name="EPID-x line",
+                                        label="EPID x = {value:3.2f}", labelOpts={'position': 0.1,
+                                        'color': (255,255,255), 'fill': (0,200,0,200), 'movable': True})
         
-        epidY_plot = pg.InfiniteLine(pos=[0,epidY], movable=False, angle=0, pen = (0,255,0), name="EPID Y line", 
-                                         label="EPID y = {value:0.2f}", labelOpts={'position': 0.1, 
-                                        'color': (200,200,100), 'fill': (0,200,0,50), 'movable': True})
+        epidY_plot = pg.InfiniteLine(pos=[0,epidY], movable=False, angle=0, pen = (0,255,0), name="EPID-y line", 
+                                         label="EPID y = {value:3.2f}", labelOpts={'position': 0.1, 
+                                        'color': (255,255,255), 'fill': (0,200,0,200), 'movable': True})
+        
+        plot_legend.addItem(epidX_plot, "EPID-x line")
+        plot_legend.addItem(epidY_plot, "EPID-y line")
         
         epidX_plot.opts = {"pen": epidX_plot.pen}
         epidY_plot.opts = {"pen": epidY_plot.pen}
@@ -627,13 +637,6 @@ class QWLutzWorksheet(QWidget):
         plotItem.addItem(cax_plotItem)
         plotItem.addItem(epidX_plot)
         plotItem.addItem(epidY_plot)
-
-        legend = pg.LegendItem((50,50), offset=(50,50))
-        legend.setParentItem(plotItem)
-        legend.addItem(bb_plotItem, "BB")
-        legend.addItem(cax_plotItem, "Field CAX")
-        legend.addItem(epidX_plot, "EPID-x line")
-        legend.addItem(epidY_plot, "EPID-y line")
 
         new_win = QMainWindow()
         new_win.setWindowTitle(image_short_name + " (Analyzed Image) ")
@@ -666,7 +669,7 @@ class QWLutzWorksheet(QWidget):
         self.delete_dialog = MessageDialog()
         self.delete_dialog.set_title("Delete File")
         self.delete_dialog.set_icon(MessageDialog.WARNING_ICON)
-        self.delete_dialog.set_text(f"Are you sure you want to permanently delete {listWidgetItem.text()}")
+        self.delete_dialog.set_text(f"Are you sure you want to permanently delete {listWidgetItem.text()}?")
         self.delete_dialog.set_info_text("This action is irreversible!")
         self.delete_dialog.setStandardButtons(QMessageBox.StandardButton.Yes | 
                                              QMessageBox.StandardButton.Cancel)

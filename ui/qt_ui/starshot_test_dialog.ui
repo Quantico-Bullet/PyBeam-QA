@@ -156,7 +156,7 @@
               <item>
                <widget class="QPushButton" name="select_file_btn">
                 <property name="text">
-                 <string>Select file</string>
+                 <string>Save to...</string>
                 </property>
                </widget>
               </item>

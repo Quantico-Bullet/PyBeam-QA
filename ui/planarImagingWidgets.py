@@ -51,7 +51,7 @@ class QPlanarImagingWorksheet(QWidget):
                 "SNC kV", "SNC MV", "SNC MV (12510)", "PTW EPID QC", "Las Vegas",
                 "IBA Primus A"]
     
-    PARAM_OVERRIDE_OPTS = ["Auto", "Manual"]
+    PARAM_OVERRIDE_OPTS = ["None (Auto detect)", "Manual"]
 
     def __init__(self):
         super().__init__()

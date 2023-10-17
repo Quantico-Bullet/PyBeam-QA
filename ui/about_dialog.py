@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QDialog, QWidget
 from PySide6.QtCore import Qt, QSize, QRect
-from PySide6.QtGui import QDesktopServices, QPixmap, QImage, QPainter
+from PySide6.QtGui import QDesktopServices, QPixmap, QImage, QPainter, QColor
 from PySide6.QtSvg import QSvgRenderer
 
 from ui.py_ui.about_dialog_ui import Ui_AboutDialog
@@ -15,6 +15,7 @@ class AboutDialog(QDialog):
 
     app_svg = QSvgRenderer(u":/misc_icons/icons/ic_app.svg")
     app_img = QImage(256, 256, QImage.Format.Format_ARGB32)
+    app_img.fill(QColor(255, 255, 255, 0))
     qpainter = QPainter(app_img)
     app_svg.render(qpainter)
     qpainter.end()

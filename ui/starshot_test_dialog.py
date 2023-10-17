@@ -5,8 +5,6 @@ from PySide6.QtWidgets import (QDialog, QWidget, QDialogButtonBox, QFileDialog,
 
 from ui.py_ui.starshot_test_dialog_ui import Ui_StarshotTestDialog
 
-import ast
-
 class StarshotTestDialog(QDialog):
 
     def __init__(self, parent: QWidget | None = None):
@@ -27,7 +25,7 @@ class StarshotTestDialog(QDialog):
         self.ui.out_file_le.textChanged.connect(self.validate_info)
 
     def save_file_to(self, line_edit: QLineEdit):
-        file_path = QFileDialog.getSaveFileName(caption="Save To File...", filter="DICOM (*.dcm)")
+        file_path = QFileDialog.getSaveFileName(caption="Save As...", filter="DICOM (*.dcm)")
         
         if file_path[0] != "":
             path = file_path[0].split("/")

@@ -1,11 +1,11 @@
 from PySide6.QtWidgets import (QWidget, QMainWindow, QCheckBox)
 from PySide6.QtCore import QObject, QEvent
-from ui.trs398Widgets import PhotonsMainWindow
+
+from core.tools.devices import DeviceManager
 
 from ui.py_ui.appMainWin_ui import Ui_MainWindow as Ui_AppMainWin
 from ui.qaToolsWindow import QAToolsWindow
-from core.tools.devices import DeviceManager, Linac
-
+from ui.trs398Widgets import PhotonsMainWindow
 from ui.starshotWidgets import StarshotMainWindow
 from ui.wlutzWidgets import WinstonLutzMainWindow
 from ui.fieldAnalysisWidgets import FieldAnalysisMainWindow
@@ -168,7 +168,7 @@ class AppMainWin(QMainWindow):
             self.qa_windows[window_type] = window(data)
             self.qa_windows[window_type].showMaximized()
                 
-            self.qa_windows[window_type].windowClosing.connect(
+            self.qa_windows[window_type].destroyed.connect(
                 lambda: self.window_closed(window_type))
               
         else:

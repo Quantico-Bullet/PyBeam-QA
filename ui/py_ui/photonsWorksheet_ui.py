@@ -108,7 +108,7 @@ class Ui_QPhotonsWorksheet(object):
         self.scrollArea.setWidgetResizable(True)
         self.calSummaryScroll = QWidget()
         self.calSummaryScroll.setObjectName(u"calSummaryScroll")
-        self.calSummaryScroll.setGeometry(QRect(0, 0, 379, 344))
+        self.calSummaryScroll.setGeometry(QRect(0, 0, 379, 346))
         sizePolicy4.setHeightForWidth(self.calSummaryScroll.sizePolicy().hasHeightForWidth())
         self.calSummaryScroll.setSizePolicy(sizePolicy4)
         self.calSummaryScroll.setAutoFillBackground(False)
@@ -230,6 +230,9 @@ class Ui_QPhotonsWorksheet(object):
 
         self.corrFactorFL_2.setWidget(4, QFormLayout.LabelRole, self.kSLabel)
 
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setSpacing(10)
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.kSLE = QLineEdit(self.calSummaryScroll)
         self.kSLE.setObjectName(u"kSLE")
         sizePolicy2.setHeightForWidth(self.kSLE.sizePolicy().hasHeightForWidth())
@@ -245,7 +248,17 @@ class Ui_QPhotonsWorksheet(object):
 "font-weight: bold")
         self.kSLE.setReadOnly(True)
 
-        self.corrFactorFL_2.setWidget(4, QFormLayout.FieldRole, self.kSLE)
+        self.horizontalLayout_2.addWidget(self.kSLE)
+
+        self.ks_status_icon = QLabel(self.calSummaryScroll)
+        self.ks_status_icon.setObjectName(u"ks_status_icon")
+        self.ks_status_icon.setMaximumSize(QSize(24, 24))
+        self.ks_status_icon.setScaledContents(True)
+
+        self.horizontalLayout_2.addWidget(self.ks_status_icon)
+
+
+        self.corrFactorFL_2.setLayout(4, QFormLayout.FieldRole, self.horizontalLayout_2)
 
 
         self.verticalLayout_5.addLayout(self.corrFactorFL_2)
@@ -1867,6 +1880,7 @@ class Ui_QPhotonsWorksheet(object):
         self.kPolLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
         self.kSLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">k</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">s </span>:</p></body></html>", None))
         self.kSLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
+        self.ks_status_icon.setText("")
         self.absorsedDoseLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-weight:700;\">Absorbed dose to water</span></p></body></html>", None))
         self.zrefDoseLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p>At reference depth, <span style=\" font-style:italic;\">D</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">w,Q </span>(<span style=\" font-style:italic;\">z</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">ref </span>) :</p></body></html>", None))
         self.zrefDoseLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))

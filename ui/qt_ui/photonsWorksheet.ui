@@ -169,7 +169,7 @@ QAbstractScrollArea::corner {
                <x>0</x>
                <y>0</y>
                <width>379</width>
-               <height>344</height>
+               <height>346</height>
               </rect>
              </property>
              <property name="sizePolicy">
@@ -388,18 +388,23 @@ font-weight: bold</string>
                  </widget>
                 </item>
                 <item row="4" column="1">
-                 <widget class="QLineEdit" name="kSLE">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
+                 <layout class="QHBoxLayout" name="horizontalLayout_2">
+                  <property name="spacing">
+                   <number>10</number>
                   </property>
-                  <property name="contextMenuPolicy">
-                   <enum>Qt::NoContextMenu</enum>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">border-radius: 15px;
+                  <item>
+                   <widget class="QLineEdit" name="kSLE">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="contextMenuPolicy">
+                     <enum>Qt::NoContextMenu</enum>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true">border-radius: 15px;
 border-color: rgb(130, 160, 250);
 border-style: solid;
 border-width:2px;
@@ -407,14 +412,32 @@ background-color: rgba(130, 160, 250,150);
 padding-left: 15px;
 height: 30px;
 font-weight: bold</string>
-                  </property>
-                  <property name="readOnly">
-                   <bool>true</bool>
-                  </property>
-                  <property name="placeholderText">
-                   <string>N/A</string>
-                  </property>
-                 </widget>
+                    </property>
+                    <property name="readOnly">
+                     <bool>true</bool>
+                    </property>
+                    <property name="placeholderText">
+                     <string>N/A</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="ks_status_icon">
+                    <property name="maximumSize">
+                     <size>
+                      <width>24</width>
+                      <height>24</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="scaledContents">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                </layout>
               </item>
@@ -3211,11 +3234,11 @@ QPushButton:!enabled{
  <resources/>
  <connections/>
  <buttongroups>
+  <buttongroup name="calibPolarityGroup"/>
+  <buttongroup name="beamTypeGroup"/>
   <buttongroup name="calibSetupGroup"/>
   <buttongroup name="calibSeparateGroup"/>
-  <buttongroup name="userPolarityGroup"/>
-  <buttongroup name="beamTypeGroup"/>
   <buttongroup name="beamQualityGroup"/>
-  <buttongroup name="calibPolarityGroup"/>
+  <buttongroup name="userPolarityGroup"/>
  </buttongroups>
 </ui>

@@ -7,10 +7,13 @@ from PySide6.QtWidgets import (QWidget, QLabel, QProgressBar, QVBoxLayout, QFile
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtCore import Qt, QSize, QEvent, QThread
 
+from ui.picket_fence_test_dialog import PFTestDialog
 from ui.qaToolsWindow import QAToolsWindow
 from ui.py_ui import icons_rc
 from ui.py_ui.picketFenceWorksheet_ui import Ui_QPicketFenceWorksheet
-from core.analysis.picket_fence import QPicketFence, QPicketFenceWorker
+from core.analysis.picket_fence import (QPicketFence,
+                                        QPicketFenceWorker,
+                                        generate_picket_fence)
 from core.tools.report import PicketFenceReport
 from core.tools.devices import DeviceManager
 
@@ -20,8 +23,16 @@ import webbrowser
 import subprocess
 import pyqtgraph as pg
 from pathlib import Path
+
+from pylinac.core.image_generator import (GaussianFilterLayer,
+                                          RandomNoiseLayer,
+                                          FilteredFieldLayer,
+                                          PerfectFieldLayer,
+                                          AS500Image,
+                                          AS1000Image,
+                                          AS1200Image)
 from pylinac.core.image import LinacDicomImage
-from pylinac.picketfence import MLC
+from pylinac.picketfence import MLC, Orientation
 
 class PicketFenceMainWindow(QAToolsWindow):
     
@@ -33,12 +44,61 @@ class PicketFenceMainWindow(QAToolsWindow):
 
         self.add_new_worksheet()
 
+        self.ui.menuFile.addAction("Add Images(s)", self.ui.tabWidget.currentWidget().add_files)
+        self.ui.menuFile.addSeparator()
+        self.ui.menuFile.addAction("Add New Worksheet", self.add_new_worksheet)
+        self.ui.menuTools.addAction("Benchmark Test", self.init_test_dialog, "Ctrl+T")
+
     def add_new_worksheet(self, worksheet_name: str = None, enable_icon: bool = True):
         if worksheet_name is None:
             self.untitled_counter = self.untitled_counter + 1
             worksheet_name = f"Picket Fence (Untitled-{self.untitled_counter})"
 
         return super().add_new_worksheet(QPicketFenceWorksheet(), worksheet_name, enable_icon)
+    
+    def init_test_dialog(self):
+        dialog = PFTestDialog()
+        result = dialog.exec()
+
+        if result == QDialog.DialogCode.Accepted:
+            sim_image = dialog.ui.sim_image_cb.currentText()
+            img_orientation = dialog.ui.image_orientation_cb.currentText()
+
+            # Set simulation image
+            if sim_image == "AS500":
+                sim_image = AS500Image
+            
+            elif sim_image == "AS1000":
+                sim_image = AS1000Image
+            
+            else: sim_image = AS1200Image
+
+            # Set image orientation
+            if img_orientation == "Up-Down":
+                img_orientation = Orientation.UP_DOWN
+            
+            else: img_orientation = Orientation.LEFT_RIGHT
+
+            picket_offset_errs = dialog.picket_offset_errors if \
+            dialog.picket_offset_errors else None
+
+            generate_picket_fence(
+                simulator = sim_image(dialog.ui.sid_sb.value()),
+                field_layer = PerfectFieldLayer,
+                file_out = dialog.ui.out_file_le.text(),
+                final_layers = [
+                    GaussianFilterLayer(sigma_mm = 0.1),
+                ],
+                pickets = dialog.ui.num_pickets_sb.value(),
+                picket_spacing_mm = dialog.ui.picket_spacing_sb.value(),
+                picket_width_mm = dialog.ui.picket_width_sb.value(),
+                picket_offset_error = picket_offset_errs,
+                orientation = img_orientation,
+                image_rotation = dialog.ui.image_rotation_dsb.value()
+            )
+
+            self.add_new_worksheet(dialog.ui.test_name_le.text() + " (Test)")
+            self.ui.tabWidget.currentWidget().add_files([dialog.ui.out_file_le.text()])
 
 class QPicketFenceWorksheet(QWidget):
 
@@ -140,13 +200,14 @@ class QPicketFenceWorksheet(QWidget):
         else:
             self.ui.configFormLayout.setRowVisible(3, True)
     
-    def add_files(self):
-        files, _ = QFileDialog.getOpenFileNames(
-            self,
-            "Select DICOM Picket Fence Images",
-            "",
-            "DICOM Images (*.dcm)",
-        )
+    def add_files(self, files: tuple | list | None = None):
+        if not files:
+            files, _ = QFileDialog.getOpenFileNames(
+                self,
+                "Select Picket Fence Images",
+                "",
+                "DICOM Images (*.dcm)",
+                )
 
         if files:
             for file in files:
@@ -424,9 +485,9 @@ class QPicketFenceWorksheet(QWidget):
                       ["Collimator angle", f"{pf.image.collimator_angle:2.2f}°", ""],
                       ["Number of pickets found", f"{len(pf.pickets)}", ""],
                       ["Number of leaf pairs found", f"{int(len(pf.mlc_meas) / len(pf.pickets))}"],
-                      ["Mean picket spacing", f"{pf.mean_picket_spacing:2.2f} mm"],
+                      ["Mean picket spacing", f"{pf.mean_picket_spacing:2.1f} mm"],
                       ["Absolute median error", f"{pf.abs_median_error:2.3f} mm"],
-                      ["Maximum error", f"{pf.max_error:2.3f} mm",
+                      ["Maximum error", f"{pf.max_error:2.2f} mm",
                        f"Max error at picket {pf.max_error_picket + 1} and leaf {pf.max_error_leaf + 1}"],
                       ["Percentage of passing leafs", f"{pf.percent_passing:2.0f}%", ""],
                       ["Number of failed leafs", f"{len(pf.failed_leaves())}", ""]]
@@ -698,9 +759,22 @@ class AdvancedPFView(QMainWindow):
                       ["Maximum error", f"{self.pf.max_error:2.3f} mm",
                        f"Max error at picket {self.pf.max_error_picket + 1} and leaf {self.pf.max_error_leaf + 1}"],
                       ["Percentage of passing leafs", f"{self.pf.percent_passing:2.0f}%", ""],
-                      ["Number of failed leafs", f"{len(self.pf.failed_leaves())}", ""]]
+                      ["Number of failed leafs", f"{len(self.pf.failed_leaves())}", ""],
+                      ["", "", ""]]
         
         self.details_tree_widget.addTopLevelItems([QTreeWidgetItem(detail) for detail in details])
+        
+        picket_offsets_item = QTreeWidgetItem(["Picket to CAX offset", "", ""])
+        picket_offsets_item.setExpanded(True)
+
+        for i in range(len(self.pf.pickets)):
+            offset = self.pf.pickets[i].dist2cax
+            picket_offsets_item.addChild(QTreeWidgetItem([f"Picket {i + 1}", f"{offset:3.1f} mm", ""]))
+
+        picket_offsets_item.addChildren([QTreeWidgetItem(["", "", ""]),
+                                         QTreeWidgetItem(["Mean picket spacing", f"{self.pf.mean_picket_spacing:3.1f} mm", ""])])
+
+        self.details_tree_widget.addTopLevelItem(picket_offsets_item)
     
     def init_leaf_profiles(self):
         self.pickets_cb.clear()

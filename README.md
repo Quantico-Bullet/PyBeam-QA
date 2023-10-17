@@ -1,3 +1,8 @@
+<p align="center">
+![Alt Text](https://github.com/Quantico-Bullet/PyBeam-QA/blob/main/ui/qt_ui/icons/ic_app.svg)
+<img src"https://github.com/Quantico-Bullet/PyBeam-QA/blob/main/ui/qt_ui/icons/ic_app_alt.svg">
+</p>
+
 # PyBeam QA
 
 PyBeam QA is a graphical user interface program for performing quality assurance tests in radiotherapy. The program is based on Pylinac and PySide6.

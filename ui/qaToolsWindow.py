@@ -1,6 +1,6 @@
-from PySide6.QtWidgets import QMainWindow, QPushButton, QApplication, QToolButton, QMenu, QLabel, QDialog
+from PySide6.QtWidgets import QMainWindow, QLabel, QDialog
 from PySide6.QtCore import Qt, QObject, Signal, QDate, QPoint
-from PySide6.QtGui import QAction, QCursor, QActionGroup, QCloseEvent, QPixmap
+from PySide6.QtGui import QCloseEvent, QPixmap, QDesktopServices, QAction
 
 from ui.py_ui.qaMainWin_ui import Ui_MainWindow
 from ui.about_dialog import AboutDialog
@@ -12,6 +12,9 @@ class QAToolsWindow(QMainWindow):
 
     def __init__(self, initData: dict | None = None):
         super().__init__()
+
+        self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose, True)
+
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.worksheetType = None
@@ -20,8 +23,22 @@ class QAToolsWindow(QMainWindow):
 
         self.untitled_counter = 0
 
+        #self.ui.menuHelp.addAction("Contents", lambda: print(1), "F1")
+        self.ui.menuHelp.addSeparator()
+        self.ui.menuHelp.addAction("Report Issue", lambda: QDesktopServices.openUrl(
+            "https://github.com/Quantico-Bullet/PyBeam-QA/issues"))
+        self.ui.menuHelp.addAction("Request Feature", lambda: QDesktopServices.openUrl(
+            "https://github.com/Quantico-Bullet/PyBeam-QA/issues"))
+        self.ui.menuHelp.addSeparator()
+
         # Add app about
         self.ui.menuHelp.addAction("About PyBeam QA...", self.about_app)
+
+        full_screen_action = self.ui.menuView.addAction("Full Screen")
+        full_screen_action.setEnabled(False)
+        full_screen_action.setShortcut("F11")
+        full_screen_action.setCheckable(True)
+        #full_screen_action.toggled.connect(self.set_window_state)
 
         # setup basic window functionality
         self.ui.dockWidget.close()
@@ -35,6 +52,8 @@ class QAToolsWindow(QMainWindow):
         self.ui.tabWidget.currentChanged.connect(self.tab_window_changed)
         self.ui.tabWidget.tabCloseRequested.connect(self.ui.tabWidget.removeTab)
 
+        self.current_window_state = self.isMaximized()
+
     def add_new_worksheet(self, worksheet, worksheet_name: str, enable_icon: bool = True):
         index = self.ui.tabWidget.addTab(worksheet, worksheet_name)
 
@@ -43,19 +62,16 @@ class QAToolsWindow(QMainWindow):
             tab_icon = tab_icon.scaled(16, 16, mode = Qt.TransformationMode.SmoothTransformation)
 
             self.ui.tabWidget.setCurrentIndex(index)
-            self.ui.tabWidget.setTabIcon(index, tab_icon)
-
-    def closeEvent(self, event: QCloseEvent) -> None:
-        self.windowClosing.emit()
-        event.accept()    
+            self.ui.tabWidget.setTabIcon(index, tab_icon) 
     
     def tab_window_changed(self):
         if self.ui.tabWidget.count() > 0:
             title = self.ui.tabWidget.tabText(self.ui.tabWidget.currentIndex())
             self.setWindowTitle(title + "  |  " + self.window_title)
 
-        elif self.ui.tabWidget.count() > 1:
+        elif self.ui.tabWidget.count() == 0:
             self.close()
+
 
     def about_app(self):
         about = AboutDialog()

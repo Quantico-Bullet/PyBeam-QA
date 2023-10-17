@@ -56,8 +56,6 @@ class Ui_MainWindow(object):
         self.menuView.setObjectName(u"menuView")
         self.menuTools = QMenu(self.menubar)
         self.menuTools.setObjectName(u"menuTools")
-        self.menuWindow = QMenu(self.menubar)
-        self.menuWindow.setObjectName(u"menuWindow")
         self.menuHelp = QMenu(self.menubar)
         self.menuHelp.setObjectName(u"menuHelp")
         self.menuHelp.setTearOffEnabled(False)
@@ -78,7 +76,6 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuView.menuAction())
         self.menubar.addAction(self.menuTools.menuAction())
-        self.menubar.addAction(self.menuWindow.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
@@ -94,7 +91,6 @@ class Ui_MainWindow(object):
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuView.setTitle(QCoreApplication.translate("MainWindow", u"View", None))
         self.menuTools.setTitle(QCoreApplication.translate("MainWindow", u"Tools", None))
-        self.menuWindow.setTitle(QCoreApplication.translate("MainWindow", u"Window", None))
         self.menuHelp.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))
         self.dockWidget.setWindowTitle(QCoreApplication.translate("MainWindow", u"Docket Widget", None))
     # retranslateUi

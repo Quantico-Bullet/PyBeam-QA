@@ -22,6 +22,7 @@
         <file>icons/down_button.png</file>
         <file>icons/up_button.png</file>
         <file>icons/test.png</file>
+        <file>icons/correct.png</file>
     </qresource>
     <qresource prefix="/actionIcons">
         <file>icons/eye.png</file>
