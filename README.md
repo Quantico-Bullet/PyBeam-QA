@@ -1,6 +1,6 @@
+![Alt Text](https://raw.github.com/Quantico-Bullet/PyBeam-QA/blob/main/ui/qt_ui/icons/ic_app.svg)
 <p align="center">
-![Alt Text](https://github.com/Quantico-Bullet/PyBeam-QA/blob/main/ui/qt_ui/icons/ic_app.svg)
-<img src"https://github.com/Quantico-Bullet/PyBeam-QA/blob/main/ui/qt_ui/icons/ic_app_alt.svg">
+<img src"https://raw.github.com/Quantico-Bullet/PyBeam-QA/blob/main/ui/qt_ui/icons/ic_app_alt.svg?sanitze=true">
 </p>
 
 # PyBeam QA
