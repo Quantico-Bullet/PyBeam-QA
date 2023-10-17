@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://raw.github.com/Quantico-Bullet/PyBeam-QA/blob/main/ui/qt_ui/icons/ic_app_alt.svg?sanitize=true">
+<img src="https://github.com/Quantico-Bullet/PyBeam-QA/blob/main/ui/qt_ui/icons/ic_app_alt.svg?sanitize=true">
 </p>
 
 # PyBeam QA
