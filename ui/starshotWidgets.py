@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (QWidget, QLabel, QProgressBar, QVBoxLayout, QFile
                                QDialog, QDialogButtonBox, QLineEdit, QSpacerItem,
                                QPushButton, QCheckBox, QHBoxLayout)
 from PySide6.QtGui import QIcon, QPixmap
-from PySide6.QtCore import Qt, QSize, QEvent, QThread
+from PySide6.QtCore import Qt, QSize, QEvent, QThread, Signal
 
 from ui.qaToolsWindow import QAToolsWindow
 from ui.py_ui import icons_rc
@@ -29,9 +29,12 @@ from pylinac.core.image_generator import (GaussianFilterLayer,
                                           AS1000Image,
                                           AS1200Image)
 
+from ui.utilsWidgets.statusbar_widgets import AnalysisInfoLabel
 from ui.starshot_test_dialog import StarshotTestDialog
 
 class StarshotMainWindow(QAToolsWindow):
+
+    analysis_info_signal = Signal(dict)
     
     def __init__(self, initData: dict = None):
         super().__init__(initData)
@@ -89,6 +92,8 @@ class StarshotMainWindow(QAToolsWindow):
 
 class QStarshotWorksheet(QWidget):
 
+    analysis_info_signal = Signal(dict)
+
     def __init__(self):
         super().__init__()
 
@@ -113,21 +118,23 @@ class QStarshotWorksheet(QWidget):
 
         # setup context menu for image list widget
         self.img_list_contextmenu = QMenu()
-        self.img_list_contextmenu.addAction("View Original Image", self.view_dicom_image)
-        self.view_analyzed_img_action = self.img_list_contextmenu.addAction("View Analyzed Image")
-        self.view_analyzed_img_action.setEnabled(False)
+        self.img_list_contextmenu.addAction("View Original Image", self.view_dicom_image, "Ctrl+I")
         self.img_list_contextmenu.addAction("Show Containing Folder", self.open_file_folder)
         self.remove_file_action = self.img_list_contextmenu.addAction("Remove from List", self.remove_file)
         self.delete_file_action = self.img_list_contextmenu.addAction("Delete", self.delete_file)
         self.img_list_contextmenu.addAction("Properties")
         self.img_list_contextmenu.addSeparator()
-        self.select_all_action = self.img_list_contextmenu.addAction("Select All", lambda: self.perform_selection("selectAll"))
-        self.unselect_all_action = self.img_list_contextmenu.addAction("Unselect All", lambda: self.perform_selection("unselectAll"))
+        self.select_all_action = self.img_list_contextmenu.addAction("Select All", lambda: self.perform_selection("selectAll"), "Ctrl+A")
+        self.unselect_all_action = self.img_list_contextmenu.addAction("Unselect All", lambda: self.perform_selection("unselectAll"),
+                                                                        "Ctrl+Shift+A")
         self.invert_select_action = self.img_list_contextmenu.addAction("Invert Selection", lambda: self.perform_selection("invertSelection"))
         self.img_list_contextmenu.addSeparator()
         self.remove_selected_files_action = self.img_list_contextmenu.addAction("Remove Selected Files", self.remove_selected_files)
         self.remove_all_files_action = self.img_list_contextmenu.addAction("Remove All Files", self.remove_all_files)
         self.ui.imageListWidget.installEventFilter(self)
+
+        #Add all context menu actions to this widget to use shortcuts
+        self.addActions(self.img_list_contextmenu.actions())
 
         self.analysis_progress_bar = QProgressBar()
         self.analysis_progress_bar.setRange(0,0)
@@ -162,6 +169,10 @@ class QStarshotWorksheet(QWidget):
         self.setup_config()
         self.update_marked_images()
         self.set_analysis_outcome()
+
+        #Set analysis state and message for status bar
+        self.analysis_message = None
+        self.analysis_state = AnalysisInfoLabel.IDLE
 
     def setup_config(self):
         self.ui.SIDInputCB.addItems(["Auto", "Manual"])
@@ -331,11 +342,6 @@ class QStarshotWorksheet(QWidget):
             if type(self.ui.imageListWidget.itemAt(pos)) == QListWidgetItem:
                 # Show context menu
                 if not self.analysis_in_progress:
-                    if self.ui.imageListWidget.itemAt(pos).data(Qt.UserRole)["analysis_data"]:
-                        self.view_analyzed_img_action.setEnabled(True)
-                    else:
-                        self.view_analyzed_img_action.setEnabled(False)
-
                     if len(self.marked_images) > 0:
                         self.invert_select_action.setEnabled(True)
                         self.unselect_all_action.setEnabled(True)
@@ -368,6 +374,8 @@ class QStarshotWorksheet(QWidget):
         return super().eventFilter(source, event)
     
     def on_analysis_failed(self, error_message: str = "Unknown Error"):
+        self.analysis_info_signal.emit({"state": AnalysisInfoLabel.FAILED,
+                                        "message": None})
         self.analysis_in_progress = False
         self.restore_list_checkmarks()
 
@@ -392,6 +400,8 @@ class QStarshotWorksheet(QWidget):
         self.error_dialog.exec()
 
     def start_analysis(self):
+        self.analysis_info_signal.emit({"state": AnalysisInfoLabel.IN_PROGRESS,
+                                        "message": None})
         self.analysis_in_progress = True
         self.ui.genReportBtn.setEnabled(False)
         self.remove_list_checkmarks()
@@ -465,6 +475,10 @@ class QStarshotWorksheet(QWidget):
         self.ui.addImgBtn.setEnabled(True)
         self.ui.genReportBtn.setEnabled(True)
     
+        # Update status bar message
+        self.analysis_info_signal.emit({"state": AnalysisInfoLabel.COMPLETE,
+                                        "message": None})
+
         self.analysis_progress_bar.hide()
         self.analysis_message_label.hide()
 
@@ -478,7 +492,7 @@ class QStarshotWorksheet(QWidget):
         starshot = results["starshot_obj"]
         starshot.plotImage()
         self.current_plot = starshot.imagePlotWidget
-        self.ui.analysisInfoVL.addWidget(self.current_plot)
+        self.ui.analysisImageVL.addWidget(self.current_plot)
 
         #Update the summary
         self.analysis_summary = [["Wobble (circle) diameter", f"{starshot.wobble.radius_mm*2.0:2.3f} mm"],

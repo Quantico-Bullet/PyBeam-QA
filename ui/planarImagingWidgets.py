@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (QWidget, QLabel, QProgressBar, QVBoxLayout, QFile
                                QSplitter, QComboBox, QDialog, QDialogButtonBox, QLineEdit, 
                                QSpacerItem, QPushButton, QCheckBox, QHBoxLayout)
 from PySide6.QtGui import QIcon, QPixmap
-from PySide6.QtCore import Qt, QSize, QEvent, QThread
+from PySide6.QtCore import Qt, QSize, QEvent, QThread, Signal
 
 from ui.py_ui.planarImagingWorksheet_ui import Ui_QPlanarImagingWorksheet
 from ui.py_ui import icons_rc
@@ -12,7 +12,9 @@ from core.analysis.planar_imaging import QPlanarImaging, QPlanarImagingWorker
 from core.tools.report import FieldAnalysisReport
 from core.tools.devices import DeviceManager
 
+from ui.utilsWidgets.statusbar_widgets import AnalysisInfoLabel
 from ui.qaToolsWindow import QAToolsWindow
+
 import platform
 import webbrowser
 import subprocess
@@ -45,6 +47,8 @@ class PlanarImagingMainWindow(QAToolsWindow):
         return super().add_new_worksheet(QPlanarImagingWorksheet(), worksheet_name, enable_icon)
 
 class QPlanarImagingWorksheet(QWidget):
+
+    analysis_info_signal = Signal(dict)
 
     PHANTOMS = ["Leeds TOR 18 (Red)", "Leeds TOR 18 (Blue)", "Standard Imaging QC-3 MV", 
                 "Standard Imaging QC kV", "Doselab MC2 MV", "Doselab MC2 kV",
@@ -79,21 +83,24 @@ class QPlanarImagingWorksheet(QWidget):
 
         # setup context menu for image list widget
         self.img_list_contextmenu = QMenu()
-        self.img_list_contextmenu.addAction("View Original Image", self.view_dicom_image)
-        self.view_analyzed_img_action = self.img_list_contextmenu.addAction("View Analyzed Image")
-        self.view_analyzed_img_action.setEnabled(False)
+        self.img_list_contextmenu.addAction("View Original Image", self.view_dicom_image, "Ctrl+I")
         self.img_list_contextmenu.addAction("Show Containing Folder", self.open_file_folder)
         self.remove_file_action = self.img_list_contextmenu.addAction("Remove from List", self.remove_file)
         self.delete_file_action = self.img_list_contextmenu.addAction("Delete", self.delete_file)
         self.img_list_contextmenu.addAction("Properties")
         self.img_list_contextmenu.addSeparator()
-        self.select_all_action = self.img_list_contextmenu.addAction("Select All", lambda: self.perform_selection("selectAll"))
-        self.unselect_all_action = self.img_list_contextmenu.addAction("Unselect All", lambda: self.perform_selection("unselectAll"))
+        self.select_all_action = self.img_list_contextmenu.addAction("Select All", lambda: self.perform_selection("selectAll"), "Ctrl+A")
+        self.select_all_action.setEnabled(False) #Only one image should be selected for Planar Analysis
+        self.unselect_all_action = self.img_list_contextmenu.addAction("Unselect All", lambda: self.perform_selection("unselectAll"),
+                                                                        "Ctrl+Shift+A")
         self.invert_select_action = self.img_list_contextmenu.addAction("Invert Selection", lambda: self.perform_selection("invertSelection"))
         self.img_list_contextmenu.addSeparator()
         self.remove_selected_files_action = self.img_list_contextmenu.addAction("Remove Selected Files", self.remove_selected_files)
         self.remove_all_files_action = self.img_list_contextmenu.addAction("Remove All Files", self.remove_all_files)
         self.ui.imageListWidget.installEventFilter(self)
+
+        #Add all context menu actions to this widget to use shortcuts
+        self.addActions(self.img_list_contextmenu.actions())
 
         self.analysis_progress_bar = QProgressBar()
         self.analysis_progress_bar.setRange(0,0)
@@ -126,6 +133,10 @@ class QPlanarImagingWorksheet(QWidget):
 
         self.setup_config()
         self.update_marked_images()
+
+        #Set analysis state and message for status bar
+        self.analysis_message = None
+        self.analysis_state = AnalysisInfoLabel.IDLE
 
     def setup_config(self):
         """
@@ -336,11 +347,6 @@ class QPlanarImagingWorksheet(QWidget):
             if type(self.ui.imageListWidget.itemAt(pos)) == QListWidgetItem:
                 # Show context menu
                 if not self.analysis_in_progress:
-                    if self.ui.imageListWidget.itemAt(pos).data(Qt.UserRole)["analysis_data"]:
-                        self.view_analyzed_img_action.setEnabled(True)
-                    else:
-                        self.view_analyzed_img_action.setEnabled(False)
-
                     if len(self.marked_images) > 0:
                         self.invert_select_action.setEnabled(True)
                         self.unselect_all_action.setEnabled(True)
@@ -366,13 +372,14 @@ class QPlanarImagingWorksheet(QWidget):
                     self.remove_selected_files_action.setEnabled(False)
                     self.remove_all_files_action.setEnabled(False)
                     self.select_all_action.setEnabled(False)
-                    self.view_analyzed_img_action.setEnabled(False)
 
                 self.img_list_contextmenu.exec(event.globalPos())
 
         return super().eventFilter(source, event)
 
     def on_analysis_failed(self, error_message: str = "Unknown Error"):
+        self.analysis_info_signal.emit({"state": AnalysisInfoLabel.FAILED,
+                                        "message": None})
         self.analysis_in_progress = False
         self.restore_list_checkmarks()
 
@@ -397,6 +404,8 @@ class QPlanarImagingWorksheet(QWidget):
         self.warning_dialog.exec()
 
     def start_analysis(self):
+        self.analysis_info_signal.emit({"state": AnalysisInfoLabel.IN_PROGRESS,
+                                        "message": None})
         self.analysis_in_progress = True
         self.ui.advancedViewBtn.setEnabled(False)
         self.ui.genReportBtn.setEnabled(False)
@@ -470,6 +479,10 @@ class QPlanarImagingWorksheet(QWidget):
         self.ui.analyzeBtn.setText(f"Analyze images")
         self.ui.addImgBtn.setEnabled(True)
         self.ui.genReportBtn.setEnabled(True)
+
+        # Update status bar message
+        self.analysis_info_signal.emit({"state": AnalysisInfoLabel.COMPLETE,
+                                        "message": None})
     
         self.analysis_progress_bar.hide()
         self.analysis_message_label.hide()
@@ -503,10 +516,10 @@ class QPlanarImagingWorksheet(QWidget):
     def show_advanced_results_view(self):
         if self.advanced_results_view is None:
             self.advanced_results_view = AdvancedPIView(pi = self.current_results["planar_img_obj"])
-            self.advanced_results_view.show()
+            self.advanced_results_view.showMaximized()
 
         else: 
-            self.advanced_results_view.show()
+            self.advanced_results_view.showMaximized()
     
     def generate_report(self):
         physicist_name_le = QLineEdit()
@@ -626,22 +639,16 @@ class AdvancedPIView(QMainWindow):
         self.top_layout = QGridLayout(self.central_widget)
         self.top_layout.setContentsMargins(0, 0, 0, 0)
 
-        self.tab_widget = QTabWidget(self.central_widget)
-        self.tab_widget.setTabsClosable(False)
-
         size_policy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         size_policy.setVerticalStretch(0)
         size_policy.setHorizontalStretch(0)
         self.central_widget.setSizePolicy(size_policy)
-        self.tab_widget.setSizePolicy(size_policy)
 
-        #----- Setup analyzed image tab content
+        #----- Setup content
         self.analyzed_img_qSplitter = QSplitter()
         self.analyzed_img_qSplitter.setSizePolicy(size_policy)
 
-        self.tab_widget.addTab(self.analyzed_img_qSplitter, "Analyzed Image")
-
-        self.top_layout.addWidget(self.tab_widget, 0, 0, 1, 1)
+        self.top_layout.addWidget(self.analyzed_img_qSplitter, 0, 0, 1, 1)
 
         self.curr_analyzed_image_widget = None
 

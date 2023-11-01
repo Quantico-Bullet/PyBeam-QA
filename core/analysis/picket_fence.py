@@ -35,7 +35,9 @@ class QPicketFence(PicketFence):
         # Widgets for leaf profile plots
         self.profile_plot_widget = pg.PlotWidget()
         self.profile_plot_widget.getPlotItem().setMouseEnabled(x=False, y=False)
-        self.legend = self.profile_plot_widget.getPlotItem().addLegend(offset=(50,50), size = (50,50))
+        self.legend = self.profile_plot_widget.getPlotItem().addLegend(offset=(50,50), size = (50,50),
+                                                                       labelTextColor=(255,255,255),
+                                                                       brush=pg.mkBrush((27, 38, 59, 200)))
 
         # Widgets for analyzed image plots
         self.analyzed_image_plot_widget = pg.GraphicsLayoutWidget()

@@ -2008,7 +2008,7 @@ class Ui_QElectronsWorksheet(object):
     def retranslateUi(self, QElectronsWorksheet):
         QElectronsWorksheet.setWindowTitle(QCoreApplication.translate("QElectronsWorksheet", u"Form", None))
         self.CalibSummaryLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"<html><head/><body><p><span style=\" font-weight:700;\">Calibration Summary</span></p></body></html>", None))
-        self.corrFactorsLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"<html><head/><body><p><span style=\" font-weight:700;\">Correction factors</span></p></body></html>", None))
+        self.corrFactorsLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"<html><head/><body><p><span style=\" font-weight:700; text-decoration: underline;\">Correction factors</span></p></body></html>", None))
         self.kQLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">k</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">Q,Qo </span>:</p></body></html>", None))
         self.kQLE.setPlaceholderText(QCoreApplication.translate("QElectronsWorksheet", u"N/A", None))
         self.kElecLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">k</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">elec </span>:</p></body></html>", None))
@@ -2021,7 +2021,7 @@ class Ui_QElectronsWorksheet(object):
         self.kPolLE.setPlaceholderText(QCoreApplication.translate("QElectronsWorksheet", u"N/A", None))
         self.kSLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">k</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">s </span>:</p></body></html>", None))
         self.kSLE.setPlaceholderText(QCoreApplication.translate("QElectronsWorksheet", u"N/A", None))
-        self.absorsedDoseLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"<html><head/><body><p><span style=\" font-weight:700;\">Absorbed dose to water</span></p></body></html>", None))
+        self.absorsedDoseLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"<html><head/><body><p><span style=\" font-weight:700; text-decoration: underline;\">Absorbed dose to water</span></p></body></html>", None))
         self.zrefDoseLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"<html><head/><body><p>At reference depth, <span style=\" font-style:italic;\">D</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">w,Q </span>(<span style=\" font-style:italic;\">z</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">ref </span>) :</p></body></html>", None))
         self.zrefDoseLE.setPlaceholderText(QCoreApplication.translate("QElectronsWorksheet", u"N/A", None))
         self.zmaxDoseLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"<html><head/><body><p>At depth of dose max, <span style=\" font-weight:700; font-style:italic;\">D</span><span style=\" font-size:12pt; font-weight:700; font-style:italic; vertical-align:sub;\">w,Q </span><span style=\" font-weight:700;\">(</span><span style=\" font-weight:700; font-style:italic;\">z</span><span style=\" font-size:12pt; font-weight:700; font-style:italic; vertical-align:sub;\">max </span><span style=\" font-weight:700;\">)</span> :</p></body></html>", None))

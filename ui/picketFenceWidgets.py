@@ -5,8 +5,9 @@ from PySide6.QtWidgets import (QWidget, QLabel, QProgressBar, QVBoxLayout, QFile
                                QDialog, QDialogButtonBox, QLineEdit, QSpacerItem,
                                QPushButton, QCheckBox, QHBoxLayout)
 from PySide6.QtGui import QIcon, QPixmap
-from PySide6.QtCore import Qt, QSize, QEvent, QThread
+from PySide6.QtCore import Qt, QSize, QEvent, QThread, Signal
 
+from ui.utilsWidgets.statusbar_widgets import AnalysisInfoLabel
 from ui.picket_fence_test_dialog import PFTestDialog
 from ui.qaToolsWindow import QAToolsWindow
 from ui.py_ui import icons_rc
@@ -25,8 +26,6 @@ import pyqtgraph as pg
 from pathlib import Path
 
 from pylinac.core.image_generator import (GaussianFilterLayer,
-                                          RandomNoiseLayer,
-                                          FilteredFieldLayer,
                                           PerfectFieldLayer,
                                           AS500Image,
                                           AS1000Image,
@@ -102,6 +101,8 @@ class PicketFenceMainWindow(QAToolsWindow):
 
 class QPicketFenceWorksheet(QWidget):
 
+    analysis_info_signal = Signal(dict)
+
     def __init__(self):
         super().__init__()
 
@@ -127,21 +128,23 @@ class QPicketFenceWorksheet(QWidget):
 
         # setup context menu for image list widget
         self.img_list_contextmenu = QMenu()
-        self.img_list_contextmenu.addAction("View Original Image", self.view_dicom_image)
-        self.view_analyzed_img_action = self.img_list_contextmenu.addAction("View Analyzed Image")
-        self.view_analyzed_img_action.setEnabled(False)
+        self.img_list_contextmenu.addAction("View Original Image", self.view_dicom_image, "Ctrl+I")
         self.img_list_contextmenu.addAction("Show Containing Folder", self.open_file_folder)
         self.remove_file_action = self.img_list_contextmenu.addAction("Remove from List", self.remove_file)
         self.delete_file_action = self.img_list_contextmenu.addAction("Delete", self.delete_file)
         self.img_list_contextmenu.addAction("Properties")
         self.img_list_contextmenu.addSeparator()
-        self.select_all_action = self.img_list_contextmenu.addAction("Select All", lambda: self.perform_selection("selectAll"))
-        self.unselect_all_action = self.img_list_contextmenu.addAction("Unselect All", lambda: self.perform_selection("unselectAll"))
+        self.select_all_action = self.img_list_contextmenu.addAction("Select All", lambda: self.perform_selection("selectAll"), "Ctrl+A")
+        self.unselect_all_action = self.img_list_contextmenu.addAction("Unselect All", lambda: self.perform_selection("unselectAll"),
+                                                                        "Ctrl+Shift+A")
         self.invert_select_action = self.img_list_contextmenu.addAction("Invert Selection", lambda: self.perform_selection("invertSelection"))
         self.img_list_contextmenu.addSeparator()
         self.remove_selected_files_action = self.img_list_contextmenu.addAction("Remove Selected Files", self.remove_selected_files)
         self.remove_all_files_action = self.img_list_contextmenu.addAction("Remove All Files", self.remove_all_files)
         self.ui.imageListWidget.installEventFilter(self)
+
+        #Add all context menu actions to this widget to use shortcuts
+        self.addActions(self.img_list_contextmenu.actions())
 
         self.analysis_progress_bar = QProgressBar()
         self.analysis_progress_bar.setRange(0,0)
@@ -176,6 +179,10 @@ class QPicketFenceWorksheet(QWidget):
         self.setup_config()
         self.update_marked_images()
         self.set_analysis_outcome()
+
+        #Set analysis state and message for status bar
+        self.analysis_message = None
+        self.analysis_state = AnalysisInfoLabel.IDLE
 
     def setup_config(self):
         self.ui.mlcTypeCB.addItems([mlc.value["name"] for mlc in MLC])
@@ -347,11 +354,6 @@ class QPicketFenceWorksheet(QWidget):
             if type(self.ui.imageListWidget.itemAt(pos)) == QListWidgetItem:
                 # Show context menu
                 if not self.analysis_in_progress:
-                    if self.ui.imageListWidget.itemAt(pos).data(Qt.UserRole)["analysis_data"]:
-                        self.view_analyzed_img_action.setEnabled(True)
-                    else:
-                        self.view_analyzed_img_action.setEnabled(False)
-
                     if len(self.marked_images) > 0:
                         self.invert_select_action.setEnabled(True)
                         self.unselect_all_action.setEnabled(True)
@@ -383,9 +385,11 @@ class QPicketFenceWorksheet(QWidget):
 
         return super().eventFilter(source, event)
 
-    def on_error_encountered(self,
-                             title_text: str = "Oops! An error was encountered",
-                             error_message: str = "Unknown Error"):
+    def on_analysis_failed(self,
+                           title_text: str = "Oops! An error was encountered",
+                           error_message: str = "Unknown Error"):
+        self.analysis_info_signal.emit({"state": AnalysisInfoLabel.FAILED,
+                                        "message": None})
         self.analysis_in_progress = False
         self.restore_list_checkmarks()
 
@@ -410,6 +414,8 @@ class QPicketFenceWorksheet(QWidget):
         self.error_dialog.exec()
 
     def start_analysis(self):
+        self.analysis_info_signal.emit({"state": AnalysisInfoLabel.IN_PROGRESS,
+                                        "message": None})
         self.analysis_in_progress = True
         self.ui.advancedViewBtn.setEnabled(False)
         self.ui.genReportBtn.setEnabled(False)
@@ -445,7 +451,7 @@ class QPicketFenceWorksheet(QWidget):
                 self.qthread = QThread()
                 self.worker.moveToThread(self.qthread)
                 self.worker.analysis_failed.connect(self.qthread.quit)
-                self.worker.analysis_failed.connect(lambda x: self.on_error_encountered(error_message = x))
+                self.worker.analysis_failed.connect(lambda x: self.on_analysis_failed(error_message = x))
                 self.worker.thread_finished.connect(self.qthread.quit)
                 self.worker.thread_finished.connect(self.worker.deleteLater)
                 self.worker.analysis_results_ready.connect(lambda results: self.show_analysis_results(results))
@@ -455,7 +461,7 @@ class QPicketFenceWorksheet(QWidget):
                 self.qthread.start()
 
             except Exception as err:
-                self.on_error_encountered(error_message = traceback.format_exception_only(err)[-1])
+                self.on_analysis_failed(error_message = traceback.format_exception_only(err)[-1])
 
     def show_analysis_results(self, results: dict):
         self.has_analysis = True
@@ -470,6 +476,10 @@ class QPicketFenceWorksheet(QWidget):
         self.ui.addImgBtn.setEnabled(True)
         self.ui.genReportBtn.setEnabled(True)
     
+        # Update status bar message
+        self.analysis_info_signal.emit({"state": AnalysisInfoLabel.COMPLETE,
+                                        "message": None})
+
         self.analysis_progress_bar.hide()
         self.analysis_message_label.hide()
 
@@ -489,8 +499,8 @@ class QPicketFenceWorksheet(QWidget):
                       ["Absolute median error", f"{pf.abs_median_error:2.3f} mm"],
                       ["Maximum error", f"{pf.max_error:2.2f} mm",
                        f"Max error at picket {pf.max_error_picket + 1} and leaf {pf.max_error_leaf + 1}"],
-                      ["Percentage of passing leafs", f"{pf.percent_passing:2.0f}%", ""],
-                      ["Number of failed leafs", f"{len(pf.failed_leaves())}", ""]]
+                      ["Percentage of passing leaves", f"{pf.percent_passing:2.0f}%", ""],
+                      ["Number of failed leaves", f"{len(pf.failed_leaves())}", ""]]
         
         # Update the advanced view
         if self.advanced_results_view is not None:
@@ -515,10 +525,10 @@ class QPicketFenceWorksheet(QWidget):
     def show_advanced_results_view(self):
         if self.advanced_results_view is None:
             self.advanced_results_view = AdvancedPFView(pf = self.current_results["picket_fence_obj"])
-            self.advanced_results_view.show()
+            self.advanced_results_view.showMaximized()
 
         else: 
-            self.advanced_results_view.show()
+            self.advanced_results_view.showMaximized()
     
     def set_analysis_outcome(self):
         if not self.has_analysis or self.analysis_in_progress:

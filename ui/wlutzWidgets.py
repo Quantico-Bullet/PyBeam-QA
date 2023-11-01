@@ -5,45 +5,26 @@ from PySide6.QtWidgets import (QWidget, QListWidgetItem, QMenu, QFileDialog, QDi
                                QCheckBox, QGridLayout, QTabWidget, QSplitter, QTableWidget,
                                QHeaderView, QTableWidgetItem)
 from PySide6.QtGui import QIcon, QPixmap, QColor
-from PySide6.QtCore import Qt, QSize, QEvent, QThread, QKeyCombination
+from PySide6.QtCore import Qt, QSize, QEvent, QThread, Signal
 
 from ui.qaToolsWindow import QAToolsWindow
 from ui.py_ui.wlutzWorksheet_ui import Ui_QWLutzWorksheet
 from ui.py_ui import icons_rc
-from core.analysis.wlutz import QWinstonLutzWorker
+from core.analysis.wlutz import QWinstonLutzWorker, generate_winstonlutz
 from core.tools.report import WinstonLutzReport
 from core.tools.devices import DeviceManager
 
-from pylinac.core.image_generator import (ConstantLayer,
-                                          FilteredFieldLayer,
+from pylinac.core.image_generator import (FilteredFieldLayer,
                                           FilterFreeConeLayer,
                                           FilterFreeFieldLayer,
                                           GaussianFilterLayer,
-                                          PerfectBBLayer,
                                           PerfectConeLayer,
                                           PerfectFieldLayer,
-                                          RandomNoiseLayer,
                                           AS500Image,
                                           AS1000Image,
                                           AS1200Image,
-                                          generate_winstonlutz,
-                                          generate_winstonlutz_cone
-)
-from pylinac.core.image_generator import (ConstantLayer,
-                                          FilteredFieldLayer,
-                                          FilterFreeConeLayer,
-                                          FilterFreeFieldLayer,
-                                          GaussianFilterLayer,
-                                          PerfectBBLayer,
-                                          PerfectConeLayer,
-                                          PerfectFieldLayer,
-                                          RandomNoiseLayer,
-                                          AS500Image,
-                                          AS1000Image,
-                                          AS1200Image,
-                                          generate_winstonlutz,
-                                          generate_winstonlutz_cone
-)
+                                          generate_winstonlutz_cone)
+
 from pylinac.core.image import LinacDicomImage
 from pathlib import Path
 import pyqtgraph as pg
@@ -51,6 +32,7 @@ import platform
 import subprocess
 import webbrowser
 
+from ui.utilsWidgets.statusbar_widgets import AnalysisInfoLabel
 from ui.utilsWidgets.dialogs import MessageDialog
 from ui.wl_test_dialog import WLTestDialog
 
@@ -163,6 +145,8 @@ class WinstonLutzMainWindow(QAToolsWindow):
 
 class QWLutzWorksheet(QWidget):
 
+    analysis_info_signal = Signal(dict)
+
     COORD_SYS = ["IEC 61217", "Varian IEC", "Varian Standard"]
 
     ANALYSIS_METRICS = {
@@ -207,21 +191,25 @@ class QWLutzWorksheet(QWidget):
 
         # setup context menu for image list widget
         self.img_list_contextmenu = QMenu()
-        self.img_list_contextmenu.addAction("View Original Image", self.view_dicom_image)
-        self.view_analyzed_img_action = self.img_list_contextmenu.addAction("View Analyzed Image", self.view_analyzed_image)
+        self.img_list_contextmenu.addAction("View Original Image", self.view_dicom_image, "Ctrl+I")
+        self.view_analyzed_img_action = self.img_list_contextmenu.addAction("View Analyzed Image", self.view_analyzed_image, "Ctrl+Shift+I")
         self.view_analyzed_img_action.setEnabled(False)
         self.img_list_contextmenu.addAction("Show Containing Folder", self.open_file_folder)
         self.remove_file_action = self.img_list_contextmenu.addAction("Remove from List", self.remove_file)
         self.delete_file_action = self.img_list_contextmenu.addAction("Delete", self.delete_file)
         self.img_list_contextmenu.addAction("Properties")
         self.img_list_contextmenu.addSeparator()
-        self.select_all_action = self.img_list_contextmenu.addAction("Select All", lambda: self.perform_selection("selectAll"))
-        self.unselect_all_action = self.img_list_contextmenu.addAction("Unselect All", lambda: self.perform_selection("unselectAll"))
+        self.select_all_action = self.img_list_contextmenu.addAction("Select All", lambda: self.perform_selection("selectAll"), "Ctrl+A")
+        self.unselect_all_action = self.img_list_contextmenu.addAction("Unselect All", lambda: self.perform_selection("unselectAll"),
+                                                                        "Ctrl+Shift+A")
         self.invert_select_action = self.img_list_contextmenu.addAction("Invert Selection", lambda: self.perform_selection("invertSelection"))
         self.img_list_contextmenu.addSeparator()
         self.remove_selected_files_action = self.img_list_contextmenu.addAction("Remove Selected Files", self.remove_selected_files)
         self.remove_all_files_action = self.img_list_contextmenu.addAction("Remove All Files", self.remove_all_files)
         self.ui.imageListWidget.installEventFilter(self)
+
+        #Add all context menu actions to this widget to use shortcuts
+        self.addActions(self.img_list_contextmenu.actions())
 
         #Add widgets
         self.progress_vl = QVBoxLayout()
@@ -263,6 +251,10 @@ class QWLutzWorksheet(QWidget):
 
         self.analysis_summary = {}
         self.set_analysis_outcome()
+
+        #Set analysis state and message for status bar
+        self.analysis_message = None
+        self.analysis_state = AnalysisInfoLabel.IDLE
 
     def add_files(self, files: tuple | list | None = None):
         if not files:
@@ -403,6 +395,8 @@ class QWLutzWorksheet(QWidget):
             self.ui.analyzeBtn.setEnabled(False)
 
     def on_analysis_failed(self, error_message: str = "Unknown Error"):
+        self.analysis_info_signal.emit({"state": AnalysisInfoLabel.FAILED,
+                                        "message": None})
         self.analysis_in_progress = False
         self.restore_list_checkmarks()
 
@@ -427,6 +421,8 @@ class QWLutzWorksheet(QWidget):
         self.error_dialog.exec()
     
     def start_analysis(self):
+        self.analysis_info_signal.emit({"state": AnalysisInfoLabel.IN_PROGRESS,
+                                        "message": None})
         self.analysis_in_progress = True
         self.remove_list_checkmarks()
 
@@ -475,6 +471,10 @@ class QWLutzWorksheet(QWidget):
         self.restore_list_checkmarks()
         self.analysis_summary = {}
         self.maxLocError = results["max_2d_cax_to_bb_mm"]
+
+        # Update status bar message
+        self.analysis_info_signal.emit({"state": AnalysisInfoLabel.COMPLETE,
+                                        "message": None})
 
         self.analysis_progress_bar.hide()
         self.analysis_message_label.hide()
@@ -563,22 +563,23 @@ class QWLutzWorksheet(QWidget):
         self.ui.shiftInfoBtn.setEnabled(True)
 
     def view_dicom_image(self):
-        image_short_name = self.ui.imageListWidget.currentItem().text()
-        image_path = self.ui.imageListWidget.selectedItems()[0].data(Qt.UserRole)["file_path"]
-        image = LinacDicomImage(image_path)
+        if len(self.ui.imageListWidget.selectedItems()) > 0:
+            image_short_name = self.ui.imageListWidget.currentItem().text()
+            image_path = self.ui.imageListWidget.selectedItems()[0].data(Qt.UserRole)["file_path"]
+            image = LinacDicomImage(image_path)
 
-        imgView = pg.ImageView()
-        imgView.setImage(image.array)
-        imgView.setPredefinedGradient("grey")
+            imgView = pg.ImageView()
+            imgView.setImage(image.array)
+            imgView.setPredefinedGradient("grey")
 
-        new_win = QMainWindow()
-        new_win.setWindowTitle(image_short_name)
-        new_win.setCentralWidget(imgView)
-        new_win.setMinimumSize(600, 500)
+            new_win = QMainWindow()
+            new_win.setWindowTitle(image_short_name)
+            new_win.setCentralWidget(imgView)
+            new_win.setMinimumSize(600, 500)
         
-        self.imageView_windows.append(new_win)
-        new_win.show()
-        new_win.setMinimumSize(0, 0)
+            self.imageView_windows.append(new_win)
+            new_win.show()
+            new_win.setMinimumSize(0, 0)
 
     def view_analyzed_image(self):
         listWidgetItem = self.ui.imageListWidget.currentItem()

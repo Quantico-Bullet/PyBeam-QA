@@ -2,14 +2,10 @@ from reportlab.platypus import (SimpleDocTemplate, Paragraph, PageBreak, Spacer,
                                 Image, TopPadder, Flowable)
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import cm, inch
+from reportlab.lib.units import cm
 from reportlab.lib import colors
-from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT
-from reportlab.rl_config import defaultPageSize
-
-from PIL import Image as pilImage
 
 from datetime import datetime
 

@@ -40,633 +40,6 @@
      <property name="verticalSpacing">
       <number>20</number>
      </property>
-     <item row="1" column="2">
-      <layout class="QVBoxLayout" name="calibSummaryVL">
-       <item alignment="Qt::AlignTop">
-        <widget class="QWidget" name="calibSummaryWidget" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>400</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_12">
-          <property name="spacing">
-           <number>6</number>
-          </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="QLabel" name="CalibSummaryLabel">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>13</pointsize>
-             </font>
-            </property>
-            <property name="frameShape">
-             <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Calibration Summary&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="Line" name="calibSummaryHLine">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>1</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">background-color: rgb(82, 142, 122)</string>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_7">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>4</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QScrollArea" name="scrollArea">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="autoFillBackground">
-             <bool>true</bool>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QScrollArea {
-	background-color: rgba(0,0,0,0);
-}
-
-QAbstractScrollArea::corner {
-	background-color: rgba(0,0,0,0);
-}</string>
-            </property>
-            <property name="frameShape">
-             <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="widgetResizable">
-             <bool>true</bool>
-            </property>
-            <widget class="QWidget" name="calSummaryScroll">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>0</y>
-               <width>379</width>
-               <height>346</height>
-              </rect>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="autoFillBackground">
-              <bool>false</bool>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">background-color: rgba(252, 247, 247, 0);</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_5">
-              <item>
-               <widget class="QLabel" name="corrFactorsLabel">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Correction factors&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QFormLayout" name="corrFactorFL_2">
-                <property name="fieldGrowthPolicy">
-                 <enum>QFormLayout::ExpandingFieldsGrow</enum>
-                </property>
-                <property name="rowWrapPolicy">
-                 <enum>QFormLayout::DontWrapRows</enum>
-                </property>
-                <property name="verticalSpacing">
-                 <number>4</number>
-                </property>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="kQLabel">
-                  <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;k&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic; vertical-align:sub;&quot;&gt;Q,Qo &lt;/span&gt;:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QLineEdit" name="kQLE">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="contextMenuPolicy">
-                   <enum>Qt::NoContextMenu</enum>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">border-radius: 15px;
-border-color: rgb(130, 160, 250);
-border-style: solid;
-border-width:2px;
-background-color: rgba(130, 160, 250,150);
-padding-left: 15px;
-height: 30px;
-font-weight: bold</string>
-                  </property>
-                  <property name="readOnly">
-                   <bool>true</bool>
-                  </property>
-                  <property name="placeholderText">
-                   <string>N/A</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="kElecLabel">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;k&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic; vertical-align:sub;&quot;&gt;elec &lt;/span&gt;:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QLineEdit" name="kElecLE">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="contextMenuPolicy">
-                   <enum>Qt::NoContextMenu</enum>
-                  </property>
-                  <property name="autoFillBackground">
-                   <bool>false</bool>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">border-radius: 15px;
-border-color: rgb(130, 160, 250);
-border-style: solid;
-border-width:2px;
-background-color: rgba(130, 160, 250,150);
-padding-left: 15px;
-height: 30px;
-font-weight: bold</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="frame">
-                   <bool>true</bool>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                  </property>
-                  <property name="readOnly">
-                   <bool>true</bool>
-                  </property>
-                  <property name="placeholderText">
-                   <string>N/A</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="kTPLabel">
-                  <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;k&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic; vertical-align:sub;&quot;&gt;TP &lt;/span&gt;:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
-                 <widget class="QLineEdit" name="kTPLE">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="contextMenuPolicy">
-                   <enum>Qt::NoContextMenu</enum>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">border-radius: 15px;
-border-color: rgb(130, 160, 250);
-border-style: solid;
-border-width:2px;
-background-color: rgba(130, 160, 250,150);
-padding-left: 15px;
-height: 30px;
-font-weight: bold</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="readOnly">
-                   <bool>true</bool>
-                  </property>
-                  <property name="placeholderText">
-                   <string>N/A</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0">
-                 <widget class="QLabel" name="kPolLabel">
-                  <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;k&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic; vertical-align:sub;&quot;&gt;pol &lt;/span&gt;:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="1">
-                 <widget class="QLineEdit" name="kPolLE">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="contextMenuPolicy">
-                   <enum>Qt::NoContextMenu</enum>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">border-radius: 15px;
-border-color: rgb(130, 160, 250);
-border-style: solid;
-border-width:2px;
-background-color: rgba(130, 160, 250,150);
-padding-left: 15px;
-height: 30px;
-font-weight: bold</string>
-                  </property>
-                  <property name="readOnly">
-                   <bool>true</bool>
-                  </property>
-                  <property name="placeholderText">
-                   <string>N/A</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="0">
-                 <widget class="QLabel" name="kSLabel">
-                  <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;k&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic; vertical-align:sub;&quot;&gt;s &lt;/span&gt;:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="1">
-                 <layout class="QHBoxLayout" name="horizontalLayout_2">
-                  <property name="spacing">
-                   <number>10</number>
-                  </property>
-                  <item>
-                   <widget class="QLineEdit" name="kSLE">
-                    <property name="sizePolicy">
-                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                      <horstretch>0</horstretch>
-                      <verstretch>0</verstretch>
-                     </sizepolicy>
-                    </property>
-                    <property name="contextMenuPolicy">
-                     <enum>Qt::NoContextMenu</enum>
-                    </property>
-                    <property name="styleSheet">
-                     <string notr="true">border-radius: 15px;
-border-color: rgb(130, 160, 250);
-border-style: solid;
-border-width:2px;
-background-color: rgba(130, 160, 250,150);
-padding-left: 15px;
-height: 30px;
-font-weight: bold</string>
-                    </property>
-                    <property name="readOnly">
-                     <bool>true</bool>
-                    </property>
-                    <property name="placeholderText">
-                     <string>N/A</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="ks_status_icon">
-                    <property name="maximumSize">
-                     <size>
-                      <width>24</width>
-                      <height>24</height>
-                     </size>
-                    </property>
-                    <property name="text">
-                     <string/>
-                    </property>
-                    <property name="scaledContents">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <spacer name="verticalSpacer_8">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Fixed</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>10</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QLabel" name="absorsedDoseLabel">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Absorbed dose to water&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QFormLayout" name="absorbedDoseFL_2">
-                <property name="fieldGrowthPolicy">
-                 <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-                </property>
-                <property name="verticalSpacing">
-                 <number>4</number>
-                </property>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="zrefDoseLabel">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;At reference depth, &lt;span style=&quot; font-style:italic;&quot;&gt;D&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic; vertical-align:sub;&quot;&gt;w,Q &lt;/span&gt;(&lt;span style=&quot; font-style:italic;&quot;&gt;z&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic; vertical-align:sub;&quot;&gt;ref &lt;/span&gt;) :&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QLineEdit" name="zrefDoseLE">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="contextMenuPolicy">
-                   <enum>Qt::NoContextMenu</enum>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">border-radius: 15px;
-border-color: rgb(130, 160, 250);
-border-style: solid;
-border-width:2px;
-background-color: rgba(130, 160, 250,150);
-padding-left: 15px;
-height: 30px;
-font-weight: bold</string>
-                  </property>
-                  <property name="readOnly">
-                   <bool>true</bool>
-                  </property>
-                  <property name="placeholderText">
-                   <string>N/A</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="zmaxDoseLabel">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;At depth of dose max, &lt;span style=&quot; font-weight:700; font-style:italic;&quot;&gt;D&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:700; font-style:italic; vertical-align:sub;&quot;&gt;w,Q &lt;/span&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot; font-weight:700; font-style:italic;&quot;&gt;z&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:700; font-style:italic; vertical-align:sub;&quot;&gt;max &lt;/span&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;)&lt;/span&gt; :&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QLineEdit" name="zmaxDoseLE">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="contextMenuPolicy">
-                   <enum>Qt::NoContextMenu</enum>
-                  </property>
-                  <property name="autoFillBackground">
-                   <bool>false</bool>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">border-radius: 15px;
-border-color: rgb(250, 200, 83);
-background-color: rgba(250, 200, 83,150);
-border-style: solid;
-border-width:2px;
-padding-left: 15px;
-height: 30px;
-font-weight: bold
-
-
-</string>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="frame">
-                   <bool>false</bool>
-                  </property>
-                  <property name="readOnly">
-                   <bool>true</bool>
-                  </property>
-                  <property name="placeholderText">
-                   <string>N/A</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </widget>
-           </widget>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_9">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Expanding</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>5</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QLabel" name="outcomeLabel">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:700;&quot;&gt;Outcome&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="Line" name="outcomeHLine">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>1</height>
-             </size>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">background-color: rgb(82, 142, 122)</string>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="outcomeLE">
-            <property name="contextMenuPolicy">
-             <enum>Qt::NoContextMenu</enum>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">border-color: rgb(95, 200, 26);
-border-radius: 15px;
-border-style: solid;
-border-width: 2px;
-background-color: rgba(95, 200, 26,150);
-padding-left: 15px;
-height: 30px;
-font-weight: bold;
-
-</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-            <property name="placeholderText">
-             <string>N/A</string>
-            </property>
-            <property name="clearButtonEnabled">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </item>
      <item row="0" column="0">
       <widget class="QWidget" name="siteDataWidget" native="true">
        <property name="sizePolicy">
@@ -793,38 +166,6 @@ font-weight: bold;
         </item>
        </layout>
       </widget>
-     </item>
-     <item row="1" column="1">
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Fixed</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>0</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="1" column="3">
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>10</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
      </item>
      <item row="1" column="0">
       <widget class="QScrollArea" name="worksheetScrollArea">
@@ -3197,35 +2538,664 @@ font-weight: bold;
        </widget>
       </widget>
      </item>
-     <item row="0" column="2" alignment="Qt::AlignLeft">
-      <widget class="QPushButton" name="pushButton">
-       <property name="enabled">
-        <bool>false</bool>
+     <item row="1" column="1">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-	background-color: rgb(82, 142, 122);
-    min-width: 150px;
-	min-height:20px;
-    padding: 6px;
-	border-radius: 15px;
-	color: white;
-	font: bold;
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="2">
+      <layout class="QVBoxLayout" name="calibSummaryVL">
+       <item alignment="Qt::AlignTop">
+        <widget class="QWidget" name="calibSummaryWidget" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>400</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_12">
+          <property name="spacing">
+           <number>6</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="CalibSummaryLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>13</pointsize>
+             </font>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Calibration Summary&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="calibSummaryHLine">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>1</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(82, 142, 122)</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>4</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QScrollArea" name="scrollArea">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="autoFillBackground">
+             <bool>true</bool>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QScrollArea {
+	background-color: rgba(0,0,0,0);
 }
 
-QPushButton:pressed {
-	background-color: rgb(52, 91, 78);
-}
-
-QPushButton:!enabled{
-	background-color: rgba(52, 91, 78, 50);
-	color: rgba(255,255,255,100)
+QAbstractScrollArea::corner {
+	background-color: rgba(0,0,0,0);
 }</string>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="widgetResizable">
+             <bool>true</bool>
+            </property>
+            <widget class="QWidget" name="calSummaryScroll">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>-10</y>
+               <width>379</width>
+               <height>346</height>
+              </rect>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgba(252, 247, 247, 0);</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_5">
+              <item>
+               <widget class="QLabel" name="corrFactorsLabel">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline;&quot;&gt;Correction factors&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QFormLayout" name="corrFactorFL_2">
+                <property name="fieldGrowthPolicy">
+                 <enum>QFormLayout::ExpandingFieldsGrow</enum>
+                </property>
+                <property name="rowWrapPolicy">
+                 <enum>QFormLayout::DontWrapRows</enum>
+                </property>
+                <property name="verticalSpacing">
+                 <number>4</number>
+                </property>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="kQLabel">
+                  <property name="text">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;k&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic; vertical-align:sub;&quot;&gt;Q,Qo &lt;/span&gt;:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QLineEdit" name="kQLE">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::NoContextMenu</enum>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">border-radius: 15px;
+border-color: rgb(130, 160, 250);
+border-style: solid;
+border-width:2px;
+background-color: rgba(130, 160, 250,150);
+padding-left: 15px;
+height: 30px;
+font-weight: bold</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                  <property name="placeholderText">
+                   <string>N/A</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="kElecLabel">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;k&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic; vertical-align:sub;&quot;&gt;elec &lt;/span&gt;:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QLineEdit" name="kElecLE">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::NoContextMenu</enum>
+                  </property>
+                  <property name="autoFillBackground">
+                   <bool>false</bool>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">border-radius: 15px;
+border-color: rgb(130, 160, 250);
+border-style: solid;
+border-width:2px;
+background-color: rgba(130, 160, 250,150);
+padding-left: 15px;
+height: 30px;
+font-weight: bold</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="frame">
+                   <bool>true</bool>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                  <property name="placeholderText">
+                   <string>N/A</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="kTPLabel">
+                  <property name="text">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;k&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic; vertical-align:sub;&quot;&gt;TP &lt;/span&gt;:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QLineEdit" name="kTPLE">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::NoContextMenu</enum>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">border-radius: 15px;
+border-color: rgb(130, 160, 250);
+border-style: solid;
+border-width:2px;
+background-color: rgba(130, 160, 250,150);
+padding-left: 15px;
+height: 30px;
+font-weight: bold</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                  <property name="placeholderText">
+                   <string>N/A</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="kPolLabel">
+                  <property name="text">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;k&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic; vertical-align:sub;&quot;&gt;pol &lt;/span&gt;:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QLineEdit" name="kPolLE">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::NoContextMenu</enum>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">border-radius: 15px;
+border-color: rgb(130, 160, 250);
+border-style: solid;
+border-width:2px;
+background-color: rgba(130, 160, 250,150);
+padding-left: 15px;
+height: 30px;
+font-weight: bold</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                  <property name="placeholderText">
+                   <string>N/A</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="0">
+                 <widget class="QLabel" name="kSLabel">
+                  <property name="text">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;k&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic; vertical-align:sub;&quot;&gt;s &lt;/span&gt;:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="1">
+                 <layout class="QHBoxLayout" name="horizontalLayout_2">
+                  <property name="spacing">
+                   <number>10</number>
+                  </property>
+                  <item>
+                   <widget class="QLineEdit" name="kSLE">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="contextMenuPolicy">
+                     <enum>Qt::NoContextMenu</enum>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true">border-radius: 15px;
+border-color: rgb(130, 160, 250);
+border-style: solid;
+border-width:2px;
+background-color: rgba(130, 160, 250,150);
+padding-left: 15px;
+height: 30px;
+font-weight: bold</string>
+                    </property>
+                    <property name="readOnly">
+                     <bool>true</bool>
+                    </property>
+                    <property name="placeholderText">
+                     <string>N/A</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="ks_status_icon">
+                    <property name="maximumSize">
+                     <size>
+                      <width>24</width>
+                      <height>24</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="scaledContents">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_8">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>10</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QLabel" name="absorsedDoseLabel">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline;&quot;&gt;Absorbed dose to water&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QFormLayout" name="absorbedDoseFL_2">
+                <property name="fieldGrowthPolicy">
+                 <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+                </property>
+                <property name="verticalSpacing">
+                 <number>4</number>
+                </property>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="zrefDoseLabel">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;At reference depth, &lt;span style=&quot; font-style:italic;&quot;&gt;D&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic; vertical-align:sub;&quot;&gt;w,Q &lt;/span&gt;(&lt;span style=&quot; font-style:italic;&quot;&gt;z&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic; vertical-align:sub;&quot;&gt;ref &lt;/span&gt;) :&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QLineEdit" name="zrefDoseLE">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::NoContextMenu</enum>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">border-radius: 15px;
+border-color: rgb(130, 160, 250);
+border-style: solid;
+border-width:2px;
+background-color: rgba(130, 160, 250,150);
+padding-left: 15px;
+height: 30px;
+font-weight: bold</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                  <property name="placeholderText">
+                   <string>N/A</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="zmaxDoseLabel">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;At depth of dose max, &lt;span style=&quot; font-weight:700; font-style:italic;&quot;&gt;D&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:700; font-style:italic; vertical-align:sub;&quot;&gt;w,Q &lt;/span&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;(&lt;/span&gt;&lt;span style=&quot; font-weight:700; font-style:italic;&quot;&gt;z&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:700; font-style:italic; vertical-align:sub;&quot;&gt;max &lt;/span&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;)&lt;/span&gt; :&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QLineEdit" name="zmaxDoseLE">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="contextMenuPolicy">
+                   <enum>Qt::NoContextMenu</enum>
+                  </property>
+                  <property name="autoFillBackground">
+                   <bool>false</bool>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">border-radius: 15px;
+border-color: rgb(250, 200, 83);
+background-color: rgba(250, 200, 83,150);
+border-style: solid;
+border-width:2px;
+padding-left: 15px;
+height: 30px;
+font-weight: bold
+
+
+</string>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="frame">
+                   <bool>false</bool>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                  <property name="placeholderText">
+                   <string>N/A</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_9">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>5</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="outcomeLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:700;&quot;&gt;Outcome&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="outcomeHLine">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>1</height>
+             </size>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(82, 142, 122)</string>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="outcomeLE">
+            <property name="contextMenuPolicy">
+             <enum>Qt::NoContextMenu</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">border-color: rgb(95, 200, 26);
+border-radius: 15px;
+border-style: solid;
+border-width: 2px;
+background-color: rgba(95, 200, 26,150);
+padding-left: 15px;
+height: 30px;
+font-weight: bold;
+
+</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="placeholderText">
+             <string>N/A</string>
+            </property>
+            <property name="clearButtonEnabled">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="3">
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
-       <property name="text">
-        <string>Generate report</string>
+       <property name="sizeType">
+        <enum>QSizePolicy::Expanding</enum>
        </property>
-      </widget>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>10</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>
@@ -3235,10 +3205,10 @@ QPushButton:!enabled{
  <connections/>
  <buttongroups>
   <buttongroup name="calibPolarityGroup"/>
-  <buttongroup name="beamTypeGroup"/>
-  <buttongroup name="calibSetupGroup"/>
-  <buttongroup name="calibSeparateGroup"/>
   <buttongroup name="beamQualityGroup"/>
+  <buttongroup name="calibSeparateGroup"/>
   <buttongroup name="userPolarityGroup"/>
+  <buttongroup name="calibSetupGroup"/>
+  <buttongroup name="beamTypeGroup"/>
  </buttongroups>
 </ui>

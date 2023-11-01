@@ -23,6 +23,9 @@
         <file>icons/up_button.png</file>
         <file>icons/test.png</file>
         <file>icons/correct.png</file>
+        <file>icons/loading.png</file>
+        <file>icons/waiting.png</file>
+        <file>icons/in_progress.png</file>
     </qresource>
     <qresource prefix="/actionIcons">
         <file>icons/eye.png</file>

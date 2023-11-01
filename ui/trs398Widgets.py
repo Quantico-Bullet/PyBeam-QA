@@ -362,7 +362,7 @@ class QPhotonsWorksheet(QWidget):
             and nDw != "")
 
         if areAllValid:
-            self.ui.zrefDoseLE.setText(("%.3f" % (self.trs398.get_DwQ_zref()*10.0)) + " cGy/MU")
+            self.ui.zrefDoseLE.setText(("%.3f" % (self.trs398.get_DwQ_zref()*100.0)) + " cGy/MU")
         else:
             self.ui.zrefDoseLE.clear()
 
@@ -372,7 +372,7 @@ class QPhotonsWorksheet(QWidget):
             pddzRef = self.ui.pddLE.text()
 
             if zRefDD != "" and pddzRef != "":
-                dMax = self.trs398.get_DwQ_zmax_ssdSetup(float(pddzRef))*10.0
+                dMax = self.trs398.get_DwQ_zmax_ssdSetup(float(pddzRef))*100.0
                 self.ui.zmaxDoseLE.setText("%.3f" % dMax + " cGy/MU")
                 self.setOutcome(dMax)
             else:
@@ -384,7 +384,7 @@ class QPhotonsWorksheet(QWidget):
             tmrRef = self.ui.tmrLE.text()
 
             if zRefDD != "" and pddzRef != "":
-                dMax = self.trs398.get_DwQ_zmax_tmrSetup(float(tmrRef))*10.0
+                dMax = self.trs398.get_DwQ_zmax_tmrSetup(float(tmrRef))*100.0
                 self.ui.zmaxDoseLE.setText("%.3f" % dMax + " cGy/MU")
                 self.setOutcome(dMax)
             else:

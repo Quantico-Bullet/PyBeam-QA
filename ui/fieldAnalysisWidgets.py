@@ -1,13 +1,14 @@
 from PySide6.QtWidgets import (QWidget, QLabel, QProgressBar, QVBoxLayout, QFileDialog,
                                QListWidgetItem, QMenu, QSizePolicy, QMessageBox, 
-                               QMainWindow, QFormLayout, QTabWidget, QGridLayout,
+                               QMainWindow, QFormLayout, QGridLayout,
                                QSplitter, QComboBox, QDialog, QDialogButtonBox, QLineEdit,
                                QSpacerItem,QPushButton, QCheckBox, QHBoxLayout)
 from PySide6.QtGui import QIcon, QPixmap
-from PySide6.QtCore import Qt, QSize, QEvent, QThread
+from PySide6.QtCore import Qt, QSize, QEvent, QThread, Signal
 
 from ui.qaToolsWindow import QAToolsWindow
 from ui.py_ui import icons_rc
+from ui.utilsWidgets.statusbar_widgets import AnalysisInfoLabel
 from ui.py_ui.fieldAnalysisWorksheet_ui import Ui_QFieldAnalysisWorksheet
 from core.analysis.field_analysis import QFieldAnalysis, QFieldAnalysisWorker
 from core.tools.report import FieldAnalysisReport
@@ -39,6 +40,8 @@ class FieldAnalysisMainWindow(QAToolsWindow):
         return super().add_new_worksheet(QFieldAnalysisWorksheet(), worksheet_name, enable_icon)
 
 class QFieldAnalysisWorksheet(QWidget):
+
+    analysis_info_signal = Signal(dict)
 
     DEFAULT_PROTOCOLS = {"Varian": Protocol.VARIAN,
                          "Elekta": Protocol.ELEKTA,
@@ -129,6 +132,10 @@ class QFieldAnalysisWorksheet(QWidget):
 
         self.setup_config()
         self.update_marked_images()
+
+        #Set analysis state and message for status bar
+        self.analysis_message = None
+        self.analysis_state = AnalysisInfoLabel.IDLE
 
     def setup_config(self):
         """
@@ -393,6 +400,8 @@ class QFieldAnalysisWorksheet(QWidget):
         return super().eventFilter(source, event)
 
     def on_analysis_failed(self, error_message: str = "Unknown Error"):
+        self.analysis_info_signal.emit({"state": AnalysisInfoLabel.FAILED,
+                                        "message": None})
         self.analysis_in_progress = False
         self.restore_list_checkmarks()
 
@@ -417,6 +426,8 @@ class QFieldAnalysisWorksheet(QWidget):
         self.warning_dialog.exec()
 
     def start_analysis(self):
+        self.analysis_info_signal.emit({"state": AnalysisInfoLabel.IN_PROGRESS,
+                                        "message": None})
         self.analysis_in_progress = True
         self.ui.advancedViewBtn.setEnabled(False)
         self.ui.genReportBtn.setEnabled(False)
@@ -474,6 +485,10 @@ class QFieldAnalysisWorksheet(QWidget):
         self.ui.addImgBtn.setEnabled(True)
         self.ui.genReportBtn.setEnabled(True)
     
+        # Update status bar message
+        self.analysis_info_signal.emit({"state": AnalysisInfoLabel.COMPLETE,
+                                        "message": None})
+
         self.analysis_progress_bar.hide()
         self.analysis_message_label.hide()
 
@@ -629,22 +644,16 @@ class AdvancedFAView(QMainWindow):
         self.top_layout = QGridLayout(self.central_widget)
         self.top_layout.setContentsMargins(0, 0, 0, 0)
 
-        self.tab_widget = QTabWidget(self.central_widget)
-        self.tab_widget.setTabsClosable(False)
-
         size_policy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         size_policy.setVerticalStretch(0)
         size_policy.setHorizontalStretch(0)
         self.central_widget.setSizePolicy(size_policy)
-        self.tab_widget.setSizePolicy(size_policy)
 
-        #----- Setup analyzed image tab content
+        #----- Setup analyzed image content
         self.analyzed_img_qSplitter = QSplitter()
         self.analyzed_img_qSplitter.setSizePolicy(size_policy)
 
-        self.tab_widget.addTab(self.analyzed_img_qSplitter, "Analyzed Image")
-
-        self.top_layout.addWidget(self.tab_widget, 0, 0, 1, 1)
+        self.top_layout.addWidget(self.analyzed_img_qSplitter, 0, 0, 1, 1)
 
         self.curr_analyzed_image_widget = None
 

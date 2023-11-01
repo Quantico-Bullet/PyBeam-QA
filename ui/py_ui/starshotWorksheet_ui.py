@@ -75,21 +75,21 @@ class Ui_QStarshotWorksheet(object):
         self.toleranceDSB.setDecimals(2)
         self.toleranceDSB.setMaximum(3.000000000000000)
         self.toleranceDSB.setSingleStep(0.500000000000000)
-        self.toleranceDSB.setValue(0.500000000000000)
+        self.toleranceDSB.setValue(1.000000000000000)
 
         self.horizontalLayout_4.addWidget(self.toleranceDSB)
 
 
         self.configFormLayout.setLayout(0, QFormLayout.FieldRole, self.horizontalLayout_4)
 
-        self.cropLabel = QLabel(self.frame_2)
-        self.cropLabel.setObjectName(u"cropLabel")
+        self.scanRadiusLabel = QLabel(self.frame_2)
+        self.scanRadiusLabel.setObjectName(u"scanRadiusLabel")
 
-        self.configFormLayout.setWidget(1, QFormLayout.LabelRole, self.cropLabel)
+        self.configFormLayout.setWidget(1, QFormLayout.LabelRole, self.scanRadiusLabel)
 
         self.radiusSB = QDoubleSpinBox(self.frame_2)
         self.radiusSB.setObjectName(u"radiusSB")
-        self.radiusSB.setMinimum(0.050000000000000)
+        self.radiusSB.setMinimum(0.200000000000000)
         self.radiusSB.setMaximum(0.950000000000000)
         self.radiusSB.setSingleStep(0.050000000000000)
         self.radiusSB.setValue(0.850000000000000)
@@ -192,10 +192,10 @@ class Ui_QStarshotWorksheet(object):
 
         self.configFormLayout.setWidget(8, QFormLayout.FieldRole, self.recursiveSearchCB)
 
-        self.forceImageInversionLabel = QLabel(self.frame_2)
-        self.forceImageInversionLabel.setObjectName(u"forceImageInversionLabel")
+        self.invertImgLabel = QLabel(self.frame_2)
+        self.invertImgLabel.setObjectName(u"invertImgLabel")
 
-        self.configFormLayout.setWidget(9, QFormLayout.LabelRole, self.forceImageInversionLabel)
+        self.configFormLayout.setWidget(9, QFormLayout.LabelRole, self.invertImgLabel)
 
         self.forceInvertCB = QCheckBox(self.frame_2)
         self.forceInvertCB.setObjectName(u"forceInvertCB")
@@ -349,6 +349,15 @@ class Ui_QStarshotWorksheet(object):
 
         self.verticalLayout_3.addLayout(self.analysisInfoVL)
 
+        self.verticalSpacer = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
+
+        self.verticalLayout_3.addItem(self.verticalSpacer)
+
+        self.analysisImageVL = QVBoxLayout()
+        self.analysisImageVL.setObjectName(u"analysisImageVL")
+
+        self.verticalLayout_3.addLayout(self.analysisImageVL)
+
         self.verticalSpacer_4 = QSpacerItem(10, 0, QSizePolicy.Minimum, QSizePolicy.MinimumExpanding)
 
         self.verticalLayout_3.addItem(self.verticalSpacer_4)
@@ -463,8 +472,8 @@ class Ui_QStarshotWorksheet(object):
         QStarshotWorksheet.setWindowTitle(QCoreApplication.translate("QStarshotWorksheet", u"Form", None))
         self.toleranceLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Tolerance:", None))
         self.toleranceDSB.setSuffix(QCoreApplication.translate("QStarshotWorksheet", u" mm", None))
-        self.cropLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Radius:", None))
-        self.minPeakHeightLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Minimum peak height", None))
+        self.scanRadiusLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Scan radius:", None))
+        self.minPeakHeightLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Minimum peak height:", None))
         self.SIDInputLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"SID input:", None))
         self.sIDLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"SID value:", None))
         self.sIDDSB.setSuffix(QCoreApplication.translate("QStarshotWorksheet", u" mm", None))
@@ -472,7 +481,7 @@ class Ui_QStarshotWorksheet(object):
         self.DPIValueLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"DPI value:", None))
         self.useFWHMLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Use FWHM:", None))
         self.recursiveSearchLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Recursive search:", None))
-        self.forceImageInversionLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Force image inversion:", None))
+        self.invertImgLabel.setText(QCoreApplication.translate("QStarshotWorksheet", u"Invert image:", None))
         self.label_2.setText(QCoreApplication.translate("QStarshotWorksheet", u"<html><head/><body><p><span style=\" font-weight:700;\">Analysis Outcome</span></p></body></html>", None))
         self.outcomeLE.setPlaceholderText(QCoreApplication.translate("QStarshotWorksheet", u"N/A", None))
         self.analyzeBtn.setText(QCoreApplication.translate("QStarshotWorksheet", u"Analyze images", None))

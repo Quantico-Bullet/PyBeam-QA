@@ -194,7 +194,7 @@ QAbstractScrollArea::corner {
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Correction factors&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline;&quot;&gt;Correction factors&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                </widget>
               </item>
@@ -443,7 +443,7 @@ font-weight: bold</string>
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Absorbed dose to water&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline;&quot;&gt;Absorbed dose to water&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                </widget>
               </item>
@@ -3513,11 +3513,11 @@ font-weight: bold;
  <connections/>
  <buttongroups>
   <buttongroup name="r50SourceGroup"/>
-  <buttongroup name="calibSeparateGroup"/>
   <buttongroup name="calibPolarityGroup"/>
-  <buttongroup name="userPolarityGroup"/>
   <buttongroup name="beamQualityGroup"/>
-  <buttongroup name="beamTypeGroup"/>
+  <buttongroup name="calibSeparateGroup"/>
+  <buttongroup name="userPolarityGroup"/>
   <buttongroup name="calibSetupGroup"/>
+  <buttongroup name="beamTypeGroup"/>
  </buttongroups>
 </ui>

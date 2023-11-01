@@ -96,23 +96,23 @@
                  <double>0.500000000000000</double>
                 </property>
                 <property name="value">
-                 <double>0.500000000000000</double>
+                 <double>1.000000000000000</double>
                 </property>
                </widget>
               </item>
              </layout>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="cropLabel">
+             <widget class="QLabel" name="scanRadiusLabel">
               <property name="text">
-               <string>Radius:</string>
+               <string>Scan radius:</string>
               </property>
              </widget>
             </item>
             <item row="1" column="1">
              <widget class="QDoubleSpinBox" name="radiusSB">
               <property name="minimum">
-               <double>0.050000000000000</double>
+               <double>0.200000000000000</double>
               </property>
               <property name="maximum">
                <double>0.950000000000000</double>
@@ -128,7 +128,7 @@
             <item row="2" column="0">
              <widget class="QLabel" name="minPeakHeightLabel">
               <property name="text">
-               <string>Minimum peak height</string>
+               <string>Minimum peak height:</string>
               </property>
              </widget>
             </item>
@@ -260,9 +260,9 @@
              </widget>
             </item>
             <item row="9" column="0">
-             <widget class="QLabel" name="forceImageInversionLabel">
+             <widget class="QLabel" name="invertImgLabel">
               <property name="text">
-               <string>Force image inversion:</string>
+               <string>Invert image:</string>
               </property>
              </widget>
             </item>
@@ -509,6 +509,25 @@ QPushButton:!enabled{
           </item>
           <item>
            <layout class="QVBoxLayout" name="analysisInfoVL"/>
+          </item>
+          <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="analysisImageVL"/>
           </item>
           <item>
            <spacer name="verticalSpacer_4">

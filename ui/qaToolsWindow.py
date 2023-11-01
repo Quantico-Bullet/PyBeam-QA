@@ -1,7 +1,8 @@
-from PySide6.QtWidgets import QMainWindow, QLabel, QDialog
-from PySide6.QtCore import Qt, QObject, Signal, QDate, QPoint
-from PySide6.QtGui import QCloseEvent, QPixmap, QDesktopServices, QAction
+from PySide6.QtWidgets import QMainWindow, QLabel
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QPixmap, QDesktopServices
 
+from ui.utilsWidgets.statusbar_widgets import AnalysisInfoLabel
 from ui.py_ui.qaMainWin_ui import Ui_MainWindow
 from ui.about_dialog import AboutDialog
 from ui.py_ui import icons_rc
@@ -43,15 +44,23 @@ class QAToolsWindow(QMainWindow):
         # setup basic window functionality
         self.ui.dockWidget.close()
 
-        copyright_text = QLabel("PyBeam QA - v0.1.0 (Copyright © 2023 Kagiso Lebang)")
-        copyright_text.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        #copyright_text = QLabel("PyBeam QA - v0.1.0 (Copyright © 2023 Kagiso Lebang)")
+        #copyright_text.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.ui.statusbar.addPermanentWidget(
-            copyright_text, 1)
+        #self.ui.statusbar.addPermanentWidget(
+        #    copyright_text, 1)
+        
+        #Add analysis message to status bar
+        self.analysis_info_label = AnalysisInfoLabel()
+        self.ui.statusbar.addWidget(self.analysis_info_label)
+
+        self.curr_anal_message = None
+        self.curr_anal_state = AnalysisInfoLabel.IDLE
         
         self.ui.tabWidget.currentChanged.connect(self.tab_window_changed)
         self.ui.tabWidget.tabCloseRequested.connect(self.ui.tabWidget.removeTab)
 
+        self.current_tab_index = 0
         self.current_window_state = self.isMaximized()
 
     def add_new_worksheet(self, worksheet, worksheet_name: str, enable_icon: bool = True):
@@ -64,10 +73,18 @@ class QAToolsWindow(QMainWindow):
             self.ui.tabWidget.setCurrentIndex(index)
             self.ui.tabWidget.setTabIcon(index, tab_icon) 
     
-    def tab_window_changed(self):
+    def tab_window_changed(self, index: int):
         if self.ui.tabWidget.count() > 0:
             title = self.ui.tabWidget.tabText(self.ui.tabWidget.currentIndex())
             self.setWindowTitle(title + "  |  " + self.window_title)
+            
+            self.analysis_worksheet = self.ui.tabWidget.widget(index)
+            analysis_state = self.analysis_worksheet.analysis_state
+            analysis_message = self.analysis_worksheet.analysis_message
+
+            self.analysis_info_label.set_message(analysis_state, analysis_message)
+            self.analysis_worksheet.analysis_info_signal.connect(lambda x: 
+                    self.analysis_info_label.set_message(x["state"], x["message"]))
 
         elif self.ui.tabWidget.count() == 0:
             self.close()
