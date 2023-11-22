@@ -380,6 +380,9 @@ class QPlanarImagingWorksheet(QWidget):
     def on_analysis_failed(self, error_message: str = "Unknown Error"):
         self.analysis_info_signal.emit({"state": AnalysisInfoLabel.FAILED,
                                         "message": None})
+        self.analysis_state =  AnalysisInfoLabel.FAILED
+        self.analysis_message = None
+
         self.analysis_in_progress = False
         self.restore_list_checkmarks()
 
@@ -406,6 +409,9 @@ class QPlanarImagingWorksheet(QWidget):
     def start_analysis(self):
         self.analysis_info_signal.emit({"state": AnalysisInfoLabel.IN_PROGRESS,
                                         "message": None})
+        self.analysis_state =  AnalysisInfoLabel.IN_PROGRESS
+        self.analysis_message = None
+
         self.analysis_in_progress = True
         self.ui.advancedViewBtn.setEnabled(False)
         self.ui.genReportBtn.setEnabled(False)
@@ -483,6 +489,8 @@ class QPlanarImagingWorksheet(QWidget):
         # Update status bar message
         self.analysis_info_signal.emit({"state": AnalysisInfoLabel.COMPLETE,
                                         "message": None})
+        self.analysis_state =  AnalysisInfoLabel.COMPLETE
+        self.analysis_message = None
     
         self.analysis_progress_bar.hide()
         self.analysis_message_label.hide()
@@ -604,7 +612,7 @@ class QPlanarImagingWorksheet(QWidget):
                                    summary_plots = fa.get_publishable_plots(),
             )
         
-            report.saveReport()
+            report.save_report()
 
             if show_report_checkbox.isChecked():
                 webbrowser.open(save_path_le.text())

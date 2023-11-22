@@ -165,11 +165,15 @@ class AppMainWin(QMainWindow):
     def open_window(self, window_type: str, window: QAToolsWindow, data: dict | None = None):
         if self.qa_windows[window_type] is None:
 
-            self.qa_windows[window_type] = window(data)
-            self.qa_windows[window_type].showMaximized()
+            if window_type != 'photon_cal' and window_type != 'electron_cal':
+                self.qa_windows[window_type] = window(data)
+                self.qa_windows[window_type].showMaximized()
                 
-            self.qa_windows[window_type].destroyed.connect(
-                lambda: self.window_closed(window_type))
+                self.qa_windows[window_type].destroyed.connect(
+                    lambda: self.window_closed(window_type))
+                
+            else:
+                window(data).showMaximized()
               
         else:
             self.qa_windows[window_type].add_new_worksheet()
@@ -181,18 +185,18 @@ class AppMainWin(QMainWindow):
     def initPhotonsCalibQA(self):
         initData = {"institution": None,
                     "user": None,
-                    "photonBeams": [],
-                    "photonFFFBeams": [],
+                    "photon_beams": [],
+                    "photon_fff_beams": [],
                     "linac": self.currLinac}
         
         # get CheckBoxes and select the checked ones
         for beamCheckBox in self.beamCheckBoxList:
             if beamCheckBox.isChecked():
                 if "FFF" in str(beamCheckBox.text()):
-                    initData["photonFFFBeams"].append(int(str(beamCheckBox.text())
+                    initData["photon_fff_beams"].append(int(str(beamCheckBox.text())
                                     .split(" ")[0]))
                 else:
-                    initData["photonBeams"].append(int(str(beamCheckBox.text())
+                    initData["photon_beams"].append(int(str(beamCheckBox.text())
                                     .split(" ")[0]))
                     
         initData["institution"] = self._ui.institutionLE.text()
@@ -203,18 +207,18 @@ class AppMainWin(QMainWindow):
     def initElectronsCalibQA(self):
         initData = {"institution": None,
                     "user": None,
-                    "electronBeams": [],
-                    "electronFFFBeams": [],
+                    "electron_beams": [],
+                    "electron_fff_beams": [],
                     "linac": self.currLinac}
         
         # retrieve checkboxes and select the checked ones
         for beamCheckBox in self.beamCheckBoxList:
             if beamCheckBox.isChecked():
                 if "FFF" in str(beamCheckBox.text()):
-                    initData["electronFFFBeams"].append(int(str(beamCheckBox.text())
+                    initData["electron_fff_beams"].append(int(str(beamCheckBox.text())
                                     .split(" ")[0]))
                 else:
-                    initData["electronBeams"].append(int(str(beamCheckBox.text())
+                    initData["electron_beams"].append(int(str(beamCheckBox.text())
                                     .split(" ")[0]))
                     
         initData["institution"] = self._ui.institutionLE.text()

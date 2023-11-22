@@ -43,7 +43,7 @@ class Ui_QPlanarImagingWorksheet(object):
         self.gridLayout.setHorizontalSpacing(20)
         self.frame_2 = QFrame(self.analysisPage)
         self.frame_2.setObjectName(u"frame_2")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.frame_2.sizePolicy().hasHeightForWidth())
@@ -517,10 +517,12 @@ class Ui_QPlanarImagingWorksheet(object):
 
         self.imageListWidget = QListWidget(self.analysisPage)
         self.imageListWidget.setObjectName(u"imageListWidget")
-        sizePolicy1.setHeightForWidth(self.imageListWidget.sizePolicy().hasHeightForWidth())
-        self.imageListWidget.setSizePolicy(sizePolicy1)
+        sizePolicy10 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy10.setHorizontalStretch(0)
+        sizePolicy10.setVerticalStretch(0)
+        sizePolicy10.setHeightForWidth(self.imageListWidget.sizePolicy().hasHeightForWidth())
+        self.imageListWidget.setSizePolicy(sizePolicy10)
         self.imageListWidget.setMinimumSize(QSize(350, 0))
-        self.imageListWidget.setMaximumSize(QSize(350, 16777215))
         self.imageListWidget.setDragDropMode(QAbstractItemView.DragDrop)
         self.imageListWidget.setDefaultDropAction(Qt.MoveAction)
         self.imageListWidget.setAlternatingRowColors(True)
@@ -529,11 +531,11 @@ class Ui_QPlanarImagingWorksheet(object):
 
         self.addImgBtn = QPushButton(self.analysisPage)
         self.addImgBtn.setObjectName(u"addImgBtn")
-        sizePolicy10 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        sizePolicy10.setHorizontalStretch(0)
-        sizePolicy10.setVerticalStretch(0)
-        sizePolicy10.setHeightForWidth(self.addImgBtn.sizePolicy().hasHeightForWidth())
-        self.addImgBtn.setSizePolicy(sizePolicy10)
+        sizePolicy11 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy11.setHorizontalStretch(0)
+        sizePolicy11.setVerticalStretch(0)
+        sizePolicy11.setHeightForWidth(self.addImgBtn.sizePolicy().hasHeightForWidth())
+        self.addImgBtn.setSizePolicy(sizePolicy11)
         self.addImgBtn.setStyleSheet(u"QPushButton {\n"
 "	background-color: rgb(82, 142, 122);\n"
 "    min-width: 150px;\n"

@@ -242,6 +242,7 @@ class QPlanarImagingWorker(QObject):
 
         elif phantom_name == PHANTOM.LAS_VEGAS.value:
             self._phantom = LasVegas(filepath, normalize, image_kwargs)
+            self._phantom.mtf = None
 
         else:
             raise ValueError("Invalid phantom name passsed. Pass one of the following: " +
@@ -268,7 +269,7 @@ class QPlanarImagingWorker(QObject):
             
             results_data = self._phantom.results_data()
             
-            summary_text = [["No. of low contrast ROI found:", str(results_data.num_contrast_rois_seen)],
+            summary_text = [["No. of low contrast ROIs visible:", str(results_data.num_contrast_rois_seen)],
                             ["Phantom center (X):", f"{results_data.phantom_center_x_y[0]}"],
                             ["Phantom center (Y):", f"{results_data.phantom_center_x_y[1]}"],
                             ["Median contrast:", f"{results_data.median_contrast: 2.2f}"],

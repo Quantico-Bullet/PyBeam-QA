@@ -1,3 +1,4 @@
+import io
 from PySide6.QtCore import Signal, Slot, QObject
 
 from pylinac.core import image
@@ -8,6 +9,7 @@ from pylinac.core.image_generator.layers import (FilteredFieldLayer,
                                                  Layer)
 from pylinac.picketfence import PicketFence, MLC, MLCArrangement, Orientation
 
+import matplotlib.pyplot as plt
 import traceback
 import os.path as osp
 import numpy as np
@@ -18,19 +20,21 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import BinaryIO, Optional, Union, Sequence
 
+
 pg.setConfigOptions(antialias = True, imageAxisOrder='row-major')
 
 class QPicketFence(PicketFence):
 
     def __init__(self, filename: Union[str, list[str], Path, BinaryIO],
                  update_signal: Signal = None,
-                 filter: Optional[int] = None,
-                 log: Optional[str] = None,
+                 filter: int | None = None,
+                 log: str | None = None,
                  use_filename: bool = False,
                  mlc: Union[MLC, MLCArrangement, str] = MLC.MILLENNIUM,
                  crop_mm: int = 3,
-                 tolerance: float = 0.5,
                  image_kwargs: Optional[dict] = None):
+
+        self.mlc_type = mlc
         
         # Widgets for leaf profile plots
         self.profile_plot_widget = pg.PlotWidget()
@@ -53,11 +57,7 @@ class QPicketFence(PicketFence):
         else:
             super().__init__(filename, filter, log,
                         use_filename, mlc, crop_mm, image_kwargs)
-            
-        self.action_tolerance = tolerance
-        self.tolerance = tolerance
-        self.mlc_type = mlc
-        
+                    
         self.update_signal = update_signal
 
     def set_update_signal(self, update_signal: Signal):
@@ -92,7 +92,8 @@ class QPicketFence(PicketFence):
             
             image_plot_item.invertY(True)
             error_plot_item.invertY(True)
-            error_plot_item.setLimits(xMin = -0.01, xMax = self.tolerance + 1.5)
+            xMax = self.tolerance if self.max_error < self.tolerance else self.max_error
+            error_plot_item.setLimits(xMin = -0.01, xMax = xMax + 1.0)
             error_plot_item.setYLink('Image_Plot')
             
             g_layout.setColumnStretchFactor(0,2)
@@ -154,18 +155,26 @@ class QPicketFence(PicketFence):
         guards_pen = pg.mkPen(color = (0, 255, 0), width = 1.5)
 
         for picket in self.pickets:
+
             left_y_data = picket.left_guard_separated
             right_y_data = picket.right_guard_separated
+            
+            left_y_data = [[f(x_data[0]), f(x_data[-1])] for f in left_y_data]
+            right_y_data = [[f(x_data[0]), f(x_data[-1])] for f in right_y_data]
 
-            for left, right in zip(left_y_data, right_y_data):
+            x_data = [x_data[0],x_data[-1]]
 
-                if self.orientation == Orientation.UP_DOWN:
-                    image_plot_item.plot(left(x_data), x_data, pen = guards_pen)
-                    image_plot_item.plot(right(x_data), x_data, pen = guards_pen)
+            if self.orientation == Orientation.UP_DOWN:
+                image_plot_item.multiDataPlot(x=left_y_data, y=x_data, 
+                                              **{"pen": [guards_pen]*len(left_y_data)})
+                image_plot_item.multiDataPlot(x=right_y_data, y=x_data,
+                                              **{"pen": [guards_pen]*len(left_y_data)})
 
-                else:
-                    image_plot_item.plot(x_data, left(x_data), pen = guards_pen)
-                    image_plot_item.plot(x_data, right(x_data), pen = guards_pen)
+            else:
+                image_plot_item.multiDataPlot(x=x_data, y=left_y_data,
+                                              **{"pen": [guards_pen]*len(left_y_data)})
+                image_plot_item.multiDataPlot(x=x_data, y=right_y_data, 
+                                              **{"pen": [guards_pen]*len(left_y_data)})
         
         # Add mlc peaks
         for mlc_meas in self.mlc_meas:
@@ -227,7 +236,7 @@ class QPicketFence(PicketFence):
             #error_plot_item.addItem(error_bars)
             error_plot_item.addItem(bars)
         
-    def qplot_leaf_profile(self, leaf: int, picket: int):
+    def qplot_leaf_profile(self, leaf: int | str, picket: int):
         """
         Plot the profile of a leaf
         """
@@ -302,6 +311,24 @@ class QPicketFence(PicketFence):
             self.legend.addItem(lg_plot, "Guard rail")
             self.legend.addItem(rg_plot, "Guard rail")
 
+    def get_publishable_plot(self) -> io.BytesIO:
+        """
+        Custom plot implementation to get smaller, high quality pdf images
+        """
+        pf_plot_data = io.BytesIO()
+
+        self.plot_analyzed_image(
+            True,
+            True,
+            False,
+            False,
+            False,
+        )
+
+        plt.savefig(pf_plot_data, format = "pdf", pad_inches = 0.0, bbox_inches='tight')
+
+        return pf_plot_data
+
 class QPicketFenceWorker(QObject):
 
     analysis_progress = Signal(str)
@@ -317,7 +344,10 @@ class QPicketFenceWorker(QObject):
                  invert: bool = False,
                  mlc: Union[MLC, MLCArrangement, str] = MLC.MILLENNIUM,
                  crop_mm: int = 3,
+                 nominal_gap: float = 3.0,
                  tolerance: float = 0.5,
+                 separate_leaves: bool = False,
+                 num_pickets: int | None = None,
                  image_kwargs: Optional[dict] = None,):
         super().__init__()
 
@@ -330,6 +360,9 @@ class QPicketFenceWorker(QObject):
         self._mlc = mlc
         self._tolerance = tolerance
         self._crop_mm = crop_mm
+        self._nominal_gap = nominal_gap
+        self._num_pickets = num_pickets
+        self._separate_leaves = separate_leaves
         self._image_kwargs = image_kwargs
 
         self._pf = QPicketFence(self._filename,
@@ -339,7 +372,6 @@ class QPicketFenceWorker(QObject):
                           self._use_filename,
                           self._mlc,
                           self._crop_mm,
-                          self._tolerance,
                           image_kwargs = self._image_kwargs)
         
 
@@ -349,15 +381,24 @@ class QPicketFenceWorker(QObject):
         Perform an analysis of a picket fence image or series of picket fence images
         """
         try:
-            self._pf.analyze(tolerance=self._pf.tolerance, action_tolerance= self._pf.action_tolerance,
-                             invert=self._invert)
+            self._pf.analyze(tolerance=self._tolerance, invert=self._invert, 
+                             separate_leaves=self._separate_leaves, num_pickets=self._num_pickets, 
+                             nominal_gap_mm=self._nominal_gap)
 
             summary_text = [["Gantry angle:", f"{self._pf.image.gantry_angle:2.2f}°"],
                        ["Collimator angle:", f"{self._pf.image.collimator_angle:2.2f}°"],
-                       ["Leaves passing:", f"{self._pf.percent_passing:2.1f}%"],
+                       ["Number of leaves failing:", str(len(self._pf.failed_leaves()))],
                        ["Absolute median error:", f"{self._pf.abs_median_error:2.2f} mm"],
-                       ["Mean picket spacing:", f"{self._pf.mean_picket_spacing:2.2f} mm"],
-                       ["Max Error:", f"{self._pf.max_error:2.3f} mm (Picket: {self._pf.max_error_picket + 1}, Leaf: {self._pf.max_error_leaf + 1})"]]
+                       ["Mean picket spacing:", f"{self._pf.mean_picket_spacing:2.2f} mm"]]
+            
+            if self._separate_leaves:
+                leaf_name = self._pf.max_error_leaf[0] + f"-{(int(self._pf.max_error_leaf[1:]) + 1)}"
+                summary_text.append(["Max Error:", f"{self._pf.max_error:2.3f} mm " \
+                 f"(Picket: {self._pf.max_error_picket + 1}, Leaf: {leaf_name})"])
+
+            else:
+                summary_text.append(["Max Error:", f"{self._pf.max_error:2.3f} mm " \
+                 f"(Picket: {self._pf.max_error_picket + 1}, Leaf: {self._pf.max_error_leaf + 1})"])  
             
             results = {"summary_text": summary_text,
                        "picket_fence_obj": self._pf}
@@ -368,6 +409,7 @@ class QPicketFenceWorker(QObject):
         except Exception as err:
             self.analysis_failed.emit(traceback.format_exception_only(err)[-1])
             self.thread_finished.emit()
+            raise err
 
 def generate_picket_fence(
         simulator: Simulator,

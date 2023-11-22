@@ -376,6 +376,9 @@ class QStarshotWorksheet(QWidget):
     def on_analysis_failed(self, error_message: str = "Unknown Error"):
         self.analysis_info_signal.emit({"state": AnalysisInfoLabel.FAILED,
                                         "message": None})
+        self.analysis_state =  AnalysisInfoLabel.FAILED
+        self.analysis_message = None
+
         self.analysis_in_progress = False
         self.restore_list_checkmarks()
 
@@ -402,6 +405,9 @@ class QStarshotWorksheet(QWidget):
     def start_analysis(self):
         self.analysis_info_signal.emit({"state": AnalysisInfoLabel.IN_PROGRESS,
                                         "message": None})
+        self.analysis_state =  AnalysisInfoLabel.IN_PROGRESS
+        self.analysis_message = None
+
         self.analysis_in_progress = True
         self.ui.genReportBtn.setEnabled(False)
         self.remove_list_checkmarks()
@@ -478,6 +484,8 @@ class QStarshotWorksheet(QWidget):
         # Update status bar message
         self.analysis_info_signal.emit({"state": AnalysisInfoLabel.COMPLETE,
                                         "message": None})
+        self.analysis_state =  AnalysisInfoLabel.COMPLETE
+        self.analysis_message = None
 
         self.analysis_progress_bar.hide()
         self.analysis_message_label.hide()
@@ -631,7 +639,7 @@ class QStarshotWorksheet(QWidget):
                                     wobble_diameter = starshot.wobble.radius_mm * 2.0,
                                     tolerance = self.ui.toleranceDSB.value(),
                                     report_status = self.ui.outcomeLE.text())
-            report.saveReport()
+            report.save_report()
 
             if show_report_checkbox.isChecked():
                 webbrowser.open(save_path_le.text())

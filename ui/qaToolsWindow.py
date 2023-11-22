@@ -83,12 +83,13 @@ class QAToolsWindow(QMainWindow):
             analysis_message = self.analysis_worksheet.analysis_message
 
             self.analysis_info_label.set_message(analysis_state, analysis_message)
+            self.analysis_worksheet.analysis_info_signal.connect(lambda: "dummy disconnect")
+            self.analysis_worksheet.analysis_info_signal.disconnect()
             self.analysis_worksheet.analysis_info_signal.connect(lambda x: 
                     self.analysis_info_label.set_message(x["state"], x["message"]))
 
         elif self.ui.tabWidget.count() == 0:
             self.close()
-
 
     def about_app(self):
         about = AboutDialog()

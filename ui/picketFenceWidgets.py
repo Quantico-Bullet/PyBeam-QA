@@ -18,6 +18,7 @@ from core.analysis.picket_fence import (QPicketFence,
 from core.tools.report import PicketFenceReport
 from core.tools.devices import DeviceManager
 
+import gc
 import traceback
 import platform
 import webbrowser
@@ -186,7 +187,7 @@ class QPicketFenceWorksheet(QWidget):
 
     def setup_config(self):
         self.ui.mlcTypeCB.addItems([mlc.value["name"] for mlc in MLC])
-        self.ui.numPicketsCB.addItems(["Auto detect", "Manual entry"])
+        self.ui.numPicketsCB.addItems(["Auto detect", "Specify"])
 
         self.ui.numPicketsCB.currentIndexChanged.connect(self.on_config_change)
 
@@ -196,8 +197,10 @@ class QPicketFenceWorksheet(QWidget):
     def set_default_values(self):
         self.ui.mlcTypeCB.setCurrentIndex(0)
         self.ui.numPicketsCB.setCurrentIndex(0)
-        self.ui.numPicketsSB.setValue(1)
+        self.ui.numPicketsSB.setValue(5)
         self.ui.cropDSB.setValue(3.0)
+        self.ui.nominalGapDSB.setValue(3.0)
+        self.ui.combLeafAnalysisCheckB.setChecked(True)
         self.ui.useFilenameSCheckB.setChecked(False)
         self.ui.invertImageCheckB.setChecked(False)
 
@@ -390,6 +393,9 @@ class QPicketFenceWorksheet(QWidget):
                            error_message: str = "Unknown Error"):
         self.analysis_info_signal.emit({"state": AnalysisInfoLabel.FAILED,
                                         "message": None})
+        self.analysis_state =  AnalysisInfoLabel.FAILED
+        self.analysis_message = None
+
         self.analysis_in_progress = False
         self.restore_list_checkmarks()
 
@@ -416,6 +422,9 @@ class QPicketFenceWorksheet(QWidget):
     def start_analysis(self):
         self.analysis_info_signal.emit({"state": AnalysisInfoLabel.IN_PROGRESS,
                                         "message": None})
+        self.analysis_state =  AnalysisInfoLabel.IN_PROGRESS
+        self.analysis_message = None
+
         self.analysis_in_progress = True
         self.ui.advancedViewBtn.setEnabled(False)
         self.ui.genReportBtn.setEnabled(False)
@@ -441,12 +450,19 @@ class QPicketFenceWorksheet(QWidget):
             images = self.marked_images[0]
             
             try:
+
+                num_pickets = (None if self.ui.numPicketsCB.currentText() == "Auto detect" 
+                               else self.ui.numPicketsSB.value())
+
                 self.worker = QPicketFenceWorker(filename = images,
                                 use_filename = self.ui.useFilenameSCheckB.isChecked(),
                                 mlc = self.ui.mlcTypeCB.currentText(),
                                 crop_mm = self.ui.cropDSB.value(),
                                 invert = self.ui.invertImageCheckB.isChecked(),
-                                tolerance = self.ui.toleranceDSB.value())
+                                tolerance = self.ui.toleranceDSB.value(),
+                                num_pickets = num_pickets,
+                                nominal_gap = self.ui.nominalGapDSB.value(),
+                                separate_leaves = not self.ui.combLeafAnalysisCheckB.isChecked())
         
                 self.qthread = QThread()
                 self.worker.moveToThread(self.qthread)
@@ -479,6 +495,8 @@ class QPicketFenceWorksheet(QWidget):
         # Update status bar message
         self.analysis_info_signal.emit({"state": AnalysisInfoLabel.COMPLETE,
                                         "message": None})
+        self.analysis_state =  AnalysisInfoLabel.COMPLETE
+        self.analysis_message = None
 
         self.analysis_progress_bar.hide()
         self.analysis_message_label.hide()
@@ -488,19 +506,6 @@ class QPicketFenceWorksheet(QWidget):
 
         #set outcome
         self.set_analysis_outcome()
-
-        # Update the report summary
-        pf = results["picket_fence_obj"]
-        self.analysis_summary = [["Gantry angle", f"{pf.image.gantry_angle:2.2f}°", ""],
-                      ["Collimator angle", f"{pf.image.collimator_angle:2.2f}°", ""],
-                      ["Number of pickets found", f"{len(pf.pickets)}", ""],
-                      ["Number of leaf pairs found", f"{int(len(pf.mlc_meas) / len(pf.pickets))}"],
-                      ["Mean picket spacing", f"{pf.mean_picket_spacing:2.1f} mm"],
-                      ["Absolute median error", f"{pf.abs_median_error:2.3f} mm"],
-                      ["Maximum error", f"{pf.max_error:2.2f} mm",
-                       f"Max error at picket {pf.max_error_picket + 1} and leaf {pf.max_error_leaf + 1}"],
-                      ["Percentage of passing leaves", f"{pf.percent_passing:2.0f}%", ""],
-                      ["Number of failed leaves", f"{len(pf.failed_leaves())}", ""]]
         
         # Update the advanced view
         if self.advanced_results_view is not None:
@@ -640,17 +645,36 @@ class QPicketFenceWorksheet(QWidget):
             institution_name = "N/A" if institution_name_le.text() == "" else institution_name_le.text()
             treatment_unit = "N/A" if treatment_unit_le.currentText() == "" else treatment_unit_le.currentText()
 
+            pf = self.current_results["picket_fence_obj"]
+
+            summary_text = [["Gantry angle", f"{pf.image.gantry_angle:2.2f}°"],
+                       ["Collimator angle", f"{pf.image.collimator_angle:2.2f}°"],
+                       ["Number of leaves failing", str(len(pf.failed_leaves()))],
+                       ["Absolute median error", f"{pf.abs_median_error:2.2f} mm"],
+                       ["Mean picket spacing", f"{pf.mean_picket_spacing:2.2f} mm"]]
+            
+            if pf.separate_leaves:
+                leaf_name = pf.max_error_leaf[0] + f"-{(int(pf.max_error_leaf[1:]) + 1)}"
+                summary_text.append(["Max Error", f"{pf.max_error:2.3f} mm",
+                 f"Picket: {pf.max_error_picket + 1}, Leaf: {leaf_name}"])
+
+            else:
+                summary_text.append(["Max Error:", f"{pf.max_error:2.3f} mm " \
+                 f"(Picket: {pf.max_error_picket + 1}, Leaf: {pf.max_error_leaf + 1})"]) 
+
             report = PicketFenceReport(save_path_le.text(),
                                    author = physicist_name,
                                    institution = institution_name,
                                    treatment_unit_name = treatment_unit,
-                                   mlc_type = self.current_results["picket_fence_obj"].mlc_type,
-                                   analysis_summary = self.analysis_summary,
+                                   mlc_type = pf.mlc_type,
+                                   analysis_summary = summary_text,
                                    report_status = self.ui.outcomeLE.text(),
-                                   max_error = self.current_results["picket_fence_obj"].max_error,
-                                   tolerance = self.ui.toleranceDSB.value())
+                                   max_error = pf.max_error,
+                                   tolerance = self.ui.toleranceDSB.value(),
+                                   summary_plot = pf.get_publishable_plot()
+                                   )
         
-            report.saveReport()
+            report.save_report()
 
             if show_report_checkbox.isChecked():
                 webbrowser.open(save_path_le.text())
@@ -670,6 +694,9 @@ class QPicketFenceWorksheet(QWidget):
     def clear_analysis_data(self):
         del self.current_results
         self.current_results = None
+
+        # Run the garbage collector now to free resources
+        gc.collect()
             
 class AdvancedPFView(QMainWindow):
 
@@ -765,13 +792,21 @@ class AdvancedPFView(QMainWindow):
         details = [["Gantry angle", f"{self.pf.image.gantry_angle:2.2f}°", ""],
                       ["Collimator angle", f"{self.pf.image.collimator_angle:2.2f}°", ""],
                       ["Number of pickets found", f"{len(self.pf.pickets)}", ""],
-                      ["Number of leaf pairs found", f"{int(len(self.pf.mlc_meas) / len(self.pf.pickets))}"],
-                      ["Maximum error", f"{self.pf.max_error:2.3f} mm",
-                       f"Max error at picket {self.pf.max_error_picket + 1} and leaf {self.pf.max_error_leaf + 1}"],
-                      ["Percentage of passing leafs", f"{self.pf.percent_passing:2.0f}%", ""],
-                      ["Number of failed leafs", f"{len(self.pf.failed_leaves())}", ""],
-                      ["", "", ""]]
+                      ["Number of leaf pairs found", f"{int(len(self.pf.mlc_meas) / len(self.pf.pickets))}"]]
         
+        if self.pf.separate_leaves:
+            leaf_name = self.pf.max_error_leaf[0] + f"-{(int(self.pf.max_error_leaf[1:]) + 1)}"
+            details.append(["Maximum error", f"{self.pf.max_error:2.3f} mm " \
+                            f"(Picket: {self.pf.max_error_picket + 1}, Leaf: {leaf_name})"])
+
+        else:
+            details.append(["Maximum error", f"{self.pf.max_error:2.3f} mm " \
+                            f"(Picket: {self.pf.max_error_picket + 1}, Leaf: {self.pf.max_error_leaf + 1})"])
+
+        details.extend([["Percentage of passing leafs", f"{self.pf.percent_passing:2.0f}%", ""],
+                       ["Number of failed leafs", f"{len(self.pf.failed_leaves())}", ""],
+                       ["", "", ""]])
+                               
         self.details_tree_widget.addTopLevelItems([QTreeWidgetItem(detail) for detail in details])
         
         picket_offsets_item = QTreeWidgetItem(["Picket to CAX offset", "", ""])
@@ -797,15 +832,26 @@ class AdvancedPFView(QMainWindow):
         self.leaf_profiles_qSplitter.addWidget(self.curr_leaf_profile_widget)
 
         self.pickets_cb.addItems([str(x) for x in range(1,self.pf.num_pickets+1)])
-        self.leafs_cb.addItems([str(x) for x in sorted({mlc.leaf_num + 1 for mlc in self.pf.mlc_meas})])
+
+        if not self.pf.separate_leaves:
+            self.leafs_cb.addItems([str(x) for x in sorted({mlc.leaf_num + 1 for mlc in self.pf.mlc_meas})])
+        
+        else:
+            leaf_items = []
+            [leaf_items.extend([f"A{x}", f"B{x}"]) for x in sorted({mlc.leaf_num for mlc in self.pf.mlc_meas})]
+            self.leafs_cb.addItems(leaf_items)
 
         self.plot_leaf_profile(True)
         
     def plot_leaf_profile(self, force_plot: bool = False):
-
         if self.initComplete or force_plot:
-            self.pf.qplot_leaf_profile(int(self.leafs_cb.currentText())-1,
-                                       int(self.pickets_cb.currentText())-1)
+            if not self.pf.separate_leaves:
+                self.pf.qplot_leaf_profile(int(self.leafs_cb.currentText())-1,
+                                           int(self.pickets_cb.currentText())-1)
+                
+            else:
+                self.pf.qplot_leaf_profile(self.leafs_cb.currentText(),
+                                           int(self.pickets_cb.currentText())-1)
             
     def init_analyzed_image(self):
         if self.curr_analyzed_image_widget is not None:

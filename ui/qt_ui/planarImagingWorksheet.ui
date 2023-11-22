@@ -30,7 +30,7 @@
        <item row="1" column="3">
         <widget class="QFrame" name="frame_2">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -831,12 +831,6 @@ QPushButton:!enabled{
           <size>
            <width>350</width>
            <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>350</width>
-           <height>16777215</height>
           </size>
          </property>
          <property name="dragDropMode">

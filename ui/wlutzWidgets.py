@@ -27,6 +27,7 @@ from pylinac.core.image_generator import (FilteredFieldLayer,
 
 from pylinac.core.image import LinacDicomImage
 from pathlib import Path
+import gc
 import pyqtgraph as pg
 import platform
 import subprocess
@@ -397,6 +398,9 @@ class QWLutzWorksheet(QWidget):
     def on_analysis_failed(self, error_message: str = "Unknown Error"):
         self.analysis_info_signal.emit({"state": AnalysisInfoLabel.FAILED,
                                         "message": None})
+        self.analysis_state =  AnalysisInfoLabel.FAILED
+        self.analysis_message = None
+
         self.analysis_in_progress = False
         self.restore_list_checkmarks()
 
@@ -423,6 +427,8 @@ class QWLutzWorksheet(QWidget):
     def start_analysis(self):
         self.analysis_info_signal.emit({"state": AnalysisInfoLabel.IN_PROGRESS,
                                         "message": None})
+        self.analysis_state =  AnalysisInfoLabel.IN_PROGRESS
+        self.analysis_message = None
         self.analysis_in_progress = True
         self.remove_list_checkmarks()
 
@@ -466,7 +472,6 @@ class QWLutzWorksheet(QWidget):
 
     def show_analysis_results(self, results: dict):
         self.current_results = results
-        self.summary_plot = results["summary_plot"]
         self.analysis_in_progress = False
         self.restore_list_checkmarks()
         self.analysis_summary = {}
@@ -475,6 +480,8 @@ class QWLutzWorksheet(QWidget):
         # Update status bar message
         self.analysis_info_signal.emit({"state": AnalysisInfoLabel.COMPLETE,
                                         "message": None})
+        self.analysis_state =  AnalysisInfoLabel.COMPLETE
+        self.analysis_message = None
 
         self.analysis_progress_bar.hide()
         self.analysis_message_label.hide()
@@ -801,13 +808,13 @@ class QWLutzWorksheet(QWidget):
                                    author = physicist_name,
                                    institution = institution_name,
                                    treatment_unit_name = treatment_unit,
-                                   summary_plot = self.summary_plot,
+                                   summary_plot = self.current_results["summary_plot"],
                                    analysis_summary = self.analysis_summary,
                                    report_status = self.ui.outcomeLE.text(),
                                    patient_info = patient_info,
                                    tolerance = self.ui.toleranceDSB.value())
         
-            report.saveReport()
+            report.save_report()
 
             if show_report_checkbox.isChecked():
                 webbrowser.open(save_path_le.text())

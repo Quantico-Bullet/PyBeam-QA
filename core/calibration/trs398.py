@@ -4,19 +4,19 @@ from scipy.interpolate import CubicSpline
 
 class TRS398:
 
-    __pulsedConstants = {2.0: {"a0": 2.337, "a1": -3.636, "a2": 2.299},
-                         2.5: {"a0": 1.474, "a1": -1.587, "a2": 1.114},
-                         3.0: {"a0": 1.198, "a1": -0.875, "a2": 0.677},
-                         3.5: {"a0": 1.080, "a1": -0.542, "a2": 0.463},
-                         4.0: {"a0": 1.022, "a1": -0.363, "a2": 0.341},
-                         5.0: {"a0": 0.975, "a1": -0.188, "a2": 0.214}}
+    __pulsed_constants = {2.0: {"a0": 2.337, "a1": -3.636, "a2": 2.299},
+                          2.5: {"a0": 1.474, "a1": -1.587, "a2": 1.114},
+                          3.0: {"a0": 1.198, "a1": -0.875, "a2": 0.677},
+                          3.5: {"a0": 1.080, "a1": -0.542, "a2": 0.463},
+                          4.0: {"a0": 1.022, "a1": -0.363, "a2": 0.341},
+                          5.0: {"a0": 0.975, "a1": -0.188, "a2": 0.214}}
     
-    __pulsedScannedConstants = {2.0: {"a0": 4.711, "a1": -8.242, "a2": 4.533},
-                         2.5: {"a0": 2.719, "a1": -3.977, "a2": 2.261},
-                         3.0: {"a0": 2.001, "a1": -2.402, "a2": 1.404},
-                         3.5: {"a0": 1.665, "a1": -1.647, "a2": 0.984},
-                         4.0: {"a0": 1.468, "a1": -1.200, "a2": 0.734},
-                         5.0: {"a0": 1.279, "a1": -0.750, "a2": 0.474}}
+    __pulsed_scanned_constants = {2.0: {"a0": 4.711, "a1": -8.242, "a2": 4.533},
+                                  2.5: {"a0": 2.719, "a1": -3.977, "a2": 2.261},
+                                  3.0: {"a0": 2.001, "a1": -2.402, "a2": 1.404},
+                                  3.5: {"a0": 1.665, "a1": -1.647, "a2": 0.984},
+                                  4.0: {"a0": 1.468, "a1": -1.200, "a2": 0.734},
+                                  5.0: {"a0": 1.279, "a1": -0.750, "a2": 0.474}}
 
     def __init__(self, mRaw: float = 1.0, nDW: float = 1.0, kTP: float = 1.0, 
                  kS: float = 1.0, kPol: float = 1.0, kElec: float = 1.0, kQQo: float = 1.0):
@@ -34,7 +34,7 @@ class TRS398:
 
         self.ksCalcMethod = "direct"
     
-    def setMRaw(self, mRaw):
+    def set_mRaw(self, mRaw):
         self.mRaw = mRaw
     
     def kTP_corr(self, temp: float, press: float) -> float:
@@ -53,12 +53,18 @@ class TRS398:
 
     def kS_corr(self, refVoltage: float, redVoltage: float, refM: float, redM,
                 isPulsedScanned: bool) -> float:
+        """
+        Calculates the ion recombination correction factor for pulsed and pulsed-scanned beams.
+
+        The algorithm is implemented from the work by Martin S. Weinhous and Jerome A. Meli (1984)
+        - http://dx.doi.org/10.1118/1.595574
+        """
         
         vRatio = refVoltage / redVoltage
         mRatio = refM / redM
 
         if self.ksCalcMethod == "direct":
-            maxIter = 10000
+            max_iter = 10000
 
             if isPulsedScanned:
                 #initial conditions
@@ -70,7 +76,7 @@ class TRS398:
                 fZetaA = fZeta(a)
 
                 #Bisection method
-                for i in range(1, maxIter+1):
+                for i in range(1, max_iter+1):
                     p = (a + b) / 2.0
                     fZetaB = fZeta(p)
 
@@ -90,7 +96,7 @@ class TRS398:
                 uParam = 0.0005
 
                 #Fixed point iteration
-                for i in range(0, maxIter+1):
+                for i in range(0, max_iter+1):
                     u = pow(1.0 + uParam*vRatio, e) - 1
 
                     if abs(u - uParam) < delta:
@@ -108,8 +114,8 @@ class TRS398:
                     raise ValueError(f"Voltage ratio %{vRatio} not within allowed range (%{minRatio} - ${maxRatio})")
                 else:
                     # Apply spline interpolation to determine the ion recombination correction factor
-                    if isPulsedScanned: fitConstants = self.__pulsedScannedConstants 
-                    else: fitConstants = self.__pulsedConstants
+                    if isPulsedScanned: fitConstants = self.__pulsed_scanned_constants 
+                    else: fitConstants = self.__pulsed_constants
 
                     vRatioData = list(fitConstants.keys())
                     a0Data = [x["a0"] for x in fitConstants.values()]
@@ -165,8 +171,6 @@ class TRS398:
     
     def get_DwQ_zmax_tmrSetup(self, tmrZref: float) -> float:
         return self.get_DwQ_zref() / tmrZref
-        
-
         
 class TRS398Photons(TRS398):
     def __init__(self, mRaw: float = 1.0, nDW: float = 1.0, kTP: float = 1.0, 

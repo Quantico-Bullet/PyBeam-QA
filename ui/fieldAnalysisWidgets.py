@@ -402,6 +402,9 @@ class QFieldAnalysisWorksheet(QWidget):
     def on_analysis_failed(self, error_message: str = "Unknown Error"):
         self.analysis_info_signal.emit({"state": AnalysisInfoLabel.FAILED,
                                         "message": None})
+        self.analysis_state =  AnalysisInfoLabel.FAILED
+        self.analysis_message = None
+
         self.analysis_in_progress = False
         self.restore_list_checkmarks()
 
@@ -428,6 +431,9 @@ class QFieldAnalysisWorksheet(QWidget):
     def start_analysis(self):
         self.analysis_info_signal.emit({"state": AnalysisInfoLabel.IN_PROGRESS,
                                         "message": None})
+        self.analysis_state =  AnalysisInfoLabel.IN_PROGRESS
+        self.analysis_message = None
+
         self.analysis_in_progress = True
         self.ui.advancedViewBtn.setEnabled(False)
         self.ui.genReportBtn.setEnabled(False)
@@ -443,9 +449,11 @@ class QFieldAnalysisWorksheet(QWidget):
         self.analysis_message_label.setText("Analysis in progress")
         self.analysis_progress_bar.show()
         self.analysis_message_label.show()
+
+        self.set_protocol = self.ui.protocolCB.currentText()
             
         self.worker = QFieldAnalysisWorker(path = self.marked_images[0],
-                                           protocol = self.DEFAULT_PROTOCOLS[self.ui.protocolCB.currentText()],
+                                           protocol = self.DEFAULT_PROTOCOLS[self.set_protocol],
                                            centering = self.ui.centeringCB.currentText(),
                                            vert_position = self.ui.vertPosDSB.value(),
                                            horiz_position = self.ui.horPosDSB.value(),
@@ -488,6 +496,8 @@ class QFieldAnalysisWorksheet(QWidget):
         # Update status bar message
         self.analysis_info_signal.emit({"state": AnalysisInfoLabel.COMPLETE,
                                         "message": None})
+        self.analysis_state =  AnalysisInfoLabel.COMPLETE
+        self.analysis_message = None
 
         self.analysis_progress_bar.hide()
         self.analysis_message_label.hide()
@@ -604,12 +614,12 @@ class QFieldAnalysisWorksheet(QWidget):
                                    author = physicist_name,
                                    institution = institution_name,
                                    treatment_unit_name = treatment_unit,
-                                   protocol = "Varian",
+                                   protocol = self.set_protocol,
                                    analysis_summary = fa.get_publishable_results(),
                                    summary_plots = fa.get_publishable_plots(),
             )
         
-            report.saveReport()
+            report.save_report()
 
             if show_report_checkbox.isChecked():
                 webbrowser.open(save_path_le.text())

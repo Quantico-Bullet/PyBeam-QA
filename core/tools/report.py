@@ -21,14 +21,17 @@ class BaseReport:
     """
     Base class for generating reports in PyBeam QA
     """
+
+    default_style = styles["Normal"]
+
     def __init__(self, filename: str, report_name: str):
         self._filename = filename
         self.report_name = report_name
 
-    def setReportName(self, report_name: str):
+    def set_report_name(self, report_name: str):
         self.report_name = report_name
     
-    def titlePage(self, canvas: Canvas, document):
+    def title_page(self, canvas: Canvas, document):
         canvas.setAuthor(self._author)
         canvas.setCreator("PyBeam QA")
         canvas.setTitle(self.report_name)
@@ -68,9 +71,7 @@ class WinstonLutzReport(BaseReport):
         self._tolerance = tolerance
         self._comments = comments
 
-        self.default_style = styles["Normal"]
-
-    def userDetails(self, doc_contents: list):
+    def set_user_details(self, doc_contents: list):
         data = [[Paragraph("<b>Physicist</b>"), f": {self._author}"],
                 [Paragraph("<b>Institution</b>"), f": {self._institution}"],
                 [Paragraph("<b>Treatment unit</b>"), f": {self._treatment_unit_name}"],
@@ -85,7 +86,7 @@ class WinstonLutzReport(BaseReport):
         
         doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT"))
 
-    def analysisDetails(self, doc_contents: list):
+    def set_analysis_details(self, doc_contents: list):
         doc_contents.append(Spacer(1, 16)) # add spacing of 8 pts
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Analysis Details:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
@@ -101,13 +102,13 @@ class WinstonLutzReport(BaseReport):
         
         doc_contents.append(table)
 
-    def plotSummary(self, doc_contents: list):
+    def set_plot_summary(self, doc_contents: list):
         doc_contents.append(PageBreak())
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Summary plot:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 8 pts
         doc_contents.append(PdfImage(self._summary_plot, width=16*cm, height=16*cm))
 
-    def signature(self, doc_contents: list):
+    def add_signature(self, doc_contents: list):
 
         data = [[Paragraph("<b>Performed by</b>"), ":", self._author],
                 [Paragraph("<b>Signature</b>"), ":", ""]]
@@ -116,26 +117,25 @@ class WinstonLutzReport(BaseReport):
                       style=[('LINEBELOW', (-1,-1), (-1,-1), 1, colors.black)])
         doc_contents.append(TopPadder(table))
 
-    def saveReport(self):
+    def save_report(self):
         document =  SimpleDocTemplate(self._filename)
         doc_contents = [Spacer(1, 2.0*cm)]
 
         # add document body and then build the PDF
-        self.userDetails(doc_contents)
-        self.analysisDetails(doc_contents)
+        self.set_user_details(doc_contents)
+        self.set_analysis_details(doc_contents)
 
         if self._summary_plot is not None:
-            self.plotSummary(doc_contents)
+            self.set_plot_summary(doc_contents)
         
-        self.signature(doc_contents)
+        self.add_signature(doc_contents)
 
-        document.build(doc_contents, onFirstPage=self.titlePage)
+        document.build(doc_contents, onFirstPage=self.title_page)
 
 class PicketFenceReport(BaseReport):
     """
     Class for generating Picket fence reports
     """
-
     def __init__(
         self, filename: str,
         report_name: str = "Picket Fence Analysis Report",
@@ -163,9 +163,7 @@ class PicketFenceReport(BaseReport):
         self._tolerance = tolerance
         self._comments = comments
 
-        self.default_style = styles["Normal"]
-
-    def userDetails(self, doc_contents: list):
+    def set_user_details(self, doc_contents: list):
         data = [[Paragraph("<b>Physicist</b>"), f": {self._author}"],
                 [Paragraph("<b>Institution</b>"), f": {self._institution}"],
                 [Paragraph("<b>Treatment unit</b>"), f": {self._treatment_unit_name}"],
@@ -182,7 +180,7 @@ class PicketFenceReport(BaseReport):
         
         doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT"))
 
-    def analysisDetails(self, doc_contents: list):
+    def set_analysis_details(self, doc_contents: list):
         doc_contents.append(Spacer(1, 16)) # add spacing of 8 pts
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Analysis Details:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
@@ -198,13 +196,16 @@ class PicketFenceReport(BaseReport):
         
         doc_contents.append(table)
 
-    def plotSummary(self, doc_contents: list):
+    def set_plot_summary(self, doc_contents: list):
         doc_contents.append(PageBreak())
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Summary plot:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 8 pts
-        doc_contents.append(Image(self._summary_plot, width=16*cm, height=16*cm))
 
-    def signature(self, doc_contents: list):
+        image = PdfImage(self._summary_plot, width=8.0*cm, height=8.0*cm)
+        image.hAlign = "CENTRE"
+        doc_contents.append(image)
+
+    def add_signature(self, doc_contents: list):
 
         data = [[Paragraph("<b>Performed by</b>"), ":", self._author],
                 [Paragraph("<b>Signature</b>"), ":", ""]]
@@ -213,26 +214,25 @@ class PicketFenceReport(BaseReport):
                       style=[('LINEBELOW', (-1,-1), (-1,-1), 1, colors.black)])
         doc_contents.append(TopPadder(table))
 
-    def saveReport(self):
+    def save_report(self):
         document =  SimpleDocTemplate(self._filename)
         doc_contents = [Spacer(1, 2.0*cm)]
 
         # add document body and then build the PDF
-        self.userDetails(doc_contents)
-        self.analysisDetails(doc_contents)
+        self.set_user_details(doc_contents)
+        self.set_analysis_details(doc_contents)
 
         if self._summary_plot is not None:
-            self.plotSummary(doc_contents)
+            self.set_plot_summary(doc_contents)
         
-        self.signature(doc_contents)
+        self.add_signature(doc_contents)
 
-        document.build(doc_contents, onFirstPage=self.titlePage)
+        document.build(doc_contents, onFirstPage=self.title_page)
 
 class FieldAnalysisReport(BaseReport):
     """
     Class for generating Field Analysis reports
     """
-
     def __init__(
         self, filename: str,
         report_name: str = "Field Analysis Report",
@@ -254,9 +254,7 @@ class FieldAnalysisReport(BaseReport):
         self._summary_plots = summary_plots
         self._comments = comments
 
-        self.default_style = styles["Normal"]
-
-    def userDetails(self, doc_contents: list):
+    def set_user_details(self, doc_contents: list):
         data = [
             [Paragraph("<b>Physicist</b>"), f": {self._author}"],
             [Paragraph("<b>Institution</b>"), f": {self._institution}"],
@@ -268,7 +266,7 @@ class FieldAnalysisReport(BaseReport):
         
         doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT"))
 
-    def analysisDetails(self, doc_contents: list):
+    def set_analysis_details(self, doc_contents: list):
         results = self._analysis_summary
 
         for title in results.keys():
@@ -292,7 +290,7 @@ class FieldAnalysisReport(BaseReport):
         
             doc_contents.append(table)
 
-    def plotSummary(self, doc_contents: list):
+    def set_plot_summary(self, doc_contents: list):
         #doc_contents.append(PageBreak())
         doc_contents.append(Spacer(1, 16))
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Summary plots:</font></u></b>"))
@@ -303,7 +301,7 @@ class FieldAnalysisReport(BaseReport):
 
         doc_contents.append(Table(data, colWidths=[9.0*cm, 9.0*cm], hAlign="CENTER"))
 
-    def signature(self, doc_contents: list):
+    def add_signature(self, doc_contents: list):
 
         data = [[Paragraph("<b>Performed by</b>"), ":", self._author],
                 [Paragraph("<b>Signature</b>"), ":", ""]]
@@ -312,26 +310,25 @@ class FieldAnalysisReport(BaseReport):
                       style=[('LINEBELOW', (-1,-1), (-1,-1), 1, colors.black)])
         doc_contents.append(TopPadder(table))
 
-    def saveReport(self):
+    def save_report(self):
         document =  SimpleDocTemplate(self._filename)
         doc_contents = [Spacer(1, 2.0*cm)]
 
         # add document body and then build the PDF
-        self.userDetails(doc_contents)
-        self.analysisDetails(doc_contents)
+        self.set_user_details(doc_contents)
+        self.set_analysis_details(doc_contents)
 
         if self._summary_plots is not None:
-            self.plotSummary(doc_contents)
+            self.set_plot_summary(doc_contents)
         
-        self.signature(doc_contents)
+        self.add_signature(doc_contents)
 
-        document.build(doc_contents, onFirstPage=self.titlePage)
+        document.build(doc_contents, onFirstPage=self.title_page)
        
 class StarshotReport(BaseReport):
     """
     Class for generating Starshot reports
     """
-
     def __init__(
         self, filename: str,
         report_name: str = "Starshot Analysis Report",
@@ -357,9 +354,7 @@ class StarshotReport(BaseReport):
         self._tolerance = tolerance
         self._comments = comments
 
-        self.default_style = styles["Normal"]
-
-    def userDetails(self, doc_contents: list):
+    def set_user_details(self, doc_contents: list):
         data = [[Paragraph("<b>Physicist</b>"), f": {self._author}"],
                 [Paragraph("<b>Institution</b>"), f": {self._institution}"],
                 [Paragraph("<b>Treatment unit</b>"), f": {self._treatment_unit_name}"],
@@ -370,7 +365,7 @@ class StarshotReport(BaseReport):
         
         doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT"))
 
-    def analysisDetails(self, doc_contents: list):
+    def set_analysis_details(self, doc_contents: list):
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Analysis Details:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
@@ -386,7 +381,7 @@ class StarshotReport(BaseReport):
         
         doc_contents.append(table)
 
-    def plotSummary(self, doc_contents: list):
+    def set_plot_summary(self, doc_contents: list):
         #doc_contents.append(PageBreak())
         doc_contents.append(Spacer(1, 16))
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Summary plots:</font></u></b>"))
@@ -397,7 +392,7 @@ class StarshotReport(BaseReport):
 
         doc_contents.append(Table(data, colWidths=[8.0*cm, 8.0*cm], hAlign="CENTER"))
 
-    def signature(self, doc_contents: list):
+    def add_signature(self, doc_contents: list):
 
         data = [[Paragraph("<b>Performed by</b>"), ":", self._author],
                 [Paragraph("<b>Signature</b>"), ":", ""]]
@@ -406,21 +401,188 @@ class StarshotReport(BaseReport):
                       style=[('LINEBELOW', (-1,-1), (-1,-1), 1, colors.black)])
         doc_contents.append(TopPadder(table))
 
-    def saveReport(self):
+    def save_report(self):
         document =  SimpleDocTemplate(self._filename)
         doc_contents = [Spacer(1, 2.0*cm)]
 
         # add document body and then build the PDF
-        self.userDetails(doc_contents)
-        self.analysisDetails(doc_contents)
+        self.set_user_details(doc_contents)
+        self.set_analysis_details(doc_contents)
 
         if self._summary_plots is not None:
-            self.plotSummary(doc_contents)
+            self.set_plot_summary(doc_contents)
         
-        self.signature(doc_contents)
+        self.add_signature(doc_contents)
 
-        document.build(doc_contents, onFirstPage=self.titlePage)
+        document.build(doc_contents, onFirstPage=self.title_page)
 
+class PlanarImagingReport(BaseReport):
+    """
+    Class for generating Planar Imaging reports
+    """
+    def __init__(
+        self, filename: str,
+        report_name: str = "Planar Imaging Analysis Report",
+        author: str = "N/A",
+        institution: str = "N/A",
+        treatment_unit_name: str = None,
+        analysis_summary: list = None,
+        summary_plots: list[io.BytesIO] = None,
+        comments: str | None = None
+        ):
+        super().__init__(filename, report_name)
+
+        self._author = author
+        self._institution = institution
+        self._treatment_unit_name = treatment_unit_name
+        self._analysis_summary = analysis_summary
+        self._summary_plots = summary_plots
+        self._comments = comments
+
+    def set_user_details(self, doc_contents: list):
+        data = [[Paragraph("<b>Physicist</b>"), f": {self._author}"],
+                [Paragraph("<b>Institution</b>"), f": {self._institution}"],
+                [Paragraph("<b>Treatment unit</b>"), f": {self._treatment_unit_name}"],
+                [Paragraph("<b>Analysis date</b>"), f": {datetime.today().strftime('%d %B %Y')}"],
+                [Paragraph("<b>Test tolerance</b>"), f": {self._tolerance:2.2f} mm"],
+                [Paragraph("<b>Test outcome</b>"),
+                         f": {self._report_status} (wobble diameter  = {self._wobble_diameter:2.3f} mm)"]]
+        
+        doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT"))
+
+    def set_analysis_details(self, doc_contents: list):
+        doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
+        doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Analysis Details:</font></u></b>"))
+        doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
+
+        data = self._analysis_summary
+        data.insert(0, [Paragraph("<b>Parameter</b>"), Paragraph("<b>Value</b>"), Paragraph("<b>Comment(s)</b>")])
+
+        table = Table(data, colWidths=[6.0*cm, 3.0*cm, 6.5*cm], hAlign="LEFT",
+                      style=[('GRID', (0,0), (-1,-1), 0.5, colors.grey),
+                             ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+                             ('LINEABOVE', (0,0), (-1,0), 1, colors.black),
+                             ('LINEABOVE', (0,1), (-1,1), 1, colors.black)])
+        
+        doc_contents.append(table)
+
+    def set_plot_summary(self, doc_contents: list):
+        #doc_contents.append(PageBreak())
+        doc_contents.append(Spacer(1, 16))
+        doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Summary plots:</font></u></b>"))
+        doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
+
+        data = [[PdfImage(self._summary_plots[0], width=7.5*cm, height=7.5*cm), 
+                 PdfImage(self._summary_plots[1], width=7.5*cm, height=7.5*cm)]]
+
+        doc_contents.append(Table(data, colWidths=[8.0*cm, 8.0*cm], hAlign="CENTER"))
+
+    def add_signature(self, doc_contents: list):
+
+        data = [[Paragraph("<b>Performed by</b>"), ":", self._author],
+                [Paragraph("<b>Signature</b>"), ":", ""]]
+
+        table = Table(data, colWidths=[3.0*cm, 0.5*cm, 4*cm], hAlign="LEFT",
+                      style=[('LINEBELOW', (-1,-1), (-1,-1), 1, colors.black)])
+        doc_contents.append(TopPadder(table))
+
+    def save_report(self):
+        document =  SimpleDocTemplate(self._filename)
+        doc_contents = [Spacer(1, 2.0*cm)]
+
+        # add document body and then build the PDF
+        self.set_user_details(doc_contents)
+        self.set_analysis_details(doc_contents)
+
+        if self._summary_plots is not None:
+            self.set_plot_summary(doc_contents)
+        
+        self.add_signature(doc_contents)
+
+        document.build(doc_contents, onFirstPage=self.title_page)
+
+class PhotonCalibrationReport(BaseReport):
+    """
+    Class for generating TRS398 Photon output calibration reports
+    """
+    def __init__(
+        self, filename: str,
+        report_name: str = "Photon Output Calibration Report",
+        author: str = "N/A",
+        institution: str = "N/A",
+        treatment_unit_name: str = None,
+        calibration_info: dict = None,
+        comments: str | None = None
+        ):
+        super().__init__(filename, report_name)
+
+        self._author = author
+        self._institution = institution
+        self._treatment_unit_name = treatment_unit_name
+        self._calibration_info = calibration_info
+        self._comments = comments
+        self._tolerance = 1.0
+
+    def set_user_details(self, doc_contents: list):
+        data = [[Paragraph("<b>Physicist</b>"), f": {self._author}"],
+                [Paragraph("<b>Institution</b>"), f": {self._institution}"],
+                [Paragraph("<b>Treatment unit</b>"), f": {self._treatment_unit_name}"],
+                [Paragraph("<b>Analysis date</b>"), f": {datetime.today().strftime('%d %B %Y')}"],
+                [Paragraph("<b>Test tolerance</b>"), f": {self._tolerance:2.1f} %"],
+                [Paragraph("<b>Test outcome</b>"), f": {self._report_status}"]]
+        
+        doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT"))
+
+    def set_analysis_details(self, doc_contents: list):
+        doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
+        doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Analysis Details:</font></u></b>"))
+        doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
+
+        data = self._analysis_summary
+        data.insert(0, [Paragraph("<b>Parameter</b>"), Paragraph("<b>Value</b>"), Paragraph("<b>Comment(s)</b>")])
+
+        table = Table(data, colWidths=[6.0*cm, 3.0*cm, 6.5*cm], hAlign="LEFT",
+                      style=[('GRID', (0,0), (-1,-1), 0.5, colors.grey),
+                             ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
+                             ('LINEABOVE', (0,0), (-1,0), 1, colors.black),
+                             ('LINEABOVE', (0,1), (-1,1), 1, colors.black)])
+        
+        doc_contents.append(table)
+
+    def set_plot_summary(self, doc_contents: list):
+        #doc_contents.append(PageBreak())
+        doc_contents.append(Spacer(1, 16))
+        doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Summary plots:</font></u></b>"))
+        doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
+
+        data = [[PdfImage(self._summary_plots[0], width=7.5*cm, height=7.5*cm), 
+                 PdfImage(self._summary_plots[1], width=7.5*cm, height=7.5*cm)]]
+
+        doc_contents.append(Table(data, colWidths=[8.0*cm, 8.0*cm], hAlign="CENTER"))
+
+    def add_signature(self, doc_contents: list):
+
+        data = [[Paragraph("<b>Performed by</b>"), ":", self._author],
+                [Paragraph("<b>Signature</b>"), ":", ""]]
+
+        table = Table(data, colWidths=[3.0*cm, 0.5*cm, 4*cm], hAlign="LEFT",
+                      style=[('LINEBELOW', (-1,-1), (-1,-1), 1, colors.black)])
+        doc_contents.append(TopPadder(table))
+
+    def save_report(self):
+        document =  SimpleDocTemplate(self._filename)
+        doc_contents = [Spacer(1, 2.0*cm)]
+
+        # add document body and then build the PDF
+        self.set_user_details(doc_contents)
+        self.set_analysis_details(doc_contents)
+
+        if self._summary_plots is not None:
+            self.set_plot_summary(doc_contents)
+        
+        self.add_signature(doc_contents)
+
+        document.build(doc_contents, onFirstPage=self.title_page)
 
 class PdfImage(Flowable):
     def __init__(self, img_data: io.BytesIO, width=200, height=200):
