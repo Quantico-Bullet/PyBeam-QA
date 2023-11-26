@@ -5,6 +5,7 @@ from core.tools.devices import Linac
 
 from ui.py_ui.photonsWorksheet_ui import Ui_QPhotonsWorksheet
 from ui.utilsWidgets.validators import DoubleValidator
+from core.tools.report import PhotonCalibrationReport
 from core.calibration.trs398 import TRS398Photons
 from core.configuration.config import ChambersConfig, SettingsConfig
 from ui.qaToolsWindow import QAToolsWindow
@@ -20,6 +21,8 @@ class BaseTRS398Window(QAToolsWindow):
     institution_changed = Signal(str)
     userName_changed = Signal(str)
     testDate_changed = Signal(QDate)
+    tolerance_changed = Signal(float)
+    setupType_changed = Signal(int)
     nomDoseRate_changed = Signal(str)
     ionChamber_changed = Signal(int)
     chamberCalFactor_changed = Signal(str)
@@ -45,9 +48,17 @@ class BaseTRS398Window(QAToolsWindow):
 
         self.ui.menuFile.addAction("Open File", lambda: self.load_from_file(self), "Ctrl+O")
         self.ui.menuFile.addSeparator()
-        self.ui.menuFile.addAction("Save Current Worksheet", lambda: self.save_worksheets(0), "Ctrl+S")
-        self.ui.menuFile.addAction("Save All Worksheets", lambda: self.save_worksheets(1), 
+        self.ui.menuFile.addAction("Save All Worksheets", lambda: self.save_worksheets_as(1), "Ctrl+S")
+        self.ui.menuFile.addAction("Save Current Worksheet", lambda: self.save_worksheets_as(0), 
                                    "Ctrl+Shift+S")
+        self.ui.menuFile.addSeparator()
+        gen_report_menu = self.ui.menuFile.addMenu("Generate Report")
+        gen_report_menu.hide()
+        self.gen_rep_curr_action = gen_report_menu.addAction("Current Worksheet")
+        self.gen_rep_curr_action.setEnabled(False)
+        self.gen_rep_all_action = gen_report_menu.addAction("All Complete Worksheets")
+        self.gen_rep_all_action.triggered.connect(lambda: self.save_worksheets_as(1,1))
+        self.gen_rep_all_action.setEnabled(True)
 
     def add_new_worksheet(self, worksheet, worksheet_name: str, enable_icon: bool = True):
         index = self.ui.tabWidget.addTab(worksheet, worksheet_name)
@@ -111,6 +122,10 @@ class PhotonsMainWindow(BaseTRS398Window):
         worksheet.ui.institutionLE.textChanged.connect(self.institution_changed)
         worksheet.ui.userLE.textChanged.connect(self.userName_changed)
         worksheet.ui.dateDE.dateChanged.connect(self.testDate_changed)
+        worksheet.ui.toleranceDSB.valueChanged.connect(self.tolerance_changed)
+        worksheet.ui.calibSetupGroup.buttonClicked.connect(lambda button: 
+            self.setupType_changed.emit(worksheet.ui.calibSetupGroup.id(button)))
+        worksheet.ui.gen_report_btn.clicked.connect(lambda: self.save_worksheets_as(0,1))
         worksheet.ui.nomDoseRateLE.textChanged.connect(self.nomDoseRate_changed)
         worksheet.ui.IonChamberModelComboB.currentIndexChanged.connect(self.ionChamber_changed)
         worksheet.ui.calibFactorLE.textChanged.connect(self.chamberCalFactor_changed)
@@ -139,6 +154,10 @@ class PhotonsMainWindow(BaseTRS398Window):
         self.institution_changed.connect(worksheet.ui.institutionLE.setText)
         self.userName_changed.connect(worksheet.ui.userLE.setText)
         self.testDate_changed.connect(worksheet.ui.dateDE.setDate)
+        self.tolerance_changed.connect(worksheet.ui.toleranceDSB.setValue)
+        self.setupType_changed.connect(lambda id: 
+            worksheet.ui.ssdRadioButton.toggle() if id == -2 else 
+            worksheet.ui.sadRadioButton.toggle())
         self.nomDoseRate_changed.connect(worksheet.ui.nomDoseRateLE.setText)
         self.ionChamber_changed.connect(worksheet.ui.IonChamberModelComboB.setCurrentIndex)
         self.chamberCalFactor_changed.connect(worksheet.ui.calibFactorLE.setText)
@@ -200,45 +219,50 @@ class PhotonsMainWindow(BaseTRS398Window):
                                                      worksheet_info["beam_energy"],
                                                      worksheet_info["is_fff"])
                     
-                    worksheet.ui.nomDoseRateLE.setText(str(worksheet_info["nominal_dose_rate"]))
-                    worksheet.ui.beamQualityLE.setText(str(worksheet_info["nominal_dose_rate"]))
+                    worksheet.ui.nomDoseRateLE.setText(worksheet_info["nominal_dose_rate"])
+                    worksheet.ui.beamQualityLE.setText(worksheet_info["tpr_2010"])
                     worksheet.ui.refPhantomComboB.setCurrentText(worksheet_info["reference_phantom"])
                     worksheet.ui.reffieldSizeComboB.setCurrentText(worksheet_info["reference_field_size"])
-                    worksheet.ui.refDistanceLE.setText(str(worksheet_info["reference_distance"]))
-                    worksheet.ui.refDepthLE.setText(str(worksheet_info["reference_depth"]))
-                    worksheet.ui.rawDosReadLE.setText(str(worksheet_info["raw_dosimeter_reading_v1"]))
-                    worksheet.ui.corrLinacMULE.setText(str(worksheet_info["corresponding_linac_mu"]))
-                    worksheet.ui.userPressureLE.setText(str(worksheet_info["user_pressure"]))
-                    worksheet.ui.userTempLE.setText(str(worksheet_info["user_temperature"]))
-                    worksheet.ui.userHumidityLE.setText(str(worksheet_info["user_humidity"]))
-                    worksheet.ui.readMPosLE.setText(str(worksheet_info["m_positive_reading"]))
-                    worksheet.ui.readMNegLE.setText(str(worksheet_info["m_negative_reading"]))
-                    worksheet.ui.normVoltageLE.setText(str(worksheet_info["v1_voltage"]))
-                    worksheet.ui.redVoltageLE.setText(str(worksheet_info["v2_voltage"]))
-                    worksheet.ui.normReadLE.setText(str(worksheet_info["m1_reading"]))
-                    worksheet.ui.redReadLE.setText(str(worksheet_info["m2_reading"]))
-                    worksheet.ui.depthDMaxLE.setText(str(worksheet_info["depth_dmax"]))
-                    worksheet.ui.pddLE.setText(str(worksheet_info["pdd_zref"]))
+                    worksheet.ui.refDistanceLE.setText(worksheet_info["reference_distance"])
+                    worksheet.ui.refDepthLE.setText(worksheet_info["reference_depth"])
+                    worksheet.ui.rawDosReadLE.setText(worksheet_info["raw_dosimeter_reading_v1"])
+                    worksheet.ui.corrLinacMULE.setText(worksheet_info["corresponding_linac_mu"])
+                    worksheet.ui.userPressureLE.setText(worksheet_info["user_pressure"])
+                    worksheet.ui.userTempLE.setText(worksheet_info["user_temperature"])
+                    worksheet.ui.userHumidityLE.setText(worksheet_info["user_humidity"])
+                    worksheet.ui.readMPosLE.setText(worksheet_info["m_positive_reading"])
+                    worksheet.ui.readMNegLE.setText(worksheet_info["m_negative_reading"])
+                    worksheet.ui.normVoltageLE.setText(worksheet_info["v1_voltage"])
+                    worksheet.ui.redVoltageLE.setText(worksheet_info["v2_voltage"])
+                    worksheet.ui.normReadLE.setText(worksheet_info["m1_reading"])
+                    worksheet.ui.redReadLE.setText(worksheet_info["m2_reading"])
+                    worksheet.ui.depthDMaxLE.setText(worksheet_info["depth_dmax"])
+                    worksheet.ui.pddLE.setText(worksheet_info["pdd_zref"])
 
-                    (worksheet.ui.userPosPolarRadioButton.toggle() if worksheet_info["user_polarity"] == -2
+                    (worksheet.ui.userPosPolarRadioButton.toggle() 
+                     if worksheet_info["user_polarity"] == -2
                      else worksheet.ui.userNegPolarRadioButton.toggle())
                     
                     (worksheet.ui.pulsedRadioButton.toggle() if worksheet_info["beam_type"] == -2 
                      else worksheet.ui.pulsedScanRadioButton.toggle())
                     
                 if file_info["worksheets"]:
-                    worksheet_info = file_info["worksheets"][-1] # Use the last worksheet to get common info
+                    worksheet_info = file_info["worksheets"][-1] # Use the last worksheet to set common info
 
                     worksheet.ui.userLE.setText(file_info["user"])
                     worksheet.ui.institutionLE.setText(file_info["institution"])
                     worksheet.ui.dateDE.setDate(QDate.fromString(file_info["date"], "dd/MM/yyyy"))
+                    worksheet.ui.toleranceDSB.valueFromText(file_info["tolerance"])
+
+                    (worksheet.ui.ssdRadioButton.toggle() if 
+                     file_info["setup_type"] == -2 else worksheet.ui.sadRadioButton.toggle())
 
                     worksheet.ui.IonChamberModelComboB.setCurrentText(
                         file_info["ion_chamber"]["model_name"])
                     worksheet.ui.chamberSerialNoLE.setText(
                         file_info["ion_chamber"]["serial_no"])
                     worksheet.ui.calibFactorLE.setText(
-                        str(file_info["ion_chamber"]["calibration_factor"]))
+                        str(file_info["ion_chamber"]["calibration_coeff"]))
                     worksheet.ui.calibLabLE.setText(
                         str(file_info["ion_chamber"]["calibration_lab"]))
                     worksheet.ui.chamberCalibDE.setDate(
@@ -259,9 +283,9 @@ class PhotonsMainWindow(BaseTRS398Window):
                     (worksheet.ui.cobaltRadioButton.toggle() if 
                     file_info["ion_chamber"]["calibration_quality"] == -2 else
                       worksheet.ui.photonBeamRadioButton.toggle())
+                    
                     worksheet.ui.corrPolarEffCheckB.setChecked(
                         file_info["ion_chamber"]["polarity_effect_corrected"])
-
                     worksheet.ui.electModelLE.setText(
                         file_info["electrometer"]["model_name"])
                     worksheet.ui.electSerialNoLE.setText(
@@ -275,14 +299,17 @@ class PhotonsMainWindow(BaseTRS398Window):
 
                 win.showMaximized()
                 
-    def save_worksheets(self, save_mode: int):
+    def save_worksheets_as(self, save_mode: int, save_format: int = 0):
         """
-        Saves calibration worksheets to a PyBeam QA file
+        Saves calibration worksheets to a PyBeam QA file or generate a PDF report.
 
         Parameters
         -----------
         save_mode: `int`
-            - The mode for saving worksheets. 0 saves the current worksheet, 1 saves all worksheets
+            - The mode for saving worksheets. 0 saves the current worksheet, 1 saves all worksheets.
+            
+        save_format: `int`
+            - The save format. 0 generates a PyBeam QA file, 1 generates a PDF report.
         """
         worksheet_info = []
 
@@ -304,19 +331,21 @@ class PhotonsMainWindow(BaseTRS398Window):
         basic_info["user"] = worksheet.ui.userLE.text()
         basic_info["institution"] = worksheet.ui.institutionLE.text()
         basic_info["date"] = worksheet.ui.dateDE.text()
+        basic_info["tolerance"] = str(worksheet.ui.toleranceDSB.value())
         basic_info["linac_name"] = worksheet.ui.linacNameLE.text()
+        basic_info["setup_type"] = worksheet.ui.calibSetupGroup.checkedId() 
 
         ion_chamber_info["model_name"] = worksheet.ui.IonChamberModelComboB.currentText()
         ion_chamber_info["serial_no"] = worksheet.ui.chamberSerialNoLE.text()
-        ion_chamber_info["calibration_factor"] = type_convert(float, worksheet.ui.calibFactorLE.text())
+        ion_chamber_info["calibration_coeff"] = worksheet.ui.calibFactorLE.text()
         ion_chamber_info["calibration_lab"] = worksheet.ui.calibLabLE.text()
         ion_chamber_info["calibration_date"] = worksheet.ui.chamberCalibDE.text()
         ion_chamber_info["water_proof_sleeve_mat"] = worksheet.ui.wSleeveMatlLE.text()
-        ion_chamber_info["water_proof_sleeve_thick"] = type_convert(float, worksheet.ui.wSleeveThickLE.text())
-        ion_chamber_info["reference_pressure"] = type_convert(float, worksheet.ui.refPressureLE.text())
-        ion_chamber_info["reference_temperature"] = type_convert(float, worksheet.ui.refTempLE.text())
-        ion_chamber_info["reference_humidity"] = type_convert(float, worksheet.ui.refHumidityLE.text())
-        ion_chamber_info["polarizing_potential"] = type_convert(int, worksheet.ui.polarPotV1LE.text())
+        ion_chamber_info["water_proof_sleeve_thick"] = worksheet.ui.wSleeveThickLE.text()
+        ion_chamber_info["reference_pressure"] = worksheet.ui.refPressureLE.text()
+        ion_chamber_info["reference_temperature"] = worksheet.ui.refTempLE.text()
+        ion_chamber_info["reference_humidity"] = worksheet.ui.refHumidityLE.text()
+        ion_chamber_info["polarizing_potential"] = worksheet.ui.polarPotV1LE.text()
         ion_chamber_info["calibration_quality"] = worksheet.ui.beamQualityGroup.checkedId()
         ion_chamber_info["calibration_polarity"] = worksheet.ui.calibPolarityGroup.checkedId()
         ion_chamber_info["polarity_effect_corrected"] = worksheet.ui.corrPolarEffCheckB.isChecked()
@@ -333,13 +362,33 @@ class PhotonsMainWindow(BaseTRS398Window):
         file_info["photon_output_calibration"].update({"electrometer": electrometer_info})
         file_info["photon_output_calibration"].update({"worksheets": worksheet_info})
 
-        save_path = self.save_worksheets_to()
+        if save_format == 0:
+            save_path = self.save_pybq_to()
+
+        elif save_format == 1:
+            save_path = self.save_report_to()
 
         if save_path:
-            with open(save_path, 'w', encoding="utf-8") as file:
-                json.dump(file_info, file, ensure_ascii=False, indent=4)
+            if save_format == 0:
+                with open(save_path, 'w', encoding="utf-8") as file:
+                    for worksheet in file_info["photon_output_calibration"]["worksheets"]:
+                        worksheet.pop("cal_summary", None)
 
-    def save_worksheets_to(self) -> str | None:
+                    json.dump(file_info, file, ensure_ascii=False, indent=4)
+
+            elif save_format == 1:
+                cal_info = file_info["photon_output_calibration"]
+
+                for (i, worksheet) in enumerate(cal_info["worksheets"]):
+                    #TODO Replace this with signals
+                    if "cal_summary" not in worksheet.keys():
+                        del cal_info["worksheets"][i]
+
+                report = PhotonCalibrationReport(filename=save_path,
+                                                 calibration_info=cal_info)
+                report.save_report()
+
+    def save_pybq_to(self) -> str | None:
         file_path = QFileDialog.getSaveFileName(caption="Save As...", filter="PyBeam QA File (*.pybq)")
         
         if file_path[0] != "":
@@ -347,6 +396,20 @@ class PhotonsMainWindow(BaseTRS398Window):
             
             if not path[-1].endswith(".pybq"):
                 path[-1] = path[-1] + ".pybq"
+            
+            return "/".join(path)
+        
+        else:
+            return None
+
+    def save_report_to(self) -> str | None:
+        file_path = QFileDialog.getSaveFileName(caption="Save Report As...", filter="PDF (*.pdf)")
+        
+        if file_path[0] != "":
+            path = file_path[0].split("/")
+            
+            if not path[-1].endswith(".pdf"):
+                path[-1] = path[-1] + ".pdf"
             
             return "/".join(path)
         
@@ -378,8 +441,9 @@ class QPhotonsWorksheet(QWidget):
         self.ui.dateDE.setMaximumDate(QDate.currentDate())
         self.ui.chamberCalibDE.setMaximumDate(QDate.currentDate())
         self.ui.electCalDateDE.setMaximumDate(QDate.currentDate())
+        self.ui.toleranceDSB.valueChanged.connect(self.set_zmax_depth_dose)
 
-        self.ui.calibSetupGroup.buttonClicked.connect(self.cal_setup_changed)
+        self.ui.calibSetupGroup.buttonToggled.connect(self.cal_setup_changed)
         self.cal_setup_changed()
         self.ui.calibSeparateGroup.idToggled.connect(self.same_calib) # use idToggled to allow other tab signals to enable fields
         self.same_calib()
@@ -420,24 +484,24 @@ class QPhotonsWorksheet(QWidget):
         self.ui.pddLE.textChanged.connect(self.set_zmax_depth_dose)
 
         # Add validators to text fields (QLineEdit)
-        self.ui.nomDoseRateLE.setValidator(DoubleValidator(1.0, 1000, 4))
-        self.ui.beamQualityLE.setValidator(DoubleValidator(0.5, 0.84, 4))
-        self.ui.refDistanceLE.setValidator(DoubleValidator(50.0, 120, 2))
-        self.ui.refDepthLE.setValidator(DoubleValidator(5.0,10.0, 1))
-        dVal = QDoubleValidator()
+        self.ui.nomDoseRateLE.setValidator(DoubleValidator.from_args(1.0, 1000, 4))
+        self.ui.beamQualityLE.setValidator(DoubleValidator.from_args(0.5, 0.84, 4))
+        self.ui.refDistanceLE.setValidator(DoubleValidator.from_args(50.0, 120, 2))
+        self.ui.refDepthLE.setValidator(DoubleValidator.from_args(5.0,10.0, 1))
+        dVal = DoubleValidator()
         dVal.setDecimals(4)
         self.ui.calibFactorLE.setValidator(dVal)
         self.ui.wSleeveThickLE.setValidator(dVal)
         self.ui.pWinThickLE.setValidator(dVal)
-        self.ui.refPressureLE.setValidator(DoubleValidator(50.0, 115, 3))
-        self.ui.refTempLE.setValidator(DoubleValidator(10, 50, 3))
-        self.ui.refHumidityLE.setValidator(DoubleValidator(0,100,3))
+        self.ui.refPressureLE.setValidator(DoubleValidator.from_args(50.0, 115, 3))
+        self.ui.refTempLE.setValidator(DoubleValidator.from_args(10, 50, 3))
+        self.ui.refHumidityLE.setValidator(DoubleValidator.from_args(0,100,3))
         self.ui.polarPotV1LE.setValidator(QIntValidator())
         self.ui.rawDosReadLE.setValidator(dVal)
         self.ui.corrLinacMULE.setValidator(dVal)
-        self.ui.userPressureLE.setValidator(DoubleValidator(50.0, 115, 3))
-        self.ui.userTempLE.setValidator(DoubleValidator(10, 50, 3))
-        self.ui.userHumidityLE.setValidator(DoubleValidator(0,100,3))
+        self.ui.userPressureLE.setValidator(DoubleValidator.from_args(50.0, 115, 3))
+        self.ui.userTempLE.setValidator(DoubleValidator.from_args(10, 50, 3))
+        self.ui.userHumidityLE.setValidator(DoubleValidator.from_args(0,100,3))
         self.ui.readMPosLE.setValidator(dVal)
         self.ui.readMNegLE.setValidator(dVal)
         self.ui.normVoltageLE.setValidator(dVal)
@@ -445,7 +509,7 @@ class QPhotonsWorksheet(QWidget):
         self.ui.normReadLE.setValidator(dVal)
         self.ui.redReadLE.setValidator(dVal)
         self.ui.depthDMaxLE.setValidator(dVal)
-        self.ui.pddLE.setValidator(DoubleValidator(0.0, 100.0, 2))
+        self.ui.pddLE.setValidator(DoubleValidator.from_args(0.0, 100.0, 2))
         self.ui.tmrLE.setValidator(dVal)
 
         # set reference condition values
@@ -605,7 +669,8 @@ class QPhotonsWorksheet(QWidget):
             rawRead = float(self.ui.rawDosReadLE.text())
             linacMU = float(self.ui.corrLinacMULE.text())
 
-            self.trs398.mRaw = rawRead / linacMU
+            self.trs398.mRaw = rawRead
+            self.trs398.linac_mu = linacMU
             self.ui.ratioReadMULE.setText("%.5f" % (rawRead / linacMU))
         else:
             self.ui.ratioReadMULE.clear()
@@ -639,7 +704,7 @@ class QPhotonsWorksheet(QWidget):
             if zRefDD != "" and pddzRef != "":
                 dMax = self.trs398.get_DwQ_zmax_ssdSetup(float(pddzRef))*100.0
                 self.ui.zmaxDoseLE.setText("%.3f" % dMax + " cGy/MU")
-                self.setOutcome(dMax)
+                self.set_outcome(dMax)
             else:
                 self.ui.zmaxDoseLE.clear()
                 self.ui.outcomeLE.clear()
@@ -648,22 +713,22 @@ class QPhotonsWorksheet(QWidget):
             zRefDD = self.ui.zrefDoseLE.text()
             tmrRef = self.ui.tmrLE.text()
 
-            if zRefDD != "" and pddzRef != "":
+            if zRefDD != "" and tmrRef != "":
                 dMax = self.trs398.get_DwQ_zmax_tmrSetup(float(tmrRef))*100.0
                 self.ui.zmaxDoseLE.setText("%.3f" % dMax + " cGy/MU")
-                self.setOutcome(dMax)
+                self.set_outcome(dMax)
             else:
                 self.ui.zmaxDoseLE.clear()
                 self.ui.outcomeLE.clear()
                 self.hide_cal_outcome()
 
-    def setOutcome(self, dMax: float):
-        tol = self.settingsConfig.getConfig()["trs398"]["tolerance"]
-        diff = abs(dMax - 1.00)
+    def set_outcome(self, dMax: float):
+        tol = self.ui.toleranceDSB.value()
+        diff = abs(dMax - 1.00) # Reference is 1.00 cGy/MU
 
-        if  diff <= tol:
+        if diff*100.0 <= tol:
             self.ui.outcomeLE.setText(
-            "PASS -- with a deviation of {}%".format("%.2f" % (diff*100.0)))
+            f"PASS -- with a {diff*100.0:2.2f}% deviation from 1.00 cGy/MU")
 
             self.ui.outcomeLE.setStyleSheet(u"border-color: rgb(95, 200, 26);\n"
                 "border-radius: 15px;\n"
@@ -675,7 +740,7 @@ class QPhotonsWorksheet(QWidget):
                 "font-weight: bold;\n")
         else:
             self.ui.outcomeLE.setText(
-            "FAIL -- with a deviation of {}%".format("%.2f" % (diff*100.0)))
+            f"FAIL -- with a {diff*100.0:2.2f}% deviation from 1.00 cGy/MU")
 
             self.ui.outcomeLE.setStyleSheet(u"border-color: rgb(231, 29, 14);\n"
                 "border-radius: 15px;\n"
@@ -735,35 +800,42 @@ class QPhotonsWorksheet(QWidget):
         worksheet_info = {}
 
         #TODO replace use of type conversion with QtValidators
-        worksheet_info["beam_energy"] = type_convert(int, self.ui.nomAccPotLE.text())
+        worksheet_info["beam_energy"] = self.ui.nomAccPotLE.text()
         worksheet_info["is_fff"] = True if "(FFF" in self.ui.nomAccPotUnit.text() else False
-        worksheet_info["nominal_dose_rate"] = type_convert(float, self.ui.nomDoseRateLE.text())
-        worksheet_info["setup_type"] = self.ui.calibSetupGroup.checkedId()  
+        worksheet_info["nominal_dose_rate"] = self.ui.nomDoseRateLE.text()
+        worksheet_info["tpr_2010"] = self.ui.beamQualityLE.text() 
         worksheet_info["reference_phantom"] = self.ui.refPhantomComboB.currentText()
         worksheet_info["reference_field_size"] = self.ui.reffieldSizeComboB.currentText()
-        worksheet_info["reference_distance"] = type_convert(float, self.ui.refDistanceLE.text())
-        worksheet_info["reference_depth"] = type_convert(float, self.ui.refDepthLE.text())
+        worksheet_info["reference_distance"] = self.ui.refDistanceLE.text()
+        worksheet_info["reference_depth"] = self.ui.refDepthLE.text()
         worksheet_info["user_polarity"] = self.ui.userPolarityGroup.checkedId()
-        worksheet_info["raw_dosimeter_reading_v1"] = type_convert(float, self.ui.rawDosReadLE.text())
-        worksheet_info["corresponding_linac_mu"] = type_convert(float, self.ui.corrLinacMULE.text())
-        worksheet_info["user_pressure"] = type_convert(float, self.ui.userPressureLE.text())
-        worksheet_info["user_temperature"] = type_convert(float, self.ui.userTempLE.text())
-        worksheet_info["user_humidity"] = type_convert(float, self.ui.userHumidityLE.text())
-        worksheet_info["m_positive_reading"] = type_convert(float, self.ui.readMPosLE.text())
-        worksheet_info["m_negative_reading"] = type_convert(float, self.ui.readMNegLE.text())
-        worksheet_info["v1_voltage"] = type_convert(int, self.ui.normVoltageLE.text())
-        worksheet_info["v2_voltage"] = type_convert(int, self.ui.redVoltageLE.text())
-        worksheet_info["m1_reading"] = type_convert(float, self.ui.normReadLE.text())
-        worksheet_info["m2_reading"] = type_convert(float, self.ui.redReadLE.text())
+        worksheet_info["raw_dosimeter_reading_v1"] = self.ui.rawDosReadLE.text()
+        worksheet_info["corresponding_linac_mu"] = self.ui.corrLinacMULE.text()
+        worksheet_info["user_pressure"] = self.ui.userPressureLE.text()
+        worksheet_info["user_temperature"] = self.ui.userTempLE.text()
+        worksheet_info["user_humidity"] = self.ui.userHumidityLE.text()
+        worksheet_info["m_positive_reading"] = self.ui.readMPosLE.text()
+        worksheet_info["m_negative_reading"] = self.ui.readMNegLE.text()
+        worksheet_info["v1_voltage"] = self.ui.normVoltageLE.text()
+        worksheet_info["v2_voltage"] = self.ui.redVoltageLE.text()
+        worksheet_info["m1_reading"] = self.ui.normReadLE.text()
+        worksheet_info["m2_reading"] = self.ui.redReadLE.text()
         worksheet_info["beam_type"] = self.ui.beamTypeGroup.checkedId()
-        worksheet_info["depth_dmax"] = type_convert(float, self.ui.depthDMaxLE.text())
-        worksheet_info["pdd_zref"] = type_convert(float, self.ui.pddLE.text())
-        worksheet_info["tmr_zref"] = type_convert(float, self.ui.tmrLE.text())
+        worksheet_info["depth_dmax"] = self.ui.depthDMaxLE.text()
+        worksheet_info["pdd_zref"] = self.ui.pddLE.text()
+        worksheet_info["tmr_zref"] = self.ui.tmrLE.text()
+
+        if self.ui.outcomeLE.text() != "":
+            cal_summary = {}
+            cal_summary["kQQo"] = self.ui.kQLE.text()
+            cal_summary["kElec"] = self.ui.kElecLE.text()
+            cal_summary["kTP"] = self.ui.kTPLE.text()
+            cal_summary["kPol"] = self.ui.kPolLE.text()
+            cal_summary["kS"] = self.ui.kSLE.text()
+            cal_summary["corr_dos_reading"] = f"{self.trs398.get_Mcorrected():2.2f}"
+            cal_summary["dw_zref"] = self.ui.zrefDoseLE.text().split(" ")[0]
+            cal_summary["dw_zmax"] = self.ui.zmaxDoseLE.text().split(" ")[0]
+            cal_summary["test_outcome"] = self.ui.outcomeLE.text().split(" ")[0]
+            worksheet_info["cal_summary"] = cal_summary
 
         return worksheet_info
-
-def type_convert(conversion_type, arg):
-    try:
-        return conversion_type(arg)
-    except ValueError:
-        return ""

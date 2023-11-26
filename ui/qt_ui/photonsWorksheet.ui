@@ -996,7 +996,7 @@ font-weight: bold;
                   </property>
                   <item>
                    <property name="text">
-                    <string>10 ⨉ 10</string>
+                    <string>10 × 10</string>
                    </property>
                   </item>
                  </widget>
@@ -1231,7 +1231,7 @@ font-weight: bold;
                 <item>
                  <widget class="QLabel" name="calibFactorUnit">
                   <property name="text">
-                   <string>Gy/nC</string>
+                   <string>cGy/nC</string>
                   </property>
                  </widget>
                 </item>
@@ -1843,6 +1843,13 @@ font-weight: bold;
                 </property>
                </spacer>
               </item>
+              <item row="15" column="0">
+               <widget class="QLabel" name="electSectionLabel">
+                <property name="text">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700; font-style:italic; text-decoration: underline;&quot;&gt;Electrometer details&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
+              </item>
               <item row="16" column="0">
                <widget class="QLabel" name="electModelLabel">
                 <property name="text">
@@ -2025,13 +2032,6 @@ font-weight: bold;
                  </layout>
                 </item>
                </layout>
-              </item>
-              <item row="15" column="0">
-               <widget class="QLabel" name="electSectionLabel">
-                <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700; font-style:italic; text-decoration: underline;&quot;&gt;Electrometer details&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-               </widget>
               </item>
              </layout>
             </item>
@@ -3162,35 +3162,97 @@ font-weight: bold;
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QDateEdit" name="dateDE">
-            <property name="enabled">
-             <bool>true</bool>
+           <layout class="QHBoxLayout" name="hlayoutDateTol">
+            <property name="spacing">
+             <number>6</number>
             </property>
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="inputMethodHints">
-             <set>Qt::ImhPreferNumbers</set>
-            </property>
-            <property name="displayFormat">
-             <string>dd/MM/yyyy</string>
-            </property>
-            <property name="calendarPopup">
-             <bool>true</bool>
-            </property>
-            <property name="timeSpec">
-             <enum>Qt::LocalTime</enum>
-            </property>
-           </widget>
+            <item>
+             <widget class="QDateEdit" name="dateDE">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>100</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="inputMethodHints">
+               <set>Qt::ImhPreferNumbers</set>
+              </property>
+              <property name="displayFormat">
+               <string>dd/MM/yyyy</string>
+              </property>
+              <property name="calendarPopup">
+               <bool>true</bool>
+              </property>
+              <property name="timeSpec">
+               <enum>Qt::LocalTime</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="hSpacerDateTol">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="hLayoutTol">
+              <property name="sizeConstraint">
+               <enum>QLayout::SetFixedSize</enum>
+              </property>
+              <item>
+               <widget class="QLabel" name="toleranceLabel">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Tolerance:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="toleranceDSB">
+                <property name="suffix">
+                 <string>%</string>
+                </property>
+                <property name="decimals">
+                 <number>1</number>
+                </property>
+                <property name="minimum">
+                 <double>0.500000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>5.000000000000000</double>
+                </property>
+                <property name="value">
+                 <double>1.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
           </item>
          </layout>
         </item>
@@ -3240,11 +3302,11 @@ QPushButton:!enabled{
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="calibPolarityGroup"/>
-  <buttongroup name="beamTypeGroup"/>
   <buttongroup name="calibSetupGroup"/>
+  <buttongroup name="calibPolarityGroup"/>
   <buttongroup name="calibSeparateGroup"/>
-  <buttongroup name="beamQualityGroup"/>
   <buttongroup name="userPolarityGroup"/>
+  <buttongroup name="beamQualityGroup"/>
+  <buttongroup name="beamTypeGroup"/>
  </buttongroups>
 </ui>

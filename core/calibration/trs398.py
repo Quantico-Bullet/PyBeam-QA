@@ -21,6 +21,7 @@ class TRS398:
     def __init__(self, mRaw: float = 1.0, nDW: float = 1.0, kTP: float = 1.0, 
                  kS: float = 1.0, kPol: float = 1.0, kElec: float = 1.0, kQQo: float = 1.0):
         self.mRaw = mRaw
+        self.linac_mu = 100.0
         self.nDW = nDW
         self.kTP = kTP
         self.kS = kS
@@ -33,9 +34,6 @@ class TRS398:
         self.refHumidity = 50.0
 
         self.ksCalcMethod = "direct"
-    
-    def set_mRaw(self, mRaw):
-        self.mRaw = mRaw
     
     def kTP_corr(self, temp: float, press: float) -> float:
         self.kTP = (273.2 + temp) * self.refPress / ((273.2 + self.refTemp) * press)
@@ -164,10 +162,10 @@ class TRS398:
         return self.mRaw * self.kTP * self.kElec * self.kPol * self.kS
 
     def get_DwQ_zref(self) -> float:
-        return self.get_Mcorrected() * self.nDW * self.kQQo
+        return self.get_Mcorrected() * self.nDW * self.kQQo / self.linac_mu
 
     def get_DwQ_zmax_ssdSetup(self, pddZref: float) -> float:
-        return 100 * self.get_DwQ_zref() / pddZref
+        return 100. * self.get_DwQ_zref() / pddZref
     
     def get_DwQ_zmax_tmrSetup(self, tmrZref: float) -> float:
         return self.get_DwQ_zref() / tmrZref

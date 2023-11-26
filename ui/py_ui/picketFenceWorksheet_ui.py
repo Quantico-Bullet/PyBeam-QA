@@ -92,44 +92,6 @@ class Ui_QPicketFenceWorksheet(object):
 
         self.configFormLayout.setWidget(1, QFormLayout.FieldRole, self.mlcTypeCB)
 
-        self.cropLabel = QLabel(self.frame_2)
-        self.cropLabel.setObjectName(u"cropLabel")
-
-        self.configFormLayout.setWidget(5, QFormLayout.LabelRole, self.cropLabel)
-
-        self.cropDSB = QDoubleSpinBox(self.frame_2)
-        self.cropDSB.setObjectName(u"cropDSB")
-        self.cropDSB.setDecimals(1)
-        self.cropDSB.setSingleStep(0.100000000000000)
-        self.cropDSB.setValue(3.000000000000000)
-
-        self.configFormLayout.setWidget(5, QFormLayout.FieldRole, self.cropDSB)
-
-        self.useFilenameSLabel = QLabel(self.frame_2)
-        self.useFilenameSLabel.setObjectName(u"useFilenameSLabel")
-
-        self.configFormLayout.setWidget(7, QFormLayout.LabelRole, self.useFilenameSLabel)
-
-        self.useFilenameSCheckB = QCheckBox(self.frame_2)
-        self.useFilenameSCheckB.setObjectName(u"useFilenameSCheckB")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.useFilenameSCheckB.sizePolicy().hasHeightForWidth())
-        self.useFilenameSCheckB.setSizePolicy(sizePolicy2)
-
-        self.configFormLayout.setWidget(7, QFormLayout.FieldRole, self.useFilenameSCheckB)
-
-        self.invertImageLabel = QLabel(self.frame_2)
-        self.invertImageLabel.setObjectName(u"invertImageLabel")
-
-        self.configFormLayout.setWidget(8, QFormLayout.LabelRole, self.invertImageLabel)
-
-        self.invertImageCheckB = QCheckBox(self.frame_2)
-        self.invertImageCheckB.setObjectName(u"invertImageCheckB")
-
-        self.configFormLayout.setWidget(8, QFormLayout.FieldRole, self.invertImageCheckB)
-
         self.numPicketsLabel = QLabel(self.frame_2)
         self.numPicketsLabel.setObjectName(u"numPicketsLabel")
 
@@ -148,6 +110,19 @@ class Ui_QPicketFenceWorksheet(object):
 
         self.configFormLayout.setWidget(3, QFormLayout.FieldRole, self.numPicketsSB)
 
+        self.cropLabel = QLabel(self.frame_2)
+        self.cropLabel.setObjectName(u"cropLabel")
+
+        self.configFormLayout.setWidget(5, QFormLayout.LabelRole, self.cropLabel)
+
+        self.cropDSB = QDoubleSpinBox(self.frame_2)
+        self.cropDSB.setObjectName(u"cropDSB")
+        self.cropDSB.setDecimals(1)
+        self.cropDSB.setSingleStep(0.100000000000000)
+        self.cropDSB.setValue(3.000000000000000)
+
+        self.configFormLayout.setWidget(5, QFormLayout.FieldRole, self.cropDSB)
+
         self.combLeafAnalysisLabel = QLabel(self.frame_2)
         self.combLeafAnalysisLabel.setObjectName(u"combLeafAnalysisLabel")
 
@@ -162,7 +137,7 @@ class Ui_QPicketFenceWorksheet(object):
         self.nominalGapLabel = QLabel(self.frame_2)
         self.nominalGapLabel.setObjectName(u"nominalGapLabel")
 
-        self.configFormLayout.setWidget(4, QFormLayout.LabelRole, self.nominalGapLabel)
+        self.configFormLayout.setWidget(7, QFormLayout.LabelRole, self.nominalGapLabel)
 
         self.nominalGapDSB = QDoubleSpinBox(self.frame_2)
         self.nominalGapDSB.setObjectName(u"nominalGapDSB")
@@ -171,7 +146,32 @@ class Ui_QPicketFenceWorksheet(object):
         self.nominalGapDSB.setMaximum(50.000000000000000)
         self.nominalGapDSB.setValue(3.000000000000000)
 
-        self.configFormLayout.setWidget(4, QFormLayout.FieldRole, self.nominalGapDSB)
+        self.configFormLayout.setWidget(7, QFormLayout.FieldRole, self.nominalGapDSB)
+
+        self.useFilenameSLabel = QLabel(self.frame_2)
+        self.useFilenameSLabel.setObjectName(u"useFilenameSLabel")
+
+        self.configFormLayout.setWidget(8, QFormLayout.LabelRole, self.useFilenameSLabel)
+
+        self.useFilenameSCheckB = QCheckBox(self.frame_2)
+        self.useFilenameSCheckB.setObjectName(u"useFilenameSCheckB")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.useFilenameSCheckB.sizePolicy().hasHeightForWidth())
+        self.useFilenameSCheckB.setSizePolicy(sizePolicy2)
+
+        self.configFormLayout.setWidget(8, QFormLayout.FieldRole, self.useFilenameSCheckB)
+
+        self.invertImageLabel = QLabel(self.frame_2)
+        self.invertImageLabel.setObjectName(u"invertImageLabel")
+
+        self.configFormLayout.setWidget(9, QFormLayout.LabelRole, self.invertImageLabel)
+
+        self.invertImageCheckB = QCheckBox(self.frame_2)
+        self.invertImageCheckB.setObjectName(u"invertImageCheckB")
+
+        self.configFormLayout.setWidget(9, QFormLayout.FieldRole, self.invertImageCheckB)
 
 
         self.verticalLayout_4.addLayout(self.configFormLayout)
@@ -457,15 +457,15 @@ class Ui_QPicketFenceWorksheet(object):
         self.toleranceLabel.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"Tolerance:", None))
         self.toleranceDSB.setSuffix(QCoreApplication.translate("QPicketFenceWorksheet", u" mm", None))
         self.mLCTypeLabel.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"MLC type:", None))
+        self.numPicketsLabel.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"Number of Pickets:", None))
         self.cropLabel.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"Crop:", None))
         self.cropDSB.setSuffix(QCoreApplication.translate("QPicketFenceWorksheet", u" mm", None))
-        self.useFilenameSLabel.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"Use filename(s):", None))
-        self.invertImageLabel.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"Invert image:", None))
-        self.numPicketsLabel.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"Number of Pickets:", None))
         self.combLeafAnalysisLabel.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"Combined leaf analysis:", None))
         self.nominalGapLabel.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"Nominal gap:", None))
         self.nominalGapDSB.setPrefix("")
         self.nominalGapDSB.setSuffix(QCoreApplication.translate("QPicketFenceWorksheet", u" mm", None))
+        self.useFilenameSLabel.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"Use filename(s):", None))
+        self.invertImageLabel.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"Invert image:", None))
         self.label_2.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"<html><head/><body><p><span style=\" font-weight:700;\">Analysis Outcome</span></p></body></html>", None))
         self.outcomeLE.setPlaceholderText(QCoreApplication.translate("QPicketFenceWorksheet", u"N/A", None))
         self.analyzeBtn.setText(QCoreApplication.translate("QPicketFenceWorksheet", u"Analyze images", None))

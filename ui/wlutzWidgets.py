@@ -51,7 +51,7 @@ class WinstonLutzMainWindow(QAToolsWindow):
 
         self.add_new_worksheet()
 
-        self.ui.menuFile.addAction("Add Images(s)", self.ui.tabWidget.currentWidget().add_files)
+        self.ui.menuFile.addAction("Add Image(s)", self.ui.tabWidget.currentWidget().add_files)
         self.ui.menuFile.addSeparator()
         self.ui.menuFile.addAction("Add New Worksheet", self.add_new_worksheet)
         self.ui.menuTools.addAction("Benchmark Test", self.init_test_dialog, "Ctrl+T")

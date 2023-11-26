@@ -16,11 +16,11 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QButtonGroup, QCheckBox, QComboBox,
-    QDateEdit, QFormLayout, QFrame, QGridLayout,
-    QGroupBox, QHBoxLayout, QLabel, QLayout,
-    QLineEdit, QPushButton, QRadioButton, QScrollArea,
-    QSizePolicy, QSpacerItem, QStackedWidget, QVBoxLayout,
-    QWidget)
+    QDateEdit, QDoubleSpinBox, QFormLayout, QFrame,
+    QGridLayout, QGroupBox, QHBoxLayout, QLabel,
+    QLayout, QLineEdit, QPushButton, QRadioButton,
+    QScrollArea, QSizePolicy, QSpacerItem, QStackedWidget,
+    QVBoxLayout, QWidget)
 
 class Ui_QPhotonsWorksheet(object):
     def setupUi(self, QPhotonsWorksheet):
@@ -1066,6 +1066,11 @@ class Ui_QPhotonsWorksheet(object):
 
         self.sectionTwoFL.setItem(14, QFormLayout.FieldRole, self.verticalSpacer_2)
 
+        self.electSectionLabel = QLabel(self.sectionTwoGB)
+        self.electSectionLabel.setObjectName(u"electSectionLabel")
+
+        self.sectionTwoFL.setWidget(15, QFormLayout.LabelRole, self.electSectionLabel)
+
         self.electModelLabel = QLabel(self.sectionTwoGB)
         self.electModelLabel.setObjectName(u"electModelLabel")
 
@@ -1165,11 +1170,6 @@ class Ui_QPhotonsWorksheet(object):
 
 
         self.sectionTwoFL.setLayout(21, QFormLayout.FieldRole, self.calibSeparateFL)
-
-        self.electSectionLabel = QLabel(self.sectionTwoGB)
-        self.electSectionLabel.setObjectName(u"electSectionLabel")
-
-        self.sectionTwoFL.setWidget(15, QFormLayout.LabelRole, self.electSectionLabel)
 
 
         self.verticalLayout_4.addLayout(self.sectionTwoFL)
@@ -1808,6 +1808,9 @@ class Ui_QPhotonsWorksheet(object):
 
         self.siteDataFL.setWidget(2, QFormLayout.LabelRole, self.dateLabel)
 
+        self.hlayoutDateTol = QHBoxLayout()
+        self.hlayoutDateTol.setSpacing(6)
+        self.hlayoutDateTol.setObjectName(u"hlayoutDateTol")
         self.dateDE = QDateEdit(self.siteDataWidget)
         self.dateDE.setObjectName(u"dateDE")
         self.dateDE.setEnabled(True)
@@ -1818,7 +1821,36 @@ class Ui_QPhotonsWorksheet(object):
         self.dateDE.setCalendarPopup(True)
         self.dateDE.setTimeSpec(Qt.LocalTime)
 
-        self.siteDataFL.setWidget(2, QFormLayout.FieldRole, self.dateDE)
+        self.hlayoutDateTol.addWidget(self.dateDE)
+
+        self.hSpacerDateTol = QSpacerItem(20, 20, QSizePolicy.Fixed, QSizePolicy.Minimum)
+
+        self.hlayoutDateTol.addItem(self.hSpacerDateTol)
+
+        self.hLayoutTol = QHBoxLayout()
+        self.hLayoutTol.setObjectName(u"hLayoutTol")
+        self.hLayoutTol.setSizeConstraint(QLayout.SetFixedSize)
+        self.toleranceLabel = QLabel(self.siteDataWidget)
+        self.toleranceLabel.setObjectName(u"toleranceLabel")
+        sizePolicy7.setHeightForWidth(self.toleranceLabel.sizePolicy().hasHeightForWidth())
+        self.toleranceLabel.setSizePolicy(sizePolicy7)
+
+        self.hLayoutTol.addWidget(self.toleranceLabel)
+
+        self.toleranceDSB = QDoubleSpinBox(self.siteDataWidget)
+        self.toleranceDSB.setObjectName(u"toleranceDSB")
+        self.toleranceDSB.setDecimals(1)
+        self.toleranceDSB.setMinimum(0.500000000000000)
+        self.toleranceDSB.setMaximum(5.000000000000000)
+        self.toleranceDSB.setValue(1.000000000000000)
+
+        self.hLayoutTol.addWidget(self.toleranceDSB)
+
+
+        self.hlayoutDateTol.addLayout(self.hLayoutTol)
+
+
+        self.siteDataFL.setLayout(2, QFormLayout.FieldRole, self.hlayoutDateTol)
 
 
         self.verticalLayout_9.addLayout(self.siteDataFL)
@@ -1901,7 +1933,7 @@ class Ui_QPhotonsWorksheet(object):
         self.sadRadioButton.setText(QCoreApplication.translate("QPhotonsWorksheet", u"SAD", None))
         self.refPhantomLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Reference phantom:", None))
         self.refFieldSizeLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Reference field size:", None))
-        self.reffieldSizeComboB.setItemText(0, QCoreApplication.translate("QPhotonsWorksheet", u"10 \u2a09 10", None))
+        self.reffieldSizeComboB.setItemText(0, QCoreApplication.translate("QPhotonsWorksheet", u"10 \u00d7 10", None))
 
         self.fieldSizeUnit.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p>cm<span style=\" font-size:11pt; vertical-align:super;\">2</span></p></body></html>", None))
         self.refDistanceLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Reference Distance:", None))
@@ -1914,7 +1946,7 @@ class Ui_QPhotonsWorksheet(object):
         self.ionChamberModelLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Ionization Chamber Model:", None))
         self.chamberSerialNoLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Chamber serial No:", None))
         self.calibFactorLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p>Calibration factor <span style=\" font-style:italic;\">N</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">D,w,Qo </span>:</p></body></html>", None))
-        self.calibFactorUnit.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Gy/nC", None))
+        self.calibFactorUnit.setText(QCoreApplication.translate("QPhotonsWorksheet", u"cGy/nC", None))
         self.calibLabLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Calibration laboratory:", None))
         self.chamberCalibDateLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Calibration date:", None))
         self.chamberCalibDE.setDisplayFormat(QCoreApplication.translate("QPhotonsWorksheet", u"dd/MM/yyyy", None))
@@ -1949,6 +1981,7 @@ class Ui_QPhotonsWorksheet(object):
         self.userPosPolarRadioButton.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Positive (+)", None))
         self.userNegPolarRadioButton.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Negative (-)", None))
         self.corrPolarEffCheckB.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Corrected for polarity effect", None))
+        self.electSectionLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-weight:700; font-style:italic; text-decoration: underline;\">Electrometer details</span></p></body></html>", None))
         self.electModelLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Electrometer model:", None))
         self.electSerialNoLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Electrometer serial No:", None))
         self.elecCalLabLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Calibration laboratory:", None))
@@ -1958,7 +1991,6 @@ class Ui_QPhotonsWorksheet(object):
         self.calibSeparateLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Calibrated separately from chamber:", None))
         self.calibSepYesRadioButton.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Yes", None))
         self.calibSepNoRadioButton.setText(QCoreApplication.translate("QPhotonsWorksheet", u"No", None))
-        self.electSectionLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-weight:700; font-style:italic; text-decoration: underline;\">Electrometer details</span></p></body></html>", None))
         self.sectionThreeGB.setTitle(QCoreApplication.translate("QPhotonsWorksheet", u"3. Dosimeter reading and correction for influence quantities", None))
         self.rawDosReadLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p>Raw dosimeter reading at <span style=\" font-style:italic;\">V</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">1</span> :</p></body></html>", None))
         self.rawDosReadUnit.setText(QCoreApplication.translate("QPhotonsWorksheet", u"nC", None))
@@ -2005,6 +2037,8 @@ class Ui_QPhotonsWorksheet(object):
         self.userLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"User:", None))
         self.dateLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Date:", None))
         self.dateDE.setDisplayFormat(QCoreApplication.translate("QPhotonsWorksheet", u"dd/MM/yyyy", None))
+        self.toleranceLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Tolerance:", None))
+        self.toleranceDSB.setSuffix(QCoreApplication.translate("QPhotonsWorksheet", u"%", None))
         self.gen_report_btn.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Generate report", None))
     # retranslateUi
 
