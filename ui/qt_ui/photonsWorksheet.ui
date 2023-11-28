@@ -240,6 +240,9 @@ QAbstractScrollArea::corner {
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="contextMenuPolicy">
                    <enum>Qt::NoContextMenu</enum>
                   </property>
@@ -287,6 +290,9 @@ font-weight: bold</string>
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="contextMenuPolicy">
                    <enum>Qt::NoContextMenu</enum>
@@ -336,6 +342,9 @@ font-weight: bold</string>
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="contextMenuPolicy">
                    <enum>Qt::NoContextMenu</enum>
                   </property>
@@ -374,6 +383,9 @@ font-weight: bold</string>
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="contextMenuPolicy">
                    <enum>Qt::NoContextMenu</enum>
@@ -415,6 +427,9 @@ font-weight: bold</string>
                       <horstretch>0</horstretch>
                       <verstretch>0</verstretch>
                      </sizepolicy>
+                    </property>
+                    <property name="focusPolicy">
+                     <enum>Qt::NoFocus</enum>
                     </property>
                     <property name="contextMenuPolicy">
                      <enum>Qt::NoContextMenu</enum>
@@ -515,6 +530,9 @@ font-weight: bold</string>
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
                   <property name="contextMenuPolicy">
                    <enum>Qt::NoContextMenu</enum>
                   </property>
@@ -556,6 +574,9 @@ font-weight: bold</string>
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="contextMenuPolicy">
                    <enum>Qt::NoContextMenu</enum>
@@ -649,6 +670,9 @@ font-weight: bold
           </item>
           <item>
            <widget class="QLineEdit" name="outcomeLE">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="contextMenuPolicy">
              <enum>Qt::NoContextMenu</enum>
             </property>
@@ -712,7 +736,7 @@ font-weight: bold;
           <x>0</x>
           <y>0</y>
           <width>605</width>
-          <height>1902</height>
+          <height>1903</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -965,6 +989,21 @@ font-weight: bold;
                 </property>
                </widget>
               </item>
+              <item row="5" column="1">
+               <widget class="QComboBox" name="refPhantomComboB">
+                <property name="minimumSize">
+                 <size>
+                  <width>100</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>Water</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
               <item row="6" column="0">
                <widget class="QLabel" name="refFieldSizeLabel">
                 <property name="text">
@@ -1011,13 +1050,57 @@ font-weight: bold;
                </layout>
               </item>
               <item row="7" column="0">
+               <widget class="QLabel" name="refDepthLabel">
+                <property name="text">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reference depth &lt;span style=&quot; font-style:italic;&quot;&gt;z&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic; vertical-align:sub;&quot;&gt;ref  &lt;/span&gt;:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="1">
+               <layout class="QHBoxLayout" name="refDepthHL">
+                <item>
+                 <widget class="QComboBox" name="refDepthComboB">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>100</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <item>
+                   <property name="text">
+                    <string>5.0</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>10.0</string>
+                   </property>
+                  </item>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="refDepthUnit">
+                  <property name="text">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;g/cm&lt;span style=&quot; font-size:11pt; vertical-align:super;&quot;&gt;2&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item row="8" column="0">
                <widget class="QLabel" name="refDistanceLabel">
                 <property name="text">
                  <string>Reference Distance:</string>
                 </property>
                </widget>
               </item>
-              <item row="7" column="1">
+              <item row="8" column="1">
                <layout class="QHBoxLayout" name="refDistanceHL">
                 <item>
                  <widget class="QLineEdit" name="refDistanceLE">
@@ -1052,61 +1135,6 @@ font-weight: bold;
                  </widget>
                 </item>
                </layout>
-              </item>
-              <item row="8" column="0">
-               <widget class="QLabel" name="refDepthLabel">
-                <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reference depth &lt;span style=&quot; font-style:italic;&quot;&gt;z&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic; vertical-align:sub;&quot;&gt;ref  &lt;/span&gt;:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="1">
-               <layout class="QHBoxLayout" name="refDepthHL">
-                <item>
-                 <widget class="QLineEdit" name="refDepthLE">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>100</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>100</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="refDepthUnit">
-                  <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;g/cm&lt;span style=&quot; font-size:11pt; vertical-align:super;&quot;&gt;2&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item row="5" column="1">
-               <widget class="QComboBox" name="refPhantomComboB">
-                <property name="minimumSize">
-                 <size>
-                  <width>100</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>Water</string>
-                 </property>
-                </item>
-               </widget>
               </item>
              </layout>
             </item>
@@ -3237,7 +3265,7 @@ font-weight: bold;
                  <string>%</string>
                 </property>
                 <property name="decimals">
-                 <number>1</number>
+                 <number>2</number>
                 </property>
                 <property name="minimum">
                  <double>0.500000000000000</double>
@@ -3302,11 +3330,11 @@ QPushButton:!enabled{
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="calibSetupGroup"/>
-  <buttongroup name="calibPolarityGroup"/>
-  <buttongroup name="calibSeparateGroup"/>
   <buttongroup name="userPolarityGroup"/>
-  <buttongroup name="beamQualityGroup"/>
+  <buttongroup name="calibPolarityGroup"/>
   <buttongroup name="beamTypeGroup"/>
+  <buttongroup name="calibSetupGroup"/>
+  <buttongroup name="beamQualityGroup"/>
+  <buttongroup name="calibSeparateGroup"/>
  </buttongroups>
 </ui>

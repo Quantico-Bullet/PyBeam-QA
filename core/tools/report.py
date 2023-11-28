@@ -552,7 +552,7 @@ class PhotonCalibrationReport(BaseReport):
                 [Paragraph("<b>Calibration Coefficient</b>"), f': {ion_chamber_info["calibration_coeff"]} cGy/nC'],
                 ["", ""],
                 [Paragraph("<b>Electrometer Model</b>"), f': {elect_meter_info["model_name"]}'],
-                [Paragraph("<b>Serial No.</b>"), f': {elect_meter_info["serial_no"]}'],
+                [Paragraph("<b>Electrometer Serial No.</b>"), f': {elect_meter_info["serial_no"]}'],
                 [Paragraph("<b>Calibration Laboratory</b>"), f': {elect_meter_info["calibration_lab"]}'],
                 [Paragraph("<b>Calibration Date</b>"), f': {elect_meter_info["calibration_date"]}']]
         
@@ -563,7 +563,7 @@ class PhotonCalibrationReport(BaseReport):
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Measurement Conditions:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
         #TODO Allow report to accept custom units of measurement
-        data = [["", Paragraph("<para align='centre'><b>Nominal Energy (MV)</b> \
+        data = [["", Paragraph("<para align='centre'><b>Nominal Accelerating Potential (MV)</b> \
                                </para>")],
                 [Paragraph("<b>Parameter</b>")],
                 ["Setup type (SSD or SAD)"],
@@ -611,7 +611,7 @@ class PhotonCalibrationReport(BaseReport):
                                       "Correction Factors:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
         #TODO Allow report to accept custom units of measurement
-        data = [["", Paragraph("<para align='centre'><b>Nominal Energy (MV)</b> \
+        data = [["", Paragraph("<para align='centre'><b>Nominal Accelerating Potential (MV)</b> \
                                </para>")],
                 [Paragraph("<b>Parameter</b>")],
                 [PdfImage(assets_dir + "/tpr2010.pdf")],
@@ -659,7 +659,7 @@ class PhotonCalibrationReport(BaseReport):
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Absorbed Dose To Water:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
 
-        data = [["", Paragraph("<para align='centre'><b>Nominal Energy (MV)</b> \
+        data = [["", Paragraph("<para align='centre'><b>Nominal Accelerating Potential (MV)</b> \
                                </para>")],
                 [Paragraph("<b>Parameter</b>")],
                 [PdfImage(assets_dir + "/depth_zmax.pdf")],

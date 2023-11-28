@@ -42,7 +42,7 @@
          <bool>true</bool>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="linacQAPage">
          <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -1071,24 +1071,6 @@ border-style: solid;
           </item>
           <item row="0" column="2">
            <layout class="QGridLayout" name="mainGridLayout">
-            <item row="0" column="1" alignment="Qt::AlignHCenter">
-             <widget class="QLabel" name="calibPageTitle">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>16</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>Page Title</string>
-              </property>
-             </widget>
-            </item>
             <item row="2" column="1">
              <widget class="QScrollArea" name="scrollArea_2">
               <property name="sizePolicy">
@@ -1108,8 +1090,8 @@ border-style: solid;
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>418</width>
-                 <height>276</height>
+                 <width>450</width>
+                 <height>371</height>
                 </rect>
                </property>
                <property name="sizePolicy">
@@ -1237,7 +1219,7 @@ border-style: solid;
                      </sizepolicy>
                     </property>
                     <property name="text">
-                     <string>EX-300-AMPLE</string>
+                     <string>N/A</string>
                     </property>
                    </widget>
                   </item>
@@ -1257,7 +1239,7 @@ border-style: solid;
                      </sizepolicy>
                     </property>
                     <property name="text">
-                     <string>Versa HD</string>
+                     <string>N/A</string>
                     </property>
                    </widget>
                   </item>
@@ -1277,7 +1259,7 @@ border-style: solid;
                      </sizepolicy>
                     </property>
                     <property name="text">
-                     <string>Elekta</string>
+                     <string>N/A</string>
                     </property>
                    </widget>
                   </item>
@@ -1348,17 +1330,17 @@ border-style: solid;
               </property>
              </spacer>
             </item>
-            <item row="3" column="1">
-             <spacer name="verticalSpacer_5">
+            <item row="3" column="2">
+             <spacer name="horizontalSpacer_3">
               <property name="orientation">
-               <enum>Qt::Vertical</enum>
+               <enum>Qt::Horizontal</enum>
               </property>
               <property name="sizeType">
                <enum>QSizePolicy::Fixed</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>20</width>
+                <width>40</width>
                 <height>20</height>
                </size>
               </property>
@@ -1409,32 +1391,68 @@ QPushButton:pressed {
               </property>
              </widget>
             </item>
-            <item row="3" column="2">
-             <spacer name="horizontalSpacer_3">
+            <item row="3" column="1">
+             <spacer name="verticalSpacer_5">
               <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+               <enum>Qt::Vertical</enum>
               </property>
               <property name="sizeType">
                <enum>QSizePolicy::Fixed</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>40</width>
+                <width>20</width>
                 <height>20</height>
                </size>
               </property>
              </spacer>
             </item>
-            <item row="4" column="1" alignment="Qt::AlignHCenter">
-             <widget class="QPushButton" name="calibStartBtn">
+            <item row="0" column="1" alignment="Qt::AlignHCenter">
+             <widget class="QLabel" name="calibPageTitle">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="styleSheet">
-               <string notr="true">QPushButton {
+              <property name="font">
+               <font>
+                <pointsize>16</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Page Title</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <property name="spacing">
+               <number>20</number>
+              </property>
+              <item>
+               <spacer name="horizontalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="calibStartBtn">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QPushButton {
 	background-color: rgb(82, 142, 122);
     min-width: 150px;
 	min-height:20px;
@@ -1451,11 +1469,58 @@ QPushButton:pressed {
 QPushButton:!enabled{
 	background-color: rgba(52, 91, 78, 50);
 }</string>
-              </property>
-              <property name="text">
-               <string>Start QA</string>
-              </property>
-             </widget>
+                </property>
+                <property name="text">
+                 <string>Start new QA</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="loadQABtn">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QPushButton {
+	background-color: rgb(82, 142, 122);
+    min-width: 150px;
+	min-height:20px;
+    padding: 6px;
+	border-radius: 15px;
+	color: white;
+	font: bold;
+}
+
+QPushButton:pressed {
+	background-color: rgb(52, 91, 78);
+}
+
+QPushButton:!enabled{
+	background-color: rgba(52, 91, 78, 50);
+}</string>
+                </property>
+                <property name="text">
+                 <string>Load QA file</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_5">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
             </item>
            </layout>
           </item>

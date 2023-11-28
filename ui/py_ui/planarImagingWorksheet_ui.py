@@ -523,6 +523,7 @@ class Ui_QPlanarImagingWorksheet(object):
         sizePolicy10.setHeightForWidth(self.imageListWidget.sizePolicy().hasHeightForWidth())
         self.imageListWidget.setSizePolicy(sizePolicy10)
         self.imageListWidget.setMinimumSize(QSize(350, 0))
+        self.imageListWidget.setMaximumSize(QSize(350, 16777215))
         self.imageListWidget.setDragDropMode(QAbstractItemView.DragDrop)
         self.imageListWidget.setDefaultDropAction(Qt.MoveAction)
         self.imageListWidget.setAlternatingRowColors(True)

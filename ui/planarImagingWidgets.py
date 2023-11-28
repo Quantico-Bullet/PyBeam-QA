@@ -50,10 +50,11 @@ class QPlanarImagingWorksheet(QWidget):
 
     analysis_info_signal = Signal(dict)
 
-    PHANTOMS = ["Leeds TOR 18 (Red)", "Leeds TOR 18 (Blue)", "Standard Imaging QC-3 MV", 
-                "Standard Imaging QC kV", "Doselab MC2 MV", "Doselab MC2 kV",
-                "SNC kV", "SNC MV", "SNC MV (12510)", "PTW EPID QC", "Las Vegas",
-                "IBA Primus A"]
+    DEFAULT_PHANTOMS = ["Leeds TOR 18 (Red)", "Leeds TOR 18 (Blue)", 
+                        "Standard Imaging QC-3 MV", "Standard Imaging QC kV", 
+                        "Doselab MC2 MV", "Doselab MC2 kV", "SNC kV", "SNC MV", 
+                        "SNC MV (12510)", "PTW EPID QC", "Las Vegas",
+                        "Elekta Las Vegas", "IBA Primus A"]
     
     PARAM_OVERRIDE_OPTS = ["None (Auto detect)", "Manual"]
 
@@ -147,7 +148,7 @@ class QPlanarImagingWorksheet(QWidget):
         self.ui.phantomAngleOverrCB.clear()
         self.ui.phantomCenterOverrCB.clear()
 
-        self.ui.phantomTypeCB.addItems(sorted(self.PHANTOMS))
+        self.ui.phantomTypeCB.addItems(sorted(self.DEFAULT_PHANTOMS))
         self.ui.lConstrastMethodCB.addItems(Contrast.options())
         self.ui.phantomAngleOverrCB.addItems(self.PARAM_OVERRIDE_OPTS)
         self.ui.phantomCenterOverrCB.addItems(self.PARAM_OVERRIDE_OPTS)

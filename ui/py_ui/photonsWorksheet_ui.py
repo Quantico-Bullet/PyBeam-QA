@@ -143,6 +143,7 @@ class Ui_QPhotonsWorksheet(object):
         self.kQLE.setObjectName(u"kQLE")
         sizePolicy2.setHeightForWidth(self.kQLE.sizePolicy().hasHeightForWidth())
         self.kQLE.setSizePolicy(sizePolicy2)
+        self.kQLE.setFocusPolicy(Qt.NoFocus)
         self.kQLE.setContextMenuPolicy(Qt.NoContextMenu)
         self.kQLE.setStyleSheet(u"border-radius: 15px;\n"
 "border-color: rgb(130, 160, 250);\n"
@@ -172,6 +173,7 @@ class Ui_QPhotonsWorksheet(object):
         self.kElecLE.setEnabled(True)
         sizePolicy2.setHeightForWidth(self.kElecLE.sizePolicy().hasHeightForWidth())
         self.kElecLE.setSizePolicy(sizePolicy2)
+        self.kElecLE.setFocusPolicy(Qt.NoFocus)
         self.kElecLE.setContextMenuPolicy(Qt.NoContextMenu)
         self.kElecLE.setAutoFillBackground(False)
         self.kElecLE.setStyleSheet(u"border-radius: 15px;\n"
@@ -197,6 +199,7 @@ class Ui_QPhotonsWorksheet(object):
         self.kTPLE.setObjectName(u"kTPLE")
         sizePolicy2.setHeightForWidth(self.kTPLE.sizePolicy().hasHeightForWidth())
         self.kTPLE.setSizePolicy(sizePolicy2)
+        self.kTPLE.setFocusPolicy(Qt.NoFocus)
         self.kTPLE.setContextMenuPolicy(Qt.NoContextMenu)
         self.kTPLE.setStyleSheet(u"border-radius: 15px;\n"
 "border-color: rgb(130, 160, 250);\n"
@@ -219,6 +222,7 @@ class Ui_QPhotonsWorksheet(object):
         self.kPolLE.setObjectName(u"kPolLE")
         sizePolicy2.setHeightForWidth(self.kPolLE.sizePolicy().hasHeightForWidth())
         self.kPolLE.setSizePolicy(sizePolicy2)
+        self.kPolLE.setFocusPolicy(Qt.NoFocus)
         self.kPolLE.setContextMenuPolicy(Qt.NoContextMenu)
         self.kPolLE.setStyleSheet(u"border-radius: 15px;\n"
 "border-color: rgb(130, 160, 250);\n"
@@ -244,6 +248,7 @@ class Ui_QPhotonsWorksheet(object):
         self.kSLE.setObjectName(u"kSLE")
         sizePolicy2.setHeightForWidth(self.kSLE.sizePolicy().hasHeightForWidth())
         self.kSLE.setSizePolicy(sizePolicy2)
+        self.kSLE.setFocusPolicy(Qt.NoFocus)
         self.kSLE.setContextMenuPolicy(Qt.NoContextMenu)
         self.kSLE.setStyleSheet(u"border-radius: 15px;\n"
 "border-color: rgb(130, 160, 250);\n"
@@ -299,6 +304,7 @@ class Ui_QPhotonsWorksheet(object):
         self.zrefDoseLE.setObjectName(u"zrefDoseLE")
         sizePolicy2.setHeightForWidth(self.zrefDoseLE.sizePolicy().hasHeightForWidth())
         self.zrefDoseLE.setSizePolicy(sizePolicy2)
+        self.zrefDoseLE.setFocusPolicy(Qt.NoFocus)
         self.zrefDoseLE.setContextMenuPolicy(Qt.NoContextMenu)
         self.zrefDoseLE.setStyleSheet(u"border-radius: 15px;\n"
 "border-color: rgb(130, 160, 250);\n"
@@ -323,6 +329,7 @@ class Ui_QPhotonsWorksheet(object):
         self.zmaxDoseLE.setObjectName(u"zmaxDoseLE")
         sizePolicy2.setHeightForWidth(self.zmaxDoseLE.sizePolicy().hasHeightForWidth())
         self.zmaxDoseLE.setSizePolicy(sizePolicy2)
+        self.zmaxDoseLE.setFocusPolicy(Qt.NoFocus)
         self.zmaxDoseLE.setContextMenuPolicy(Qt.NoContextMenu)
         self.zmaxDoseLE.setAutoFillBackground(False)
         self.zmaxDoseLE.setStyleSheet(u"border-radius: 15px;\n"
@@ -375,6 +382,7 @@ class Ui_QPhotonsWorksheet(object):
 
         self.outcomeLE = QLineEdit(self.calibSummaryWidget)
         self.outcomeLE.setObjectName(u"outcomeLE")
+        self.outcomeLE.setFocusPolicy(Qt.NoFocus)
         self.outcomeLE.setContextMenuPolicy(Qt.NoContextMenu)
         self.outcomeLE.setStyleSheet(u"border-color: rgb(95, 200, 26);\n"
 "border-radius: 15px;\n"
@@ -407,7 +415,7 @@ class Ui_QPhotonsWorksheet(object):
         self.worksheetScrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 605, 1902))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 605, 1903))
         sizePolicy2.setHeightForWidth(self.scrollAreaWidgetContents.sizePolicy().hasHeightForWidth())
         self.scrollAreaWidgetContents.setSizePolicy(sizePolicy2)
         self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents)
@@ -547,6 +555,13 @@ class Ui_QPhotonsWorksheet(object):
 
         self.sectionOneFL.setWidget(5, QFormLayout.LabelRole, self.refPhantomLabel)
 
+        self.refPhantomComboB = QComboBox(self.sectionOneGB)
+        self.refPhantomComboB.addItem("")
+        self.refPhantomComboB.setObjectName(u"refPhantomComboB")
+        self.refPhantomComboB.setMinimumSize(QSize(100, 0))
+
+        self.sectionOneFL.setWidget(5, QFormLayout.FieldRole, self.refPhantomComboB)
+
         self.refFieldSizeLabel = QLabel(self.sectionOneGB)
         self.refFieldSizeLabel.setObjectName(u"refFieldSizeLabel")
 
@@ -572,10 +587,35 @@ class Ui_QPhotonsWorksheet(object):
 
         self.sectionOneFL.setLayout(6, QFormLayout.FieldRole, self.refFieldSizeHL)
 
+        self.refDepthLabel = QLabel(self.sectionOneGB)
+        self.refDepthLabel.setObjectName(u"refDepthLabel")
+
+        self.sectionOneFL.setWidget(7, QFormLayout.LabelRole, self.refDepthLabel)
+
+        self.refDepthHL = QHBoxLayout()
+        self.refDepthHL.setObjectName(u"refDepthHL")
+        self.refDepthComboB = QComboBox(self.sectionOneGB)
+        self.refDepthComboB.addItem("")
+        self.refDepthComboB.addItem("")
+        self.refDepthComboB.setObjectName(u"refDepthComboB")
+        sizePolicy2.setHeightForWidth(self.refDepthComboB.sizePolicy().hasHeightForWidth())
+        self.refDepthComboB.setSizePolicy(sizePolicy2)
+        self.refDepthComboB.setMinimumSize(QSize(100, 0))
+
+        self.refDepthHL.addWidget(self.refDepthComboB)
+
+        self.refDepthUnit = QLabel(self.sectionOneGB)
+        self.refDepthUnit.setObjectName(u"refDepthUnit")
+
+        self.refDepthHL.addWidget(self.refDepthUnit)
+
+
+        self.sectionOneFL.setLayout(7, QFormLayout.FieldRole, self.refDepthHL)
+
         self.refDistanceLabel = QLabel(self.sectionOneGB)
         self.refDistanceLabel.setObjectName(u"refDistanceLabel")
 
-        self.sectionOneFL.setWidget(7, QFormLayout.LabelRole, self.refDistanceLabel)
+        self.sectionOneFL.setWidget(8, QFormLayout.LabelRole, self.refDistanceLabel)
 
         self.refDistanceHL = QHBoxLayout()
         self.refDistanceHL.setObjectName(u"refDistanceHL")
@@ -595,38 +635,7 @@ class Ui_QPhotonsWorksheet(object):
         self.refDistanceHL.addWidget(self.refDistanceUnit)
 
 
-        self.sectionOneFL.setLayout(7, QFormLayout.FieldRole, self.refDistanceHL)
-
-        self.refDepthLabel = QLabel(self.sectionOneGB)
-        self.refDepthLabel.setObjectName(u"refDepthLabel")
-
-        self.sectionOneFL.setWidget(8, QFormLayout.LabelRole, self.refDepthLabel)
-
-        self.refDepthHL = QHBoxLayout()
-        self.refDepthHL.setObjectName(u"refDepthHL")
-        self.refDepthLE = QLineEdit(self.sectionOneGB)
-        self.refDepthLE.setObjectName(u"refDepthLE")
-        sizePolicy2.setHeightForWidth(self.refDepthLE.sizePolicy().hasHeightForWidth())
-        self.refDepthLE.setSizePolicy(sizePolicy2)
-        self.refDepthLE.setMinimumSize(QSize(100, 0))
-        self.refDepthLE.setMaximumSize(QSize(100, 16777215))
-
-        self.refDepthHL.addWidget(self.refDepthLE)
-
-        self.refDepthUnit = QLabel(self.sectionOneGB)
-        self.refDepthUnit.setObjectName(u"refDepthUnit")
-
-        self.refDepthHL.addWidget(self.refDepthUnit)
-
-
-        self.sectionOneFL.setLayout(8, QFormLayout.FieldRole, self.refDepthHL)
-
-        self.refPhantomComboB = QComboBox(self.sectionOneGB)
-        self.refPhantomComboB.addItem("")
-        self.refPhantomComboB.setObjectName(u"refPhantomComboB")
-        self.refPhantomComboB.setMinimumSize(QSize(100, 0))
-
-        self.sectionOneFL.setWidget(5, QFormLayout.FieldRole, self.refPhantomComboB)
+        self.sectionOneFL.setLayout(8, QFormLayout.FieldRole, self.refDistanceHL)
 
 
         self.verticalLayout_2.addLayout(self.sectionOneFL)
@@ -1839,7 +1848,7 @@ class Ui_QPhotonsWorksheet(object):
 
         self.toleranceDSB = QDoubleSpinBox(self.siteDataWidget)
         self.toleranceDSB.setObjectName(u"toleranceDSB")
-        self.toleranceDSB.setDecimals(1)
+        self.toleranceDSB.setDecimals(2)
         self.toleranceDSB.setMinimum(0.500000000000000)
         self.toleranceDSB.setMaximum(5.000000000000000)
         self.toleranceDSB.setValue(1.000000000000000)
@@ -1932,16 +1941,19 @@ class Ui_QPhotonsWorksheet(object):
         self.ssdRadioButton.setText(QCoreApplication.translate("QPhotonsWorksheet", u"SSD", None))
         self.sadRadioButton.setText(QCoreApplication.translate("QPhotonsWorksheet", u"SAD", None))
         self.refPhantomLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Reference phantom:", None))
+        self.refPhantomComboB.setItemText(0, QCoreApplication.translate("QPhotonsWorksheet", u"Water", None))
+
         self.refFieldSizeLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Reference field size:", None))
         self.reffieldSizeComboB.setItemText(0, QCoreApplication.translate("QPhotonsWorksheet", u"10 \u00d7 10", None))
 
         self.fieldSizeUnit.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p>cm<span style=\" font-size:11pt; vertical-align:super;\">2</span></p></body></html>", None))
+        self.refDepthLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p>Reference depth <span style=\" font-style:italic;\">z</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">ref  </span>:</p></body></html>", None))
+        self.refDepthComboB.setItemText(0, QCoreApplication.translate("QPhotonsWorksheet", u"5.0", None))
+        self.refDepthComboB.setItemText(1, QCoreApplication.translate("QPhotonsWorksheet", u"10.0", None))
+
+        self.refDepthUnit.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p>g/cm<span style=\" font-size:11pt; vertical-align:super;\">2</span></p></body></html>", None))
         self.refDistanceLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Reference Distance:", None))
         self.refDistanceUnit.setText(QCoreApplication.translate("QPhotonsWorksheet", u"cm", None))
-        self.refDepthLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p>Reference depth <span style=\" font-style:italic;\">z</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">ref  </span>:</p></body></html>", None))
-        self.refDepthUnit.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p>g/cm<span style=\" font-size:11pt; vertical-align:super;\">2</span></p></body></html>", None))
-        self.refPhantomComboB.setItemText(0, QCoreApplication.translate("QPhotonsWorksheet", u"Water", None))
-
         self.sectionTwoGB.setTitle(QCoreApplication.translate("QPhotonsWorksheet", u"2. Ionization chamber and electrometer", None))
         self.ionChamberModelLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Ionization Chamber Model:", None))
         self.chamberSerialNoLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Chamber serial No:", None))

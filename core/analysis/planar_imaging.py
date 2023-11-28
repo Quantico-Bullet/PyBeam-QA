@@ -3,7 +3,7 @@ from PySide6.QtCore import Signal, Slot, QObject
 from pylinac.planar_imaging import (ImagePhantomBase, LeedsTOR, LeedsTORBlue, LasVegas,
                                     SNCkV, SNCMV, SNCMV12510, PTWEPIDQC, IBAPrimusA,
                                     DoselabMC2kV, DoselabMC2MV, StandardImagingQC3,
-                                    StandardImagingQCkV)
+                                    StandardImagingQCkV, ElektaLasVegas)
 from pylinac.core.contrast import Contrast
 from pylinac.core.geometry import Circle, Rectangle
 
@@ -21,6 +21,7 @@ class PHANTOM(enum.Enum):
     DOSELAB_MC2_MV = "Doselab MC2 MV"
     IBA_PRIMUS_A = "IBA Primus A"
     LAS_VEGAS = "Las Vegas"
+    ELEKTA_LAS_VEGAS = "Elekta Las Vegas"
     LEEDS_TOR_RED = "Leeds TOR 18 (Red)"
     LEEDS_TOR_BLUE = "Leeds TOR 18 (Blue)"
     PTW_EPID_QC = "PTW EPID QC"
@@ -35,8 +36,12 @@ class QPlanarImaging():
     def __init__(self, phantom: ImagePhantomBase):
         self._phantom = phantom
 
-        # Widgets for analyzed image plots
         self.analyzed_image_plot_widget = pg.GraphicsLayoutWidget()
+
+    def qplot_analyzed_image(self):
+        self.analyzed_image_plot_widget.clear()
+
+        # Prepare the image plot widget
         g_layout = self.analyzed_image_plot_widget.ci.layout
 
         # Add the image plot 
@@ -68,11 +73,6 @@ class QPlanarImaging():
         self.high_freq_plot.setLabel('bottom', "Line pairs / mm")
 
         g_layout.setColumnStretchFactor(0,2)
-
-    def qplot_analyzed_image(self):
-        self.image_plot.clear()
-        self.low_contr_plot.clear()
-        self.high_freq_plot.clear()
 
         #-------- Plot the image and phantom outline (if any) --------
         self.image_plot.addItem(pg.ImageItem(self._phantom.image.array))
@@ -244,13 +244,16 @@ class QPlanarImagingWorker(QObject):
             self._phantom = LasVegas(filepath, normalize, image_kwargs)
             self._phantom.mtf = None
 
+        elif phantom_name == PHANTOM.ELEKTA_LAS_VEGAS.value:
+            self._phantom = ElektaLasVegas(filepath, normalize, image_kwargs)
+            self._phantom.mtf = None
+
         else:
             raise ValueError("Invalid phantom name passsed. Pass one of the following: " +
                              str.join(", ", [x for x in PHANTOM]))
         
         self._planar_img = QPlanarImaging(self._phantom)
     
-    @Slot()
     def analyze(self):
         """
         Perform an analysis of a phantom image from a 2D kV or MV linac imager.

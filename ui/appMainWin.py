@@ -54,11 +54,13 @@ class AppMainWin(QMainWindow):
 
         # setup daily/monthly photons page functionality
         self._ui.calibStartBtn.clicked.connect(lambda: "fake slot") # use fake slots so that we can disconnect past slots without errors
+        self._ui.loadQABtn.clicked.connect(lambda: "fake slot")
         self._ui.backBtn.clicked.connect(lambda: "fake slot")
         self._ui.linacNameCB.currentTextChanged.connect(lambda x: "fake slot")
         self._ui.backBtn.clicked.disconnect()
         self._ui.backBtn.clicked.connect(lambda: self.changeMainPage(self._ui.linacQAPage))
         self._ui.calibStartBtn.clicked.disconnect()
+        self._ui.loadQABtn.clicked.disconnect()
         self._ui.linacNameCB.currentTextChanged.disconnect()
         self._ui.institutionLE.clear()
         self._ui.userLE.clear()
@@ -67,6 +69,7 @@ class AppMainWin(QMainWindow):
         if calibType == "photons":
             self._ui.calibPageTitle.setText("Photon Output Calibration")
             self._ui.calibStartBtn.clicked.connect(lambda: self.initPhotonsCalibQA())
+            self._ui.loadQABtn.clicked.connect(lambda: PhotonsMainWindow.load_from_file(None))
             self._ui.linacNameCB.currentTextChanged.connect(lambda x: self.setLinacDetails(calibType, x))   
 
         elif calibType == "electrons":

@@ -510,7 +510,7 @@ class QFieldAnalysisWorksheet(QWidget):
 
         # Update the advanced view
         if self.advanced_results_view is not None:
-            self.advanced_results_view.update_picket_fence(pf)
+            self.advanced_results_view.update_field_analysis(pf)
 
     def remove_list_checkmarks(self):
         for index in range(self.ui.imageListWidget.count()):
@@ -672,7 +672,7 @@ class AdvancedFAView(QMainWindow):
 
         self.initComplete = True
     
-    def update_picket_fence(self, fa: QFieldAnalysis):
+    def update_field_analysis(self, fa: QFieldAnalysis):
         self.fa = fa
 
         self.initComplete = False

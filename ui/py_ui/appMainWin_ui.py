@@ -554,14 +554,6 @@ class Ui_MainWindow(object):
 
         self.mainGridLayout = QGridLayout()
         self.mainGridLayout.setObjectName(u"mainGridLayout")
-        self.calibPageTitle = QLabel(self.initCalibPage)
-        self.calibPageTitle.setObjectName(u"calibPageTitle")
-        sizePolicy2.setHeightForWidth(self.calibPageTitle.sizePolicy().hasHeightForWidth())
-        self.calibPageTitle.setSizePolicy(sizePolicy2)
-        self.calibPageTitle.setFont(font)
-
-        self.mainGridLayout.addWidget(self.calibPageTitle, 0, 1, 1, 1, Qt.AlignHCenter)
-
         self.scrollArea_2 = QScrollArea(self.initCalibPage)
         self.scrollArea_2.setObjectName(u"scrollArea_2")
         sizePolicy6 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding)
@@ -573,7 +565,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollAreaWidgetContents_2 = QWidget()
         self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
-        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 418, 276))
+        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 450, 371))
         sizePolicy.setHeightForWidth(self.scrollAreaWidgetContents_2.sizePolicy().hasHeightForWidth())
         self.scrollAreaWidgetContents_2.setSizePolicy(sizePolicy)
         self.scrollAreaWidgetContents_2.setMaximumSize(QSize(600, 16777215))
@@ -707,9 +699,9 @@ class Ui_MainWindow(object):
 
         self.mainGridLayout.addItem(self.verticalSpacer_6, 1, 1, 1, 1)
 
-        self.verticalSpacer_5 = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Fixed, QSizePolicy.Minimum)
 
-        self.mainGridLayout.addItem(self.verticalSpacer_5, 3, 1, 1, 1)
+        self.mainGridLayout.addItem(self.horizontalSpacer_3, 3, 2, 1, 1)
 
         self.backBtn = QPushButton(self.initCalibPage)
         self.backBtn.setObjectName(u"backBtn")
@@ -738,9 +730,24 @@ class Ui_MainWindow(object):
 
         self.mainGridLayout.addWidget(self.backBtn, 0, 0, 1, 1, Qt.AlignTop)
 
-        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Fixed, QSizePolicy.Minimum)
+        self.verticalSpacer_5 = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
 
-        self.mainGridLayout.addItem(self.horizontalSpacer_3, 3, 2, 1, 1)
+        self.mainGridLayout.addItem(self.verticalSpacer_5, 3, 1, 1, 1)
+
+        self.calibPageTitle = QLabel(self.initCalibPage)
+        self.calibPageTitle.setObjectName(u"calibPageTitle")
+        sizePolicy2.setHeightForWidth(self.calibPageTitle.sizePolicy().hasHeightForWidth())
+        self.calibPageTitle.setSizePolicy(sizePolicy2)
+        self.calibPageTitle.setFont(font)
+
+        self.mainGridLayout.addWidget(self.calibPageTitle, 0, 1, 1, 1, Qt.AlignHCenter)
+
+        self.horizontalLayout_3 = QHBoxLayout()
+        self.horizontalLayout_3.setSpacing(20)
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_3.addItem(self.horizontalSpacer_4)
 
         self.calibStartBtn = QPushButton(self.initCalibPage)
         self.calibStartBtn.setObjectName(u"calibStartBtn")
@@ -764,7 +771,38 @@ class Ui_MainWindow(object):
 "	background-color: rgba(52, 91, 78, 50);\n"
 "}")
 
-        self.mainGridLayout.addWidget(self.calibStartBtn, 4, 1, 1, 1, Qt.AlignHCenter)
+        self.horizontalLayout_3.addWidget(self.calibStartBtn)
+
+        self.loadQABtn = QPushButton(self.initCalibPage)
+        self.loadQABtn.setObjectName(u"loadQABtn")
+        sizePolicy2.setHeightForWidth(self.loadQABtn.sizePolicy().hasHeightForWidth())
+        self.loadQABtn.setSizePolicy(sizePolicy2)
+        self.loadQABtn.setStyleSheet(u"QPushButton {\n"
+"	background-color: rgb(82, 142, 122);\n"
+"    min-width: 150px;\n"
+"	min-height:20px;\n"
+"    padding: 6px;\n"
+"	border-radius: 15px;\n"
+"	color: white;\n"
+"	font: bold;\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"	background-color: rgb(52, 91, 78);\n"
+"}\n"
+"\n"
+"QPushButton:!enabled{\n"
+"	background-color: rgba(52, 91, 78, 50);\n"
+"}")
+
+        self.horizontalLayout_3.addWidget(self.loadQABtn)
+
+        self.horizontalSpacer_5 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_3.addItem(self.horizontalSpacer_5)
+
+
+        self.mainGridLayout.addLayout(self.horizontalLayout_3, 4, 1, 1, 1)
 
 
         self.gridLayout.addLayout(self.mainGridLayout, 0, 2, 1, 1)
@@ -784,7 +822,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.mainStackWidget.setCurrentIndex(0)
+        self.mainStackWidget.setCurrentIndex(1)
         self.devicesBtn.setDefault(False)
         self.navigationStackedWidget.setCurrentIndex(0)
 
@@ -815,20 +853,21 @@ class Ui_MainWindow(object):
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"No content here!", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"No content here!", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"PyBeam QA - v0.1.0 (Copyright \u00a9 2023 Kagiso Lebang)  ", None))
-        self.calibPageTitle.setText(QCoreApplication.translate("MainWindow", u"Page Title", None))
         self.institutionLabel.setText(QCoreApplication.translate("MainWindow", u"Institution:", None))
         self.userLabel.setText(QCoreApplication.translate("MainWindow", u"User:", None))
         self.treatmentUnitLabel.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-weight:700;\">Treatment Unit</span></p></body></html>", None))
         self.unitNameLabel.setText(QCoreApplication.translate("MainWindow", u"Unit name:", None))
         self.linacSerialNumLabel.setText(QCoreApplication.translate("MainWindow", u"Serial No:", None))
-        self.linacSerialNumField.setText(QCoreApplication.translate("MainWindow", u"EX-300-AMPLE", None))
+        self.linacSerialNumField.setText(QCoreApplication.translate("MainWindow", u"N/A", None))
         self.linacModelLabel.setText(QCoreApplication.translate("MainWindow", u"Model name:", None))
-        self.linacModelField.setText(QCoreApplication.translate("MainWindow", u"Versa HD", None))
+        self.linacModelField.setText(QCoreApplication.translate("MainWindow", u"N/A", None))
         self.linacManufacLabel.setText(QCoreApplication.translate("MainWindow", u"Manufacturer:", None))
-        self.linacManufacField.setText(QCoreApplication.translate("MainWindow", u"Elekta", None))
+        self.linacManufacField.setText(QCoreApplication.translate("MainWindow", u"N/A", None))
         self.linacBeamsLabel.setText(QCoreApplication.translate("MainWindow", u"Beams to calibrate:", None))
         self.backBtn.setText("")
-        self.calibStartBtn.setText(QCoreApplication.translate("MainWindow", u"Start QA", None))
+        self.calibPageTitle.setText(QCoreApplication.translate("MainWindow", u"Page Title", None))
+        self.calibStartBtn.setText(QCoreApplication.translate("MainWindow", u"Start new QA", None))
+        self.loadQABtn.setText(QCoreApplication.translate("MainWindow", u"Load QA file", None))
         pass
     # retranslateUi
 
