@@ -32,6 +32,10 @@ class FieldAnalysisMainWindow(QAToolsWindow):
 
         self.add_new_worksheet()
 
+        self.ui.menuFile.addAction("Add Image(s)", self.ui.tabWidget.currentWidget().add_files)
+        self.ui.menuFile.addSeparator()
+        self.ui.menuFile.addAction("Add New Worksheet", self.add_new_worksheet)
+
     def add_new_worksheet(self, worksheet_name: str = None, enable_icon: bool = True):
         if worksheet_name is None:
             self.untitled_counter = self.untitled_counter + 1

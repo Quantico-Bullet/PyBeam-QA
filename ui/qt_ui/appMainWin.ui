@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>674</width>
+    <width>690</width>
     <height>621</height>
    </rect>
   </property>
@@ -42,7 +42,7 @@
          <bool>true</bool>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="linacQAPage">
          <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -261,7 +261,7 @@ QPushButton:checked {
                       <rect>
                        <x>0</x>
                        <y>0</y>
-                       <width>614</width>
+                       <width>616</width>
                        <height>401</height>
                       </rect>
                      </property>
@@ -427,7 +427,7 @@ border-style: solid;
                            <item>
                             <widget class="QFrame" name="electronCalib">
                              <property name="enabled">
-                              <bool>false</bool>
+                              <bool>true</bool>
                              </property>
                              <property name="sizePolicy">
                               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
@@ -1011,9 +1011,9 @@ border-style: solid;
                </spacer>
               </item>
               <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label">
+               <widget class="QToolButton" name="toolButton">
                 <property name="text">
-                 <string>PyBeam QA - v0.1.0 (Copyright © 2023 Kagiso Lebang)  </string>
+                 <string>Settings</string>
                 </property>
                </widget>
               </item>
@@ -1090,8 +1090,8 @@ border-style: solid;
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>450</width>
-                 <height>371</height>
+                 <width>418</width>
+                 <height>276</height>
                 </rect>
                </property>
                <property name="sizePolicy">

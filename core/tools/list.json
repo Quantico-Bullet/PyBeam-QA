@@ -6,7 +6,8 @@
             "manufacturer": "Elekta",
             "beams": {
                 "photons": [6, 9, 12, 18],
-                "photonsFFF": [6, 9, 12]
+                "photonsFFF": [6, 9, 12],
+                "electrons": [6, 9, 12, 15]
             }
         }
     }

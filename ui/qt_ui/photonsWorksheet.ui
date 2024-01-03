@@ -734,7 +734,7 @@ font-weight: bold;
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>0</y>
+          <y>-425</y>
           <width>605</width>
           <height>1903</height>
          </rect>
@@ -1096,7 +1096,7 @@ font-weight: bold;
               <item row="8" column="0">
                <widget class="QLabel" name="refDistanceLabel">
                 <property name="text">
-                 <string>Reference Distance:</string>
+                 <string>Reference distance:</string>
                 </property>
                </widget>
               </item>
@@ -1155,7 +1155,7 @@ font-weight: bold;
               <item row="0" column="0">
                <widget class="QLabel" name="ionChamberModelLabel">
                 <property name="text">
-                 <string>Ionization Chamber Model:</string>
+                 <string>Ionization chamber model:</string>
                 </property>
                </widget>
               </item>
@@ -1316,7 +1316,7 @@ font-weight: bold;
                  </size>
                 </property>
                 <property name="displayFormat">
-                 <string>dd/MM/yyyy</string>
+                 <string>dd MMM yyyy</string>
                 </property>
                 <property name="calendarPopup">
                  <bool>true</bool>
@@ -1575,7 +1575,7 @@ font-weight: bold;
               <item row="8" column="0">
                <widget class="QLabel" name="calibQualityLabel">
                 <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Calibration Quality, &lt;span style=&quot; font-style:italic;&quot;&gt;Q&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic; vertical-align:sub;&quot;&gt;o&lt;/span&gt; :&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Calibration quality, &lt;span style=&quot; font-style:italic;&quot;&gt;Q&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic; vertical-align:sub;&quot;&gt;o&lt;/span&gt; :&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                </widget>
               </item>
@@ -1987,7 +1987,7 @@ font-weight: bold;
                  </size>
                 </property>
                 <property name="displayFormat">
-                 <string>dd/MM/yyyy</string>
+                 <string>dd MMM yyyy</string>
                 </property>
                 <property name="calendarPopup">
                  <bool>true</bool>
@@ -3215,13 +3215,10 @@ font-weight: bold;
                <set>Qt::ImhPreferNumbers</set>
               </property>
               <property name="displayFormat">
-               <string>dd/MM/yyyy</string>
+               <string>dd MMM yyyy</string>
               </property>
               <property name="calendarPopup">
                <bool>true</bool>
-              </property>
-              <property name="timeSpec">
-               <enum>Qt::LocalTime</enum>
               </property>
              </widget>
             </item>
@@ -3330,11 +3327,11 @@ QPushButton:!enabled{
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="userPolarityGroup"/>
-  <buttongroup name="calibPolarityGroup"/>
-  <buttongroup name="beamTypeGroup"/>
-  <buttongroup name="calibSetupGroup"/>
   <buttongroup name="beamQualityGroup"/>
+  <buttongroup name="beamTypeGroup"/>
+  <buttongroup name="userPolarityGroup"/>
+  <buttongroup name="calibSetupGroup"/>
+  <buttongroup name="calibPolarityGroup"/>
   <buttongroup name="calibSeparateGroup"/>
  </buttongroups>
 </ui>

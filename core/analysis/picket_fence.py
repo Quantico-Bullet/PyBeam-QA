@@ -1,6 +1,5 @@
 import io
-from PySide6.QtCore import Signal, Slot, QObject
-
+from PySide6.QtCore import Signal, Slot, QObject, QCoreApplication
 from pylinac.core import image
 from pylinac.core.image_generator.simulators import Simulator
 from pylinac.core.image_generator.layers import (FilteredFieldLayer,
@@ -19,9 +18,11 @@ from py_linq import Enumerable
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import BinaryIO, Optional, Union, Sequence
+import time
 
+import gc
 
-pg.setConfigOptions(antialias = True, imageAxisOrder='row-major')
+pg.setConfigOptions(antialias = True, imageAxisOrder='row-major', enableExperimental=True)
 
 class QPicketFence(PicketFence):
 
@@ -36,13 +37,6 @@ class QPicketFence(PicketFence):
 
         self.mlc_type = mlc
         
-        # Widgets for leaf profile plots
-        self.profile_plot_widget = pg.PlotWidget()
-        self.profile_plot_widget.getPlotItem().setMouseEnabled(x=False, y=False)
-        self.legend = self.profile_plot_widget.getPlotItem().addLegend(offset=(50,50), size = (50,50),
-                                                                       labelTextColor=(255,255,255),
-                                                                       brush=pg.mkBrush((27, 38, 59, 200)))
-
         # Widgets for analyzed image plots
         self.analyzed_image_plot_widget = pg.GraphicsLayoutWidget()
         
@@ -63,13 +57,26 @@ class QPicketFence(PicketFence):
     def set_update_signal(self, update_signal: Signal):
         self.update_signal = update_signal
 
+    def init_profile_plot(self):
+        # Widgets for leaf profile plots
+        self.profile_plot_widget = pg.PlotWidget()
+        self.profile_plot_widget.getPlotItem().setMouseEnabled(x=False, y=False)
+        
+        """
+        self.legend = self.profile_plot_widget.getPlotItem().addLegend(
+                        offset=(50,50), size = (50,50),
+                        labelTextColor=(255,255,255),
+                        brush=pg.mkBrush((27, 38, 59, 200))
+                        )
+        """
+
     def qplot_analyzed_image(self):
         """
         Plot the analyzed picket fence image
         """
-
+        
         self.analyzed_image_plot_widget.clear()
-
+        
         g_layout = self.analyzed_image_plot_widget.ci.layout
 
         tol_line_pen = pg.mkPen(color = (255, 0, 0), width = 2)
@@ -144,46 +151,6 @@ class QPicketFence(PicketFence):
         #------ Add error plot data
         error_plot_item.addItem(tolerance_line)
 
-        # Add guard rails
-        if self.orientation == Orientation.UP_DOWN:
-            length = self.image.shape[0]
-        else:
-            length = self.image.shape[1]
-    
-        x_data = np.arange(length)
-
-        guards_pen = pg.mkPen(color = (0, 255, 0), width = 1.5)
-
-        for picket in self.pickets:
-
-            left_y_data = picket.left_guard_separated
-            right_y_data = picket.right_guard_separated
-            
-            left_y_data = [[f(x_data[0]), f(x_data[-1])] for f in left_y_data]
-            right_y_data = [[f(x_data[0]), f(x_data[-1])] for f in right_y_data]
-
-            x_data = [x_data[0],x_data[-1]]
-
-            if self.orientation == Orientation.UP_DOWN:
-                image_plot_item.multiDataPlot(x=left_y_data, y=x_data, 
-                                              **{"pen": [guards_pen]*len(left_y_data)})
-                image_plot_item.multiDataPlot(x=right_y_data, y=x_data,
-                                              **{"pen": [guards_pen]*len(left_y_data)})
-
-            else:
-                image_plot_item.multiDataPlot(x=x_data, y=left_y_data,
-                                              **{"pen": [guards_pen]*len(left_y_data)})
-                image_plot_item.multiDataPlot(x=x_data, y=right_y_data, 
-                                              **{"pen": [guards_pen]*len(left_y_data)})
-        
-        # Add mlc peaks
-        for mlc_meas in self.mlc_meas:
-
-            # plot mlc peaks 
-            for idx, line in enumerate(mlc_meas.marker_lines):
-                image_plot_item.plot([line.point1.x, line.point2.x], [line.point1.y, line.point2.y],
-                                     pen = pg.mkPen(color = mlc_meas.bg_color[idx], width = 1.5))
-
         # add errors
         if self.orientation == Orientation.UP_DOWN:
             pos = [
@@ -226,6 +193,12 @@ class QPicketFence(PicketFence):
 
             #error_plot_item.addItem(error_bars)
             error_plot_item.addItem(bars)
+
+            # Add EPID CAX line here to make it above image
+            epid_cax_line = pg.InfiniteLine(pos = self.image.shape[1]/2.0,
+                                            pen = pg.mkPen('y', width=2.0),
+                                            angle = 90)
+            image_plot_item.addItem(epid_cax_line)
             
         else:
             error_bars = pg.ErrorBarItem(x = pos, y = error_vals,
@@ -235,6 +208,68 @@ class QPicketFence(PicketFence):
             
             #error_plot_item.addItem(error_bars)
             error_plot_item.addItem(bars)
+
+            # Add EPID CAX line here to make it above image
+            epid_cax_line = pg.InfiniteLine(pos = self.image.shape[0]/2.0,
+                                            pen = pg.mkPen('y', width=2.0),
+                                            angle = 0)
+            image_plot_item.addItem(epid_cax_line)
+
+        # Add guard rails
+        if self.orientation == Orientation.UP_DOWN:
+            length = self.image.shape[0]
+        else:
+            length = self.image.shape[1]
+    
+        x_data = np.arange(length)
+
+        guards_pen = pg.mkPen(color = (0, 255, 0), width = 1.5)
+
+        for picket in self.pickets:
+
+            left_y_data = picket.left_guard_separated
+            right_y_data = picket.right_guard_separated
+            
+            left_y_data = [[f(x_data[0]), f(x_data[-1])] for f in left_y_data]
+            right_y_data = [[f(x_data[0]), f(x_data[-1])] for f in right_y_data]
+
+            x_data = [x_data[0],x_data[-1]]
+
+            if self.orientation == Orientation.UP_DOWN:
+                image_plot_item.multiDataPlot(x=left_y_data, y=x_data, 
+                                              **{"pen": [guards_pen]*len(left_y_data)}
+                                              )
+                image_plot_item.multiDataPlot(x=right_y_data, y=x_data,
+                                              **{"pen": [guards_pen]*len(left_y_data)}
+                                              )
+
+            else:
+                image_plot_item.multiDataPlot(x=x_data, y=left_y_data,
+                                              **{"pen": [guards_pen]*len(left_y_data)}
+                                              )
+                image_plot_item.multiDataPlot(x=x_data, y=right_y_data, 
+                                              **{"pen": [guards_pen]*len(left_y_data)}
+                                              )
+
+        image_plot_item.disableAutoRange()
+        now = time.time()
+        # Add mlc peaks
+        for mlc_meas in self.mlc_meas:
+            # plot mlc peaks 
+            for idx, line in enumerate(mlc_meas.marker_lines):
+                
+                curve = pg.PlotCurveItem(x=[line.point1.x, line.point2.x], y=[line.point1.y, line.point2.y],
+                                         pen=pg.mkPen(color = mlc_meas.bg_color[idx], width = 2.0),
+                                         skipFiniteCheck=False,
+                                         )
+                pg.arrayToQPath
+                image_plot_item.addItem(curve)
+                QCoreApplication.processEvents()
+        
+        image_plot_item.enableAutoRange()
+        error_plot_item.autoRange()
+
+        gc.collect()
         
     def qplot_leaf_profile(self, leaf: int | str, picket: int):
         """
@@ -242,7 +277,7 @@ class QPicketFence(PicketFence):
         """
 
         self.profile_plot_widget.clear()
-        self.legend.clear()
+        #self.legend.clear()
 
         mlc = Enumerable(self.mlc_meas).single(
             lambda m: leaf in m.full_leaf_nums and m.picket_num == picket)
@@ -281,8 +316,8 @@ class QPicketFence(PicketFence):
         
         self.profile_plot_widget.addItem(mlc_pos_plot)
         self.profile_plot_widget.addItem(picket_pos_plot)
-        self.legend.addItem(mlc_pos_plot, "MLC position")
-        self.legend.addItem(picket_pos_plot, "Fitted picket position")
+        #self.legend.addItem(mlc_pos_plot, "MLC position")
+        #self.legend.addItem(picket_pos_plot, "Fitted picket position")
 
         #plot the guard rails
         for lg, rg, m in zip(
@@ -308,8 +343,8 @@ class QPicketFence(PicketFence):
             self.profile_plot_widget.addItem(lg_plot)
             self.profile_plot_widget.addItem(rg_plot)
 
-            self.legend.addItem(lg_plot, "Guard rail")
-            self.legend.addItem(rg_plot, "Guard rail")
+            #self.legend.addItem(lg_plot, "Guard rail")
+            #self.legend.addItem(rg_plot, "Guard rail")
 
     def get_publishable_plot(self) -> io.BytesIO:
         """
@@ -373,7 +408,6 @@ class QPicketFenceWorker(QObject):
                           self._mlc,
                           self._crop_mm,
                           image_kwargs = self._image_kwargs)
-        
 
     @Slot()
     def analyze(self):

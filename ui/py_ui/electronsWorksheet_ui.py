@@ -45,7 +45,7 @@ class Ui_QElectronsWorksheet(object):
         self.calibSummaryVL.setObjectName(u"calibSummaryVL")
         self.calibSummaryWidget = QWidget(QElectronsWorksheet)
         self.calibSummaryWidget.setObjectName(u"calibSummaryWidget")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.calibSummaryWidget.sizePolicy().hasHeightForWidth())
@@ -108,7 +108,7 @@ class Ui_QElectronsWorksheet(object):
         self.scrollArea.setWidgetResizable(True)
         self.calSummaryScroll = QWidget()
         self.calSummaryScroll.setObjectName(u"calSummaryScroll")
-        self.calSummaryScroll.setGeometry(QRect(0, 0, 379, 344))
+        self.calSummaryScroll.setGeometry(QRect(0, 0, 379, 346))
         sizePolicy5 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding)
         sizePolicy5.setHorizontalStretch(0)
         sizePolicy5.setVerticalStretch(0)
@@ -233,11 +233,13 @@ class Ui_QElectronsWorksheet(object):
 
         self.corrFactorFL_2.setWidget(4, QFormLayout.LabelRole, self.kSLabel)
 
+        self.horizontalLayout_4 = QHBoxLayout()
+        self.horizontalLayout_4.setSpacing(10)
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
         self.kSLE = QLineEdit(self.calSummaryScroll)
         self.kSLE.setObjectName(u"kSLE")
         sizePolicy2.setHeightForWidth(self.kSLE.sizePolicy().hasHeightForWidth())
         self.kSLE.setSizePolicy(sizePolicy2)
-        self.kSLE.setContextMenuPolicy(Qt.NoContextMenu)
         self.kSLE.setStyleSheet(u"border-radius: 15px;\n"
 "border-color: rgb(130, 160, 250);\n"
 "border-style: solid;\n"
@@ -246,9 +248,16 @@ class Ui_QElectronsWorksheet(object):
 "padding-left: 15px;\n"
 "height: 30px;\n"
 "font-weight: bold")
-        self.kSLE.setReadOnly(True)
 
-        self.corrFactorFL_2.setWidget(4, QFormLayout.FieldRole, self.kSLE)
+        self.horizontalLayout_4.addWidget(self.kSLE)
+
+        self.ks_status_icon = QLabel(self.calSummaryScroll)
+        self.ks_status_icon.setObjectName(u"ks_status_icon")
+
+        self.horizontalLayout_4.addWidget(self.ks_status_icon)
+
+
+        self.corrFactorFL_2.setLayout(4, QFormLayout.FieldRole, self.horizontalLayout_4)
 
 
         self.verticalLayout_5.addLayout(self.corrFactorFL_2)
@@ -494,7 +503,7 @@ class Ui_QElectronsWorksheet(object):
         self.worksheetScrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, -4, 605, 1942))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 605, 1942))
         sizePolicy2.setHeightForWidth(self.scrollAreaWidgetContents.sizePolicy().hasHeightForWidth())
         self.scrollAreaWidgetContents.setSizePolicy(sizePolicy2)
         self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents)
@@ -545,11 +554,8 @@ class Ui_QElectronsWorksheet(object):
         self.nomAccPotHL.setObjectName(u"nomAccPotHL")
         self.nomAccPotLE = QLineEdit(self.sectionOneGB)
         self.nomAccPotLE.setObjectName(u"nomAccPotLE")
-        sizePolicy11 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
-        sizePolicy11.setHorizontalStretch(0)
-        sizePolicy11.setVerticalStretch(0)
-        sizePolicy11.setHeightForWidth(self.nomAccPotLE.sizePolicy().hasHeightForWidth())
-        self.nomAccPotLE.setSizePolicy(sizePolicy11)
+        sizePolicy1.setHeightForWidth(self.nomAccPotLE.sizePolicy().hasHeightForWidth())
+        self.nomAccPotLE.setSizePolicy(sizePolicy1)
         self.nomAccPotLE.setMinimumSize(QSize(0, 0))
         self.nomAccPotLE.setMaximumSize(QSize(100, 16777215))
         self.nomAccPotLE.setMouseTracking(False)
@@ -705,13 +711,12 @@ class Ui_QElectronsWorksheet(object):
 
         self.sectionOneFL.setWidget(6, QFormLayout.LabelRole, self.refPhantomLabel)
 
-        self.comboBox = QComboBox(self.sectionOneGB)
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.comboBox.setObjectName(u"comboBox")
-        self.comboBox.setMinimumSize(QSize(100, 0))
+        self.refPhantomComboB = QComboBox(self.sectionOneGB)
+        self.refPhantomComboB.addItem("")
+        self.refPhantomComboB.setObjectName(u"refPhantomComboB")
+        self.refPhantomComboB.setMinimumSize(QSize(100, 0))
 
-        self.sectionOneFL.setWidget(6, QFormLayout.FieldRole, self.comboBox)
+        self.sectionOneFL.setWidget(6, QFormLayout.FieldRole, self.refPhantomComboB)
 
         self.refFieldSizeLabel = QLabel(self.sectionOneGB)
         self.refFieldSizeLabel.setObjectName(u"refFieldSizeLabel")
@@ -1300,8 +1305,8 @@ class Ui_QElectronsWorksheet(object):
 
         self.electRangeSettLE = QLineEdit(self.sectionTwoGB)
         self.electRangeSettLE.setObjectName(u"electRangeSettLE")
-        sizePolicy11.setHeightForWidth(self.electRangeSettLE.sizePolicy().hasHeightForWidth())
-        self.electRangeSettLE.setSizePolicy(sizePolicy11)
+        sizePolicy1.setHeightForWidth(self.electRangeSettLE.sizePolicy().hasHeightForWidth())
+        self.electRangeSettLE.setSizePolicy(sizePolicy1)
         self.electRangeSettLE.setMinimumSize(QSize(175, 0))
         self.electRangeSettLE.setMaximumSize(QSize(175, 16777215))
 
@@ -1346,11 +1351,11 @@ class Ui_QElectronsWorksheet(object):
         self.sectionThreeGB = QGroupBox(self.scrollAreaWidgetContents)
         self.sectionThreeGB.setObjectName(u"sectionThreeGB")
         self.sectionThreeGB.setEnabled(True)
-        sizePolicy12 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred)
-        sizePolicy12.setHorizontalStretch(0)
-        sizePolicy12.setVerticalStretch(0)
-        sizePolicy12.setHeightForWidth(self.sectionThreeGB.sizePolicy().hasHeightForWidth())
-        self.sectionThreeGB.setSizePolicy(sizePolicy12)
+        sizePolicy11 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred)
+        sizePolicy11.setHorizontalStretch(0)
+        sizePolicy11.setVerticalStretch(0)
+        sizePolicy11.setHeightForWidth(self.sectionThreeGB.sizePolicy().hasHeightForWidth())
+        self.sectionThreeGB.setSizePolicy(sizePolicy11)
         self.sectionThreeGB.setFlat(False)
         self.sectionThreeGB.setCheckable(False)
         self.verticalLayout_6 = QVBoxLayout(self.sectionThreeGB)
@@ -1920,12 +1925,12 @@ class Ui_QElectronsWorksheet(object):
 
         self.worksheetGrid.addWidget(self.worksheetScrollArea, 1, 0, 1, 1)
 
-        self.pushButton = QPushButton(QElectronsWorksheet)
-        self.pushButton.setObjectName(u"pushButton")
-        self.pushButton.setEnabled(False)
-        sizePolicy2.setHeightForWidth(self.pushButton.sizePolicy().hasHeightForWidth())
-        self.pushButton.setSizePolicy(sizePolicy2)
-        self.pushButton.setStyleSheet(u"QPushButton {\n"
+        self.gen_report_btn = QPushButton(QElectronsWorksheet)
+        self.gen_report_btn.setObjectName(u"gen_report_btn")
+        self.gen_report_btn.setEnabled(False)
+        sizePolicy2.setHeightForWidth(self.gen_report_btn.sizePolicy().hasHeightForWidth())
+        self.gen_report_btn.setSizePolicy(sizePolicy2)
+        self.gen_report_btn.setStyleSheet(u"QPushButton {\n"
 "	background-color: rgb(82, 142, 122);\n"
 "    min-width: 150px;\n"
 "	min-height:20px;\n"
@@ -1944,7 +1949,7 @@ class Ui_QElectronsWorksheet(object):
 "	color: rgba(255,255,255,100)\n"
 "}")
 
-        self.worksheetGrid.addWidget(self.pushButton, 0, 2, 1, 1)
+        self.worksheetGrid.addWidget(self.gen_report_btn, 0, 2, 1, 1)
 
         self.worksheetGrid.setColumnStretch(0, 3)
         self.worksheetGrid.setColumnStretch(2, 1)
@@ -1973,6 +1978,7 @@ class Ui_QElectronsWorksheet(object):
         self.kPolLE.setPlaceholderText(QCoreApplication.translate("QElectronsWorksheet", u"N/A", None))
         self.kSLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">k</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">s </span>:</p></body></html>", None))
         self.kSLE.setPlaceholderText(QCoreApplication.translate("QElectronsWorksheet", u"N/A", None))
+        self.ks_status_icon.setText("")
         self.absorsedDoseLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"<html><head/><body><p><span style=\" font-weight:700; text-decoration: underline;\">Absorbed dose to water</span></p></body></html>", None))
         self.zrefDoseLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"<html><head/><body><p>At reference depth, <span style=\" font-style:italic;\">D</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">w,Q </span>(<span style=\" font-style:italic;\">z</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">ref </span>) :</p></body></html>", None))
         self.zrefDoseLE.setPlaceholderText(QCoreApplication.translate("QElectronsWorksheet", u"N/A", None))
@@ -1985,7 +1991,7 @@ class Ui_QElectronsWorksheet(object):
         self.institutionLE.setText("")
         self.userLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"User:", None))
         self.dateLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"Date:", None))
-        self.dateDE.setDisplayFormat(QCoreApplication.translate("QElectronsWorksheet", u"dd/MM/yyyy", None))
+        self.dateDE.setDisplayFormat(QCoreApplication.translate("QElectronsWorksheet", u"dd MMM yyyy", None))
         self.toleranceLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"Tolerance:", None))
         self.toleranceDSB.setSuffix(QCoreApplication.translate("QElectronsWorksheet", u"%", None))
         self.sectionOneGB.setTitle(QCoreApplication.translate("QElectronsWorksheet", u"1. Radiation treatment unit and reference conditions ", None))
@@ -2004,8 +2010,7 @@ class Ui_QElectronsWorksheet(object):
         self.ssdRadioButton.setText(QCoreApplication.translate("QElectronsWorksheet", u"SSD", None))
         self.sadRadioButton.setText(QCoreApplication.translate("QElectronsWorksheet", u"SAD", None))
         self.refPhantomLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"Reference phantom:", None))
-        self.comboBox.setItemText(0, QCoreApplication.translate("QElectronsWorksheet", u"Water", None))
-        self.comboBox.setItemText(1, QCoreApplication.translate("QElectronsWorksheet", u"Plastic", None))
+        self.refPhantomComboB.setItemText(0, QCoreApplication.translate("QElectronsWorksheet", u"Water", None))
 
         self.refFieldSizeLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"Reference field size:", None))
         self.reffieldSizeComboB.setItemText(0, QCoreApplication.translate("QElectronsWorksheet", u"10 \u00d7 10", None))
@@ -2024,7 +2029,7 @@ class Ui_QElectronsWorksheet(object):
         self.calibFactorUnit.setText(QCoreApplication.translate("QElectronsWorksheet", u"Gy/nC", None))
         self.calibLabLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"Calibration laboratory:", None))
         self.chamberCalibDateLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"Calibration date:", None))
-        self.chamberCalibDE.setDisplayFormat(QCoreApplication.translate("QElectronsWorksheet", u"dd/MM/yyyy", None))
+        self.chamberCalibDE.setDisplayFormat(QCoreApplication.translate("QElectronsWorksheet", u"dd MMM yyyy", None))
         self.chamberWallMatLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"Chamber wall", None))
         self.cWallMaterialLE.setText(QCoreApplication.translate("QElectronsWorksheet", u"material:", None))
         self.cWallThickLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"thickness:", None))
@@ -2060,7 +2065,7 @@ class Ui_QElectronsWorksheet(object):
         self.electSerialNoLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"Electrometer serial No:", None))
         self.elecCalLabLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"Calibration laboratory:", None))
         self.electCalDateLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"Calibration date:", None))
-        self.electCalDateDE.setDisplayFormat(QCoreApplication.translate("QElectronsWorksheet", u"dd/MM/yyyy", None))
+        self.electCalDateDE.setDisplayFormat(QCoreApplication.translate("QElectronsWorksheet", u"dd MMM yyyy", None))
         self.electRangeSettLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"Range setting:", None))
         self.calibSeparateLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"Calibrated separately from chamber:", None))
         self.calibSepYesRadioButton.setText(QCoreApplication.translate("QElectronsWorksheet", u"Yes", None))
@@ -2106,6 +2111,6 @@ class Ui_QElectronsWorksheet(object):
         self.pddUnit.setText(QCoreApplication.translate("QElectronsWorksheet", u"%", None))
         self.sadSetupLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic; text-decoration: underline;\">SAD set-up</span></p></body></html>", None))
         self.tmrLabel.setText(QCoreApplication.translate("QElectronsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">TMR</span> at  <span style=\" font-style:italic;\">z</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">ref </span>:</p></body></html>", None))
-        self.pushButton.setText(QCoreApplication.translate("QElectronsWorksheet", u"Generate report", None))
+        self.gen_report_btn.setText(QCoreApplication.translate("QElectronsWorksheet", u"Generate report", None))
     # retranslateUi
 

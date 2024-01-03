@@ -1,6 +1,6 @@
 {
     "trs398": {
-        "tolerance": 0.01,
+        "tolerance": 1.0,
         "reference_temperature": 20.0,
         "reference_pressure": 101.325,
         "reference_humidity": 50,

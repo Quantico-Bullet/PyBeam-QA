@@ -48,6 +48,7 @@ class PicketFenceMainWindow(QAToolsWindow):
         self.ui.menuFile.addSeparator()
         self.ui.menuFile.addAction("Add New Worksheet", self.add_new_worksheet)
         self.ui.menuTools.addAction("Benchmark Test", self.init_test_dialog, "Ctrl+T")
+        self.ui.menuTools.addAction("Compare Profiles", self.compare_profiles, "Ctrl+Shift+P")
 
     def add_new_worksheet(self, worksheet_name: str = None, enable_icon: bool = True):
         if worksheet_name is None:
@@ -99,6 +100,46 @@ class PicketFenceMainWindow(QAToolsWindow):
 
             self.add_new_worksheet(dialog.ui.test_name_le.text() + " (Test)")
             self.ui.tabWidget.currentWidget().add_files([dialog.ui.out_file_le.text()])
+
+    def compare_profiles(self):
+        comp_profile_dialog = QDialog()
+        comp_profile_dialog.setWindowTitle("Compare Picket Fence Profiles")
+
+        layout = QVBoxLayout()
+        widget_layout = QFormLayout()
+
+        profiles_list_0_cb = QComboBox()
+        profiles_list_1_cb = QComboBox()
+        profiles_list_0_cb.setFixedWidth(200)
+        profiles_list_1_cb.setFixedWidth(200)
+
+        widget_layout.addRow("Profile 1:", profiles_list_0_cb)
+        widget_layout.addRow("Profile 2:", profiles_list_1_cb)
+
+        dialog_buttons = QDialogButtonBox()
+        apply_button = dialog_buttons.addButton(QDialogButtonBox.StandardButton(
+            QDialogButtonBox.StandardButton.Apply), )
+        apply_button.setEnabled(False)
+        cancel_button = dialog_buttons.addButton(QDialogButtonBox.StandardButton(
+            QDialogButtonBox.StandardButton.Cancel), )
+
+        for index in range(self.ui.tabWidget.count()):
+            widget: QPicketFenceWorksheet = self.ui.tabWidget.widget(index)
+
+            if widget.has_analysis:
+                apply_button.setEnabled(True)
+                profiles_list_0_cb.addItem(self.ui.tabWidget.tabText(index))
+                profiles_list_1_cb.addItem(self.ui.tabWidget.tabText(index))
+
+        layout.addLayout(widget_layout)
+        comp_profile_dialog.setLayout(layout)
+
+        cancel_button.clicked.connect(comp_profile_dialog.reject)
+        apply_button.clicked.connect(comp_profile_dialog.accept)
+
+        layout.addWidget(dialog_buttons)
+        comp_profile_dialog.setFixedSize(comp_profile_dialog.sizeHint())
+        comp_profile_dialog.exec()
 
 class QPicketFenceWorksheet(QWidget):
 
@@ -696,7 +737,7 @@ class QPicketFenceWorksheet(QWidget):
         self.current_results = None
 
         # Run the garbage collector now to free resources
-        gc.collect()
+        #gc.collect()
             
 class AdvancedPFView(QMainWindow):
 
@@ -824,12 +865,16 @@ class AdvancedPFView(QMainWindow):
     def init_leaf_profiles(self):
         self.pickets_cb.clear()
         self.leafs_cb.clear()
+        self.pf.init_profile_plot()
 
         if self.curr_leaf_profile_widget is not None:
             self.curr_leaf_profile_widget.deleteLater()
+            self.curr_leaf_profile_widget = self.pf.profile_plot_widget
+            self.leaf_profiles_qSplitter.replaceWidget(1,self.curr_leaf_profile_widget)
 
-        self.curr_leaf_profile_widget = self.pf.profile_plot_widget
-        self.leaf_profiles_qSplitter.addWidget(self.curr_leaf_profile_widget)
+        else:
+            self.curr_leaf_profile_widget = self.pf.profile_plot_widget
+            self.leaf_profiles_qSplitter.addWidget(self.curr_leaf_profile_widget)
 
         self.pickets_cb.addItems([str(x) for x in range(1,self.pf.num_pickets+1)])
 
@@ -856,8 +901,11 @@ class AdvancedPFView(QMainWindow):
     def init_analyzed_image(self):
         if self.curr_analyzed_image_widget is not None:
             self.curr_analyzed_image_widget.deleteLater()
+            self.curr_analyzed_image_widget = self.pf.analyzed_image_plot_widget
+            self.analyzed_img_qSplitter.replaceWidget(0,self.curr_analyzed_image_widget)
 
-        self.curr_analyzed_image_widget = self.pf.analyzed_image_plot_widget
-        self.analyzed_img_qSplitter.addWidget(self.curr_analyzed_image_widget)
+        else:
+            self.curr_analyzed_image_widget = self.pf.analyzed_image_plot_widget
+            self.analyzed_img_qSplitter.addWidget(self.curr_analyzed_image_widget)
 
         self.pf.qplot_analyzed_image()

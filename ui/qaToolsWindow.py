@@ -1,9 +1,10 @@
-from PySide6.QtWidgets import QMainWindow, QLabel
+from PySide6.QtWidgets import QMainWindow
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QPixmap, QDesktopServices
 
 from ui.utilsWidgets.statusbar_widgets import AnalysisInfoLabel
 from ui.py_ui.qaMainWin_ui import Ui_MainWindow
+from ui.utilsWidgets.dialogs import MessageDialog
 from ui.about_dialog import AboutDialog
 from ui.py_ui import icons_rc
 
@@ -58,7 +59,7 @@ class QAToolsWindow(QMainWindow):
         self.curr_anal_state = AnalysisInfoLabel.IDLE
         
         self.ui.tabWidget.currentChanged.connect(self.tab_window_changed)
-        self.ui.tabWidget.tabCloseRequested.connect(self.ui.tabWidget.removeTab)
+        self.ui.tabWidget.tabCloseRequested.connect(self.tab_close_requested)
 
         self.current_tab_index = 0
         self.current_window_state = self.isMaximized()
@@ -91,6 +92,16 @@ class QAToolsWindow(QMainWindow):
         elif self.ui.tabWidget.count() == 0:
             self.close()
 
+    def tab_close_requested(self, tab_index: int):
+        warning_dialog = MessageDialog()
+        warning_dialog.set_icon(MessageDialog.WARNING_ICON)
+        warning_dialog.set_title("Close Tab")
+        warning_dialog.set_info_text("Are you sure you want to close this tab?")
+
+        response = warning_dialog.exec()
+
+        self.ui.tabWidget.removeTab(tab_index)
+        
     def about_app(self):
         about = AboutDialog()
         about.exec()

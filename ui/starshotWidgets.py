@@ -498,7 +498,7 @@ class QStarshotWorksheet(QWidget):
 
         # Update the plot
         starshot = results["starshot_obj"]
-        starshot.plotImage()
+        starshot.plot_image()
         self.current_plot = starshot.imagePlotWidget
         self.ui.analysisImageVL.addWidget(self.current_plot)
 

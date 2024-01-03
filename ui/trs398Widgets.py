@@ -1,4 +1,8 @@
-from PySide6.QtWidgets import QWidget, QFileDialog
+from PySide6.QtWidgets import (QWidget, QFileDialog, QLineEdit,
+                               QComboBox, QPlainTextEdit, QPushButton,
+                               QHBoxLayout, QVBoxLayout, QCheckBox, QLabel,
+                               QSizePolicy, QSpacerItem, QFormLayout, 
+                               QDialogButtonBox, QDialog)
 from PySide6.QtCore import Qt, Signal, QDate
 from PySide6.QtGui import QPixmap, QIntValidator, QDoubleValidator
 from core.tools.devices import Linac
@@ -10,10 +14,12 @@ from core.tools.report import PhotonCalibrationReport
 from core.calibration.trs398 import TRS398Photons, TRS398Electrons
 from core.configuration.config import ChambersConfig, SettingsConfig
 from ui.qaToolsWindow import QAToolsWindow
+from ui.preferences.prefs_main import Preferences
 
 from pathlib import Path
 
 import json
+import webbrowser
 
 #TODO Move TRS398 Electrons here!
 
@@ -60,6 +66,12 @@ class BaseTRS398Window(QAToolsWindow):
         self.gen_rep_all_action = gen_report_menu.addAction("All Complete Worksheets")
         self.gen_rep_all_action.triggered.connect(lambda: self.save_worksheets_as(1,1))
         self.gen_rep_all_action.setEnabled(True)
+        self.ui.menuFile.addSeparator()
+        self.ui.menuFile.addAction("Preferences", self.show_preferences)
+
+    def show_preferences(self):
+        self.preferences = Preferences()
+        self.preferences.exec()
 
     def add_new_worksheet(self, worksheet, worksheet_name: str, enable_icon: bool = True):
         index = self.ui.tabWidget.addTab(worksheet, worksheet_name)
@@ -89,6 +101,128 @@ class BaseTRS398Window(QAToolsWindow):
             ) 
         
         return file
+
+    def generate_report(self, calibration_info: dict):
+
+        worksheet: QPhotonsWorksheet | QElectronsWorksheet = \
+        self.ui.tabWidget.widget(0)
+
+        physicist_name_le = QLineEdit()
+        institution_name_le = QLineEdit()
+        treatment_unit_le = QLineEdit()
+        comments_te = QPlainTextEdit()
+        physicist_name_le.setMaximumWidth(250)
+        physicist_name_le.setMinimumWidth(250)
+        institution_name_le.setMaximumWidth(350)
+        institution_name_le.setMinimumWidth(350)
+        treatment_unit_le.setMaximumWidth(250)
+        treatment_unit_le.setMinimumWidth(250)
+
+        # Set the fields from the first worksheet
+        # TODO Put worksheet date on report 
+        physicist_name_le.setText(worksheet.ui.userLE.text())
+        institution_name_le.setText(worksheet.ui.institutionLE.text())
+        treatment_unit_le.setText(worksheet.ui.linacNameLE.text())
+
+        save_path_le = QLineEdit()
+        save_win_btn = QPushButton("Save to...")
+        save_path_le.setReadOnly(True)
+        save_location_layout = QHBoxLayout()
+        save_location_layout.addWidget(save_path_le)
+        save_location_layout.addWidget(save_win_btn)
+
+        show_report_checkbox = QCheckBox()
+        show_report_label = QLabel("Open report:")
+        show_report_checkbox.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        show_report_label.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        show_report_layout = QHBoxLayout()
+        show_report_layout.addWidget(show_report_label)
+        show_report_layout.addWidget(show_report_checkbox)
+
+        user_details_layout = QFormLayout()
+        user_details_layout.addRow("Physicist:", physicist_name_le)
+        user_details_layout.addRow("Treatment unit:", treatment_unit_le)
+        user_details_layout.addRow("Institution:", institution_name_le)
+        user_details_layout.addRow("Save location:", save_location_layout)
+        user_details_layout.addRow("Comments:", comments_te)
+        user_details_layout.addRow("",show_report_layout)
+        user_details_layout.addItem(QSpacerItem(1,10, QSizePolicy.Policy.Minimum,
+                                                QSizePolicy.Policy.Minimum))
+        
+        layout = QVBoxLayout()
+        layout.addLayout(user_details_layout)
+
+        dialog_buttons = QDialogButtonBox()
+        save_button = dialog_buttons.addButton(QDialogButtonBox.StandardButton(
+            QDialogButtonBox.StandardButton.Save), )
+        save_button.setEnabled(False)
+        cancel_button = dialog_buttons.addButton(QDialogButtonBox.StandardButton(
+            QDialogButtonBox.StandardButton.Cancel))
+        
+        # enable the save button once we have a path to save the report to
+        save_path_le.textChanged.connect(lambda: save_button.setEnabled(True))
+        
+        layout.addWidget(dialog_buttons)
+
+        report_dialog = QDialog()
+        report_dialog.setWindowTitle("Generate Planar Imaging Report ‒ PyBeam QA")
+        report_dialog.setLayout(layout)
+        report_dialog.setMinimumSize(report_dialog.sizeHint())
+        report_dialog.setMaximumSize(report_dialog.sizeHint())
+
+        cancel_button.clicked.connect(report_dialog.reject)
+        save_button.clicked.connect(report_dialog.accept)
+        save_win_btn.clicked.connect(lambda: save_path_le.setText(self.save_report_to(report_dialog)))
+
+        result = report_dialog.exec()
+
+        if result == QDialog.DialogCode.Accepted:
+
+            calibration_info["comments"] = comments_te.toPlainText()
+
+            if isinstance(worksheet, QPhotonsWorksheet):
+                report = PhotonCalibrationReport(filename=save_path_le.text(),
+                                                 calibration_info=calibration_info)
+                report.save_report()
+            
+            else:
+                report = PhotonCalibrationReport(filename=save_path_le.text(),
+                                                 calibration_info=calibration_info)
+                report.save_report()
+
+            if show_report_checkbox.isChecked():
+                webbrowser.open(save_path_le.text())
+
+    def save_pybq_to(self) -> str | None:
+        file_path = QFileDialog.getSaveFileName(caption="Save As...", 
+                                                filter="PyBeam QA File (*.pybq)")
+        
+        if file_path[0] != "":
+            path = file_path[0].split("/")
+            
+            if not path[-1].endswith(".pybq"):
+                path[-1] = path[-1] + ".pybq"
+            
+            return "/".join(path)
+        
+        else:
+            return None
+
+    def save_report_to(self, top_dialog: QDialog) -> str:
+        file_path = QFileDialog.getSaveFileName(caption="Save Report As...", 
+                                                filter="PDF (*.pdf)",
+                                                parent=top_dialog)
+        
+        if file_path[0] != "":
+            path = file_path[0].split("/")
+            
+            if not path[-1].endswith(".pdf"):
+                path[-1] = path[-1] + ".pdf"
+            
+            return "/".join(path)
+        
+        else:
+            return ""
 
 class PhotonsMainWindow(BaseTRS398Window):
     
@@ -239,6 +373,7 @@ class PhotonsMainWindow(BaseTRS398Window):
                     worksheet.ui.redReadLE.setText(worksheet_info["m2_reading"])
                     worksheet.ui.depthDMaxLE.setText(worksheet_info["depth_dmax"])
                     worksheet.ui.pddLE.setText(worksheet_info["pdd_zref"])
+                    worksheet.ui.tmrLE.setText(worksheet_info["tmr_zref"])
 
                     (worksheet.ui.userPosPolarRadioButton.toggle() 
                      if worksheet_info["user_polarity"] == -2
@@ -252,7 +387,7 @@ class PhotonsMainWindow(BaseTRS398Window):
 
                     worksheet.ui.userLE.setText(file_info["user"])
                     worksheet.ui.institutionLE.setText(file_info["institution"])
-                    worksheet.ui.dateDE.setDate(QDate.fromString(file_info["date"], "dd/MM/yyyy"))
+                    worksheet.ui.dateDE.setDate(QDate.fromString(file_info["date"], "dd MMM yyyy"))
                     worksheet.ui.toleranceDSB.valueFromText(file_info["tolerance"])
 
                     (worksheet.ui.ssdRadioButton.toggle() if 
@@ -267,7 +402,7 @@ class PhotonsMainWindow(BaseTRS398Window):
                     worksheet.ui.calibLabLE.setText(
                         str(file_info["ion_chamber"]["calibration_lab"]))
                     worksheet.ui.chamberCalibDE.setDate(
-                        QDate.fromString(file_info["ion_chamber"]["calibration_date"], "dd/MM/yyyy"))
+                        QDate.fromString(file_info["ion_chamber"]["calibration_date"], "dd MMM yyyy"))
                     worksheet.ui.wSleeveMatlLE.setText(
                         file_info["ion_chamber"]["water_proof_sleeve_mat"])
                     worksheet.ui.wSleeveThickLE.setText(
@@ -294,7 +429,7 @@ class PhotonsMainWindow(BaseTRS398Window):
                     worksheet.ui.electCalLabLE.setText(
                         file_info["electrometer"]["calibration_lab"])
                     worksheet.ui.electCalDateDE.setDate(QDate.fromString(
-                        file_info["electrometer"]["calibration_date"], "dd/MM/yyyy"))
+                        file_info["electrometer"]["calibration_date"], "dd MMM yyyy"))
                     worksheet.ui.electRangeSettLE.setText(
                         file_info["electrometer"]["range_setting"])
 
@@ -366,56 +501,21 @@ class PhotonsMainWindow(BaseTRS398Window):
         if save_format == 0:
             save_path = self.save_pybq_to()
 
+            with open(save_path, 'w', encoding="utf-8") as file:
+                for worksheet in file_info["photon_output_calibration"]["worksheets"]:
+                    worksheet.pop("cal_summary", None)
+
+                json.dump(file_info, file, ensure_ascii=False, indent=4)
+
         elif save_format == 1:
-            save_path = self.save_report_to()
+            cal_info = file_info["photon_output_calibration"]
 
-        if save_path:
-            if save_format == 0:
-                with open(save_path, 'w', encoding="utf-8") as file:
-                    for worksheet in file_info["photon_output_calibration"]["worksheets"]:
-                        worksheet.pop("cal_summary", None)
+            for (i, worksheet) in enumerate(cal_info["worksheets"]):
+                #TODO Replace this with signals?
+                if "cal_summary" not in worksheet.keys():
+                    del cal_info["worksheets"][i]
 
-                    json.dump(file_info, file, ensure_ascii=False, indent=4)
-
-            elif save_format == 1:
-                cal_info = file_info["photon_output_calibration"]
-
-                for (i, worksheet) in enumerate(cal_info["worksheets"]):
-                    #TODO Replace this with signals
-                    if "cal_summary" not in worksheet.keys():
-                        del cal_info["worksheets"][i]
-
-                report = PhotonCalibrationReport(filename=save_path,
-                                                 calibration_info=cal_info)
-                report.save_report()
-
-    def save_pybq_to(self) -> str | None:
-        file_path = QFileDialog.getSaveFileName(caption="Save As...", filter="PyBeam QA File (*.pybq)")
-        
-        if file_path[0] != "":
-            path = file_path[0].split("/")
-            
-            if not path[-1].endswith(".pybq"):
-                path[-1] = path[-1] + ".pybq"
-            
-            return "/".join(path)
-        
-        else:
-            return None
-
-    def save_report_to(self) -> str | None:
-        file_path = QFileDialog.getSaveFileName(caption="Save Report As...", filter="PDF (*.pdf)")
-        
-        if file_path[0] != "":
-            path = file_path[0].split("/")
-            
-            if not path[-1].endswith(".pdf"):
-                path[-1] = path[-1] + ".pdf"
-            
-            return "/".join(path)
-        
-        else:
-            return None
+            self.generate_report(cal_info)
 
 class ElectronsMainWindow(BaseTRS398Window):
     
@@ -427,21 +527,17 @@ class ElectronsMainWindow(BaseTRS398Window):
 
         if init_data is not None:
             for beam in init_data["electron_beams"]:
-                    self.setup_worksheets(init_data["linac"], beam, False)
+                    self.setup_worksheets(init_data["linac"], beam)
 
             self.institution_changed.emit(init_data["institution"])
             self.userName_changed.emit(init_data["user"])
 
-    def setup_worksheets(self, linac: str | Linac, beam_energy: int, isFFF: bool):
+    def setup_worksheets(self, linac: str | Linac, beam_energy: int):
         worksheet = QElectronsWorksheet()
         worksheet.ui.nomAccPotLE.setText(f"{beam_energy}")
         worksheet.ui.nomAccPotLE.setReadOnly(True)
 
-        if isFFF:
-            self.ui.tabWidget.addTab(worksheet, f"{beam_energy} MV FFF beam")
-            worksheet.ui.nomAccPotUnit.setText("MV (FFF beam)")
-        else:
-            self.ui.tabWidget.addTab(worksheet, f"{beam_energy} MV beam")
+        self.ui.tabWidget.addTab(worksheet, f"{beam_energy} MeV beam")
 
         # Send data changes to other worksheets
         worksheet.ui.institutionLE.textChanged.connect(self.institution_changed)
@@ -534,22 +630,21 @@ class ElectronsMainWindow(BaseTRS398Window):
             with open(file_path, 'r', encoding="utf-8") as file:
                 pybq_file = json.load(file)
 
-            if "photon_output_calibration" in pybq_file:
+            if "electron_output_calibration" in pybq_file:
                 #TODO Add error dialog for failed file parsing
                 win = cls()
 
-                file_info = pybq_file["photon_output_calibration"]
+                file_info = pybq_file["electron_output_calibration"]
                 for worksheet_info in file_info["worksheets"]:
                     worksheet = win.setup_worksheets(file_info["linac_name"],
-                                                     worksheet_info["beam_energy"],
-                                                     worksheet_info["is_fff"])
+                                                     worksheet_info["beam_energy"])
                     
                     worksheet.ui.nomDoseRateLE.setText(worksheet_info["nominal_dose_rate"])
-                    worksheet.ui.beamQualityLE.setText(worksheet_info["tpr_2010"])
+                    worksheet.ui.measuredR50LE.setText(worksheet_info["r_50_ion"])
                     worksheet.ui.refPhantomComboB.setCurrentText(worksheet_info["reference_phantom"])
                     worksheet.ui.reffieldSizeComboB.setCurrentText(worksheet_info["reference_field_size"])
                     worksheet.ui.refDistanceLE.setText(worksheet_info["reference_distance"])
-                    worksheet.ui.refDepthComboB.setCurrentText(worksheet_info["reference_depth"])
+                    worksheet.ui.refDepthLE.setText(worksheet_info["reference_depth"])
                     worksheet.ui.rawDosReadLE.setText(worksheet_info["raw_dosimeter_reading_v1"])
                     worksheet.ui.corrLinacMULE.setText(worksheet_info["corresponding_linac_mu"])
                     worksheet.ui.userPressureLE.setText(worksheet_info["user_pressure"])
@@ -576,11 +671,8 @@ class ElectronsMainWindow(BaseTRS398Window):
 
                     worksheet.ui.userLE.setText(file_info["user"])
                     worksheet.ui.institutionLE.setText(file_info["institution"])
-                    worksheet.ui.dateDE.setDate(QDate.fromString(file_info["date"], "dd/MM/yyyy"))
+                    worksheet.ui.dateDE.setDate(QDate.fromString(file_info["date"], "dd MMM yyyy"))
                     worksheet.ui.toleranceDSB.valueFromText(file_info["tolerance"])
-
-                    (worksheet.ui.ssdRadioButton.toggle() if 
-                     file_info["setup_type"] == -2 else worksheet.ui.sadRadioButton.toggle())
 
                     worksheet.ui.IonChamberModelComboB.setCurrentText(
                         file_info["ion_chamber"]["model_name"])
@@ -591,7 +683,7 @@ class ElectronsMainWindow(BaseTRS398Window):
                     worksheet.ui.calibLabLE.setText(
                         str(file_info["ion_chamber"]["calibration_lab"]))
                     worksheet.ui.chamberCalibDE.setDate(
-                        QDate.fromString(file_info["ion_chamber"]["calibration_date"], "dd/MM/yyyy"))
+                        QDate.fromString(file_info["ion_chamber"]["calibration_date"], "dd MMM yyyy"))
                     worksheet.ui.wSleeveMatlLE.setText(
                         file_info["ion_chamber"]["water_proof_sleeve_mat"])
                     worksheet.ui.wSleeveThickLE.setText(
@@ -618,7 +710,7 @@ class ElectronsMainWindow(BaseTRS398Window):
                     worksheet.ui.electCalLabLE.setText(
                         file_info["electrometer"]["calibration_lab"])
                     worksheet.ui.electCalDateDE.setDate(QDate.fromString(
-                        file_info["electrometer"]["calibration_date"], "dd/MM/yyyy"))
+                        file_info["electrometer"]["calibration_date"], "dd MMM yyyy"))
                     worksheet.ui.electRangeSettLE.setText(
                         file_info["electrometer"]["range_setting"])
 
@@ -681,65 +773,32 @@ class ElectronsMainWindow(BaseTRS398Window):
         electrometer_info["calibration_date"] = worksheet.ui.electCalDateDE.text()
         electrometer_info["range_setting"] = worksheet.ui.electRangeSettLE.text()
 
-        file_info = {"photon_output_calibration": {}}
-        file_info["photon_output_calibration"].update(basic_info)
-        file_info["photon_output_calibration"].update({"ion_chamber": ion_chamber_info})
-        file_info["photon_output_calibration"].update({"electrometer": electrometer_info})
-        file_info["photon_output_calibration"].update({"worksheets": worksheet_info})
+        file_info = {"electron_output_calibration": {}}
+        file_info["electron_output_calibration"].update(basic_info)
+        file_info["electron_output_calibration"].update({"ion_chamber": ion_chamber_info})
+        file_info["electron_output_calibration"].update({"electrometer": electrometer_info})
+        file_info["electron_output_calibration"].update({"worksheets": worksheet_info})
 
         if save_format == 0:
             save_path = self.save_pybq_to()
 
+            with open(save_path, 'w', encoding="utf-8") as file:
+                for worksheet in file_info["electron_output_calibration"]["worksheets"]:
+                    worksheet.pop("cal_summary", None)
+
+                json.dump(file_info, file, ensure_ascii=False, indent=4)
+
         elif save_format == 1:
             save_path = self.save_report_to()
 
-        if save_path:
-            if save_format == 0:
-                with open(save_path, 'w', encoding="utf-8") as file:
-                    for worksheet in file_info["photon_output_calibration"]["worksheets"]:
-                        worksheet.pop("cal_summary", None)
+            cal_info = file_info["electron_output_calibration"]
 
-                    json.dump(file_info, file, ensure_ascii=False, indent=4)
+            for (i, worksheet) in enumerate(cal_info["worksheets"]):
+                #TODO Replace this with signals
+                if "cal_summary" not in worksheet.keys():
+                    del cal_info["worksheets"][i]
 
-            elif save_format == 1:
-                cal_info = file_info["photon_output_calibration"]
-
-                for (i, worksheet) in enumerate(cal_info["worksheets"]):
-                    #TODO Replace this with signals
-                    if "cal_summary" not in worksheet.keys():
-                        del cal_info["worksheets"][i]
-
-                report = PhotonCalibrationReport(filename=save_path,
-                                                 calibration_info=cal_info)
-                report.save_report()
-
-    def save_pybq_to(self) -> str | None:
-        file_path = QFileDialog.getSaveFileName(caption="Save As...", filter="PyBeam QA File (*.pybq)")
-        
-        if file_path[0] != "":
-            path = file_path[0].split("/")
-            
-            if not path[-1].endswith(".pybq"):
-                path[-1] = path[-1] + ".pybq"
-            
-            return "/".join(path)
-        
-        else:
-            return None
-
-    def save_report_to(self) -> str | None:
-        file_path = QFileDialog.getSaveFileName(caption="Save Report As...", filter="PDF (*.pdf)")
-        
-        if file_path[0] != "":
-            path = file_path[0].split("/")
-            
-            if not path[-1].endswith(".pdf"):
-                path[-1] = path[-1] + ".pdf"
-            
-            return "/".join(path)
-        
-        else:
-            return None
+            self.generate_report(cal_info)
 
 class QPhotonsWorksheet(QWidget):
 
@@ -768,9 +827,7 @@ class QPhotonsWorksheet(QWidget):
         self.ui.toleranceDSB.valueChanged.connect(self.set_zmax_depth_dose)
 
         self.ui.calibSetupGroup.buttonToggled.connect(self.cal_setup_changed)
-        
         self.ui.calibSeparateGroup.idToggled.connect(self.same_calib) # use idToggled to allow other tab signals to enable fields
-        
         self.ui.beamQualityLE.textChanged.connect(self.tpr2010_changed)
         self.ui.calibLabLE.textChanged.connect(self.same_calib)
         self.ui.chamberCalibDE.dateChanged.connect(self.same_calib)
@@ -1209,14 +1266,14 @@ class QElectronsWorksheet(QWidget):
         self.ui.calibSetupGroup.buttonToggled.connect(self.cal_setup_changed)
         
         self.ui.calibSeparateGroup.idToggled.connect(self.same_calib) # use idToggled to allow other tab signals to enable fields
+        self.ui.r50SourceGroup.idToggled.connect(self.measured_r50_changed)
         
-        self.ui.beamQualityLE.textChanged.connect(self.tpr2010_changed)
+        self.ui.measuredR50LE.textChanged.connect(self.measured_r50_changed)
         self.ui.calibLabLE.textChanged.connect(self.same_calib)
         self.ui.chamberCalibDE.dateChanged.connect(self.same_calib)
         self.ui.IonChamberModelComboB.currentIndexChanged.connect(self.chamber_model_changed)
         self.ui.calibSetupGroup.buttonClicked.connect(self.set_zmax_depth_dose)
-        self.ui.IonChamberModelComboB.currentIndexChanged.connect(self.calc_kq)
-        self.ui.beamQualityLE.textChanged.connect(self.calc_kq)
+        self.ui.IonChamberModelComboB.currentIndexChanged.connect(self.measured_r50_changed)
         self.ui.refPressureLE.textChanged.connect(self.calc_ktp)
         self.ui.refTempLE.textChanged.connect(self.calc_ktp)
         self.ui.refHumidityLE.textChanged.connect(self.calc_ktp)
@@ -1250,7 +1307,7 @@ class QElectronsWorksheet(QWidget):
 
         # Add validators to text fields (QLineEdit)
         self.ui.nomDoseRateLE.setValidator(DoubleValidator.from_args(1.0, 1000, 4))
-        self.ui.beamQualityLE.setValidator(DoubleValidator.from_args(0.5, 0.84, 4))
+        self.ui.measuredR50LE.setValidator(DoubleValidator.from_args(1.0, 20.0, 4))
         self.ui.refDistanceLE.setValidator(DoubleValidator.from_args(50.0, 120, 2))
         dVal = DoubleValidator()
         dVal.setDecimals(4)
@@ -1286,23 +1343,51 @@ class QElectronsWorksheet(QWidget):
 
     def set_ion_chamber_list(self):
         self.chambers = self.chambersConfig.getConfig()
+        chambersAllowed = self.settingsConfig.getConfig()
+        chambersAllowed = chambersAllowed["trs398"]["electron_calibration"]
+        chambersAllowed = chambersAllowed["allowed_chambers"]
+
         self.allChambers.extend(self.chambers["cylindrical"])
+        self.allChambers.extend(self.chambers["plane_parallel"])
+
+        self.allChambers = list(set(self.allChambers).intersection(
+            set(chambersAllowed)))
 
         self.allChambers.sort()   
         self.ui.IonChamberModelComboB.addItems(self.allChambers)
 
-    def tpr2010_changed(self):
-        self.ui.refDepthComboB.clear()
-        if self.ui.beamQualityLE.hasAcceptableInput():
-            if float(self.ui.beamQualityLE.text()) >= 0.70:
-                self.ui.refDepthComboB.addItems(["10.0"])
-            else:
-                self.ui.refDepthComboB.addItems(["0.5", "10.0"])
+    def measured_r50_changed(self):
+        if self.ui.measuredR50LE.hasAcceptableInput():
+            r50ion_source = ("ion_curves" if self.ui.r50SourceGroup.checkedId() == -2 
+                             else "dose_curves")
+            r50ion = float(self.ui.measuredR50LE.text())
 
-            self.ui.refDepthComboB.setCurrentIndex(0)
+            """
+            Determine R50 from the set R50ion value, if obtained from dose curves
+            then R50 = R50ion
+            """
+            r50 = self.trs398.r50ion_to_r50(r50ion, r50ion_source)
+            self.ui.beamQualityLE.setText(f"{r50:2.3f}")
+            # Set the reference depth
+            self.ui.refDepthLE.setText(f"{self.trs398.ref_depth:2.3f}")
+
+            # Set the beam quality correction factor
+            chambers = self.chambersConfig.getConfig()
+            currChamber = self.ui.IonChamberModelComboB.currentText()
+
+            for chamberType in chambers:
+                if currChamber in chambers[chamberType]:
+                    r50_kQ: dict = chambers[chamberType][currChamber]["r50_kQ"]
+
+                    try:
+                        kQ = self.trs398.r50_to_kQ(r50_kQ)
+                        self.ui.kQLE.setText(f"{kQ:2.3f}")
+                    except ValueError as err:
+                        self.ui.kQLE.setText("Out of range")
 
         else:
-            self.ui.refDepthComboB.setPlaceholderText("N/A")
+            self.ui.refDepthLE.clear()
+            self.ui.kQLE.clear()
 
     def chamber_model_changed(self):
         currentChamber = self.ui.IonChamberModelComboB.currentText()
@@ -1341,21 +1426,6 @@ class QElectronsWorksheet(QWidget):
             self.ui.kElecLE_2.show()
             self.ui.kElecLE.clear() # kElec will still be 1.00 in TRS class until set
 
-    def calc_kq(self):
-        currChamber = self.ui.IonChamberModelComboB.currentText()
-        tprValue = self.ui.beamQualityLE.text()
-
-        chambers = self.chambersConfig.getConfig()
-
-        if tprValue != "":
-            for chamberType in chambers:
-                if currChamber in chambers[chamberType]:
-                    tpr_kQ: dict = chambers[chamberType][currChamber]["tpr_kQ"]
-                    kQ = self.trs398.tpr2010_to_kQ(float(tprValue), tpr_kQ)
-                    self.ui.kQLE.setText("%.3f" % kQ)
-        else:
-            self.ui.kQLE.clear()
-
     def calc_ktp(self):
         userTemp = self.ui.userTempLE.text()
         userPress = self.ui.userPressureLE.text()
@@ -1363,7 +1433,7 @@ class QElectronsWorksheet(QWidget):
 
         if userTemp != "" and userPress != "" and userHumid != "":
             kTP = self.trs398.kTP_corr(float(userTemp), float(userPress))
-            self.ui.kTPLE.setText("%.3f" % kTP)
+            self.ui.kTPLE.setText(f"{kTP:2.3f}")
         else:
             self.ui.kTPLE.clear()
 
@@ -1580,13 +1650,12 @@ class QElectronsWorksheet(QWidget):
 
         #TODO replace use of type conversion with QtValidators
         worksheet_info["beam_energy"] = self.ui.nomAccPotLE.text()
-        worksheet_info["is_fff"] = True if "(FFF" in self.ui.nomAccPotUnit.text() else False
         worksheet_info["nominal_dose_rate"] = self.ui.nomDoseRateLE.text()
-        worksheet_info["tpr_2010"] = self.ui.beamQualityLE.text() 
+        worksheet_info["r_50_ion"] = self.ui.measuredR50LE.text() 
         worksheet_info["reference_phantom"] = self.ui.refPhantomComboB.currentText()
         worksheet_info["reference_field_size"] = self.ui.reffieldSizeComboB.currentText()
         worksheet_info["reference_distance"] = self.ui.refDistanceLE.text()
-        worksheet_info["reference_depth"] = self.ui.refDepthComboB.currentText()
+        worksheet_info["reference_depth"] = self.ui.refDepthLE.text()
         worksheet_info["user_polarity"] = self.ui.userPolarityGroup.checkedId()
         worksheet_info["raw_dosimeter_reading_v1"] = self.ui.rawDosReadLE.text()
         worksheet_info["corresponding_linac_mu"] = self.ui.corrLinacMULE.text()
@@ -1602,7 +1671,6 @@ class QElectronsWorksheet(QWidget):
         worksheet_info["beam_type"] = self.ui.beamTypeGroup.checkedId()
         worksheet_info["depth_dmax"] = self.ui.depthDMaxLE.text()
         worksheet_info["pdd_zref"] = self.ui.pddLE.text()
-        worksheet_info["tmr_zref"] = self.ui.tmrLE.text()
 
         if self.ui.outcomeLE.text() != "":
             cal_summary = {}

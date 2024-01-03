@@ -19,14 +19,14 @@ from PySide6.QtWidgets import (QApplication, QButtonGroup, QComboBox, QFormLayou
     QFrame, QGridLayout, QHBoxLayout, QLabel,
     QLayout, QLineEdit, QMainWindow, QPushButton,
     QScrollArea, QSizePolicy, QSpacerItem, QStackedWidget,
-    QVBoxLayout, QWidget)
+    QToolButton, QVBoxLayout, QWidget)
 import icons_rc
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(674, 621)
+        MainWindow.resize(690, 621)
         sizePolicy = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -171,7 +171,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 614, 401))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 616, 401))
         self.horizontalLayout = QHBoxLayout(self.scrollAreaWidgetContents)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Minimum, QSizePolicy.Minimum)
@@ -263,7 +263,7 @@ class Ui_MainWindow(object):
 
         self.electronCalib = QFrame(self.testListFrame)
         self.electronCalib.setObjectName(u"electronCalib")
-        self.electronCalib.setEnabled(False)
+        self.electronCalib.setEnabled(True)
         sizePolicy4.setHeightForWidth(self.electronCalib.sizePolicy().hasHeightForWidth())
         self.electronCalib.setSizePolicy(sizePolicy4)
         self.electronCalib.setStyleSheet(u"")
@@ -527,10 +527,10 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_4.addItem(self.verticalSpacer_4)
 
-        self.label = QLabel(self.linacQAPage)
-        self.label.setObjectName(u"label")
+        self.toolButton = QToolButton(self.linacQAPage)
+        self.toolButton.setObjectName(u"toolButton")
 
-        self.verticalLayout_4.addWidget(self.label, 0, Qt.AlignHCenter)
+        self.verticalLayout_4.addWidget(self.toolButton, 0, Qt.AlignHCenter)
 
 
         self.verticalLayout_3.addLayout(self.verticalLayout_4)
@@ -565,7 +565,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollAreaWidgetContents_2 = QWidget()
         self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
-        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 450, 371))
+        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 418, 276))
         sizePolicy.setHeightForWidth(self.scrollAreaWidgetContents_2.sizePolicy().hasHeightForWidth())
         self.scrollAreaWidgetContents_2.setSizePolicy(sizePolicy)
         self.scrollAreaWidgetContents_2.setMaximumSize(QSize(600, 16777215))
@@ -822,7 +822,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.mainStackWidget.setCurrentIndex(1)
+        self.mainStackWidget.setCurrentIndex(0)
         self.devicesBtn.setDefault(False)
         self.navigationStackedWidget.setCurrentIndex(0)
 
@@ -852,7 +852,7 @@ class Ui_MainWindow(object):
         self.fieldAnalysisLabel.setText(QCoreApplication.translate("MainWindow", u"Field analysis", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"No content here!", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"No content here!", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"PyBeam QA - v0.1.0 (Copyright \u00a9 2023 Kagiso Lebang)  ", None))
+        self.toolButton.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
         self.institutionLabel.setText(QCoreApplication.translate("MainWindow", u"Institution:", None))
         self.userLabel.setText(QCoreApplication.translate("MainWindow", u"User:", None))
         self.treatmentUnitLabel.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-weight:700;\">Treatment Unit</span></p></body></html>", None))

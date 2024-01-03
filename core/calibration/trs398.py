@@ -199,24 +199,34 @@ class TRS398Electrons(TRS398):
                  kS: float = 1.0, kPol: float = 1.0, kElec: float = 1.0, kQQo: float = 1.0):
         super().__init__(mRaw = mRaw, nDW = nDW, kTP = kTP,kS = kS, kPol = kPol, kElec = kElec, kQQo = kQQo)
 
-    def r50ion_to_r50(self, r50ion: float, r50ionDepth: float) -> float:
-        if r50ionDepth <= 10.0:
-            return 1.029 * r50ion - 0.06
+        self.r50 = 1.0
+
+    def r50ion_to_r50(self, r50ion: float, source: str) -> float:
+        if source == "ion_curves":
+            if r50ion <= 10.0:
+                self.r50 = 1.029 * r50ion - 0.06
+                return self.r50
+            else:
+                self.r50 = 1.059 * r50ion - 0.37
+                return self.r50
         else:
-            return 1.059 * r50ion - 0.37
-        
-    def r50_to_kQ(self, r50: float, r50_kQ: dict) -> float:
+            self.r50 = r50ion
+            return self.r50
+
+    def r50_to_kQ(self, r50_kQ: dict) -> float:
         r50Values = [float(x) for x in r50_kQ.keys()]
         kQValues = [float(x) for x in r50_kQ.values()]
         r50Values.sort()
         kQValues.sort(reverse=True)
 
         #check if R50 value is within bounds
-        if r50 < r50Values[0] or r50 > r50Values[-1]:
-            raise ValueError(f"R-50 value {r50} is not within an acceptable range: {r50Values[0]} - {r50Values[-1]}")
+        if self.r50 < r50Values[0] or self.r50 > r50Values[-1]:
+            raise ValueError(f"R-50 value {self.r50} is not within an acceptable range: " \
+                             f"{r50Values[0]} - {r50Values[-1]}")
         else:
             kQSpline = CubicSpline(r50Values, kQValues)
-            return float(kQSpline(r50))
+            self.kQQo = float(kQSpline(self.r50))
+            return self.kQQo
 
     def r50_to_kQQint(self, r50: float, r50_kQQint: dict) -> float:
         r50Values = [float(x) for x in r50_kQQint.keys()]
@@ -226,7 +236,12 @@ class TRS398Electrons(TRS398):
 
         #check if R50 value is within bounds
         if r50 < r50Values[0] or r50 > r50Values[-1]:
-            raise ValueError(f"R-50 value {r50} is not within an acceptable range: {r50Values[0]} - {r50Values[-1]}")
+            raise ValueError(f"R-50 value {r50} is not within an acceptable range: " \
+                             f"{r50Values[0]} - {r50Values[-1]}")
         else:
             kQSpline = CubicSpline(r50Values, kQQintValues)
             return float(kQSpline(r50))
+    
+    @property
+    def ref_depth(self) -> float:
+        return 0.6*self.r50 - 0.1

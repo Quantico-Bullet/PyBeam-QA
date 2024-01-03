@@ -127,43 +127,7 @@ def generate_winstonlutz(
     field_alpha: float = 1.0,
     bb_alpha: float = -0.5,
 ) -> list[str]:
-    """Create a mock set of WL images, simulating gantry sag effects. Produces one image for each item in image_axes.
-
-    Parameters
-    ----------
-    simulator
-        The image simulator
-    field_layer
-        The primary field layer simulating radiation
-    dir_out
-        The directory to save the images to.
-    field_size_mm
-        The field size of the radiation field in mm
-    final_layers
-        Layers to apply after generating the primary field and BB layer. Useful for blurring or adding noise.
-    bb_size_mm
-        The size of the BB. Must be positive.
-    offset_mm_left
-        How far left (lat) to set the BB. Can be positive or negative.
-    offset_mm_up
-        How far up (vert) to set the BB. Can be positive or negative.
-    offset_mm_in
-        How far in (long) to set the BB. Can be positive or negative.
-    image_axes
-        List of axis values for the images. Sequence is (Gantry, Coll, Couch).
-    gantry_tilt
-        The tilt of the gantry that affects the position at 0 and 180. Simulates a simple cosine function.
-    gantry_sag
-        The sag of the gantry that affects the position at gantry=90 and 270. Simulates a simple sine function.
-    clean_dir
-        Whether to clean out the output directory. Useful when iterating.
-    field_alpha
-        The normalized alpha (i.e. signal) of the radiation field. Use in combination
-        with bb_alpha such that the sum of the two is always <= 1.
-    bb_alpha
-        The normalized alpha (in the case of the BB think of it as attenuation) of the BB against the radiation field. More negative values
-        attenuate (remove signal) more.
-    """
+    
     if field_alpha + bb_alpha > 1:
         raise ValueError("field_alpha and bb_alpha must sum to <=1")
     if field_alpha - bb_alpha < 0:

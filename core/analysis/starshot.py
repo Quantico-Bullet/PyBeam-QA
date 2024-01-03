@@ -36,7 +36,7 @@ class QStarshot(Starshot):
         
         return super().analyze(radius, min_peak_height, tolerance, start_point, fwhm, recursive, invert)
     
-    def plotImage(self):
+    def plot_image(self):
         # plot the image
         self.imagePlotWidget.addItem(pg.ImageItem(self.image.array))
 

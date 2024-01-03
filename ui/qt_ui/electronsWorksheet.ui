@@ -45,7 +45,7 @@
        <item>
         <widget class="QWidget" name="calibSummaryWidget" native="true">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -169,7 +169,7 @@ QAbstractScrollArea::corner {
                <x>0</x>
                <y>0</y>
                <width>379</width>
-               <height>344</height>
+               <height>346</height>
               </rect>
              </property>
              <property name="sizePolicy">
@@ -388,18 +388,20 @@ font-weight: bold</string>
                  </widget>
                 </item>
                 <item row="4" column="1">
-                 <widget class="QLineEdit" name="kSLE">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
+                 <layout class="QHBoxLayout" name="horizontalLayout_4">
+                  <property name="spacing">
+                   <number>10</number>
                   </property>
-                  <property name="contextMenuPolicy">
-                   <enum>Qt::NoContextMenu</enum>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">border-radius: 15px;
+                  <item>
+                   <widget class="QLineEdit" name="kSLE">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true">border-radius: 15px;
 border-color: rgb(130, 160, 250);
 border-style: solid;
 border-width:2px;
@@ -407,14 +409,20 @@ background-color: rgba(130, 160, 250,150);
 padding-left: 15px;
 height: 30px;
 font-weight: bold</string>
-                  </property>
-                  <property name="readOnly">
-                   <bool>true</bool>
-                  </property>
-                  <property name="placeholderText">
-                   <string>N/A</string>
-                  </property>
-                 </widget>
+                    </property>
+                    <property name="placeholderText">
+                     <string>N/A</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="ks_status_icon">
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                </layout>
               </item>
@@ -758,7 +766,7 @@ font-weight: bold;
                <set>Qt::ImhPreferNumbers</set>
               </property>
               <property name="displayFormat">
-               <string>dd/MM/yyyy</string>
+               <string>dd MMM yyyy</string>
               </property>
               <property name="calendarPopup">
                <bool>true</bool>
@@ -877,7 +885,7 @@ font-weight: bold;
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>-4</y>
+          <y>0</y>
           <width>605</width>
           <height>1942</height>
          </rect>
@@ -1253,7 +1261,7 @@ font-weight: bold;
                </widget>
               </item>
               <item row="6" column="1">
-               <widget class="QComboBox" name="comboBox">
+               <widget class="QComboBox" name="refPhantomComboB">
                 <property name="minimumSize">
                  <size>
                   <width>100</width>
@@ -1263,11 +1271,6 @@ font-weight: bold;
                 <item>
                  <property name="text">
                   <string>Water</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Plastic</string>
                  </property>
                 </item>
                </widget>
@@ -1588,7 +1591,7 @@ font-weight: bold;
                  </size>
                 </property>
                 <property name="displayFormat">
-                 <string>dd/MM/yyyy</string>
+                 <string>dd MMM yyyy</string>
                 </property>
                 <property name="calendarPopup">
                  <bool>true</bool>
@@ -2285,7 +2288,7 @@ font-weight: bold;
                  </size>
                 </property>
                 <property name="displayFormat">
-                 <string>dd/MM/yyyy</string>
+                 <string>dd MMM yyyy</string>
                 </property>
                 <property name="calendarPopup">
                  <bool>true</bool>
@@ -3381,7 +3384,7 @@ font-weight: bold;
       </widget>
      </item>
      <item row="0" column="2">
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="gen_report_btn">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -3423,12 +3426,12 @@ QPushButton:!enabled{
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="userPolarityGroup"/>
-  <buttongroup name="calibPolarityGroup"/>
-  <buttongroup name="beamTypeGroup"/>
-  <buttongroup name="calibSetupGroup"/>
-  <buttongroup name="beamQualityGroup"/>
-  <buttongroup name="r50SourceGroup"/>
   <buttongroup name="calibSeparateGroup"/>
+  <buttongroup name="calibSetupGroup"/>
+  <buttongroup name="beamTypeGroup"/>
+  <buttongroup name="beamQualityGroup"/>
+  <buttongroup name="userPolarityGroup"/>
+  <buttongroup name="r50SourceGroup"/>
+  <buttongroup name="calibPolarityGroup"/>
  </buttongroups>
 </ui>

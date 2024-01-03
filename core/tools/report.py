@@ -52,6 +52,26 @@ class BaseReport:
 
         canvas.drawCentredString(20.0*cm, 2.0*cm, text)
 
+    def add_signature(self, doc_contents: list):
+
+        data = [[Paragraph("<b>Performed by</b>"), ":", self._author],
+                [Paragraph("<b>Signature</b>"), ":", ""]]
+
+        table = Table(data, colWidths=[3.0*cm, 0.5*cm, 4*cm], hAlign="LEFT",
+                      style=[('LINEBELOW', (-1,-1), (-1,-1), 1, colors.black),
+                             ('LEFTPADDING', (-1,-1), (-1,-1), 0)])
+        doc_contents.append(TopPadder(table))
+
+    def add_comments(self, doc_contents: list):
+        if self._comments:
+            doc_contents.append(Spacer(1, 16))
+            data = [[Paragraph("<b>Comments</b>"), self._comments]]
+
+            table = Table(data, colWidths=[3.0*cm, 0.5*cm, 4*cm], hAlign="LEFT",
+                          style=[('VALIGN', (0,0), (0,0), 'TOP'),
+                                 ('LEFTPADDING', (-1,-1), (-1,-1), 0)])
+            doc_contents.append(table)
+
 class WinstonLutzReport(BaseReport):
     """
     Class for generating Winston-Lutz reports
@@ -94,7 +114,8 @@ class WinstonLutzReport(BaseReport):
             data.append([Paragraph("<b>Patient name</b>"), f": {self._patient_info['patient_name']}"])
             data.append([Paragraph("<b>Patient ID</b>"), f": {self._patient_info['patient_id']}"])
         
-        doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT"))
+        doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT",
+                                  style=[('LEFTPADDING', (-1,-1), (-1,-1), 0)]))
 
     def set_analysis_details(self, doc_contents: list):
         doc_contents.append(Spacer(1, 16)) # add spacing of 8 pts
@@ -117,15 +138,6 @@ class WinstonLutzReport(BaseReport):
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Summary plot:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 8 pts
         doc_contents.append(PdfImage(self._summary_plot, width=16*cm, height=16*cm))
-
-    def add_signature(self, doc_contents: list):
-
-        data = [[Paragraph("<b>Performed by</b>"), ":", self._author],
-                [Paragraph("<b>Signature</b>"), ":", ""]]
-
-        table = Table(data, colWidths=[3.0*cm, 0.5*cm, 4*cm], hAlign="LEFT",
-                      style=[('LINEBELOW', (-1,-1), (-1,-1), 1, colors.black)])
-        doc_contents.append(TopPadder(table))
 
     def save_report(self):
         document =  SimpleDocTemplate(self._filename)
@@ -188,7 +200,8 @@ class PicketFenceReport(BaseReport):
         else:
             data.append([Paragraph("<b>Test outcome</b>"), f": {self._report_status}"])
         
-        doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT"))
+        doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT",
+                                  style=[('LEFTPADDING', (-1,-1), (-1,-1), 0)]))
 
     def set_analysis_details(self, doc_contents: list):
         doc_contents.append(Spacer(1, 16)) # add spacing of 8 pts
@@ -214,15 +227,6 @@ class PicketFenceReport(BaseReport):
         image = PdfImage(self._summary_plot, width=8.0*cm, height=8.0*cm)
         image.hAlign = "CENTRE"
         doc_contents.append(image)
-
-    def add_signature(self, doc_contents: list):
-
-        data = [[Paragraph("<b>Performed by</b>"), ":", self._author],
-                [Paragraph("<b>Signature</b>"), ":", ""]]
-
-        table = Table(data, colWidths=[3.0*cm, 0.5*cm, 4*cm], hAlign="LEFT",
-                      style=[('LINEBELOW', (-1,-1), (-1,-1), 1, colors.black)])
-        doc_contents.append(TopPadder(table))
 
     def save_report(self):
         document =  SimpleDocTemplate(self._filename)
@@ -274,7 +278,8 @@ class FieldAnalysisReport(BaseReport):
             [Paragraph("<b>Analysis protocol</b>"), f": {self._protocol}"]
         ]
         
-        doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT"))
+        doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT",
+                                  style=[('LEFTPADDING', (-1,-1), (-1,-1), 0)]))
 
     def set_analysis_details(self, doc_contents: list):
         results = self._analysis_summary
@@ -297,6 +302,7 @@ class FieldAnalysisReport(BaseReport):
                              ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
                              ('LINEABOVE', (0,0), (-1,0), 1, colors.black),
                              ('LINEABOVE', (0,1), (-1,1), 1, colors.black)])
+
         
             doc_contents.append(table)
 
@@ -310,15 +316,6 @@ class FieldAnalysisReport(BaseReport):
                  PdfImage(self._summary_plots[1], width=9.0*cm, height=9.0*cm)]]
 
         doc_contents.append(Table(data, colWidths=[9.0*cm, 9.0*cm], hAlign="CENTER"))
-
-    def add_signature(self, doc_contents: list):
-
-        data = [[Paragraph("<b>Performed by</b>"), ":", self._author],
-                [Paragraph("<b>Signature</b>"), ":", ""]]
-
-        table = Table(data, colWidths=[3.0*cm, 0.5*cm, 4*cm], hAlign="LEFT",
-                      style=[('LINEBELOW', (-1,-1), (-1,-1), 1, colors.black)])
-        doc_contents.append(TopPadder(table))
 
     def save_report(self):
         document =  SimpleDocTemplate(self._filename)
@@ -373,7 +370,8 @@ class StarshotReport(BaseReport):
                 [Paragraph("<b>Test outcome</b>"),
                          f": {self._report_status} (wobble diameter  = {self._wobble_diameter:2.3f} mm)"]]
         
-        doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT"))
+        doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT",
+                                  style=[('LEFTPADDING', (-1,-1), (-1,-1), 0)]))
 
     def set_analysis_details(self, doc_contents: list):
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
@@ -401,15 +399,6 @@ class StarshotReport(BaseReport):
                  PdfImage(self._summary_plots[1], width=7.5*cm, height=7.5*cm)]]
 
         doc_contents.append(Table(data, colWidths=[8.0*cm, 8.0*cm], hAlign="CENTER"))
-
-    def add_signature(self, doc_contents: list):
-
-        data = [[Paragraph("<b>Performed by</b>"), ":", self._author],
-                [Paragraph("<b>Signature</b>"), ":", ""]]
-
-        table = Table(data, colWidths=[3.0*cm, 0.5*cm, 4*cm], hAlign="LEFT",
-                      style=[('LINEBELOW', (-1,-1), (-1,-1), 1, colors.black)])
-        doc_contents.append(TopPadder(table))
 
     def save_report(self):
         document =  SimpleDocTemplate(self._filename)
@@ -458,7 +447,8 @@ class PlanarImagingReport(BaseReport):
                 [Paragraph("<b>Test outcome</b>"),
                          f": {self._report_status} (wobble diameter  = {self._wobble_diameter:2.3f} mm)"]]
         
-        doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT"))
+        doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT",
+                                  style=[('LEFTPADDING', (-1,-1), (-1,-1), 0)]))
 
     def set_analysis_details(self, doc_contents: list):
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
@@ -511,20 +501,20 @@ class PlanarImagingReport(BaseReport):
 
         document.build(doc_contents, onFirstPage=self.add_metadata)
 
-class PhotonCalibrationReport(BaseReport):
+class BaseCalibrationReport(BaseReport):
     """
-    Class for generating TRS398 Photon output calibration reports
+    General class for generating TRS398 calibration reports
     """
     def __init__(
         self, filename: str,
-        report_name: str = "Photon Output Calibration Report",
+        report_name: str = "Base Calibration Report",
         calibration_info: dict | None = None,
-        comments: str | None = None
         ):
         super().__init__(filename, report_name)
 
         self._calibration_info = calibration_info
         self._author = self._calibration_info["user"] # We need this for self._author in title_page()
+        self._comments = self._calibration_info["comments"]
 
     def set_user_details(self, doc_contents: list):
         data = [[Paragraph("<b>Physicist</b>"), f': {self._calibration_info["user"]}'],
@@ -558,43 +548,66 @@ class PhotonCalibrationReport(BaseReport):
         
         doc_contents.append(Table(data, colWidths=[4.5*cm, 5.0*cm], hAlign="LEFT"))
 
+class PhotonCalibrationReport(BaseCalibrationReport):
+    """
+    Class for generating TRS398 Photon output calibration reports
+    """
+    def __init__(
+        self, filename: str,
+        report_name: str = "Photon Output Calibration Report",
+        calibration_info: dict | None = None,
+        comments: str | None = None
+        ):
+        super().__init__(filename, report_name, calibration_info)
+
     def set_measurement_details(self, doc_contents: list):
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Measurement Conditions:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
         #TODO Allow report to accept custom units of measurement
+
+        worksheet = self._calibration_info["worksheets"][0]
+        data = [[Paragraph("<b>Setup Type (SSD or SAD)</b>"), 
+                 f': {"SSD" if self._calibration_info["setup_type"] == -2 else "SAD"}'],
+                [Paragraph("<b>Reference Distance</b>"), f': {worksheet["reference_distance"]} cm'],
+                [Paragraph("<b>Field Size</b>"), f': {worksheet["reference_field_size"].replace(" ", "")} cm²'],
+                [Paragraph("<b>Number of MUs</b>"), f': {worksheet["corresponding_linac_mu"]}'],
+                [Paragraph("<b>Temperature</b>"), f': {worksheet["user_temperature"]} °C'],
+                [Paragraph("<b>Pressure</b>"), f': {worksheet["user_pressure"]} kPa'],
+                [Paragraph("<b>Relative Humidity</b>"), f': {worksheet["user_humidity"]}%']]
+        
+        doc_contents.append(Table(data, colWidths=[5.5*cm, 3.5*cm], hAlign="LEFT"))
+
         data = [["", Paragraph("<para align='centre'><b>Nominal Accelerating Potential (MV)</b> \
                                </para>")],
                 [Paragraph("<b>Parameter</b>")],
-                ["Setup type (SSD or SAD)"],
-                ["Reference distance (cm)"],
-                ["Reference depth (g/cm²)"],
-                ["Field size (cm²)"],
-                ["Number of MUs"],
-                [""],
-                ["Temperature (°C)"],
-                ["Pressure (kPa)"],
-                ["Relative Humidity (%)"]]
+                ["Reference depth (g/cm²)"]
+            ]
         
         num_worksheets = len(self._calibration_info["worksheets"])
+        
         data[0].extend([""]*(num_worksheets-1))
-        data[7].extend([""]*num_worksheets)
+        #data[7].extend([""]*num_worksheets)
         
         for worksheet in self._calibration_info["worksheets"]:
             data[1].append(worksheet["beam_energy"] + (" FFF" if worksheet["is_fff"] 
                                    else ""))
+            """
             data[2].append("SSD" if self._calibration_info["setup_type"] == -2 else "SAD")
             data[3].append(worksheet["reference_distance"])
-            data[4].append(worksheet["reference_depth"])
+            """
+            data[2].append(worksheet["reference_depth"])
+            """
             data[5].append(worksheet["reference_field_size"].replace(" ", ""))
             data[6].append(worksheet["corresponding_linac_mu"])
 
             data[8].append(worksheet["user_temperature"])
             data[9].append(worksheet["user_pressure"])
             data[10].append(worksheet["user_humidity"])
-
+            """
         col_widths = [5.5*cm]
         col_widths.extend([10.0*cm / num_worksheets]*num_worksheets)
+        
         table = Table(data, colWidths=col_widths, hAlign='CENTRE',
                       style=[('BACKGROUND', (0,0), (-1,1), colors.lightgrey),
                              ('SPAN', (1,0), (-1,0)),
@@ -602,6 +615,7 @@ class PhotonCalibrationReport(BaseReport):
                              ('LINEABOVE', (1,1), (-1,1), 0.5, colors.black),
                              ('LINEBEFORE', (1,0), (1, -1), 1, colors.black)])
         
+        doc_contents.append(Spacer(1, 16))
         doc_contents.append(table)
 
     def set_correction_details(self, doc_contents: list):
@@ -615,6 +629,196 @@ class PhotonCalibrationReport(BaseReport):
                                </para>")],
                 [Paragraph("<b>Parameter</b>")],
                 [PdfImage(assets_dir + "/tpr2010.pdf")],
+                [PdfImage(assets_dir + "/kQQo.pdf")],
+                [PdfImage(assets_dir + "/kElec.pdf")],
+                [PdfImage(assets_dir + "/kTP.pdf")],
+                [PdfImage(assets_dir + "/kPol.pdf")],
+                [PdfImage(assets_dir + "/kS.pdf")],
+                [""],
+                ["Average dosimeter rdg. (nC)"],
+                ["Corrected dosimeter rdg. (nC)"]]
+        
+        num_worksheets = len(self._calibration_info["worksheets"])
+        data[0].extend([""]*(num_worksheets-1))
+        data[8].extend([""]*num_worksheets)
+        
+        for worksheet in self._calibration_info["worksheets"]:
+            data[1].append(worksheet["beam_energy"] + (" FFF" if worksheet["is_fff"] 
+                                   else ""))
+            
+            cal_summary = worksheet["cal_summary"]
+            data[2].append(worksheet["tpr_2010"])
+            data[3].append(cal_summary["kQQo"])
+            data[4].append(cal_summary["kElec"])
+            data[5].append(cal_summary["kTP"])
+            data[6].append(cal_summary["kPol"])
+            data[7].append(cal_summary["kS"])
+
+            data[9].append(worksheet["raw_dosimeter_reading_v1"])
+            data[10].append(cal_summary["corr_dos_reading"])
+
+        col_widths = [5.5*cm]
+        col_widths.extend([10.0*cm / num_worksheets]*num_worksheets)
+        table = Table(data, colWidths=col_widths, hAlign='CENTRE',
+                      style=[('BACKGROUND', (0,0), (-1,1), colors.lightgrey),
+                             ('SPAN', (1,0), (-1,0)),
+                             ('BOX', (0,0), (-1,-1), 1, colors.black),
+                             ('LINEABOVE', (1,1), (-1,1), 0.5, colors.black),
+                             ('LINEBEFORE', (1,0), (1,-1), 1, colors.black)])
+        
+        doc_contents.append(table)
+
+    def set_outcome_details(self, doc_contents: list):
+        doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
+        doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Absorbed Dose To Water:</font></u></b>"))
+        doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
+
+        data = [["", Paragraph("<para align='centre'><b>Nominal Accelerating Potential (MV)</b> \
+                               </para>")],
+                [Paragraph("<b>Parameter</b>")],
+                [PdfImage(assets_dir + "/depth_zmax.pdf")],
+                [],
+                [PdfImage(assets_dir + "/dw_zref.pdf")],
+                [PdfImage(assets_dir + "/dw_zmax.pdf")],
+                [""],
+                ["Outcome (PASS / FAIL)"]]
+        
+        num_worksheets = len(self._calibration_info["worksheets"])
+        data[0].extend([""]*(num_worksheets-1))
+        data[6].extend([""]*num_worksheets)
+
+        beam_q_file, key = (("/pdd_zref.pdf", "pdd_zref") if self._calibration_info["setup_type"] == -2 
+                            else ("/tmr_zref.pdf", "tmr_zref"))
+        
+        data[3].insert(0,PdfImage(assets_dir + beam_q_file))
+        
+        for worksheet in self._calibration_info["worksheets"]:
+            data[1].append(worksheet["beam_energy"] + (" FFF" if worksheet["is_fff"] 
+                                   else ""))
+            
+            cal_summary = worksheet["cal_summary"]
+            data[2].append(worksheet["depth_dmax"])
+            data[3].append(worksheet[key])
+            data[4].append(cal_summary["dw_zref"])
+            data[5].append(cal_summary["dw_zmax"])
+            data[7].append(cal_summary["test_outcome"])
+
+        col_widths = [5.5*cm]
+        col_widths.extend([10.0*cm / num_worksheets]*num_worksheets)
+        table = Table(data, colWidths=col_widths, hAlign='CENTRE',
+                      style=[('BACKGROUND', (0,0), (-1,1), colors.lightgrey),
+                             ('SPAN', (1,0), (-1,0)),
+                             ('BOX', (0,0), (-1,-1), 1, colors.black),
+                             ('LINEABOVE', (1,1), (-1,1), 0.5, colors.black),
+                             ('LINEBEFORE', (1,0), (1,-1), 1, colors.black)])
+        
+        doc_contents.append(table)
+
+    def add_signature(self, doc_contents: list):
+
+        data = [[Paragraph("<b>Performed by</b>"), ":", self._calibration_info["user"]],
+                [Paragraph("<b>Signature</b>"), ":", ""]]
+
+        table = Table(data, colWidths=[3.0*cm, 0.5*cm, 4*cm], hAlign="LEFT",
+                      style=[('LINEBELOW', (-1,-1), (-1,-1), 1, colors.black)])
+        doc_contents.append(TopPadder(table))
+
+    def save_report(self):
+        document =  SimpleDocTemplate(self._filename, pagesize=A4, pageCompression=1)
+        doc_contents = [Spacer(1, 2.0*cm)]
+
+        # add document body and then build the PDF
+        self.set_user_details(doc_contents)
+        self.set_instrumentation_details(doc_contents)
+        self.set_measurement_details(doc_contents)
+        self.set_correction_details(doc_contents)
+        self.set_outcome_details(doc_contents)
+        
+        self.add_comments(doc_contents)
+        self.add_signature(doc_contents)
+
+        document.build(doc_contents, onFirstPage=self.add_metadata)
+
+class ElectronCalibrationReport(BaseCalibrationReport):
+    """
+    Class for generating TRS398 Electron output calibration reports
+    """
+    def __init__(
+        self, filename: str,
+        report_name: str = "Electron Output Calibration Report",
+        calibration_info: dict | None = None,
+        comments: str | None = None
+        ):
+        super().__init__(filename, report_name, calibration_info)
+
+    def set_measurement_details(self, doc_contents: list):
+        doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
+        doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Measurement Conditions:</font></u></b>"))
+        doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
+        #TODO Allow report to accept custom units of measurement
+
+        worksheet = self._calibration_info["worksheets"][0]
+        data = [[Paragraph("<b>Setup Type (SSD or SAD)</b>"), "SSD"],
+                [Paragraph("<b>Reference Distance</b>"), f': {worksheet["reference_distance"]} cm'],
+                [Paragraph("<b>Field Size</b>"), f': {worksheet["reference_field_size"].replace(" ", "")} cm²'],
+                [Paragraph("<b>Number of MUs</b>"), f': {worksheet["corresponding_linac_mu"]}'],
+                [Paragraph("<b>Temperature</b>"), f': {worksheet["user_temperature"]} °C'],
+                [Paragraph("<b>Pressure</b>"), f': {worksheet["user_pressure"]} kPa'],
+                [Paragraph("<b>Relative Humidity</b>"), f': {worksheet["user_humidity"]}%']]
+        
+        doc_contents.append(Table(data, colWidths=[5.5*cm, 3.5*cm], hAlign="LEFT"))
+
+        data = [["", Paragraph("<para align='centre'><b>Nominal Energy (MeV)</b> \
+                               </para>")],
+                [Paragraph("<b>Parameter</b>")],
+                [PdfImage(assets_dir + "/meas_depth_zref.pdf")]
+            ]
+        
+        num_worksheets = len(self._calibration_info["worksheets"])
+        
+        data[0].extend([""]*(num_worksheets-1))
+        #data[7].extend([""]*num_worksheets)
+        
+        for worksheet in self._calibration_info["worksheets"]:
+            data[1].append(worksheet["beam_energy"] + (" FFF" if worksheet["is_fff"] 
+                                   else ""))
+            """
+            data[2].append("SSD" if self._calibration_info["setup_type"] == -2 else "SAD")
+            data[3].append(worksheet["reference_distance"])
+            """
+            data[2].append(worksheet["reference_depth"])
+            """
+            data[5].append(worksheet["reference_field_size"].replace(" ", ""))
+            data[6].append(worksheet["corresponding_linac_mu"])
+
+            data[8].append(worksheet["user_temperature"])
+            data[9].append(worksheet["user_pressure"])
+            data[10].append(worksheet["user_humidity"])
+            """
+        col_widths = [5.5*cm]
+        col_widths.extend([10.0*cm / num_worksheets]*num_worksheets)
+        
+        table = Table(data, colWidths=col_widths, hAlign='CENTRE',
+                      style=[('BACKGROUND', (0,0), (-1,1), colors.lightgrey),
+                             ('SPAN', (1,0), (-1,0)),
+                             ('BOX', (0,0), (-1, -1), 1, colors.black),
+                             ('LINEABOVE', (1,1), (-1,1), 0.5, colors.black),
+                             ('LINEBEFORE', (1,0), (1, -1), 1, colors.black)])
+        
+        doc_contents.append(Spacer(1, 16))
+        doc_contents.append(table)
+
+    def set_correction_details(self, doc_contents: list):
+        doc_contents.append(PageBreak())
+        doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
+        doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Beam Quality & " \
+                                      "Correction Factors:</font></u></b>"))
+        doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
+        #TODO Allow report to accept custom units of measurement
+        data = [["", Paragraph("<para align='centre'><b>Nominal Accelerating Potential (MV)</b> \
+                               </para>")],
+                [Paragraph("<b>Parameter</b>")],
+                [PdfImage(assets_dir + "/r50.pdf")],
                 [PdfImage(assets_dir + "/kQQo.pdf")],
                 [PdfImage(assets_dir + "/kElec.pdf")],
                 [PdfImage(assets_dir + "/kTP.pdf")],

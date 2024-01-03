@@ -5,7 +5,7 @@ from core.tools.devices import DeviceManager
 
 from ui.py_ui.appMainWin_ui import Ui_MainWindow as Ui_AppMainWin
 from ui.qaToolsWindow import QAToolsWindow
-from ui.trs398Widgets import PhotonsMainWindow
+from ui.trs398Widgets import PhotonsMainWindow, ElectronsMainWindow
 from ui.starshotWidgets import StarshotMainWindow
 from ui.wlutzWidgets import WinstonLutzMainWindow
 from ui.fieldAnalysisWidgets import FieldAnalysisMainWindow
@@ -75,6 +75,7 @@ class AppMainWin(QMainWindow):
         elif calibType == "electrons":
             self._ui.calibPageTitle.setText("Electron Output Calibration")
             self._ui.calibStartBtn.clicked.connect(lambda: self.initElectronsCalibQA())
+            self._ui.loadQABtn.clicked.connect(lambda: ElectronsMainWindow.load_from_file(None))
             self._ui.linacNameCB.currentTextChanged.connect(lambda x: self.setLinacDetails(calibType, x))
         
         # Add all available linacs
@@ -118,11 +119,6 @@ class AppMainWin(QMainWindow):
                 self._ui.linacBeamsField.addWidget(checkBox,i,0,1,1)
                 self.beamCheckBoxList.append(checkBox)
 
-            for i,beam in enumerate(self.currLinac.beams["electronsFFF"]):
-                checkBox = QCheckBox(f"{beam} MeV FFF")
-                self._ui.linacBeamsField.addWidget(checkBox,i,1,1,1)
-                self.beamCheckBoxList.append(checkBox)
-
     def changeMainPage(self, currWidget: QWidget):
         self._ui.mainStackWidget.setCurrentWidget(currWidget)
 
@@ -144,9 +140,9 @@ class AppMainWin(QMainWindow):
             self.setupCalibrationPage("photons")
             self.changeMainPage(self._ui.initCalibPage)
 
-        #elif event.type() == QEvent.Type.MouseButtonPress and source is self.__ui.electronCalib:
-            #self.setupCalibrationPage("electrons")
-            #self.changeMainPage(self.__ui.initCalibPage)
+        elif event.type() == QEvent.Type.MouseButtonPress and source is self._ui.electronCalib:
+            self.setupCalibrationPage("electrons")
+            self.changeMainPage(self._ui.initCalibPage)
 
         elif event.type() == QEvent.Type.MouseButtonPress and source is self._ui.winstonLutzAnalysis:
             self.open_window("winston_lutz", WinstonLutzMainWindow)
@@ -211,20 +207,14 @@ class AppMainWin(QMainWindow):
         initData = {"institution": None,
                     "user": None,
                     "electron_beams": [],
-                    "electron_fff_beams": [],
                     "linac": self.currLinac}
         
         # retrieve checkboxes and select the checked ones
         for beamCheckBox in self.beamCheckBoxList:
             if beamCheckBox.isChecked():
-                if "FFF" in str(beamCheckBox.text()):
-                    initData["electron_fff_beams"].append(int(str(beamCheckBox.text())
-                                    .split(" ")[0]))
-                else:
-                    initData["electron_beams"].append(int(str(beamCheckBox.text())
-                                    .split(" ")[0]))
+                initData["electron_beams"].append(int(str(beamCheckBox.text()).split(" ")[0]))
                     
         initData["institution"] = self._ui.institutionLE.text()
         initData["user"] = self._ui.userLE.text()
         
-        #self.open_window("electron_cal", ElectronsMainWindow)
+        self.open_window("electron_cal", ElectronsMainWindow, initData)

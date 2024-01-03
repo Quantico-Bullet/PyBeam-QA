@@ -181,7 +181,7 @@ class QWLutzWorksheet(QWidget):
         self.image_icon.addFile(u":/colorIcons/icons/picture.png", QSize(), QIcon.Normal, QIcon.Off)
 
         self.form_layout = QFormLayout()
-        self.form_layout.setHorizontalSpacing(30)
+        self.form_layout.setHorizontalSpacing(40)
         self.ui.analysisInfoVL.addLayout(self.form_layout)
         self.ui.stackedWidget.setCurrentIndex(0)
         self.ui.shiftInfoBtn.setEnabled(False)
@@ -508,7 +508,7 @@ class QWLutzWorksheet(QWidget):
         for key in self.ANALYSIS_METRICS:
             param = self.ANALYSIS_METRICS[key]
             if "_mm" in key:
-                value = f"{round(float(results[key]),2)} mm"
+                value = f"{float(results[key]):2.2f} mm"
                 self.form_layout.addRow(f"{param}:", QLabel(value))
                 self.analysis_summary[param] = value
             else:
