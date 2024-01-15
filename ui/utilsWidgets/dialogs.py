@@ -58,3 +58,6 @@ class MessageDialog(QMessageBox):
             pixmap = pixmap.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
 
         return super().setIconPixmap(pixmap)
+
+
+    

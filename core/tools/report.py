@@ -65,7 +65,7 @@ class BaseReport:
     def add_comments(self, doc_contents: list):
         if self._comments:
             doc_contents.append(Spacer(1, 16))
-            data = [[Paragraph("<b>Comments</b>"), self._comments]]
+            data = [[Paragraph("<b>Comments:</b>"), self._comments]]
 
             table = Table(data, colWidths=[3.0*cm, 0.5*cm, 4*cm], hAlign="LEFT",
                           style=[('VALIGN', (0,0), (0,0), 'TOP'),
@@ -370,8 +370,7 @@ class StarshotReport(BaseReport):
                 [Paragraph("<b>Test outcome</b>"),
                          f": {self._report_status} (wobble diameter  = {self._wobble_diameter:2.3f} mm)"]]
         
-        doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT",
-                                  style=[('LEFTPADDING', (-1,-1), (-1,-1), 0)]))
+        doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT"))
 
     def set_analysis_details(self, doc_contents: list):
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts

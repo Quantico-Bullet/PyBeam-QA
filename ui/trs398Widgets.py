@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (QWidget, QFileDialog, QLineEdit,
                                QSizePolicy, QSpacerItem, QFormLayout, 
                                QDialogButtonBox, QDialog)
 from PySide6.QtCore import Qt, Signal, QDate
-from PySide6.QtGui import QPixmap, QIntValidator, QDoubleValidator
+from PySide6.QtGui import QPixmap, QIntValidator
 from core.tools.devices import Linac
 
 from ui.py_ui.photonsWorksheet_ui import Ui_QPhotonsWorksheet
@@ -62,6 +62,7 @@ class BaseTRS398Window(QAToolsWindow):
         gen_report_menu = self.ui.menuFile.addMenu("Generate Report")
         gen_report_menu.hide()
         self.gen_rep_curr_action = gen_report_menu.addAction("Current Worksheet")
+        self.gen_rep_curr_action.triggered.connect(lambda: self.save_worksheets_as(0,1))
         self.gen_rep_curr_action.setEnabled(False)
         self.gen_rep_all_action = gen_report_menu.addAction("All Complete Worksheets")
         self.gen_rep_all_action.triggered.connect(lambda: self.save_worksheets_as(1,1))
@@ -87,6 +88,11 @@ class BaseTRS398Window(QAToolsWindow):
         if self.ui.tabWidget.count() > 0:
             title = self.ui.tabWidget.tabText(self.ui.tabWidget.currentIndex())
             self.setWindowTitle(title + "  |  " + self.window_title)
+
+            tab: QPhotonsWorksheet | QElectronsWorksheet = self.ui.tabWidget.widget(index)
+            
+            self.gen_rep_curr_action.setEnabled(
+                tab.ui.gen_report_btn.isEnabled())
 
         elif self.ui.tabWidget.count() == 0:
             self.close()
@@ -139,13 +145,22 @@ class BaseTRS398Window(QAToolsWindow):
         show_report_layout.addWidget(show_report_label)
         show_report_layout.addWidget(show_report_checkbox)
 
+        num_beams_reported =  QLabel()
+
+        num_beams = self.ui.tabWidget.count()
+        num = len(calibration_info["worksheets"])
+        num_beams_reported.setText(f"{num} of {num_beams} " \
+                "beam energies to be included in the report.")
+        
         user_details_layout = QFormLayout()
         user_details_layout.addRow("Physicist:", physicist_name_le)
         user_details_layout.addRow("Treatment unit:", treatment_unit_le)
         user_details_layout.addRow("Institution:", institution_name_le)
         user_details_layout.addRow("Save location:", save_location_layout)
         user_details_layout.addRow("Comments:", comments_te)
-        user_details_layout.addRow("",show_report_layout)
+        user_details_layout.addRow("", num_beams_reported)
+        user_details_layout.addRow("", QLabel())
+        user_details_layout.addRow("", show_report_layout)
         user_details_layout.addItem(QSpacerItem(1,10, QSizePolicy.Policy.Minimum,
                                                 QSizePolicy.Policy.Minimum))
         
@@ -165,7 +180,7 @@ class BaseTRS398Window(QAToolsWindow):
         layout.addWidget(dialog_buttons)
 
         report_dialog = QDialog()
-        report_dialog.setWindowTitle("Generate Planar Imaging Report ‒ PyBeam QA")
+        report_dialog.setWindowTitle("Generate Beam Calibration Report ‒ PyBeam QA")
         report_dialog.setLayout(layout)
         report_dialog.setMinimumSize(report_dialog.sizeHint())
         report_dialog.setMaximumSize(report_dialog.sizeHint())
@@ -789,11 +804,11 @@ class ElectronsMainWindow(BaseTRS398Window):
                 json.dump(file_info, file, ensure_ascii=False, indent=4)
 
         elif save_format == 1:
-            save_path = self.save_report_to()
-
             cal_info = file_info["electron_output_calibration"]
 
-            for (i, worksheet) in enumerate(cal_info["worksheets"]):
+            worksheets = cal_info["worksheets"]
+
+            for (i, worksheet) in enumerate(worksheets):
                 #TODO Replace this with signals
                 if "cal_summary" not in worksheet.keys():
                     del cal_info["worksheets"][i]
@@ -915,7 +930,7 @@ class QPhotonsWorksheet(QWidget):
             if float(self.ui.beamQualityLE.text()) >= 0.70:
                 self.ui.refDepthComboB.addItems(["10.0"])
             else:
-                self.ui.refDepthComboB.addItems(["0.5", "10.0"])
+                self.ui.refDepthComboB.addItems(["5.0", "10.0"])
 
             self.ui.refDepthComboB.setCurrentIndex(0)
 
@@ -1685,4 +1700,5 @@ class QElectronsWorksheet(QWidget):
             cal_summary["test_outcome"] = self.ui.outcomeLE.text().split(" ")[0]
             worksheet_info["cal_summary"] = cal_summary
 
+        print(worksheet_info)
         return worksheet_info

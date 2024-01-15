@@ -26,6 +26,7 @@
         <file>icons/loading.png</file>
         <file>icons/waiting.png</file>
         <file>icons/in_progress.png</file>
+        <file>icons/settings.png</file>
     </qresource>
     <qresource prefix="/actionIcons">
         <file>icons/eye.png</file>

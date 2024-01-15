@@ -495,8 +495,8 @@ class Ui_QElectronsWorksheet(object):
 
         self.worksheetScrollArea = QScrollArea(QElectronsWorksheet)
         self.worksheetScrollArea.setObjectName(u"worksheetScrollArea")
-        sizePolicy8.setHeightForWidth(self.worksheetScrollArea.sizePolicy().hasHeightForWidth())
-        self.worksheetScrollArea.setSizePolicy(sizePolicy8)
+        sizePolicy5.setHeightForWidth(self.worksheetScrollArea.sizePolicy().hasHeightForWidth())
+        self.worksheetScrollArea.setSizePolicy(sizePolicy5)
         self.worksheetScrollArea.setMaximumSize(QSize(630, 16777215))
         self.worksheetScrollArea.setStyleSheet(u"")
         self.worksheetScrollArea.setFrameShape(QFrame.StyledPanel)

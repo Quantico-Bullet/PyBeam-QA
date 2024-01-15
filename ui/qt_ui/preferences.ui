@@ -196,7 +196,7 @@ QPushButton:checked {
    <item row="1" column="2">
     <widget class="QStackedWidget" name="nav_stacked_widget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="general_page">
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -220,8 +220,8 @@ QPushButton:checked {
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>537</width>
-                <height>395</height>
+                <width>129</width>
+                <height>49</height>
                </rect>
               </property>
               <layout class="QGridLayout" name="gridLayout_4">
@@ -280,7 +280,7 @@ QPushButton:checked {
        <item>
         <widget class="QTabWidget" name="devices_tab_widget">
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="linac_tab">
           <attribute name="title">
@@ -320,7 +320,7 @@ QPushButton:checked {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QComboBox" name="comboBox"/>
+                    <widget class="QComboBox" name="linac_comboB"/>
                    </item>
                   </layout>
                  </item>
@@ -367,14 +367,14 @@ QPushButton:checked {
                        </widget>
                       </item>
                       <item row="2" column="0">
-                       <widget class="QLabel" name="serial_num_label">
+                       <widget class="QLabel" name="linac_serial_num_label">
                         <property name="text">
                          <string>Serial No:</string>
                         </property>
                        </widget>
                       </item>
                       <item row="2" column="1">
-                       <widget class="QLabel" name="serial_num_field">
+                       <widget class="QLabel" name="linac_serial_num_field">
                         <property name="text">
                          <string/>
                         </property>
@@ -424,15 +424,29 @@ QPushButton:checked {
                         </property>
                        </widget>
                       </item>
-                      <item row="1" column="0">
+                      <item row="2" column="0">
                        <widget class="QLabel" name="electron_beam_label">
                         <property name="text">
                          <string>Electron beams (MeV):</string>
                         </property>
                        </widget>
                       </item>
-                      <item row="1" column="1">
+                      <item row="2" column="1">
                        <widget class="QLabel" name="electron_beam_field">
+                        <property name="text">
+                         <string/>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="0">
+                       <widget class="QLabel" name="photon_fff_beam_label">
+                        <property name="text">
+                         <string>Photon FFF beams (MV):</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="1">
+                       <widget class="QLabel" name="photon_fff_beam_field">
                         <property name="text">
                          <string/>
                         </property>
@@ -484,19 +498,6 @@ QPushButton:checked {
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="delete_linac_btn">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Delete</string>
-               </property>
-              </widget>
-             </item>
-             <item>
               <widget class="QPushButton" name="add_linac_btn">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -506,6 +507,19 @@ QPushButton:checked {
                </property>
                <property name="text">
                 <string>Add...</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="delete_linac_btn">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Delete</string>
                </property>
               </widget>
              </item>
@@ -732,16 +746,16 @@ QPushButton:checked {
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_2">
+              <widget class="QPushButton" name="pushButton">
                <property name="text">
-                <string>Delete</string>
+                <string>Add...</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton">
+              <widget class="QPushButton" name="pushButton_2">
                <property name="text">
-                <string>Add...</string>
+                <string>Delete</string>
                </property>
               </widget>
              </item>

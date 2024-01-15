@@ -861,7 +861,7 @@ font-weight: bold;
      <item row="1" column="0">
       <widget class="QScrollArea" name="worksheetScrollArea">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+        <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -3426,12 +3426,12 @@ QPushButton:!enabled{
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="calibSeparateGroup"/>
-  <buttongroup name="calibSetupGroup"/>
-  <buttongroup name="beamTypeGroup"/>
-  <buttongroup name="beamQualityGroup"/>
   <buttongroup name="userPolarityGroup"/>
-  <buttongroup name="r50SourceGroup"/>
+  <buttongroup name="calibSetupGroup"/>
+  <buttongroup name="calibSeparateGroup"/>
+  <buttongroup name="beamQualityGroup"/>
   <buttongroup name="calibPolarityGroup"/>
+  <buttongroup name="beamTypeGroup"/>
+  <buttongroup name="r50SourceGroup"/>
  </buttongroups>
 </ui>

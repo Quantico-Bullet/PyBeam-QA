@@ -147,7 +147,7 @@ class Ui_PreferencesDialog(object):
         self.workspace_scroll_area.setWidgetResizable(True)
         self.scrollAreaWidgetContents_4 = QWidget()
         self.scrollAreaWidgetContents_4.setObjectName(u"scrollAreaWidgetContents_4")
-        self.scrollAreaWidgetContents_4.setGeometry(QRect(0, 0, 537, 395))
+        self.scrollAreaWidgetContents_4.setGeometry(QRect(0, 0, 129, 49))
         self.gridLayout_4 = QGridLayout(self.scrollAreaWidgetContents_4)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
         self.config_group_box = QGroupBox(self.scrollAreaWidgetContents_4)
@@ -218,10 +218,10 @@ class Ui_PreferencesDialog(object):
 
         self.horizontalLayout.addWidget(self.linac_label)
 
-        self.comboBox = QComboBox(self.scrollAreaWidgetContents_2)
-        self.comboBox.setObjectName(u"comboBox")
+        self.linac_comboB = QComboBox(self.scrollAreaWidgetContents_2)
+        self.linac_comboB.setObjectName(u"linac_comboB")
 
-        self.horizontalLayout.addWidget(self.comboBox)
+        self.horizontalLayout.addWidget(self.linac_comboB)
 
 
         self.verticalLayout_5.addLayout(self.horizontalLayout)
@@ -257,15 +257,15 @@ class Ui_PreferencesDialog(object):
 
         self.linac_info_fl.setWidget(1, QFormLayout.FieldRole, self.linac_model_field)
 
-        self.serial_num_label = QLabel(self.lina_info_group_box)
-        self.serial_num_label.setObjectName(u"serial_num_label")
+        self.linac_serial_num_label = QLabel(self.lina_info_group_box)
+        self.linac_serial_num_label.setObjectName(u"linac_serial_num_label")
 
-        self.linac_info_fl.setWidget(2, QFormLayout.LabelRole, self.serial_num_label)
+        self.linac_info_fl.setWidget(2, QFormLayout.LabelRole, self.linac_serial_num_label)
 
-        self.serial_num_field = QLabel(self.lina_info_group_box)
-        self.serial_num_field.setObjectName(u"serial_num_field")
+        self.linac_serial_num_field = QLabel(self.lina_info_group_box)
+        self.linac_serial_num_field.setObjectName(u"linac_serial_num_field")
 
-        self.linac_info_fl.setWidget(2, QFormLayout.FieldRole, self.serial_num_field)
+        self.linac_info_fl.setWidget(2, QFormLayout.FieldRole, self.linac_serial_num_field)
 
         self.linac_state_label = QLabel(self.lina_info_group_box)
         self.linac_state_label.setObjectName(u"linac_state_label")
@@ -303,12 +303,22 @@ class Ui_PreferencesDialog(object):
         self.electron_beam_label = QLabel(self.groupBox)
         self.electron_beam_label.setObjectName(u"electron_beam_label")
 
-        self.beam_energies_fl.setWidget(1, QFormLayout.LabelRole, self.electron_beam_label)
+        self.beam_energies_fl.setWidget(2, QFormLayout.LabelRole, self.electron_beam_label)
 
         self.electron_beam_field = QLabel(self.groupBox)
         self.electron_beam_field.setObjectName(u"electron_beam_field")
 
-        self.beam_energies_fl.setWidget(1, QFormLayout.FieldRole, self.electron_beam_field)
+        self.beam_energies_fl.setWidget(2, QFormLayout.FieldRole, self.electron_beam_field)
+
+        self.photon_fff_beam_label = QLabel(self.groupBox)
+        self.photon_fff_beam_label.setObjectName(u"photon_fff_beam_label")
+
+        self.beam_energies_fl.setWidget(1, QFormLayout.LabelRole, self.photon_fff_beam_label)
+
+        self.photon_fff_beam_field = QLabel(self.groupBox)
+        self.photon_fff_beam_field.setObjectName(u"photon_fff_beam_field")
+
+        self.beam_energies_fl.setWidget(1, QFormLayout.FieldRole, self.photon_fff_beam_field)
 
 
         self.verticalLayout_7.addLayout(self.beam_energies_fl)
@@ -340,19 +350,19 @@ class Ui_PreferencesDialog(object):
 
         self.verticalLayout_6.addWidget(self.edit_linac_btn, 0, Qt.AlignTop)
 
-        self.delete_linac_btn = QPushButton(self.linac_tab)
-        self.delete_linac_btn.setObjectName(u"delete_linac_btn")
-        sizePolicy4.setHeightForWidth(self.delete_linac_btn.sizePolicy().hasHeightForWidth())
-        self.delete_linac_btn.setSizePolicy(sizePolicy4)
-
-        self.verticalLayout_6.addWidget(self.delete_linac_btn)
-
         self.add_linac_btn = QPushButton(self.linac_tab)
         self.add_linac_btn.setObjectName(u"add_linac_btn")
         sizePolicy4.setHeightForWidth(self.add_linac_btn.sizePolicy().hasHeightForWidth())
         self.add_linac_btn.setSizePolicy(sizePolicy4)
 
         self.verticalLayout_6.addWidget(self.add_linac_btn)
+
+        self.delete_linac_btn = QPushButton(self.linac_tab)
+        self.delete_linac_btn.setObjectName(u"delete_linac_btn")
+        sizePolicy4.setHeightForWidth(self.delete_linac_btn.sizePolicy().hasHeightForWidth())
+        self.delete_linac_btn.setSizePolicy(sizePolicy4)
+
+        self.verticalLayout_6.addWidget(self.delete_linac_btn)
 
         self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
@@ -505,15 +515,15 @@ class Ui_PreferencesDialog(object):
 
         self.verticalLayout_8.addWidget(self.pushButton_3)
 
-        self.pushButton_2 = QPushButton(self.chambers_tab)
-        self.pushButton_2.setObjectName(u"pushButton_2")
-
-        self.verticalLayout_8.addWidget(self.pushButton_2)
-
         self.pushButton = QPushButton(self.chambers_tab)
         self.pushButton.setObjectName(u"pushButton")
 
         self.verticalLayout_8.addWidget(self.pushButton)
+
+        self.pushButton_2 = QPushButton(self.chambers_tab)
+        self.pushButton_2.setObjectName(u"pushButton_2")
+
+        self.verticalLayout_8.addWidget(self.pushButton_2)
 
         self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
@@ -548,9 +558,9 @@ class Ui_PreferencesDialog(object):
         self.buttonBox.accepted.connect(PreferencesDialog.accept)
         self.buttonBox.rejected.connect(PreferencesDialog.reject)
 
-        self.nav_stacked_widget.setCurrentIndex(0)
+        self.nav_stacked_widget.setCurrentIndex(1)
         self.general_tab_widget.setCurrentIndex(0)
-        self.devices_tab_widget.setCurrentIndex(1)
+        self.devices_tab_widget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(PreferencesDialog)
@@ -573,8 +583,8 @@ class Ui_PreferencesDialog(object):
         self.linac_name_field.setText("")
         self.linac_model_label.setText(QCoreApplication.translate("PreferencesDialog", u"Model:", None))
         self.linac_model_field.setText("")
-        self.serial_num_label.setText(QCoreApplication.translate("PreferencesDialog", u"Serial No:", None))
-        self.serial_num_field.setText("")
+        self.linac_serial_num_label.setText(QCoreApplication.translate("PreferencesDialog", u"Serial No:", None))
+        self.linac_serial_num_field.setText("")
         self.linac_state_label.setText(QCoreApplication.translate("PreferencesDialog", u"State:", None))
         self.linac_state_field.setText("")
         self.groupBox.setTitle(QCoreApplication.translate("PreferencesDialog", u"Beam Energies", None))
@@ -582,9 +592,11 @@ class Ui_PreferencesDialog(object):
         self.photon_beam_field.setText("")
         self.electron_beam_label.setText(QCoreApplication.translate("PreferencesDialog", u"Electron beams (MeV):", None))
         self.electron_beam_field.setText("")
+        self.photon_fff_beam_label.setText(QCoreApplication.translate("PreferencesDialog", u"Photon FFF beams (MV):", None))
+        self.photon_fff_beam_field.setText("")
         self.edit_linac_btn.setText(QCoreApplication.translate("PreferencesDialog", u"Edit", None))
-        self.delete_linac_btn.setText(QCoreApplication.translate("PreferencesDialog", u"Delete", None))
         self.add_linac_btn.setText(QCoreApplication.translate("PreferencesDialog", u"Add...", None))
+        self.delete_linac_btn.setText(QCoreApplication.translate("PreferencesDialog", u"Delete", None))
         self.devices_tab_widget.setTabText(self.devices_tab_widget.indexOf(self.linac_tab), QCoreApplication.translate("PreferencesDialog", u"Linear Accelerators", None))
         self.ion_chamber_label.setText(QCoreApplication.translate("PreferencesDialog", u"Ion. Chamber:", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("PreferencesDialog", u"General Info", None))
@@ -603,8 +615,8 @@ class Ui_PreferencesDialog(object):
         self.chamber_cal_date_field.setText("")
         self.label.setText(QCoreApplication.translate("PreferencesDialog", u"<html><head/><body><p>Calibration coefficient (<span style=\" font-style:italic;\">N</span><span style=\" font-size:11pt; font-style:italic; vertical-align:sub;\">D,w</span>):</p></body></html>", None))
         self.pushButton_3.setText(QCoreApplication.translate("PreferencesDialog", u"Edit", None))
-        self.pushButton_2.setText(QCoreApplication.translate("PreferencesDialog", u"Delete", None))
         self.pushButton.setText(QCoreApplication.translate("PreferencesDialog", u"Add...", None))
+        self.pushButton_2.setText(QCoreApplication.translate("PreferencesDialog", u"Delete", None))
         self.devices_tab_widget.setTabText(self.devices_tab_widget.indexOf(self.chambers_tab), QCoreApplication.translate("PreferencesDialog", u"Ionization Chambers", None))
     # retranslateUi
 

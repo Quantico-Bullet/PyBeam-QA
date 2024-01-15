@@ -226,7 +226,7 @@ QPushButton:checked {
               <item>
                <widget class="QStackedWidget" name="navigationStackedWidget">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -1010,10 +1010,51 @@ border-style: solid;
                 </property>
                </spacer>
               </item>
-              <item alignment="Qt::AlignHCenter">
-               <widget class="QToolButton" name="toolButton">
+              <item alignment="Qt::AlignRight">
+               <widget class="QPushButton" name="pushButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>40</width>
+                  <height>40</height>
+                 </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">QPushButton {
+    border-radius: 20px;
+    min-width: 40px;
+	min-height: 40px;
+	background-color: transparent;
+}
+
+QPushButton:hover {
+	background-color: rgba(82, 142, 122,50);
+	border-width: 1px;
+	border-style: solid;
+	border-color: rgba(82, 142, 122,50);
+}
+
+QPushButton:pressed {
+	background-color: rgba(82, 142, 122,122);
+}</string>
+                </property>
                 <property name="text">
-                 <string>Settings</string>
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="icons.qrc">
+                  <normaloff>:/colorIcons/icons/settings.png</normaloff>:/colorIcons/icons/settings.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>32</width>
+                  <height>32</height>
+                 </size>
                 </property>
                </widget>
               </item>
@@ -1090,8 +1131,8 @@ border-style: solid;
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>418</width>
-                 <height>276</height>
+                 <width>466</width>
+                 <height>371</height>
                 </rect>
                </property>
                <property name="sizePolicy">

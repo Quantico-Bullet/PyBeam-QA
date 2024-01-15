@@ -415,7 +415,7 @@ class Ui_QPhotonsWorksheet(object):
         self.worksheetScrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, -425, 605, 1903))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 605, 1903))
         sizePolicy2.setHeightForWidth(self.scrollAreaWidgetContents.sizePolicy().hasHeightForWidth())
         self.scrollAreaWidgetContents.setSizePolicy(sizePolicy2)
         self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents)

@@ -734,7 +734,7 @@ font-weight: bold;
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>-425</y>
+          <y>0</y>
           <width>605</width>
           <height>1903</height>
          </rect>
@@ -3327,11 +3327,11 @@ QPushButton:!enabled{
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="beamQualityGroup"/>
-  <buttongroup name="beamTypeGroup"/>
   <buttongroup name="userPolarityGroup"/>
   <buttongroup name="calibSetupGroup"/>
-  <buttongroup name="calibPolarityGroup"/>
   <buttongroup name="calibSeparateGroup"/>
+  <buttongroup name="beamQualityGroup"/>
+  <buttongroup name="calibPolarityGroup"/>
+  <buttongroup name="beamTypeGroup"/>
  </buttongroups>
 </ui>
