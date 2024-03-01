@@ -1,0 +1,6 @@
+-r requirements.txt
+auto-py-to-exe 
+pyopengl 
+pyopengl-accelerate
+pytest
+jupyter-rfb
