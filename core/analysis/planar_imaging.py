@@ -275,8 +275,8 @@ class QPlanarImagingWorker(QObject):
             summary_text = [["No. of low contrast ROIs visible:", str(results_data.num_contrast_rois_seen)],
                             ["Phantom center (X):", f"{results_data.phantom_center_x_y[0]}"],
                             ["Phantom center (Y):", f"{results_data.phantom_center_x_y[1]}"],
-                            ["Median contrast:", f"{results_data.median_contrast: 2.2f}"],
-                            ["Median CNR:", f"{results_data.median_cnr: 2.2f}"]
+                            ["Median contrast:", f"{results_data.median_contrast: 4.4f}"],
+                            ["Median CNR:", f"{results_data.median_cnr: 3.3f}"]
             ]
 
             if self._phantom.mtf is not None:
