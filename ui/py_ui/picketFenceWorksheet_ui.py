@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'picketFenceWorksheet.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.2
+## Created by: Qt User Interface Compiler version 6.6.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -30,7 +30,7 @@ class Ui_QPicketFenceWorksheet(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.stackedWidget = QStackedWidget(QPicketFenceWorksheet)
         self.stackedWidget.setObjectName(u"stackedWidget")
-        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.stackedWidget.sizePolicy().hasHeightForWidth())
@@ -42,7 +42,7 @@ class Ui_QPicketFenceWorksheet(object):
         self.gridLayout.setHorizontalSpacing(20)
         self.frame_2 = QFrame(self.analysisPage)
         self.frame_2.setObjectName(u"frame_2")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.frame_2.sizePolicy().hasHeightForWidth())
@@ -155,7 +155,7 @@ class Ui_QPicketFenceWorksheet(object):
 
         self.useFilenameSCheckB = QCheckBox(self.frame_2)
         self.useFilenameSCheckB.setObjectName(u"useFilenameSCheckB")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.useFilenameSCheckB.sizePolicy().hasHeightForWidth())
@@ -176,7 +176,7 @@ class Ui_QPicketFenceWorksheet(object):
 
         self.verticalLayout_4.addLayout(self.configFormLayout)
 
-        self.verticalSpacer_6 = QSpacerItem(20, 15, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        self.verticalSpacer_6 = QSpacerItem(20, 15, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
 
         self.verticalLayout_4.addItem(self.verticalSpacer_6)
 
@@ -215,7 +215,7 @@ class Ui_QPicketFenceWorksheet(object):
 
         self.verticalLayout_4.addWidget(self.outcomeLE)
 
-        self.verticalSpacer_5 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_5 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_4.addItem(self.verticalSpacer_5)
 
@@ -227,7 +227,7 @@ class Ui_QPicketFenceWorksheet(object):
         self.mainActionsHL.setObjectName(u"mainActionsHL")
         self.analyzeBtn = QPushButton(self.analysisPage)
         self.analyzeBtn.setObjectName(u"analyzeBtn")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.analyzeBtn.sizePolicy().hasHeightForWidth())
@@ -303,7 +303,7 @@ class Ui_QPicketFenceWorksheet(object):
 
         self.mainActionsHL.addWidget(self.genReportBtn, 0, Qt.AlignLeft)
 
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.mainActionsHL.addItem(self.horizontalSpacer)
 
@@ -312,7 +312,7 @@ class Ui_QPicketFenceWorksheet(object):
 
         self.frame = QFrame(self.analysisPage)
         self.frame.setObjectName(u"frame")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
         sizePolicy4.setHorizontalStretch(0)
         sizePolicy4.setVerticalStretch(0)
         sizePolicy4.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
@@ -324,7 +324,7 @@ class Ui_QPicketFenceWorksheet(object):
         self.verticalLayout_3.setContentsMargins(0, 0, -1, -1)
         self.analysisSummaryLabel = QFrame(self.frame)
         self.analysisSummaryLabel.setObjectName(u"analysisSummaryLabel")
-        sizePolicy5 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
+        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Fixed)
         sizePolicy5.setHorizontalStretch(0)
         sizePolicy5.setVerticalStretch(0)
         sizePolicy5.setHeightForWidth(self.analysisSummaryLabel.sizePolicy().hasHeightForWidth())
@@ -336,7 +336,7 @@ class Ui_QPicketFenceWorksheet(object):
 
         self.verticalLayout_3.addWidget(self.analysisSummaryLabel)
 
-        self.buttonSpacer = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        self.buttonSpacer = QSpacerItem(20, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
 
         self.verticalLayout_3.addItem(self.buttonSpacer)
 
@@ -345,7 +345,7 @@ class Ui_QPicketFenceWorksheet(object):
 
         self.verticalLayout_3.addLayout(self.analysisInfoVL)
 
-        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.MinimumExpanding)
+        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
 
         self.verticalLayout_3.addItem(self.verticalSpacer_4)
 
@@ -358,7 +358,7 @@ class Ui_QPicketFenceWorksheet(object):
 
         self.gridLayout.addWidget(self.importedImgLabel, 0, 0, 1, 1)
 
-        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Preferred, QSizePolicy.Minimum)
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Minimum)
 
         self.gridLayout.addItem(self.horizontalSpacer_3, 1, 4, 1, 1)
 
@@ -379,7 +379,7 @@ class Ui_QPicketFenceWorksheet(object):
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.analysisSumLabel = QLabel(self.analysisPage)
         self.analysisSumLabel.setObjectName(u"analysisSumLabel")
-        sizePolicy6 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy6 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         sizePolicy6.setHorizontalStretch(0)
         sizePolicy6.setVerticalStretch(0)
         sizePolicy6.setHeightForWidth(self.analysisSumLabel.sizePolicy().hasHeightForWidth())
@@ -393,7 +393,7 @@ class Ui_QPicketFenceWorksheet(object):
 
         self.imageListWidget = QListWidget(self.analysisPage)
         self.imageListWidget.setObjectName(u"imageListWidget")
-        sizePolicy7 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Expanding)
+        sizePolicy7 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Expanding)
         sizePolicy7.setHorizontalStretch(0)
         sizePolicy7.setVerticalStretch(0)
         sizePolicy7.setHeightForWidth(self.imageListWidget.sizePolicy().hasHeightForWidth())

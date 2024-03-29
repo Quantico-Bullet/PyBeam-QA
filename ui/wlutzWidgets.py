@@ -3,7 +3,7 @@ from PySide6.QtWidgets import (QWidget, QListWidgetItem, QMenu, QFileDialog, QDi
                                QMessageBox, QSizePolicy, QMainWindow, QGroupBox, 
                                QLineEdit, QComboBox, QDialogButtonBox, QPushButton, QSpacerItem,
                                QCheckBox, QGridLayout, QTabWidget, QSplitter, QTableWidget,
-                               QHeaderView, QTableWidgetItem)
+                               QHeaderView, QTableWidgetItem, QPlainTextEdit)
 from PySide6.QtGui import QIcon, QPixmap, QColor
 from PySide6.QtCore import Qt, QSize, QEvent, QThread, Signal
 
@@ -579,92 +579,28 @@ class QWLutzWorksheet(QWidget):
             imgView.setImage(image.array)
             imgView.setPredefinedGradient("grey")
 
-            new_win = QMainWindow()
+            new_win = QMainWindow(self)
             new_win.setWindowTitle(image_short_name)
             new_win.setCentralWidget(imgView)
             new_win.setMinimumSize(600, 500)
-        
-            self.imageView_windows.append(new_win)
             new_win.show()
-            new_win.setMinimumSize(0, 0)
 
     def view_analyzed_image(self):
         listWidgetItem = self.ui.imageListWidget.currentItem()
-        image_short_name = listWidgetItem.text()
-        image_path = listWidgetItem.data(Qt.UserRole)["file_path"]
-        image_data = listWidgetItem.data(Qt.UserRole)["analysis_data"]
-        image = LinacDicomImage(image_path)
+        analysed_image_viewer = AnalysedImageViewer(list_item=listWidgetItem, parent=self)
 
-        plotView = pg.PlotWidget()
-        plotView.setAspectLocked(True)
-        plotItem = plotView.getPlotItem()
-        plotItem.setLimits(xMin=-150, xMax=image.array.shape[1]+150, yMin=-150, yMax=image.array.shape[0]+150)
-        plotItem.setRange(xRange=(-50, image.array.shape[1]+50), yRange=(-50, image.array.shape[0]+50))
-        plotItem.setLabel('left', 'Pixel')
-        plotItem.setLabel('bottom', 'Pixel')
-        #plotItem.invertY(True)
-
-        plot_legend = plotItem.addLegend(size = (50,50), offset=(30,20), 
-                                         labelTextColor=(255,255,255),
-                                         brush=pg.mkBrush((27, 38, 59, 200)))
-
-        image.flipud() # WL images are flip up-side down in Pylinac
-        
-        imageItem = pg.ImageItem(image=image.array)
-
-        bbX = image_data["bb_location"]["x"]
-        bbY = image_data["bb_location"]["y"]
-        caxX = image_data["field_cax"]["x"]
-        caxY = image_data["field_cax"]["y"]
-        epidX = image_data["epid"]["x"]
-        epidY = image_data["epid"]["y"]
-
-        bb_plotItem = pg.ScatterPlotItem()
-        cax_plotItem = pg.ScatterPlotItem()
-        bb_plotItem.addPoints(pos=[(bbX, bbY)], pen=None, size=10, brush=(255,0,0,255), name="BB center")
-        cax_plotItem.addPoints(pos=[(caxX, caxY)], pen=None, size=10, brush=(0,0,255,255),
-                                symbol="s", name="Field CAX")
-        
-        epidX_plot = pg.InfiniteLine(pos=[epidX,0],movable=False, angle=90, pen = (0,255,0), name="EPID-x line",
-                                        label="EPID x = {value:3.2f}", labelOpts={'position': 0.1,
-                                        'color': (255,255,255), 'fill': (0,200,0,200), 'movable': True})
-        
-        epidY_plot = pg.InfiniteLine(pos=[0,epidY], movable=False, angle=0, pen = (0,255,0), name="EPID-y line", 
-                                         label="EPID y = {value:3.2f}", labelOpts={'position': 0.1, 
-                                        'color': (255,255,255), 'fill': (0,200,0,200), 'movable': True})
-        
-        plot_legend.addItem(epidX_plot, "EPID-x line")
-        plot_legend.addItem(epidY_plot, "EPID-y line")
-        
-        epidX_plot.opts = {"pen": epidX_plot.pen}
-        epidY_plot.opts = {"pen": epidY_plot.pen}
-        
-        plotItem.addItem(imageItem)
-        plotItem.addColorBar(imageItem, colorMap=pg.colormap.getFromMatplotlib('gray'))
-        plotItem.addItem(bb_plotItem)
-        plotItem.addItem(cax_plotItem)
-        plotItem.addItem(epidX_plot)
-        plotItem.addItem(epidY_plot)
-
-        new_win = QMainWindow()
-        new_win.setWindowTitle(image_short_name + " (Analyzed Image) ")
-        new_win.setCentralWidget(plotView)
-        new_win.setMinimumSize(600, 500)
-        
-        self.imageView_windows.append(new_win)
-        new_win.show()
-        new_win.setMinimumSize(0, 0)
+        analysed_image_viewer.show()
 
     def show_shift_info(self):
         self.shift_dialog = MessageDialog()
         self.shift_dialog.set_title("BB Shift Instructions")
-        self.shift_dialog.set_text("To minimize the mean positioning error shift the ball-bearing as follows:")
-        self.shift_dialog.setStandardButtons(QMessageBox.StandardButton.Ok)
+        self.shift_dialog.set_header_text("To minimize the mean positioning error, shift the ball-bearing as follows:")
+        self.shift_dialog.set_standard_buttons(QDialogButtonBox.StandardButton.Ok)
 
         shifts = self.shift_info.split("; ")
-        self.shift_dialog.setInformativeText(f'{shifts[0].split(" ")[0]}: {shifts[0].split(" ")[1].replace("mm", " mm")}\n' \
-                                            f'{shifts[1].split(" ")[0]}: {shifts[1].split(" ")[1].replace("mm", " mm")}\n' \
-                                            f'{shifts[2].split(" ")[0]}: {shifts[2].split(" ")[1].replace("mm", " mm")}')
+        self.shift_dialog.set_info_text(f'{shifts[0].split(" ")[0]}: {shifts[0].split(" ")[1].replace("mm", " mm")}\n' 
+                                        f'{shifts[1].split(" ")[0]}: {shifts[1].split(" ")[1].replace("mm", " mm")}\n' \
+                                        f'{shifts[2].split(" ")[0]}: {shifts[2].split(" ")[1].replace("mm", " mm")}')
 
         shift_icon = QPixmap(u":/colorIcons/icons/bb_shift.png")
         self.shift_dialog.set_icon(shift_icon)
@@ -677,14 +613,14 @@ class QWLutzWorksheet(QWidget):
         self.delete_dialog = MessageDialog()
         self.delete_dialog.set_title("Delete File")
         self.delete_dialog.set_icon(MessageDialog.WARNING_ICON)
-        self.delete_dialog.set_text(f"Are you sure you want to permanently delete {listWidgetItem.text()}?")
+        self.delete_dialog.set_header_text(f"Are you sure you want to permanently delete {listWidgetItem.text()}?")
         self.delete_dialog.set_info_text("This action is irreversible!")
-        self.delete_dialog.setStandardButtons(QMessageBox.StandardButton.Yes | 
-                                             QMessageBox.StandardButton.Cancel)
+        self.delete_dialog.set_standard_buttons(QDialogButtonBox.StandardButton.Yes | 
+                                             QDialogButtonBox.StandardButton.Cancel)
 
         ret = self.delete_dialog.exec()
 
-        if ret == QMessageBox.StandardButton.Yes:
+        if ret == QDialogButtonBox.StandardButton.Yes:
             path = Path(listWidgetItem.data(Qt.UserRole)["file_path"])
             path.unlink(missing_ok=True)
             self.ui.imageListWidget.takeItem(self.ui.imageListWidget.currentRow())
@@ -710,6 +646,7 @@ class QWLutzWorksheet(QWidget):
         physicist_name_le = QLineEdit()
         institution_name_le = QLineEdit()
         treatment_unit_le = QComboBox()
+        comments_te = QPlainTextEdit()
         treatment_unit_le.setEditable(True)
         physicist_name_le.setMaximumWidth(250)
         physicist_name_le.setMinimumWidth(250)
@@ -742,6 +679,7 @@ class QWLutzWorksheet(QWidget):
         user_details_layout.addRow("Treatment unit:", treatment_unit_le)
         user_details_layout.addRow("Institution:", institution_name_le)
         user_details_layout.addRow("Save location:", save_location_layout)
+        user_details_layout.addRow("Comments:", comments_te)
         user_details_layout.addRow("",show_report_layout)
         user_details_layout.addItem(QSpacerItem(1,10, QSizePolicy.Policy.Minimum,
                                                 QSizePolicy.Policy.Minimum))
@@ -812,7 +750,9 @@ class QWLutzWorksheet(QWidget):
                                    analysis_summary = self.analysis_summary,
                                    report_status = self.ui.outcomeLE.text(),
                                    patient_info = patient_info,
-                                   tolerance = self.ui.toleranceDSB.value())
+                                   tolerance = self.ui.toleranceDSB.value(),
+                                   comments = comments_te.toPlainText()
+                                   )
         
             report.save_report()
 
@@ -954,3 +894,108 @@ class AdvancedWLView(QMainWindow):
             self.table_widget.setItem(row, 8, outcome_item)
     
         self.table_widget.setSortingEnabled(True)
+
+class AnalysedImageViewer(QMainWindow):
+
+    def __init__(self, list_item: QListWidgetItem, parent: QWidget = None) -> None:
+        super().__init__(parent)
+
+        self.setWindowTitle(list_item.text() + " (Analyzed Image)")
+
+        image_path = list_item.data(Qt.UserRole)["file_path"]
+        image_data = list_item.data(Qt.UserRole)["analysis_data"]
+        image = LinacDicomImage(image_path)
+
+        self.dpmm = image.dpmm
+        self.image_dim = image.array.shape
+
+        self.plot_view = pg.PlotWidget()
+        self.plot_view.setAspectLocked(True)
+        self.plot_item = self.plot_view.getPlotItem()
+        self.plot_item.setLimits(xMin=-150, xMax=self.image_dim[1]+150, yMin=-150, yMax=self.image_dim[0]+150)
+        self.plot_item.setRange(xRange=(-50, self.image_dim[1]+50), yRange=(-50, self.image_dim[0]+50))
+        self.plot_item.setLabel('left', 'Pixel')
+        self.plot_item.setLabel('bottom', 'Pixel')
+        #plotItem.invertY(True)
+
+        plot_legend = self.plot_item.addLegend(size = (50,50), offset=(30,20), 
+                                               labelTextColor=(255,255,255),
+                                               brush=pg.mkBrush((27, 38, 59, 200)))
+
+        image.flipud() # WL images are flip up-side down in Pylinac
+        
+        image_item = pg.ImageItem(image=image.array)
+
+        bbX = image_data["bb_location"]["x"]
+        bbY = image_data["bb_location"]["y"]
+        caxX = image_data["field_cax"]["x"]
+        caxY = image_data["field_cax"]["y"]
+        epidX = image_data["epid"]["x"]
+        epidY = image_data["epid"]["y"]
+
+        bb_plotItem = pg.ScatterPlotItem()
+        cax_plotItem = pg.ScatterPlotItem()
+        bb_plotItem.addPoints(pos=[(bbX, bbY)], pen=None, size=10, brush=(255,0,0,255), name="BB center")
+        cax_plotItem.addPoints(pos=[(caxX, caxY)], pen=None, size=10, brush=(255,165,0,255),
+                                symbol="s", name="Field CAX")
+        
+        epidX_plot = pg.InfiniteLine(pos=[epidX,0],movable=False, angle=90, pen = (0,255,0), name="EPID-x line",
+                                        label="EPID x = {value:3.2f}", labelOpts={'position': 0.1,
+                                        'color': (255,255,255), 'fill': (0,200,0,200), 'movable': True})
+        
+        epidY_plot = pg.InfiniteLine(pos=[0,epidY], movable=False, angle=0, pen = (0,255,0), name="EPID-y line", 
+                                         label="EPID y = {value:3.2f}", labelOpts={'position': 0.1, 
+                                        'color': (255,255,255), 'fill': (0,200,0,200), 'movable': True})
+        
+        plot_legend.addItem(epidX_plot, "EPID-x line")
+        plot_legend.addItem(epidY_plot, "EPID-y line")
+        
+        epidX_plot.opts = {"pen": epidX_plot.pen}
+        epidY_plot.opts = {"pen": epidY_plot.pen}
+        
+        self.plot_item.addItem(image_item)
+        self.plot_item.addColorBar(image_item, colorMap=pg.colormap.getFromMatplotlib('gray'))
+        self.plot_item.addItem(bb_plotItem)
+        self.plot_item.addItem(cax_plotItem)
+        self.plot_item.addItem(epidX_plot)
+        self.plot_item.addItem(epidY_plot)
+        self.plot_item.autoRange()
+
+        # Modify plot context menu
+        context_menu = self.plot_item.getViewBox().menu
+        context_menu.addSeparator()
+        
+        self.axes_unit_mode = 0 # 0 = pixels; 1 = millimetres
+
+        self.chg_axes_units = context_menu.addAction("Change axes units to mm")
+        self.chg_axes_units.triggered.connect(self.change_axes_units)
+
+        self.setCentralWidget(self.plot_view)
+        self.setMinimumSize(600, 500)
+
+    def change_axes_units(self):
+        """
+        if self.axes_unit_mode == 0:
+            self.chg_axes_units.setText("Change axes units to pixels")
+            self.axes_unit_mode = 1
+
+            self.plot_item.setLimits(xMin=-150/self.dpmm, 
+                                     xMax=(self.image_dim[1]+150)/self.dpmm, 
+                                     yMin=-150/self.dpmm, 
+                                     yMax=(self.image_dim[0]+150)/self.dpmm)
+            self.plot_item.setRange(xRange=(-50, self.image_dim[1]+50)/self.dpmm, 
+                                    yRange=(-50, self.image_dim[0]+50)/self.dpmm)
+            self.plot_item.setLabel('left', 'Distance relative to EPID Y')
+            self.plot_item.setLabel('bottom', 'Distance relative to EPID X')
+
+        else:
+            self.chg_axes_units.setText("Change axes units to mm")
+            self.axes_unit_mode = 0
+        
+            self.plot_item.setLimits(xMin=-150, xMax=self.image_dim[1]+150, yMin=-150, yMax=self.image_dim[0]+150)
+            self.plot_item.setRange(xRange=(-50, self.image_dim[1]+50), yRange=(-50, self.image_dim[0]+50))
+            self.plot_item.setLabel('left', 'Pixel')
+            self.plot_item.setLabel('bottom', 'Pixel')
+        """
+        
+

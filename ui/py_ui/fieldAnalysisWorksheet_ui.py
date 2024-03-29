@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'fieldAnalysisWorksheet.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.2
+## Created by: Qt User Interface Compiler version 6.6.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -31,7 +31,7 @@ class Ui_QFieldAnalysisWorksheet(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.stackedWidget = QStackedWidget(QFieldAnalysisWorksheet)
         self.stackedWidget.setObjectName(u"stackedWidget")
-        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.stackedWidget.sizePolicy().hasHeightForWidth())
@@ -46,7 +46,7 @@ class Ui_QFieldAnalysisWorksheet(object):
         self.mainActionsHL.setObjectName(u"mainActionsHL")
         self.analyzeBtn = QPushButton(self.analysisPage)
         self.analyzeBtn.setObjectName(u"analyzeBtn")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.analyzeBtn.sizePolicy().hasHeightForWidth())
@@ -122,7 +122,7 @@ class Ui_QFieldAnalysisWorksheet(object):
 
         self.mainActionsHL.addWidget(self.genReportBtn, 0, Qt.AlignLeft)
 
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.mainActionsHL.addItem(self.horizontalSpacer)
 
@@ -131,7 +131,7 @@ class Ui_QFieldAnalysisWorksheet(object):
 
         self.frame = QFrame(self.analysisPage)
         self.frame.setObjectName(u"frame")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
@@ -144,7 +144,7 @@ class Ui_QFieldAnalysisWorksheet(object):
         self.verticalLayout_3.setContentsMargins(0, 0, -1, -1)
         self.analysisSummaryLabel = QFrame(self.frame)
         self.analysisSummaryLabel.setObjectName(u"analysisSummaryLabel")
-        sizePolicy3 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Fixed)
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.analysisSummaryLabel.sizePolicy().hasHeightForWidth())
@@ -156,7 +156,7 @@ class Ui_QFieldAnalysisWorksheet(object):
 
         self.verticalLayout_3.addWidget(self.analysisSummaryLabel)
 
-        self.buttonSpacer = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        self.buttonSpacer = QSpacerItem(20, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
 
         self.verticalLayout_3.addItem(self.buttonSpacer)
 
@@ -183,7 +183,7 @@ class Ui_QFieldAnalysisWorksheet(object):
         self.verticalLayout_8.setContentsMargins(0, 0, 0, 0)
         self.summaryTE = QTextEdit(self.summaryScrollArea)
         self.summaryTE.setObjectName(u"summaryTE")
-        sizePolicy4 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.MinimumExpanding)
         sizePolicy4.setHorizontalStretch(0)
         sizePolicy4.setVerticalStretch(0)
         sizePolicy4.setHeightForWidth(self.summaryTE.sizePolicy().hasHeightForWidth())
@@ -205,7 +205,7 @@ class Ui_QFieldAnalysisWorksheet(object):
 
         self.verticalLayout_3.addLayout(self.analysisInfoVL)
 
-        self.verticalSpacer_4 = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Preferred)
+        self.verticalSpacer_4 = QSpacerItem(20, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)
 
         self.verticalLayout_3.addItem(self.verticalSpacer_4)
 
@@ -220,7 +220,7 @@ class Ui_QFieldAnalysisWorksheet(object):
 
         self.gridLayout.addWidget(self.importedImgLabel, 0, 0, 1, 1)
 
-        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Preferred, QSizePolicy.Minimum)
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Minimum)
 
         self.gridLayout.addItem(self.horizontalSpacer_3, 1, 4, 1, 1)
 
@@ -241,7 +241,7 @@ class Ui_QFieldAnalysisWorksheet(object):
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.analysisSumLabel = QLabel(self.analysisPage)
         self.analysisSumLabel.setObjectName(u"analysisSumLabel")
-        sizePolicy5 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         sizePolicy5.setHorizontalStretch(0)
         sizePolicy5.setVerticalStretch(0)
         sizePolicy5.setHeightForWidth(self.analysisSumLabel.sizePolicy().hasHeightForWidth())
@@ -255,7 +255,7 @@ class Ui_QFieldAnalysisWorksheet(object):
 
         self.imageListWidget = QListWidget(self.analysisPage)
         self.imageListWidget.setObjectName(u"imageListWidget")
-        sizePolicy6 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Expanding)
+        sizePolicy6 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Expanding)
         sizePolicy6.setHorizontalStretch(0)
         sizePolicy6.setVerticalStretch(0)
         sizePolicy6.setHeightForWidth(self.imageListWidget.sizePolicy().hasHeightForWidth())
@@ -270,7 +270,7 @@ class Ui_QFieldAnalysisWorksheet(object):
 
         self.addImgBtn = QPushButton(self.analysisPage)
         self.addImgBtn.setObjectName(u"addImgBtn")
-        sizePolicy7 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy7 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy7.setHorizontalStretch(0)
         sizePolicy7.setVerticalStretch(0)
         sizePolicy7.setHeightForWidth(self.addImgBtn.sizePolicy().hasHeightForWidth())
@@ -306,7 +306,7 @@ class Ui_QFieldAnalysisWorksheet(object):
 
         self.frame_2 = QFrame(self.analysisPage)
         self.frame_2.setObjectName(u"frame_2")
-        sizePolicy8 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+        sizePolicy8 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
         sizePolicy8.setHorizontalStretch(0)
         sizePolicy8.setVerticalStretch(0)
         sizePolicy8.setHeightForWidth(self.frame_2.sizePolicy().hasHeightForWidth())
@@ -351,7 +351,7 @@ class Ui_QFieldAnalysisWorksheet(object):
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
         self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 306, 511))
-        sizePolicy9 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
+        sizePolicy9 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.MinimumExpanding)
         sizePolicy9.setHorizontalStretch(0)
         sizePolicy9.setVerticalStretch(0)
         sizePolicy9.setHeightForWidth(self.scrollAreaWidgetContents.sizePolicy().hasHeightForWidth())
@@ -581,7 +581,7 @@ class Ui_QFieldAnalysisWorksheet(object):
         self.verticalLayout_6 = QVBoxLayout(self.analysisOutcomeFrame)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
         self.verticalLayout_6.setContentsMargins(0, 0, 0, 0)
-        self.verticalSpacer_6 = QSpacerItem(0, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        self.verticalSpacer_6 = QSpacerItem(0, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
 
         self.verticalLayout_6.addItem(self.verticalSpacer_6)
 
@@ -618,7 +618,7 @@ class Ui_QFieldAnalysisWorksheet(object):
 
         self.verticalLayout_6.addWidget(self.outcomeLE)
 
-        self.verticalSpacer_5 = QSpacerItem(10, 66, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_5 = QSpacerItem(10, 66, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_6.addItem(self.verticalSpacer_5)
 

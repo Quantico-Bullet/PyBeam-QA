@@ -1024,6 +1024,12 @@ border-style: solid;
                   <height>40</height>
                  </size>
                 </property>
+                <property name="toolTip">
+                 <string>Preferences</string>
+                </property>
+                <property name="toolTipDuration">
+                 <number>5000</number>
+                </property>
                 <property name="styleSheet">
                  <string notr="true">QPushButton {
     border-radius: 20px;
@@ -1131,8 +1137,8 @@ QPushButton:pressed {
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>466</width>
-                 <height>371</height>
+                 <width>418</width>
+                 <height>276</height>
                 </rect>
                </property>
                <property name="sizePolicy">

@@ -21,13 +21,13 @@ class AppMainWin(QMainWindow):
         self.initSetupComplete = False
 
         self.setWindowTitle("PyBeam QA")
-        self.setupPages()
+        self.setup_pages()
 
         self.initSetupComplete = True
 
-    def setupPages(self):
+    def setup_pages(self):
         # setup main page
-        self._ui.navTabBtnGroup.buttonClicked.connect(self.changeNavPage)
+        self._ui.navTabBtnGroup.buttonClicked.connect(self.change_nav_page)
         self._ui.photonCalib.installEventFilter(self)
         self._ui.electronCalib.installEventFilter(self)
         self._ui.winstonLutzAnalysis.installEventFilter(self)
@@ -48,9 +48,9 @@ class AppMainWin(QMainWindow):
                       "field_analysis": None,
                       "planar_imaging_analysis": None}
 
-    def setupCalibrationPage(self, calibType: str):
-        self.currLinac = None
-        self.beamCheckBoxList = []
+    def setup_calibration_page(self, calibType: str):
+        self.curr_linac = None
+        self.beam_checkbox_list = []
 
         # setup daily/monthly photons page functionality
         self._ui.calibStartBtn.clicked.connect(lambda: "fake slot") # use fake slots so that we can disconnect past slots without errors
@@ -58,7 +58,7 @@ class AppMainWin(QMainWindow):
         self._ui.backBtn.clicked.connect(lambda: "fake slot")
         self._ui.linacNameCB.currentTextChanged.connect(lambda x: "fake slot")
         self._ui.backBtn.clicked.disconnect()
-        self._ui.backBtn.clicked.connect(lambda: self.changeMainPage(self._ui.linacQAPage))
+        self._ui.backBtn.clicked.connect(lambda: self.change_main_page(self._ui.linacQAPage))
         self._ui.calibStartBtn.clicked.disconnect()
         self._ui.loadQABtn.clicked.disconnect()
         self._ui.linacNameCB.currentTextChanged.disconnect()
@@ -68,61 +68,61 @@ class AppMainWin(QMainWindow):
 
         if calibType == "photons":
             self._ui.calibPageTitle.setText("Photon Output Calibration")
-            self._ui.calibStartBtn.clicked.connect(lambda: self.initPhotonsCalibQA())
+            self._ui.calibStartBtn.clicked.connect(lambda: self.init_photons_calib_qa())
             self._ui.loadQABtn.clicked.connect(lambda: PhotonsMainWindow.load_from_file(None))
-            self._ui.linacNameCB.currentTextChanged.connect(lambda x: self.setLinacDetails(calibType, x))   
+            self._ui.linacNameCB.currentTextChanged.connect(lambda x: self.set_linac_details(calibType, x))   
 
         elif calibType == "electrons":
             self._ui.calibPageTitle.setText("Electron Output Calibration")
-            self._ui.calibStartBtn.clicked.connect(lambda: self.initElectronsCalibQA())
+            self._ui.calibStartBtn.clicked.connect(lambda: self.init_electrons_calib_qa())
             self._ui.loadQABtn.clicked.connect(lambda: ElectronsMainWindow.load_from_file(None))
-            self._ui.linacNameCB.currentTextChanged.connect(lambda x: self.setLinacDetails(calibType, x))
+            self._ui.linacNameCB.currentTextChanged.connect(lambda x: self.set_linac_details(calibType, x))
         
         # Add all available linacs
         for linac in DeviceManager.device_list["linacs"]:
             self._ui.linacNameCB.addItem(linac.name)
 
-    def setLinacDetails(self, calibType: str, linacName: str):
+    def set_linac_details(self, calibType: str, linacName: str):
         for linac in DeviceManager.device_list["linacs"]:
             if linacName == linac.name:
-                self.currLinac = linac
+                self.curr_linac = linac
         
         # check if there are beams added prior and remove them
-        self.beamCheckBoxList.clear()
-        addedPrior = self._ui.linacBeamsField.count()
+        self.beam_checkbox_list.clear()
+        added_prior = self._ui.linacBeamsField.count()
                 
-        for i in range(addedPrior):
+        for i in range(added_prior):
             layout = self._ui.linacBeamsField.takeAt(0)
             widget = layout.widget()
             widget.deleteLater()
 
         # TODO check if these fields exist/make sure they exist but are empty
-        self._ui.linacSerialNumField.setText(self.currLinac.serial_num)
-        self._ui.linacModelField.setText(self.currLinac.model_name)
-        self._ui.linacManufacField.setText(self.currLinac.manufacturer)
+        self._ui.linacSerialNumField.setText(self.curr_linac.serial_num)
+        self._ui.linacModelField.setText(self.curr_linac.model_name)
+        self._ui.linacManufacField.setText(self.curr_linac.manufacturer)
 
         # add new beams
         if calibType == "photons":
-            for i,beam in enumerate(self.currLinac.beams["photons"]):
-                checkBox = QCheckBox(f"{beam} MV")
-                self._ui.linacBeamsField.addWidget(checkBox,i,0,1,1)
-                self.beamCheckBoxList.append(checkBox)
+            for i, beam in enumerate(self.curr_linac.beams["photons"]):
+                check_box = QCheckBox(f"{beam} MV")
+                self._ui.linacBeamsField.addWidget(check_box,i,0,1,1)
+                self.beam_checkbox_list.append(check_box)
 
-            for i,beam in enumerate(self.currLinac.beams["photonsFFF"]):
-                checkBox = QCheckBox(f"{beam} MV FFF")
-                self._ui.linacBeamsField.addWidget(checkBox,i,1,1,1)
-                self.beamCheckBoxList.append(checkBox)
+            for i,beam in enumerate(self.curr_linac.beams["photonsFFF"]):
+                check_box = QCheckBox(f"{beam} MV FFF")
+                self._ui.linacBeamsField.addWidget(check_box,i,1,1,1)
+                self.beam_checkbox_list.append(check_box)
 
         elif calibType == "electrons":
-            for i,beam in enumerate(self.currLinac.beams["electrons"]):
-                checkBox = QCheckBox(f"{beam} MeV")
-                self._ui.linacBeamsField.addWidget(checkBox,i,0,1,1)
-                self.beamCheckBoxList.append(checkBox)
+            for i,beam in enumerate(self.curr_linac.beams["electrons"]):
+                check_box = QCheckBox(f"{beam} MeV")
+                self._ui.linacBeamsField.addWidget(check_box,i,0,1,1)
+                self.beam_checkbox_list.append(check_box)
 
-    def changeMainPage(self, currWidget: QWidget):
+    def change_main_page(self, currWidget: QWidget):
         self._ui.mainStackWidget.setCurrentWidget(currWidget)
 
-    def changeNavPage(self):
+    def change_nav_page(self):
         if self._ui.navTabBtnGroup.checkedButton() == self._ui.qaToolsBtn:
             self._ui.currentPageTitle.setText("QA Tools")
             self._ui.navigationStackedWidget.setCurrentIndex(0)
@@ -137,12 +137,12 @@ class AppMainWin(QMainWindow):
         # Catch all sub-navigation component clicks here
         # TODO remove too many if else checks
         if event.type() == QEvent.Type.MouseButtonPress and source is self._ui.photonCalib:
-            self.setupCalibrationPage("photons")
-            self.changeMainPage(self._ui.initCalibPage)
+            self.setup_calibration_page("photons")
+            self.change_main_page(self._ui.initCalibPage)
 
         elif event.type() == QEvent.Type.MouseButtonPress and source is self._ui.electronCalib:
-            self.setupCalibrationPage("electrons")
-            self.changeMainPage(self._ui.initCalibPage)
+            self.setup_calibration_page("electrons")
+            self.change_main_page(self._ui.initCalibPage)
 
         elif event.type() == QEvent.Type.MouseButtonPress and source is self._ui.winstonLutzAnalysis:
             self.open_window("winston_lutz", WinstonLutzMainWindow)
@@ -181,40 +181,40 @@ class AppMainWin(QMainWindow):
     def window_closed(self, winType: str):
         self.qa_windows[winType] = None
     
-    def initPhotonsCalibQA(self):
-        initData = {"institution": None,
+    def init_photons_calib_qa(self):
+        init_data = {"institution": None,
                     "user": None,
                     "photon_beams": [],
                     "photon_fff_beams": [],
-                    "linac": self.currLinac}
+                    "linac": self.curr_linac}
         
         # get CheckBoxes and select the checked ones
-        for beamCheckBox in self.beamCheckBoxList:
-            if beamCheckBox.isChecked():
-                if "FFF" in str(beamCheckBox.text()):
-                    initData["photon_fff_beams"].append(int(str(beamCheckBox.text())
+        for beam_checkbox in self.beam_checkbox_list:
+            if beam_checkbox.isChecked():
+                if "FFF" in str(beam_checkbox.text()):
+                    init_data["photon_fff_beams"].append(int(str(beam_checkbox.text())
                                     .split(" ")[0]))
                 else:
-                    initData["photon_beams"].append(int(str(beamCheckBox.text())
+                    init_data["photon_beams"].append(int(str(beam_checkbox.text())
                                     .split(" ")[0]))
                     
-        initData["institution"] = self._ui.institutionLE.text()
-        initData["user"] = self._ui.userLE.text()
+        init_data["institution"] = self._ui.institutionLE.text()
+        init_data["user"] = self._ui.userLE.text()
         
-        self.open_window("photon_cal", PhotonsMainWindow, initData)
+        self.open_window("photon_cal", PhotonsMainWindow, init_data)
 
-    def initElectronsCalibQA(self):
-        initData = {"institution": None,
+    def init_electrons_calib_qa(self):
+        init_data = {"institution": None,
                     "user": None,
                     "electron_beams": [],
-                    "linac": self.currLinac}
+                    "linac": self.curr_linac}
         
         # retrieve checkboxes and select the checked ones
-        for beamCheckBox in self.beamCheckBoxList:
-            if beamCheckBox.isChecked():
-                initData["electron_beams"].append(int(str(beamCheckBox.text()).split(" ")[0]))
+        for beam_checkbox in self.beam_checkbox_list:
+            if beam_checkbox.isChecked():
+                init_data["electron_beams"].append(int(str(beam_checkbox.text()).split(" ")[0]))
                     
-        initData["institution"] = self._ui.institutionLE.text()
-        initData["user"] = self._ui.userLE.text()
+        init_data["institution"] = self._ui.institutionLE.text()
+        init_data["user"] = self._ui.userLE.text()
         
-        self.open_window("electron_cal", ElectronsMainWindow, initData)
+        self.open_window("electron_cal", ElectronsMainWindow, init_data)

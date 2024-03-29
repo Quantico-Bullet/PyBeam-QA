@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'planarImagingWorksheet.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.2
+## Created by: Qt User Interface Compiler version 6.6.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -31,7 +31,7 @@ class Ui_QPlanarImagingWorksheet(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.stackedWidget = QStackedWidget(QPlanarImagingWorksheet)
         self.stackedWidget.setObjectName(u"stackedWidget")
-        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.stackedWidget.sizePolicy().hasHeightForWidth())
@@ -43,7 +43,7 @@ class Ui_QPlanarImagingWorksheet(object):
         self.gridLayout.setHorizontalSpacing(20)
         self.frame_2 = QFrame(self.analysisPage)
         self.frame_2.setObjectName(u"frame_2")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.frame_2.sizePolicy().hasHeightForWidth())
@@ -63,7 +63,7 @@ class Ui_QPlanarImagingWorksheet(object):
 
         self.splitter = QSplitter(self.frame_2)
         self.splitter.setObjectName(u"splitter")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.splitter.sizePolicy().hasHeightForWidth())
@@ -75,7 +75,7 @@ class Ui_QPlanarImagingWorksheet(object):
         self.splitter.setChildrenCollapsible(False)
         self.configFrame = QFrame(self.splitter)
         self.configFrame.setObjectName(u"configFrame")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.configFrame.sizePolicy().hasHeightForWidth())
@@ -145,7 +145,7 @@ class Ui_QPlanarImagingWorksheet(object):
 
         self.lConstrastMethodCB = QComboBox(self.frame_3)
         self.lConstrastMethodCB.setObjectName(u"lConstrastMethodCB")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         sizePolicy4.setHorizontalStretch(0)
         sizePolicy4.setVerticalStretch(0)
         sizePolicy4.setHeightForWidth(self.lConstrastMethodCB.sizePolicy().hasHeightForWidth())
@@ -208,7 +208,7 @@ class Ui_QPlanarImagingWorksheet(object):
         self.phantomAngleConfigVL.setObjectName(u"phantomAngleConfigVL")
         self.phantomAngleLabel = QLabel(self.frame_3)
         self.phantomAngleLabel.setObjectName(u"phantomAngleLabel")
-        sizePolicy5 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Preferred)
+        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)
         sizePolicy5.setHorizontalStretch(0)
         sizePolicy5.setVerticalStretch(0)
         sizePolicy5.setHeightForWidth(self.phantomAngleLabel.sizePolicy().hasHeightForWidth())
@@ -317,7 +317,7 @@ class Ui_QPlanarImagingWorksheet(object):
 
         self.outcomeLE = QLineEdit(self.outcomeFrame)
         self.outcomeLE.setObjectName(u"outcomeLE")
-        sizePolicy6 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy6 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         sizePolicy6.setHorizontalStretch(0)
         sizePolicy6.setVerticalStretch(0)
         sizePolicy6.setHeightForWidth(self.outcomeLE.sizePolicy().hasHeightForWidth())
@@ -338,7 +338,7 @@ class Ui_QPlanarImagingWorksheet(object):
 
         self.verticalLayout_7.addWidget(self.outcomeLE)
 
-        self.verticalSpacer = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer = QSpacerItem(20, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_7.addItem(self.verticalSpacer)
 
@@ -354,7 +354,7 @@ class Ui_QPlanarImagingWorksheet(object):
         self.mainActionsHL.setObjectName(u"mainActionsHL")
         self.analyzeBtn = QPushButton(self.analysisPage)
         self.analyzeBtn.setObjectName(u"analyzeBtn")
-        sizePolicy7 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        sizePolicy7 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         sizePolicy7.setHorizontalStretch(0)
         sizePolicy7.setVerticalStretch(0)
         sizePolicy7.setHeightForWidth(self.analyzeBtn.sizePolicy().hasHeightForWidth())
@@ -430,7 +430,7 @@ class Ui_QPlanarImagingWorksheet(object):
 
         self.mainActionsHL.addWidget(self.genReportBtn, 0, Qt.AlignLeft)
 
-        self.horizontalSpacer = QSpacerItem(10, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer = QSpacerItem(10, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.mainActionsHL.addItem(self.horizontalSpacer)
 
@@ -439,7 +439,7 @@ class Ui_QPlanarImagingWorksheet(object):
 
         self.frame = QFrame(self.analysisPage)
         self.frame.setObjectName(u"frame")
-        sizePolicy8 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        sizePolicy8 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
         sizePolicy8.setHorizontalStretch(0)
         sizePolicy8.setVerticalStretch(0)
         sizePolicy8.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
@@ -451,7 +451,7 @@ class Ui_QPlanarImagingWorksheet(object):
         self.verticalLayout_3.setContentsMargins(0, 0, -1, -1)
         self.analysisSummaryLabel = QFrame(self.frame)
         self.analysisSummaryLabel.setObjectName(u"analysisSummaryLabel")
-        sizePolicy9 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
+        sizePolicy9 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Fixed)
         sizePolicy9.setHorizontalStretch(0)
         sizePolicy9.setVerticalStretch(0)
         sizePolicy9.setHeightForWidth(self.analysisSummaryLabel.sizePolicy().hasHeightForWidth())
@@ -463,7 +463,7 @@ class Ui_QPlanarImagingWorksheet(object):
 
         self.verticalLayout_3.addWidget(self.analysisSummaryLabel)
 
-        self.buttonSpacer = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        self.buttonSpacer = QSpacerItem(20, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
 
         self.verticalLayout_3.addItem(self.buttonSpacer)
 
@@ -472,7 +472,7 @@ class Ui_QPlanarImagingWorksheet(object):
 
         self.verticalLayout_3.addLayout(self.analysisInfoVL)
 
-        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.MinimumExpanding)
+        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
 
         self.verticalLayout_3.addItem(self.verticalSpacer_4)
 
@@ -485,7 +485,7 @@ class Ui_QPlanarImagingWorksheet(object):
 
         self.gridLayout.addWidget(self.importedImgLabel, 0, 0, 1, 1)
 
-        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Preferred, QSizePolicy.Minimum)
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Minimum)
 
         self.gridLayout.addItem(self.horizontalSpacer_3, 1, 4, 1, 1)
 
@@ -517,7 +517,7 @@ class Ui_QPlanarImagingWorksheet(object):
 
         self.imageListWidget = QListWidget(self.analysisPage)
         self.imageListWidget.setObjectName(u"imageListWidget")
-        sizePolicy10 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy10 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy10.setHorizontalStretch(0)
         sizePolicy10.setVerticalStretch(0)
         sizePolicy10.setHeightForWidth(self.imageListWidget.sizePolicy().hasHeightForWidth())
@@ -532,7 +532,7 @@ class Ui_QPlanarImagingWorksheet(object):
 
         self.addImgBtn = QPushButton(self.analysisPage)
         self.addImgBtn.setObjectName(u"addImgBtn")
-        sizePolicy11 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy11 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy11.setHorizontalStretch(0)
         sizePolicy11.setVerticalStretch(0)
         sizePolicy11.setHeightForWidth(self.addImgBtn.sizePolicy().hasHeightForWidth())

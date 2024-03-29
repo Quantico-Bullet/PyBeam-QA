@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QMainWindow
+from PySide6.QtWidgets import QMainWindow, QDialogButtonBox, QDialog
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QPixmap, QDesktopServices
 
@@ -96,11 +96,16 @@ class QAToolsWindow(QMainWindow):
         warning_dialog = MessageDialog()
         warning_dialog.set_icon(MessageDialog.WARNING_ICON)
         warning_dialog.set_title("Close Tab")
-        warning_dialog.set_info_text("Are you sure you want to close this tab?")
+        warning_dialog.set_header_text("Do you want to close this tab?")
+        warning_dialog.set_info_text("Closing this tab will remove any unsaved work, proceed?")
 
-        response = warning_dialog.exec()
+        warning_dialog.set_standard_buttons(QDialogButtonBox.StandardButton.Yes | 
+                                            QDialogButtonBox.StandardButton.No)
 
-        self.ui.tabWidget.removeTab(tab_index)
+        response = warning_dialog.exec_()
+
+        if response == QDialog.DialogCode.Accepted:
+            self.ui.tabWidget.removeTab(tab_index)
         
     def about_app(self):
         about = AboutDialog()

@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'pf_offsets_dialog.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.2
+## Created by: Qt User Interface Compiler version 6.6.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -27,13 +27,13 @@ class Ui_PFOffsetDialog(object):
         PFOffsetDialog.resize(369, 400)
         self.gridLayout = QGridLayout(PFOffsetDialog)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.buttons_spacer = QSpacerItem(10, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        self.buttons_spacer = QSpacerItem(10, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
 
         self.gridLayout.addItem(self.buttons_spacer, 3, 0, 1, 1)
 
         self.button_box = QDialogButtonBox(PFOffsetDialog)
         self.button_box.setObjectName(u"button_box")
-        sizePolicy = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.button_box.sizePolicy().hasHeightForWidth())
@@ -45,7 +45,7 @@ class Ui_PFOffsetDialog(object):
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_2.addItem(self.horizontalSpacer_2)
 
@@ -59,7 +59,7 @@ class Ui_PFOffsetDialog(object):
 
         self.horizontalLayout_2.addWidget(self.picket_num_cb)
 
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_2.addItem(self.horizontalSpacer)
 

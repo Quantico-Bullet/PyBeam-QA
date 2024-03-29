@@ -12,7 +12,7 @@ The program is still in early development and may contain bugs. Tools are flagge
 
 | QA Tool | Status |
 | --------------- | --------------- |
-| TRS 398 Photon & Electron output calibration | In-progress |
+| TRS 398 Photon & Electron output calibration | Complete |
 | Picket fence | Complete |
 | Winston-Lutz analysis | Complete |
 | Star-shot analysis | Complete |
@@ -29,7 +29,7 @@ The program includes some of these complementary features:
 As of current the program depends on the following:
 - Python (3.10+)
 - PySide6 (6.4+)
-- pylinac (3.9.0+)
+- pylinac (3.16.0+)
 - pyqtgraph (0.13.2+)
 - pdfrw (0.4)
 
@@ -41,4 +41,4 @@ with existing python libraries. You can use a dependency manager such as `Pipenv
 
 ## Quick start
 To run the application simply navigate to the source code directory and run the following command:\
-`python3 main.py`
+`python main.py` or `python3 main.py`

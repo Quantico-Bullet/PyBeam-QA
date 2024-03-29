@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'electronsWorksheet.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.2
+## Created by: Qt User Interface Compiler version 6.6.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -26,8 +26,8 @@ class Ui_QElectronsWorksheet(object):
     def setupUi(self, QElectronsWorksheet):
         if not QElectronsWorksheet.objectName():
             QElectronsWorksheet.setObjectName(u"QElectronsWorksheet")
-        QElectronsWorksheet.resize(1109, 620)
-        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        QElectronsWorksheet.resize(1109, 625)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(QElectronsWorksheet.sizePolicy().hasHeightForWidth())
@@ -45,7 +45,7 @@ class Ui_QElectronsWorksheet(object):
         self.calibSummaryVL.setObjectName(u"calibSummaryVL")
         self.calibSummaryWidget = QWidget(QElectronsWorksheet)
         self.calibSummaryWidget.setObjectName(u"calibSummaryWidget")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.calibSummaryWidget.sizePolicy().hasHeightForWidth())
@@ -58,7 +58,7 @@ class Ui_QElectronsWorksheet(object):
         self.verticalLayout_12.setContentsMargins(0, 0, 0, 0)
         self.CalibSummaryLabel = QLabel(self.calibSummaryWidget)
         self.CalibSummaryLabel.setObjectName(u"CalibSummaryLabel")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.CalibSummaryLabel.sizePolicy().hasHeightForWidth())
@@ -73,7 +73,7 @@ class Ui_QElectronsWorksheet(object):
 
         self.calibSummaryHLine = QFrame(self.calibSummaryWidget)
         self.calibSummaryHLine.setObjectName(u"calibSummaryHLine")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.calibSummaryHLine.sizePolicy().hasHeightForWidth())
@@ -85,13 +85,13 @@ class Ui_QElectronsWorksheet(object):
 
         self.verticalLayout_12.addWidget(self.calibSummaryHLine)
 
-        self.verticalSpacer_7 = QSpacerItem(20, 4, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        self.verticalSpacer_7 = QSpacerItem(20, 4, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
 
         self.verticalLayout_12.addItem(self.verticalSpacer_7)
 
         self.scrollArea = QScrollArea(self.calibSummaryWidget)
         self.scrollArea.setObjectName(u"scrollArea")
-        sizePolicy4 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.MinimumExpanding)
         sizePolicy4.setHorizontalStretch(0)
         sizePolicy4.setVerticalStretch(0)
         sizePolicy4.setHeightForWidth(self.scrollArea.sizePolicy().hasHeightForWidth())
@@ -108,8 +108,8 @@ class Ui_QElectronsWorksheet(object):
         self.scrollArea.setWidgetResizable(True)
         self.calSummaryScroll = QWidget()
         self.calSummaryScroll.setObjectName(u"calSummaryScroll")
-        self.calSummaryScroll.setGeometry(QRect(0, 0, 379, 346))
-        sizePolicy5 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.MinimumExpanding)
+        self.calSummaryScroll.setGeometry(QRect(0, 0, 379, 348))
+        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.MinimumExpanding)
         sizePolicy5.setHorizontalStretch(0)
         sizePolicy5.setVerticalStretch(0)
         sizePolicy5.setHeightForWidth(self.calSummaryScroll.sizePolicy().hasHeightForWidth())
@@ -154,7 +154,7 @@ class Ui_QElectronsWorksheet(object):
 
         self.kElecLabel = QLabel(self.calSummaryScroll)
         self.kElecLabel.setObjectName(u"kElecLabel")
-        sizePolicy6 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
+        sizePolicy6 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.MinimumExpanding)
         sizePolicy6.setHorizontalStretch(0)
         sizePolicy6.setVerticalStretch(0)
         sizePolicy6.setHeightForWidth(self.kElecLabel.sizePolicy().hasHeightForWidth())
@@ -262,7 +262,7 @@ class Ui_QElectronsWorksheet(object):
 
         self.verticalLayout_5.addLayout(self.corrFactorFL_2)
 
-        self.verticalSpacer_8 = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        self.verticalSpacer_8 = QSpacerItem(20, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
 
         self.verticalLayout_5.addItem(self.verticalSpacer_8)
 
@@ -279,7 +279,7 @@ class Ui_QElectronsWorksheet(object):
         self.absorbedDoseFL_2.setVerticalSpacing(4)
         self.zrefDoseLabel = QLabel(self.calSummaryScroll)
         self.zrefDoseLabel.setObjectName(u"zrefDoseLabel")
-        sizePolicy7 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+        sizePolicy7 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
         sizePolicy7.setHorizontalStretch(0)
         sizePolicy7.setVerticalStretch(0)
         sizePolicy7.setHeightForWidth(self.zrefDoseLabel.sizePolicy().hasHeightForWidth())
@@ -340,7 +340,7 @@ class Ui_QElectronsWorksheet(object):
 
         self.verticalLayout_12.addWidget(self.scrollArea)
 
-        self.verticalSpacer_9 = QSpacerItem(20, 5, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_9 = QSpacerItem(20, 5, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_12.addItem(self.verticalSpacer_9)
 
@@ -382,7 +382,7 @@ class Ui_QElectronsWorksheet(object):
         self.verticalLayout_12.addWidget(self.outcomeLE)
 
 
-        self.calibSummaryVL.addWidget(self.calibSummaryWidget)
+        self.calibSummaryVL.addWidget(self.calibSummaryWidget, 0, Qt.AlignTop)
 
 
         self.worksheetGrid.addLayout(self.calibSummaryVL, 1, 2, 1, 1)
@@ -398,7 +398,7 @@ class Ui_QElectronsWorksheet(object):
         self.siteDataFL.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         self.institutionLabel = QLabel(self.siteDataWidget)
         self.institutionLabel.setObjectName(u"institutionLabel")
-        sizePolicy8 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        sizePolicy8 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
         sizePolicy8.setHorizontalStretch(0)
         sizePolicy8.setVerticalStretch(0)
         sizePolicy8.setHeightForWidth(self.institutionLabel.sizePolicy().hasHeightForWidth())
@@ -408,7 +408,7 @@ class Ui_QElectronsWorksheet(object):
 
         self.institutionLE = QLineEdit(self.siteDataWidget)
         self.institutionLE.setObjectName(u"institutionLE")
-        sizePolicy9 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
+        sizePolicy9 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Fixed)
         sizePolicy9.setHorizontalStretch(0)
         sizePolicy9.setVerticalStretch(0)
         sizePolicy9.setHeightForWidth(self.institutionLE.sizePolicy().hasHeightForWidth())
@@ -454,7 +454,7 @@ class Ui_QElectronsWorksheet(object):
 
         self.horizontalLayout_2.addWidget(self.dateDE)
 
-        self.horizontalSpacer_3 = QSpacerItem(20, 20, QSizePolicy.Fixed, QSizePolicy.Minimum)
+        self.horizontalSpacer_3 = QSpacerItem(20, 20, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_2.addItem(self.horizontalSpacer_3)
 
@@ -485,11 +485,11 @@ class Ui_QElectronsWorksheet(object):
 
         self.worksheetGrid.addWidget(self.siteDataWidget, 0, 0, 1, 1)
 
-        self.horizontalSpacer = QSpacerItem(0, 20, QSizePolicy.Fixed, QSizePolicy.Minimum)
+        self.horizontalSpacer = QSpacerItem(0, 20, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Minimum)
 
         self.worksheetGrid.addItem(self.horizontalSpacer, 1, 1, 1, 1)
 
-        self.horizontalSpacer_2 = QSpacerItem(10, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer_2 = QSpacerItem(10, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.worksheetGrid.addItem(self.horizontalSpacer_2, 1, 3, 1, 1)
 
@@ -503,7 +503,7 @@ class Ui_QElectronsWorksheet(object):
         self.worksheetScrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 605, 1942))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 605, 2044))
         sizePolicy2.setHeightForWidth(self.scrollAreaWidgetContents.sizePolicy().hasHeightForWidth())
         self.scrollAreaWidgetContents.setSizePolicy(sizePolicy2)
         self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents)
@@ -512,7 +512,7 @@ class Ui_QElectronsWorksheet(object):
         self.sectionOneGB = QGroupBox(self.scrollAreaWidgetContents)
         self.sectionOneGB.setObjectName(u"sectionOneGB")
         self.sectionOneGB.setEnabled(True)
-        sizePolicy10 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        sizePolicy10 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         sizePolicy10.setHorizontalStretch(0)
         sizePolicy10.setVerticalStretch(0)
         sizePolicy10.setHeightForWidth(self.sectionOneGB.sizePolicy().hasHeightForWidth())
@@ -782,7 +782,10 @@ class Ui_QElectronsWorksheet(object):
         self.refDepthLE.setSizePolicy(sizePolicy2)
         self.refDepthLE.setMinimumSize(QSize(100, 0))
         self.refDepthLE.setMaximumSize(QSize(100, 16777215))
-        self.refDepthLE.setStyleSheet(u"background-color: rgb(153, 193, 241);")
+        font2 = QFont()
+        font2.setBold(True)
+        self.refDepthLE.setFont(font2)
+        self.refDepthLE.setStyleSheet(u"background-color: rgb(100, 100, 150);")
         self.refDepthLE.setReadOnly(True)
 
         self.refDepthHL.addWidget(self.refDepthLE)
@@ -1238,7 +1241,7 @@ class Ui_QElectronsWorksheet(object):
 
         self.sectionTwoFL.setWidget(13, QFormLayout.FieldRole, self.corrPolarEffCheckB)
 
-        self.verticalSpacer_2 = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_2 = QSpacerItem(20, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.sectionTwoFL.setItem(14, QFormLayout.FieldRole, self.verticalSpacer_2)
 
@@ -1351,7 +1354,7 @@ class Ui_QElectronsWorksheet(object):
         self.sectionThreeGB = QGroupBox(self.scrollAreaWidgetContents)
         self.sectionThreeGB.setObjectName(u"sectionThreeGB")
         self.sectionThreeGB.setEnabled(True)
-        sizePolicy11 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred)
+        sizePolicy11 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Preferred)
         sizePolicy11.setHorizontalStretch(0)
         sizePolicy11.setVerticalStretch(0)
         sizePolicy11.setHeightForWidth(self.sectionThreeGB.sizePolicy().hasHeightForWidth())
@@ -1438,7 +1441,7 @@ class Ui_QElectronsWorksheet(object):
 
         self.sectionThreeFL.setLayout(2, QFormLayout.FieldRole, self.ratioReadMUHL)
 
-        self.tempPressCorrSpacer = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.tempPressCorrSpacer = QSpacerItem(20, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.sectionThreeFL.setItem(3, QFormLayout.LabelRole, self.tempPressCorrSpacer)
 
@@ -1525,7 +1528,7 @@ class Ui_QElectronsWorksheet(object):
 
         self.sectionThreeFL.setLayout(4, QFormLayout.FieldRole, self.tempPressCorrFL)
 
-        self.polarCorrSpacer = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.polarCorrSpacer = QSpacerItem(20, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.sectionThreeFL.setItem(5, QFormLayout.LabelRole, self.polarCorrSpacer)
 
@@ -1588,7 +1591,7 @@ class Ui_QElectronsWorksheet(object):
 
         self.sectionThreeFL.setLayout(6, QFormLayout.FieldRole, self.polarCorrFL)
 
-        self.ionRecombCorrSpacer = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.ionRecombCorrSpacer = QSpacerItem(20, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.sectionThreeFL.setItem(7, QFormLayout.LabelRole, self.ionRecombCorrSpacer)
 
@@ -1756,7 +1759,7 @@ class Ui_QElectronsWorksheet(object):
         self.verticalLayout_7 = QVBoxLayout(self.electmeterCorrSpacer)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
         self.verticalLayout_7.setContentsMargins(0, 0, 0, 0)
-        self.verticalSpacer_3 = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        self.verticalSpacer_3 = QSpacerItem(20, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
 
         self.verticalLayout_7.addItem(self.verticalSpacer_3)
 
@@ -1805,7 +1808,7 @@ class Ui_QElectronsWorksheet(object):
 
         self.verticalLayout_3.addLayout(self.depthDMaxFL)
 
-        self.vSpacerSecFour = QSpacerItem(20, 10, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.vSpacerSecFour = QSpacerItem(20, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_3.addItem(self.vSpacerSecFour)
 
@@ -1904,7 +1907,7 @@ class Ui_QElectronsWorksheet(object):
 
         self.tmrHL.addWidget(self.tmrLE)
 
-        self.tmrSpacer = QSpacerItem(0, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.tmrSpacer = QSpacerItem(0, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.tmrHL.addItem(self.tmrSpacer)
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1109</width>
-    <height>620</height>
+    <height>625</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -42,7 +42,7 @@
      </property>
      <item row="1" column="2">
       <layout class="QVBoxLayout" name="calibSummaryVL">
-       <item>
+       <item alignment="Qt::AlignTop">
         <widget class="QWidget" name="calibSummaryWidget" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -169,7 +169,7 @@ QAbstractScrollArea::corner {
                <x>0</x>
                <y>0</y>
                <width>379</width>
-               <height>346</height>
+               <height>348</height>
               </rect>
              </property>
              <property name="sizePolicy">
@@ -887,7 +887,7 @@ font-weight: bold;
           <x>0</x>
           <y>0</y>
           <width>605</width>
-          <height>1942</height>
+          <height>2044</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -1400,8 +1400,14 @@ font-weight: bold;
                     <height>16777215</height>
                    </size>
                   </property>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
                   <property name="styleSheet">
-                   <string notr="true">background-color: rgb(153, 193, 241);</string>
+                   <string notr="true">background-color: rgb(100, 100, 150);</string>
                   </property>
                   <property name="readOnly">
                    <bool>true</bool>
@@ -3426,12 +3432,12 @@ QPushButton:!enabled{
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="userPolarityGroup"/>
+  <buttongroup name="r50SourceGroup"/>
   <buttongroup name="calibSetupGroup"/>
-  <buttongroup name="calibSeparateGroup"/>
   <buttongroup name="beamQualityGroup"/>
+  <buttongroup name="calibSeparateGroup"/>
+  <buttongroup name="userPolarityGroup"/>
   <buttongroup name="calibPolarityGroup"/>
   <buttongroup name="beamTypeGroup"/>
-  <buttongroup name="r50SourceGroup"/>
  </buttongroups>
 </ui>

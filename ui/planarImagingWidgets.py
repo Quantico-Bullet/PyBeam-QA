@@ -1,15 +1,16 @@
 from PySide6.QtWidgets import (QWidget, QLabel, QProgressBar, QVBoxLayout, QFileDialog,
                                QListWidgetItem, QMenu, QSizePolicy, QMessageBox, 
-                               QMainWindow, QFormLayout, QTabWidget, QGridLayout,
+                               QMainWindow, QFormLayout, QGridLayout,
                                QSplitter, QComboBox, QDialog, QDialogButtonBox, QLineEdit, 
-                               QSpacerItem, QPushButton, QCheckBox, QHBoxLayout)
+                               QSpacerItem, QPushButton, QCheckBox, QHBoxLayout, QPlainTextEdit)
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtCore import Qt, QSize, QEvent, QThread, Signal
 
+from ui.utilsWidgets.dialogs import MessageDialog
 from ui.py_ui.planarImagingWorksheet_ui import Ui_QPlanarImagingWorksheet
 from ui.py_ui import icons_rc
 from core.analysis.planar_imaging import QPlanarImaging, QPlanarImagingWorker
-from core.tools.report import FieldAnalysisReport
+from core.tools.report import PlanarImagingReport
 from core.tools.devices import DeviceManager
 
 from ui.utilsWidgets.statusbar_widgets import AnalysisInfoLabel
@@ -21,6 +22,7 @@ import subprocess
 import pyqtgraph as pg
 from pathlib import Path
 from pylinac.core.image import LinacDicomImage
+from pylinac.planar_imaging import ImagePhantomBase
 
 from pylinac.core.contrast import Contrast
 
@@ -325,8 +327,8 @@ class QPlanarImagingWorksheet(QWidget):
         self.delete_dialog.setText("<p><span style=\" font-weight:700; font-size: 11pt;\">" \
                                   f"Are you sure you want to permanently delete \'{listWidgetItem.text()}\' ? </span></p>")
         self.delete_dialog.setInformativeText("This action is irreversible!")
-        self.delete_dialog.setStandardButtons(QMessageBox.StandardButton.Yes | 
-                                             QMessageBox.StandardButton.Cancel)
+        self.delete_dialog.setStandardButtons(QDialogButtonBox.StandardButton.Yes,
+                                              QDialogButtonBox.StandardButton.Cancel)
         self.delete_dialog.setTextFormat(Qt.TextFormat.RichText)
 
         warning_icon = QPixmap(u":/colorIcons/icons/warning.png")
@@ -335,7 +337,7 @@ class QPlanarImagingWorksheet(QWidget):
 
         ret = self.delete_dialog.exec()
 
-        if ret == QMessageBox.StandardButton.Yes:
+        if ret == QDialogButtonBox.StandardButtonYes:
             path = Path(listWidgetItem.data(Qt.UserRole)["file_path"])
             path.unlink(missing_ok=True)
             self.ui.imageListWidget.takeItem(self.ui.imageListWidget.currentRow())
@@ -393,17 +395,12 @@ class QPlanarImagingWorksheet(QWidget):
         self.analysis_progress_bar.hide()
         self.analysis_message_label.hide()
 
-        self.warning_dialog = QMessageBox()
-        self.warning_dialog.setWindowTitle("Analysis Error")
-        self.warning_dialog.setText("<p><span style=\" font-weight:700; font-size: 12pt;\">" \
-                                  "Oops! An error was encountered</span></p>")
-        self.warning_dialog.setInformativeText(error_message)
-        self.warning_dialog.setStandardButtons(QMessageBox.StandardButton.Ok)
-        self.warning_dialog.setTextFormat(Qt.TextFormat.RichText)
-
-        error_icon = QPixmap(u":/colorIcons/icons/error_round.png")
-        error_icon = error_icon.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
-        self.warning_dialog.setIconPixmap(error_icon)
+        self.warning_dialog = MessageDialog()
+        self.warning_dialog.set_title("Analysis Error")
+        self.warning_dialog.set_header_text("Oops! An error was encountered")
+        self.warning_dialog.set_info_text(error_message)
+        self.warning_dialog.set_standard_buttons(QDialogButtonBox.StandardButton.Ok)
+        self.warning_dialog.set_icon(MessageDialog.CRITICAL_ICON)
 
         self.warning_dialog.exec()
 
@@ -500,9 +497,21 @@ class QPlanarImagingWorksheet(QWidget):
             self.form_layout.addRow(summary_item[0], QLabel(summary_item[1]))
 
         # Update the report summary
-        pi = results["planar_img_obj"]
+        phantom_base: ImagePhantomBase = results["planar_img_obj"]._phantom
+        data = phantom_base.results_data()
 
-        # Update the advanced view
+        #TODO remove repeated code
+        #update analysis summary
+        self.analysis_summary = [["No. of low contrasts ROIs visible", f"{data.num_contrast_rois_seen}"],
+                                 ["Median contrast", f"{data.median_contrast:2.2f}"],
+                                 ["Median contrast-to-noise ratio", f"{data.median_cnr:2.2f}"],
+                                 ["MTF 80% (lp/mm)", f"{data.mtf_lp_mm[0][80]: 2.2f}"],
+                                 ["MTF 50% (lp/mm)", f"{data.mtf_lp_mm[1][50]: 2.2f}"],
+                                 ["MTF 30% (lp/mm):", f"{data.mtf_lp_mm[2][30]: 2.2f}"]
+                                 ]
+
+        pi = results["planar_img_obj"]
+        # Update the advanced viewcle
         if self.advanced_results_view is not None:
             self.advanced_results_view.update_planar_image(pi)
 
@@ -534,6 +543,11 @@ class QPlanarImagingWorksheet(QWidget):
         physicist_name_le = QLineEdit()
         institution_name_le = QLineEdit()
         treatment_unit_le = QComboBox()
+        imaging_sys_cb = QComboBox()
+        imaging_sys_cb.addItems(["EPID", "kV Imager"])
+        imaging_sys_name = QComboBox()
+        imaging_sys_name.setEditable(True)
+        comments_te = QPlainTextEdit()
         treatment_unit_le.setEditable(True)
         physicist_name_le.setMaximumWidth(250)
         physicist_name_le.setMinimumWidth(250)
@@ -565,7 +579,10 @@ class QPlanarImagingWorksheet(QWidget):
         user_details_layout.addRow("Physicist:", physicist_name_le)
         user_details_layout.addRow("Treatment unit:", treatment_unit_le)
         user_details_layout.addRow("Institution:", institution_name_le)
+        user_details_layout.addRow("Imaging system type:", imaging_sys_cb)
+        user_details_layout.addRow("Imaging system name:", imaging_sys_name)
         user_details_layout.addRow("Save location:", save_location_layout)
+        user_details_layout.addRow("Comments:", comments_te)
         user_details_layout.addRow("",show_report_layout)
         user_details_layout.addItem(QSpacerItem(1,10, QSizePolicy.Policy.Minimum,
                                                 QSizePolicy.Policy.Minimum))
@@ -602,16 +619,18 @@ class QPlanarImagingWorksheet(QWidget):
             institution_name = "N/A" if institution_name_le.text() == "" else institution_name_le.text()
             treatment_unit = "N/A" if treatment_unit_le.currentText() == "" else treatment_unit_le.currentText()
 
-            fa = self.current_results["field_analysis_obj"]
+            pi = self.current_results["planar_img_obj"]
 
-            report = FieldAnalysisReport(save_path_le.text(),
+            report = PlanarImagingReport(save_path_le.text(),
                                    author = physicist_name,
                                    institution = institution_name,
                                    treatment_unit_name = treatment_unit,
-                                   protocol = "Varian",
-                                   analysis_summary = fa.get_publishable_results(),
-                                   summary_plots = fa.get_publishable_plots(),
-            )
+                                   imaging_system_type = imaging_sys_cb.currentText(),
+                                   imaging_system_name = imaging_sys_name.currentText(),
+                                   phantom_name = pi._phantom.common_name,
+                                   summary_plots = pi.get_publishable_plots(),
+                                   analysis_summary = self.analysis_summary,
+                                   comments = comments_te.toPlainText())
         
             report.save_report()
 

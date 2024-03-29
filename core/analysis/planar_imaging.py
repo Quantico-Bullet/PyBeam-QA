@@ -6,7 +6,9 @@ from pylinac.planar_imaging import (ImagePhantomBase, LeedsTOR, LeedsTORBlue, La
                                     StandardImagingQCkV, ElektaLasVegas)
 from pylinac.core.contrast import Contrast
 from pylinac.core.geometry import Circle, Rectangle
+from pylinac.settings import get_dicom_cmap
 
+import io
 from matplotlib.patches import Rectangle as MatplotRect
 from pathlib import Path
 from typing import BinaryIO
@@ -175,6 +177,21 @@ class QPlanarImaging():
         else:
             self.high_freq_plot.hide()
 
+    def get_publishable_plots(self) -> list[io.BytesIO()]:
+        """
+        Custom plot implementation to get smaller, high quality pdf images
+        """
+        figs, names = self._phantom.plot_analyzed_image(
+            show=False, split_plots=True, figsize = (4.5 ,4.5)
+        )
+
+        filenames = [io.BytesIO() for _ in names]
+        for fig, name in zip(figs, filenames):
+            fig.savefig(name, format = "pdf", pad_inches = 0.0, bbox_inches='tight', dpi=200)
+        
+
+        return filenames
+
 class QPlanarImagingWorker(QObject):
 
     analysis_progress = Signal(str)
@@ -209,43 +226,56 @@ class QPlanarImagingWorker(QObject):
 
         if phantom_name == PHANTOM.LEEDS_TOR_RED.value:
             self._phantom = LeedsTOR(filepath, normalize, image_kwargs)
+            self._phantom.common_name = PHANTOM.LEEDS_TOR_RED.value
 
         elif phantom_name == PHANTOM.LEEDS_TOR_BLUE.value:
             self._phantom = LeedsTORBlue(filepath, normalize, image_kwargs)
+            self._phantom.common_name = PHANTOM.LEEDS_TOR_BLUE.value
 
         elif phantom_name == PHANTOM.STANDARD_IMAGING_QC3.value:
             self._phantom = StandardImagingQC3(filepath, normalize, image_kwargs)
+            self._phantom.common_name = PHANTOM.STANDARD_IMAGING_QC3.value
 
         elif phantom_name == PHANTOM.STANDARD_IMAGING_QC_KV.value:
             self._phantom = StandardImagingQCkV(filepath, normalize, image_kwargs)
+            self._phantom.common_name = PHANTOM.STANDARD_IMAGING_QC_KV.value
 
         elif phantom_name == PHANTOM.DOSELAB_MC2_MV.value:
             self._phantom = DoselabMC2MV(filepath, normalize, image_kwargs)
+            self._phantom.common_name = PHANTOM.DOSELAB_MC2_MV.value
 
         elif phantom_name == PHANTOM.DOSELAB_MC2_KV.value:
             self._phantom =  DoselabMC2kV(filepath, normalize, image_kwargs)
+            self._phantom.common_name = PHANTOM.DOSELAB_MC2_KV.value
 
         elif phantom_name == PHANTOM.SNC_MV.value:
             self._phantom = SNCMV(filepath, normalize, image_kwargs)
+            self._phantom.common_name = PHANTOM.SNC_MV.value
         
         elif phantom_name == PHANTOM.SNC_MV_12510.value:
             self._phantom = SNCMV12510(filepath, normalize, image_kwargs)
+            self._phantom.common_name = PHANTOM.SNC_MV_12510.value
 
         elif phantom_name == PHANTOM.SNC_KV.value:
             self._phantom = SNCkV(filepath, normalize, image_kwargs)
+            self._phantom.common_name = PHANTOM.SNC_KV.value
 
         elif phantom_name == PHANTOM.IBA_PRIMUS_A.value:
             self._phantom = IBAPrimusA(filepath, normalize, image_kwargs)
+            self._phantom.common_name = PHANTOM.IBA_PRIMUS_A.value
 
         elif phantom_name == PHANTOM.PTW_EPID_QC.value:
             self._phantom = PTWEPIDQC(filepath, normalize, image_kwargs)
+            self._phantom.common_name = PHANTOM.PTW_EPID_QC.value
 
         elif phantom_name == PHANTOM.LAS_VEGAS.value:
             self._phantom = LasVegas(filepath, normalize, image_kwargs)
+            self._phantom.common_name = PHANTOM.LAS_VEGAS.value
             self._phantom.mtf = None
 
         elif phantom_name == PHANTOM.ELEKTA_LAS_VEGAS.value:
             self._phantom = ElektaLasVegas(filepath, normalize, image_kwargs)
+            self._phantom.common_name = PHANTOM.ELEKTA_LAS_VEGAS.value
             self._phantom.mtf = None
 
         else:

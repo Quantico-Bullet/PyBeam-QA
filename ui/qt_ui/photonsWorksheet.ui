@@ -1259,7 +1259,7 @@ font-weight: bold;
                 <item>
                  <widget class="QLabel" name="calibFactorUnit">
                   <property name="text">
-                   <string>cGy/nC</string>
+                   <string>Gy/nC</string>
                   </property>
                  </widget>
                 </item>
@@ -3327,11 +3327,11 @@ QPushButton:!enabled{
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="userPolarityGroup"/>
-  <buttongroup name="calibSetupGroup"/>
   <buttongroup name="calibSeparateGroup"/>
-  <buttongroup name="beamQualityGroup"/>
   <buttongroup name="calibPolarityGroup"/>
   <buttongroup name="beamTypeGroup"/>
+  <buttongroup name="beamQualityGroup"/>
+  <buttongroup name="userPolarityGroup"/>
+  <buttongroup name="calibSetupGroup"/>
  </buttongroups>
 </ui>

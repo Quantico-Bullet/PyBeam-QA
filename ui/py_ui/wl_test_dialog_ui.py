@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'wl_test_dialog.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.2
+## Created by: Qt User Interface Compiler version 6.6.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -30,7 +30,7 @@ class Ui_WLTestDialog(object):
         self.gridLayout.setObjectName(u"gridLayout")
         self.scrollArea = QScrollArea(WLTestDialog)
         self.scrollArea.setObjectName(u"scrollArea")
-        sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.scrollArea.sizePolicy().hasHeightForWidth())
@@ -40,7 +40,7 @@ class Ui_WLTestDialog(object):
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
         self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 568, 605))
-        sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.MinimumExpanding)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.scrollAreaWidgetContents.sizePolicy().hasHeightForWidth())
@@ -64,7 +64,7 @@ class Ui_WLTestDialog(object):
 
         self.test_name_le = QLineEdit(self.frame)
         self.test_name_le.setObjectName(u"test_name_le")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Fixed)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.test_name_le.sizePolicy().hasHeightForWidth())
@@ -80,7 +80,7 @@ class Ui_WLTestDialog(object):
 
         self.sim_image_cb = QComboBox(self.frame)
         self.sim_image_cb.setObjectName(u"sim_image_cb")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.sim_image_cb.sizePolicy().hasHeightForWidth())
@@ -219,7 +219,7 @@ class Ui_WLTestDialog(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.left_offset_label = QLabel(self.frame)
         self.left_offset_label.setObjectName(u"left_offset_label")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
         sizePolicy4.setHorizontalStretch(0)
         sizePolicy4.setVerticalStretch(0)
         sizePolicy4.setHeightForWidth(self.left_offset_label.sizePolicy().hasHeightForWidth())
@@ -338,7 +338,7 @@ class Ui_WLTestDialog(object):
 
         self.horizontalLayout_2.addWidget(self.select_dir_btn)
 
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_2.addItem(self.horizontalSpacer)
 
@@ -355,13 +355,13 @@ class Ui_WLTestDialog(object):
 
         self.gridLayout.addWidget(self.scrollArea, 0, 0, 1, 1)
 
-        self.buttons_spacer = QSpacerItem(10, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        self.buttons_spacer = QSpacerItem(10, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
 
         self.gridLayout.addItem(self.buttons_spacer, 1, 0, 1, 1)
 
         self.button_box = QDialogButtonBox(WLTestDialog)
         self.button_box.setObjectName(u"button_box")
-        sizePolicy5 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
+        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Fixed)
         sizePolicy5.setHorizontalStretch(0)
         sizePolicy5.setVerticalStretch(0)
         sizePolicy5.setHeightForWidth(self.button_box.sizePolicy().hasHeightForWidth())

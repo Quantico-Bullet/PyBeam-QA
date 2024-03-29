@@ -358,6 +358,7 @@ class QPicketFence(PicketFence):
             False,
             False,
             False,
+            figure_size = (4.5 ,4.5)
         )
 
         plt.savefig(pf_plot_data, format = "pdf", pad_inches = 0.0, bbox_inches='tight')

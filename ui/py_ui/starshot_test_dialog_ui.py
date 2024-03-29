@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'starshot_test_dialog.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.2
+## Created by: Qt User Interface Compiler version 6.6.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -28,13 +28,13 @@ class Ui_StarshotTestDialog(object):
         StarshotTestDialog.resize(522, 241)
         self.gridLayout = QGridLayout(StarshotTestDialog)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.buttons_spacer = QSpacerItem(10, 10, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        self.buttons_spacer = QSpacerItem(10, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
 
         self.gridLayout.addItem(self.buttons_spacer, 1, 0, 1, 1)
 
         self.button_box = QDialogButtonBox(StarshotTestDialog)
         self.button_box.setObjectName(u"button_box")
-        sizePolicy = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.button_box.sizePolicy().hasHeightForWidth())
@@ -46,7 +46,7 @@ class Ui_StarshotTestDialog(object):
 
         self.scrollArea = QScrollArea(StarshotTestDialog)
         self.scrollArea.setObjectName(u"scrollArea")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.scrollArea.sizePolicy().hasHeightForWidth())
@@ -56,7 +56,7 @@ class Ui_StarshotTestDialog(object):
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
         self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 504, 177))
-        sizePolicy2 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.MinimumExpanding)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.scrollAreaWidgetContents.sizePolicy().hasHeightForWidth())
@@ -80,7 +80,7 @@ class Ui_StarshotTestDialog(object):
 
         self.test_name_le = QLineEdit(self.frame)
         self.test_name_le.setObjectName(u"test_name_le")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Fixed)
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.test_name_le.sizePolicy().hasHeightForWidth())
@@ -111,7 +111,7 @@ class Ui_StarshotTestDialog(object):
 
         self.horizontalLayout_2.addWidget(self.select_file_btn)
 
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_2.addItem(self.horizontalSpacer)
 
@@ -125,7 +125,7 @@ class Ui_StarshotTestDialog(object):
 
         self.sim_image_cb = QComboBox(self.frame)
         self.sim_image_cb.setObjectName(u"sim_image_cb")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy4.setHorizontalStretch(0)
         sizePolicy4.setVerticalStretch(0)
         sizePolicy4.setHeightForWidth(self.sim_image_cb.sizePolicy().hasHeightForWidth())

@@ -2,7 +2,7 @@ from PySide6.QtWidgets import (QWidget, QLabel, QProgressBar, QVBoxLayout, QFile
                                QListWidgetItem, QMenu, QSizePolicy, QMessageBox, 
                                QMainWindow, QFormLayout, QGridLayout,
                                QSplitter, QComboBox, QDialog, QDialogButtonBox, QLineEdit,
-                               QSpacerItem,QPushButton, QCheckBox, QHBoxLayout)
+                               QSpacerItem,QPushButton, QCheckBox, QHBoxLayout, QPlainTextEdit)
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtCore import Qt, QSize, QEvent, QThread, Signal
 
@@ -544,6 +544,7 @@ class QFieldAnalysisWorksheet(QWidget):
         physicist_name_le = QLineEdit()
         institution_name_le = QLineEdit()
         treatment_unit_le = QComboBox()
+        comments_te = QPlainTextEdit()
         treatment_unit_le.setEditable(True)
         physicist_name_le.setMaximumWidth(250)
         physicist_name_le.setMinimumWidth(250)
@@ -576,7 +577,8 @@ class QFieldAnalysisWorksheet(QWidget):
         user_details_layout.addRow("Treatment unit:", treatment_unit_le)
         user_details_layout.addRow("Institution:", institution_name_le)
         user_details_layout.addRow("Save location:", save_location_layout)
-        user_details_layout.addRow("",show_report_layout)
+        user_details_layout.addRow("Comments:", comments_te)
+        user_details_layout.addRow("", show_report_layout)
         user_details_layout.addItem(QSpacerItem(1,10, QSizePolicy.Policy.Minimum,
                                                 QSizePolicy.Policy.Minimum))
         
@@ -621,7 +623,7 @@ class QFieldAnalysisWorksheet(QWidget):
                                    protocol = self.set_protocol,
                                    analysis_summary = fa.get_publishable_results(),
                                    summary_plots = fa.get_publishable_plots(),
-            )
+                                   comments = comments_te.toPlainText())
         
             report.save_report()
 

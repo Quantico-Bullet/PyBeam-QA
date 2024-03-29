@@ -1,11 +1,14 @@
-from PySide6.QtWidgets import (QWidget, QMessageBox, QSpacerItem, QGridLayout,
-                               QSizePolicy, QLineEdit, QFileDialog)
-from PySide6.QtGui import QPixmap, QImage, QResizeEvent
+from PySide6.QtWidgets import (QWidget, QDialogButtonBox, QSpacerItem, QGridLayout,
+                               QSizePolicy, QDialog, QLabel,
+                               QVBoxLayout, QMessageBox)
+from PySide6.QtGui import QPixmap, QImage
 from PySide6.QtCore import Qt, QSize
+
+from enum import Flag
 
 from ui.py_ui import icons_rc
 
-class MessageDialog(QMessageBox):
+class MessageDialog(QDialog):
 
     NO_ICON = 0
     INFO_ICON = 1
@@ -16,24 +19,53 @@ class MessageDialog(QMessageBox):
     def __init__(self, parent: QWidget | None = None):
         super().__init__(parent)
 
-        hor_spacer = QSpacerItem(800, 0,
-                                 QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-        layout: QGridLayout = self.layout()
-        layout.addItem(hor_spacer, layout.rowCount(), 0, 1, layout.columnCount())
-        self.setTextFormat(Qt.TextFormat.RichText)
+        self.header_text = QLabel()
+        self.header_text.setWordWrap(True)
+        self.header_text.setMinimumWidth(400)
+        self.icon = QLabel()
+        self.icon.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        self.message_text = QLabel()
+        self.message_text.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        
+        self.button_box = QDialogButtonBox()
 
-        self.setStyleSheet("QSpacerItem{min-width: 600px;}")
+        self.button_box.accepted.connect(self.accept)
+        self.button_box.rejected.connect(self.reject)
+
+        hor_spacer = QSpacerItem(350, 10, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        
+        base_layout = QVBoxLayout()
+        layout = QGridLayout()
+        layout.setHorizontalSpacing(10)
+        layout.addWidget(self.icon, 0, 0, 1, 1, Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(self.header_text, 0, 1, 1, 1, Qt.AlignmentFlag.AlignVCenter)
+        layout.addWidget(self.message_text, 1, 1, 1, 1, Qt.AlignmentFlag.AlignLeft)
+        layout.addItem(hor_spacer, 2, 0, 1, 2, Qt.AlignmentFlag.AlignLeft)
+
+        base_layout.addLayout(layout)
+        base_layout.addWidget(self.button_box)
+        self.setLayout(base_layout)
+
+        self.setMaximumWidth(450)
+
+        #set default button
+        self.set_standard_buttons()
+
+    def set_standard_buttons(self, buttons = QDialogButtonBox.StandardButton.Ok):
+        self.button_box.clear()
+        self.button_box.setStandardButtons(buttons)
 
     def set_title(self, title):
         return super().setWindowTitle(title)
 
-    def set_text(self, text: str) -> None:
+    def set_header_text(self, text: str) -> None:
         text = "<p><span style=\" font-weight:700; font-size: 12pt;\">" \
                 f"{text}</span></p>"
-        return super().setText(text)
+        
+        self.header_text.setText(text)
     
     def set_info_text(self, text: str) -> None:
-        return super().setInformativeText(text)
+        self.message_text.setText(text)
     
     def set_icon(self, pixmap: QPixmap | QImage | str | int, smooth_image: bool = True) -> None:
         if isinstance(pixmap, (QPixmap, QImage)) and smooth_image:
@@ -57,7 +89,7 @@ class MessageDialog(QMessageBox):
             
             pixmap = pixmap.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
 
-        return super().setIconPixmap(pixmap)
+        self.icon.setPixmap(pixmap)
 
 
     

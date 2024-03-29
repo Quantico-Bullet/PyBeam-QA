@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'preferences.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.2
+## Created by: Qt User Interface Compiler version 6.6.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -31,7 +31,7 @@ class Ui_PreferencesDialog(object):
         self.gridLayout.setObjectName(u"gridLayout")
         self.page_title_label = QLabel(PreferencesDialog)
         self.page_title_label.setObjectName(u"page_title_label")
-        sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.page_title_label.sizePolicy().hasHeightForWidth())
@@ -44,7 +44,7 @@ class Ui_PreferencesDialog(object):
 
         self.scrollArea = QScrollArea(PreferencesDialog)
         self.scrollArea.setObjectName(u"scrollArea")
-        sizePolicy1 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Expanding)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Expanding)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.scrollArea.sizePolicy().hasHeightForWidth())
@@ -76,7 +76,7 @@ class Ui_PreferencesDialog(object):
         self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 250, 461))
         self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.nav_top_spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.nav_top_spacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout.addItem(self.nav_top_spacer)
 
@@ -113,7 +113,7 @@ class Ui_PreferencesDialog(object):
 
         self.verticalLayout.addWidget(self.analysis_tools_btn)
 
-        self.nav_bottom_spacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.nav_bottom_spacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout.addItem(self.nav_bottom_spacer)
 
@@ -210,7 +210,7 @@ class Ui_PreferencesDialog(object):
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.linac_label = QLabel(self.scrollAreaWidgetContents_2)
         self.linac_label.setObjectName(u"linac_label")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
         sizePolicy2.setHorizontalStretch(0)
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.linac_label.sizePolicy().hasHeightForWidth())
@@ -228,7 +228,7 @@ class Ui_PreferencesDialog(object):
 
         self.lina_info_group_box = QGroupBox(self.scrollAreaWidgetContents_2)
         self.lina_info_group_box.setObjectName(u"lina_info_group_box")
-        sizePolicy3 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Preferred)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Preferred)
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.lina_info_group_box.sizePolicy().hasHeightForWidth())
@@ -326,7 +326,7 @@ class Ui_PreferencesDialog(object):
 
         self.verticalLayout_5.addWidget(self.groupBox)
 
-        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_5.addItem(self.verticalSpacer_2)
 
@@ -342,7 +342,7 @@ class Ui_PreferencesDialog(object):
         self.verticalLayout_6.setContentsMargins(-1, 9, -1, 9)
         self.edit_linac_btn = QPushButton(self.linac_tab)
         self.edit_linac_btn.setObjectName(u"edit_linac_btn")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy4.setHorizontalStretch(0)
         sizePolicy4.setVerticalStretch(0)
         sizePolicy4.setHeightForWidth(self.edit_linac_btn.sizePolicy().hasHeightForWidth())
@@ -364,7 +364,7 @@ class Ui_PreferencesDialog(object):
 
         self.verticalLayout_6.addWidget(self.delete_linac_btn)
 
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_6.addItem(self.verticalSpacer)
 
@@ -496,7 +496,7 @@ class Ui_PreferencesDialog(object):
 
         self.verticalLayout_10.addWidget(self.groupBox_3)
 
-        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_10.addItem(self.verticalSpacer_4)
 
@@ -525,7 +525,7 @@ class Ui_PreferencesDialog(object):
 
         self.verticalLayout_8.addWidget(self.pushButton_2)
 
-        self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_8.addItem(self.verticalSpacer_3)
 

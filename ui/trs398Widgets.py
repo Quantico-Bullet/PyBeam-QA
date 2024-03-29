@@ -10,7 +10,8 @@ from core.tools.devices import Linac
 from ui.py_ui.photonsWorksheet_ui import Ui_QPhotonsWorksheet
 from ui.py_ui.electronsWorksheet_ui import Ui_QElectronsWorksheet
 from ui.utilsWidgets.validators import DoubleValidator
-from core.tools.report import PhotonCalibrationReport
+from ui.utilsWidgets.dialogs import MessageDialog
+from core.tools.report import PhotonCalibrationReport, ElectronCalibrationReport
 from core.calibration.trs398 import TRS398Photons, TRS398Electrons
 from core.configuration.config import ChambersConfig, SettingsConfig
 from ui.qaToolsWindow import QAToolsWindow
@@ -18,6 +19,7 @@ from ui.preferences.prefs_main import Preferences
 
 from pathlib import Path
 
+from copy import copy
 import json
 import webbrowser
 
@@ -110,6 +112,21 @@ class BaseTRS398Window(QAToolsWindow):
 
     def generate_report(self, calibration_info: dict):
 
+        num_beams = self.ui.tabWidget.count()
+        num = len(calibration_info["worksheets"])
+
+        if num == 0: 
+            no_reports_dialog = MessageDialog()
+            no_reports_dialog.set_title("Info")
+            no_reports_dialog.set_header_text("No complete calibration worksheets found!")
+            no_reports_dialog.set_info_text("Please complete at least one calibration worksheet to " + 
+                                            "generate a report")
+            no_reports_dialog.set_icon(MessageDialog.INFO_ICON)
+
+            no_reports_dialog.exec()
+
+            return
+
         worksheet: QPhotonsWorksheet | QElectronsWorksheet = \
         self.ui.tabWidget.widget(0)
 
@@ -147,8 +164,6 @@ class BaseTRS398Window(QAToolsWindow):
 
         num_beams_reported =  QLabel()
 
-        num_beams = self.ui.tabWidget.count()
-        num = len(calibration_info["worksheets"])
         num_beams_reported.setText(f"{num} of {num_beams} " \
                 "beam energies to be included in the report.")
         
@@ -201,7 +216,7 @@ class BaseTRS398Window(QAToolsWindow):
                 report.save_report()
             
             else:
-                report = PhotonCalibrationReport(filename=save_path_le.text(),
+                report = ElectronCalibrationReport(filename=save_path_le.text(),
                                                  calibration_info=calibration_info)
                 report.save_report()
 
@@ -524,13 +539,18 @@ class PhotonsMainWindow(BaseTRS398Window):
 
         elif save_format == 1:
             cal_info = file_info["photon_output_calibration"]
+            cal_info_new = copy(cal_info)
 
-            for (i, worksheet) in enumerate(cal_info["worksheets"]):
-                #TODO Replace this with signals?
-                if "cal_summary" not in worksheet.keys():
-                    del cal_info["worksheets"][i]
+            # Delete the worksheets and add them again if completed
+            del cal_info_new["worksheets"]
+            cal_info_new["worksheets"] = []
 
-            self.generate_report(cal_info)
+            for worksheet in cal_info["worksheets"]:
+                #TODO Replace this with signals
+                if worksheet["cal_summary"]:
+                    cal_info_new["worksheets"].append(worksheet)
+
+            self.generate_report(cal_info_new)
 
 class ElectronsMainWindow(BaseTRS398Window):
     
@@ -747,12 +767,12 @@ class ElectronsMainWindow(BaseTRS398Window):
 
         if save_mode == 0:
             index = self.ui.tabWidget.currentIndex()
-            worksheet: QPhotonsWorksheet = self.ui.tabWidget.widget(index)
+            worksheet: QElectronsWorksheet = self.ui.tabWidget.widget(index)
             worksheet_info.append(worksheet.save_worksheet_info())
 
         elif save_mode == 1:
             for index in range(self.ui.tabWidget.count()):
-                worksheet: QPhotonsWorksheet = self.ui.tabWidget.widget(index)
+                worksheet: QElectronsWorksheet = self.ui.tabWidget.widget(index)
                 worksheet_info.append(worksheet.save_worksheet_info())
 
         # Use the last worksheet to extract worksheet common information
@@ -805,15 +825,18 @@ class ElectronsMainWindow(BaseTRS398Window):
 
         elif save_format == 1:
             cal_info = file_info["electron_output_calibration"]
+            cal_info_new = copy(cal_info)
 
-            worksheets = cal_info["worksheets"]
+            # Delete the worksheets and add them again if completed
+            del cal_info_new["worksheets"]
+            cal_info_new["worksheets"] = []
 
-            for (i, worksheet) in enumerate(worksheets):
+            for worksheet in cal_info["worksheets"]:
                 #TODO Replace this with signals
-                if "cal_summary" not in worksheet.keys():
-                    del cal_info["worksheets"][i]
+                if worksheet["cal_summary"]:
+                    cal_info_new["worksheets"].append(worksheet)
 
-            self.generate_report(cal_info)
+            self.generate_report(cal_info_new)
 
 class QPhotonsWorksheet(QWidget):
 
@@ -825,13 +848,13 @@ class QPhotonsWorksheet(QWidget):
         self.ui.setupUi(self)
 
         self.trs398 = TRS398Photons()
-        self.chambersConfig = ChambersConfig()
-        self.settingsConfig = SettingsConfig()
+        self.chambers_config = ChambersConfig()
+        self.settings_config = SettingsConfig()
 
         self.hide_cal_outcome()
 
         # Load all ionization chambers
-        self.allChambers = []
+        self.all_chambers = []
         self.set_ion_chamber_list()
 
         #--- Set up basic functionality ---
@@ -918,11 +941,11 @@ class QPhotonsWorksheet(QWidget):
         self.chamber_model_changed()
 
     def set_ion_chamber_list(self):
-        self.chambers = self.chambersConfig.getConfig()
-        self.allChambers.extend(self.chambers["cylindrical"])
+        self.chambers = self.chambers_config.getConfig()
+        self.all_chambers.extend(self.chambers["cylindrical"])
 
-        self.allChambers.sort()   
-        self.ui.IonChamberModelComboB.addItems(self.allChambers)
+        self.all_chambers.sort()   
+        self.ui.IonChamberModelComboB.addItems(self.all_chambers)
 
     def tpr2010_changed(self):
         self.ui.refDepthComboB.clear()
@@ -938,12 +961,12 @@ class QPhotonsWorksheet(QWidget):
             self.ui.refDepthComboB.setPlaceholderText("N/A")
 
     def chamber_model_changed(self):
-        currentChamber = self.ui.IonChamberModelComboB.currentText()
+        curr_chamber = self.ui.IonChamberModelComboB.currentText()
 
         for type in self.chambers:
-            if currentChamber in self.chambers[type]:
-                self.ui.cWallMatLE.setText(self.chambers[type][currentChamber]["wall_material"])
-                self.ui.cWallThickLE.setText(str(self.chambers[type][currentChamber]["wall_thickness"]))
+            if curr_chamber in self.chambers[type]:
+                self.ui.cWallMatLE.setText(self.chambers[type][curr_chamber]["wall_material"])
+                self.ui.cWallThickLE.setText(str(self.chambers[type][curr_chamber]["wall_thickness"]))
 
     def cal_setup_changed(self):
         if self.ui.calibSetupGroup.checkedButton() == self.ui.ssdRadioButton:
@@ -975,42 +998,42 @@ class QPhotonsWorksheet(QWidget):
             self.ui.kElecLE.clear() # kElec will still be 1.00 in TRS class until set
 
     def calc_kq(self):
-        currChamber = self.ui.IonChamberModelComboB.currentText()
-        tprValue = self.ui.beamQualityLE.text()
+        curr_chamber = self.ui.IonChamberModelComboB.currentText()
+        tpr_value = self.ui.beamQualityLE.text()
 
-        chambers = self.chambersConfig.getConfig()
+        chambers = self.chambers_config.getConfig()
 
-        if tprValue != "":
+        if tpr_value != "":
             for chamberType in chambers:
-                if currChamber in chambers[chamberType]:
-                    tpr_kQ: dict = chambers[chamberType][currChamber]["tpr_kQ"]
-                    kQ = self.trs398.tpr2010_to_kQ(float(tprValue), tpr_kQ)
+                if curr_chamber in chambers[chamberType]:
+                    tpr_kQ: dict = chambers[chamberType][curr_chamber]["tpr_kQ"]
+                    kQ = self.trs398.tpr2010_to_kQ(float(tpr_value), tpr_kQ)
                     self.ui.kQLE.setText("%.3f" % kQ)
         else:
             self.ui.kQLE.clear()
 
     def calc_ktp(self):
-        userTemp = self.ui.userTempLE.text()
-        userPress = self.ui.userPressureLE.text()
-        userHumid = self.ui.userHumidityLE.text()
+        user_temp = self.ui.userTempLE.text()
+        user_press = self.ui.userPressureLE.text()
+        user_humid = self.ui.userHumidityLE.text()
 
-        if userTemp != "" and userPress != "" and userHumid != "":
-            kTP = self.trs398.kTP_corr(float(userTemp), float(userPress))
+        if user_temp != "" and user_press != "" and user_humid != "":
+            kTP = self.trs398.kTP_corr(float(user_temp), float(user_press))
             self.ui.kTPLE.setText("%.3f" % kTP)
         else:
             self.ui.kTPLE.clear()
 
     def cal_kpol(self):
-        mPos = self.ui.readMPosLE.text()
-        mNeg = self.ui.readMNegLE.text()
+        m_pos = self.ui.readMPosLE.text()
+        m_neg = self.ui.readMNegLE.text()
 
-        if mPos != "" and mNeg != "":
+        if m_pos != "" and m_neg != "":
             if self.ui.userPolarityGroup.checkedButton() == self.ui.userPosPolarRadioButton:
                 isPosPref = True
             else:
                 isPosPref = False
 
-            kPol = self.trs398.kPol_corr(float(mPos), float(mNeg), isPosPref)
+            kPol = self.trs398.kPol_corr(float(m_pos), float(m_neg), isPosPref)
             self.ui.kPolLE.setText("%.3f" % kPol)
         else:
             self.ui.kPolLE.clear()
@@ -1024,17 +1047,17 @@ class QPhotonsWorksheet(QWidget):
         )
 
         if correct_input:
-            vNorm = float(self.ui.normVoltageLE.text())
-            vRed = float(self.ui.redVoltageLE.text())
-            mNorm = float(self.ui.normReadLE.text())
-            mRed = float(self.ui.redReadLE.text())
+            v_norm = float(self.ui.normVoltageLE.text())
+            v_red = float(self.ui.redVoltageLE.text())
+            m_norm = float(self.ui.normReadLE.text())
+            m_red = float(self.ui.redReadLE.text())
 
             if self.ui.beamTypeGroup.checkedButton() == self.ui.pulsedScanRadioButton:
-                isPulsedScanned = True
+                is_pulsed_scanned = True
             else:
-                isPulsedScanned = False
+                is_pulsed_scanned = False
             
-            kS = self.trs398.kS_corr(vNorm, vRed, mNorm, mRed, isPulsedScanned)
+            kS = self.trs398.kS_corr(v_norm, v_red, m_norm, m_red, is_pulsed_scanned)
             self.ui.kSLE.setText("%.3f" % kS)
         else:
             self.ui.kSLE.clear()
@@ -1042,13 +1065,13 @@ class QPhotonsWorksheet(QWidget):
     def check_ks_value(self):
         if self.ui.kSLE.text() != "":
             kS = float(self.ui.kSLE.text())
-            vNorm = float(self.ui.normVoltageLE.text())
-            vRed = float(self.ui.redVoltageLE.text())
-            mNorm = float(self.ui.normReadLE.text())
-            mRed = float(self.ui.redReadLE.text())
+            v_norm = float(self.ui.normVoltageLE.text())
+            v_red = float(self.ui.redVoltageLE.text())
+            m_norm = float(self.ui.normReadLE.text())
+            m_red = float(self.ui.redReadLE.text())
 
             kS = kS - 1.0
-            kS_test = ((mNorm/mRed) - 1.0) / ((vNorm/vRed) - 1.0)
+            kS_test = ((m_norm/m_red) - 1.0) / ((v_norm/v_red) - 1.0)
 
             if abs(kS - kS_test) <= 0.01:
                 pixmap = QPixmap(u":/colorIcons/icons/correct.png")
@@ -1078,12 +1101,12 @@ class QPhotonsWorksheet(QWidget):
                          self.ui.corrLinacMULE.hasAcceptableInput())
 
         if correct_input:
-            rawRead = float(self.ui.rawDosReadLE.text())
-            linacMU = float(self.ui.corrLinacMULE.text())
+            raw_read = float(self.ui.rawDosReadLE.text())
+            linac_MU = float(self.ui.corrLinacMULE.text())
 
-            self.trs398.mRaw = rawRead
-            self.trs398.linac_mu = linacMU
-            self.ui.ratioReadMULE.setText("%.5f" % (rawRead / linacMU))
+            self.trs398.mRaw = raw_read
+            self.trs398.linac_mu = linac_MU
+            self.ui.ratioReadMULE.setText("%.5f" % (raw_read / linac_MU))
         else:
             self.ui.ratioReadMULE.clear()
 
@@ -1097,46 +1120,46 @@ class QPhotonsWorksheet(QWidget):
         kElec = self.ui.kElecLE.text()
         kPol = self.ui.kPolLE.text()
         kQ = self.ui.kQLE.text()
-        ratioRead = self.ui.ratioReadMULE.text()
+        ratio_read = self.ui.ratioReadMULE.text()
         nDw = self.ui.calibFactorLE.text()
 
-        areAllValid = (kTP != "" and kS != "" and kElec != "" and kPol != "" and kQ != "" and ratioRead != ""
+        all_valid = (kTP != "" and kS != "" and kElec != "" and kPol != "" and kQ != "" and ratio_read != ""
             and nDw != "")
 
-        if areAllValid:
+        if all_valid:
             self.ui.zrefDoseLE.setText(("%.3f" % (self.trs398.get_DwQ_zref()*100.0)) + " cGy/MU")
         else:
             self.ui.zrefDoseLE.clear()
 
     def set_zmax_depth_dose(self):
         if self.ui.calibSetupGroup.checkedButton() == self.ui.ssdRadioButton:
-            zRefDD = self.ui.zrefDoseLE.text()
-            pddzRef = self.ui.pddLE.text()
+            z_ref_dd = self.ui.zrefDoseLE.text()
+            pdd_z_ref = self.ui.pddLE.text()
 
-            if zRefDD != "" and pddzRef != "":
-                dMax = self.trs398.get_DwQ_zmax_ssdSetup(float(pddzRef))*100.0
-                self.ui.zmaxDoseLE.setText("%.3f" % dMax + " cGy/MU")
-                self.set_outcome(dMax)
+            if z_ref_dd != "" and pdd_z_ref != "":
+                d_max = self.trs398.get_DwQ_zmax_ssdSetup(float(pdd_z_ref))*100.0
+                self.ui.zmaxDoseLE.setText("%.3f" % d_max + " cGy/MU")
+                self.set_outcome(d_max)
             else:
                 self.ui.zmaxDoseLE.clear()
                 self.ui.outcomeLE.clear()
                 self.hide_cal_outcome()
         else:
-            zRefDD = self.ui.zrefDoseLE.text()
-            tmrRef = self.ui.tmrLE.text()
+            z_ref_dd = self.ui.zrefDoseLE.text()
+            tmr_ref = self.ui.tmrLE.text()
 
-            if zRefDD != "" and tmrRef != "":
-                dMax = self.trs398.get_DwQ_zmax_tmrSetup(float(tmrRef))*100.0
-                self.ui.zmaxDoseLE.setText("%.3f" % dMax + " cGy/MU")
-                self.set_outcome(dMax)
+            if z_ref_dd != "" and tmr_ref != "":
+                d_max = self.trs398.get_DwQ_zmax_tmrSetup(float(tmr_ref))*100.0
+                self.ui.zmaxDoseLE.setText("%.3f" % d_max + " cGy/MU")
+                self.set_outcome(d_max)
             else:
                 self.ui.zmaxDoseLE.clear()
                 self.ui.outcomeLE.clear()
                 self.hide_cal_outcome()
 
-    def set_outcome(self, dMax: float):
+    def set_outcome(self, d_max: float):
         tol = self.ui.toleranceDSB.value()
-        diff = abs(dMax - 1.00) # Reference is 1.00 cGy/MU
+        diff = abs(d_max - 1.00) # Reference is 1.00 cGy/MU
 
         if diff*100.0 <= tol:
             self.ui.outcomeLE.setText(
@@ -1177,22 +1200,22 @@ class QPhotonsWorksheet(QWidget):
         
         self.ui.gen_report_btn.setEnabled(False)
     
-    def toggleSimpleView(self):
+    def toggle_simple_view(self):
         #Check QT form structure before editing row numbers to hide
 
         #hide section one fields
-        rowsToHide = [2]
-        for row in rowsToHide:
+        rows_to_hide = [2]
+        for row in rows_to_hide:
             self.ui.sectionOneFL.setRowVisible(row, False)
 
         #hide section two fields
-        rowsToHide = [1, 3, 4, 5, 6, 7, 10, 16, 17, 18, 19, 20]
-        for row in rowsToHide:
+        rows_to_hide = [1, 3, 4, 5, 6, 7, 10, 16, 17, 18, 19, 20]
+        for row in rows_to_hide:
             self.ui.sectionTwoFL.setRowVisible(row, False)
 
         #hide section four fields
-        rowsToHide = [0, 1]
-        for row in rowsToHide:
+        rows_to_hide = [0, 1]
+        for row in rows_to_hide:
             self.ui.depthDMaxFL.setRowVisible(row, False)
 
     def toggle_detailed_view(self):
@@ -1249,6 +1272,9 @@ class QPhotonsWorksheet(QWidget):
             cal_summary["dw_zmax"] = self.ui.zmaxDoseLE.text().split(" ")[0]
             cal_summary["test_outcome"] = self.ui.outcomeLE.text().split(" ")[0]
             worksheet_info["cal_summary"] = cal_summary
+
+        else:
+            worksheet_info["cal_summary"] = None
 
         return worksheet_info
 
@@ -1666,7 +1692,8 @@ class QElectronsWorksheet(QWidget):
         #TODO replace use of type conversion with QtValidators
         worksheet_info["beam_energy"] = self.ui.nomAccPotLE.text()
         worksheet_info["nominal_dose_rate"] = self.ui.nomDoseRateLE.text()
-        worksheet_info["r_50_ion"] = self.ui.measuredR50LE.text() 
+        worksheet_info["r_50_ion"] = self.ui.measuredR50LE.text()
+        worksheet_info["r_50"] = self.ui.beamQualityLE.text() 
         worksheet_info["reference_phantom"] = self.ui.refPhantomComboB.currentText()
         worksheet_info["reference_field_size"] = self.ui.reffieldSizeComboB.currentText()
         worksheet_info["reference_distance"] = self.ui.refDistanceLE.text()
@@ -1700,5 +1727,7 @@ class QElectronsWorksheet(QWidget):
             cal_summary["test_outcome"] = self.ui.outcomeLE.text().split(" ")[0]
             worksheet_info["cal_summary"] = cal_summary
 
-        print(worksheet_info)
+        else:
+            worksheet_info["cal_summary"] = None
+
         return worksheet_info

@@ -3,7 +3,7 @@ from PySide6.QtWidgets import (QWidget, QLabel, QProgressBar, QVBoxLayout, QFile
                                QMainWindow, QFormLayout, QTabWidget, QFrame, QGridLayout,
                                QSplitter, QTreeWidgetItem, QTreeWidget, QComboBox,
                                QDialog, QDialogButtonBox, QLineEdit, QSpacerItem,
-                               QPushButton, QCheckBox, QHBoxLayout)
+                               QPushButton, QCheckBox, QHBoxLayout, QPlainTextEdit)
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtCore import Qt, QSize, QEvent, QThread, Signal
 
@@ -617,6 +617,7 @@ class QPicketFenceWorksheet(QWidget):
         physicist_name_le = QLineEdit()
         institution_name_le = QLineEdit()
         treatment_unit_le = QComboBox()
+        comments_te = QPlainTextEdit()
         treatment_unit_le.setEditable(True)
         physicist_name_le.setMaximumWidth(250)
         physicist_name_le.setMinimumWidth(250)
@@ -649,6 +650,7 @@ class QPicketFenceWorksheet(QWidget):
         user_details_layout.addRow("Treatment unit:", treatment_unit_le)
         user_details_layout.addRow("Institution:", institution_name_le)
         user_details_layout.addRow("Save location:", save_location_layout)
+        user_details_layout.addRow("Comments:", comments_te)
         user_details_layout.addRow("",show_report_layout)
         user_details_layout.addItem(QSpacerItem(1,10, QSizePolicy.Policy.Minimum,
                                                 QSizePolicy.Policy.Minimum))
@@ -700,8 +702,8 @@ class QPicketFenceWorksheet(QWidget):
                  f"Picket: {pf.max_error_picket + 1}, Leaf: {leaf_name}"])
 
             else:
-                summary_text.append(["Max Error:", f"{pf.max_error:2.3f} mm " \
-                 f"(Picket: {pf.max_error_picket + 1}, Leaf: {pf.max_error_leaf + 1})"]) 
+                summary_text.append(["Max Error", f"{pf.max_error:2.3f} mm",
+                                      f"At picket: {pf.max_error_picket + 1}, leaf: {pf.max_error_leaf + 1}"]) 
 
             report = PicketFenceReport(save_path_le.text(),
                                    author = physicist_name,
@@ -712,7 +714,8 @@ class QPicketFenceWorksheet(QWidget):
                                    report_status = self.ui.outcomeLE.text(),
                                    max_error = pf.max_error,
                                    tolerance = self.ui.toleranceDSB.value(),
-                                   summary_plot = pf.get_publishable_plot()
+                                   summary_plot = pf.get_publishable_plot(),
+                                   comments = comments_te.toPlainText()
                                    )
         
             report.save_report()

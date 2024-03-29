@@ -156,12 +156,12 @@ class QStarshotWorker(QObject):
                               invert = self._invert)
 
             summary_text = [["Minimum circle (wobble) diameter:", 
-                         f"{self.starshot.wobble.radius_mm * 2.0 : 2.3f} mm"],
-                        ["Position of the wobble circle:",
-                         f"{self.starshot.wobble.center.x : 2.1f}, {self.starshot.wobble.center.y : 2.1f}"]]
+                             f"{self.starshot.wobble.radius_mm * 2.0 : 2.3f} mm"],
+                             ["Position of the wobble circle:",
+                              f"{self.starshot.wobble.center.x : 2.1f}, {self.starshot.wobble.center.y : 2.1f}"]]
         
             results = {"summary_text": summary_text,
-                   "starshot_obj": self.starshot}
+                       "starshot_obj": self.starshot}
         
             self.analysis_results_ready.emit(results)
             self.thread_finished.emit()

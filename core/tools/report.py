@@ -59,7 +59,7 @@ class BaseReport:
 
         table = Table(data, colWidths=[3.0*cm, 0.5*cm, 4*cm], hAlign="LEFT",
                       style=[('LINEBELOW', (-1,-1), (-1,-1), 1, colors.black),
-                             ('LEFTPADDING', (-1,-1), (-1,-1), 0)])
+                             ('LEFTPADDING', (0, 0), (0,-1), 0)])
         doc_contents.append(TopPadder(table))
 
     def add_comments(self, doc_contents: list):
@@ -69,7 +69,7 @@ class BaseReport:
 
             table = Table(data, colWidths=[3.0*cm, 0.5*cm, 4*cm], hAlign="LEFT",
                           style=[('VALIGN', (0,0), (0,0), 'TOP'),
-                                 ('LEFTPADDING', (-1,-1), (-1,-1), 0)])
+                                 ('LEFTPADDING', (0, 0), (0,-1), 0)])
             doc_contents.append(table)
 
 class WinstonLutzReport(BaseReport):
@@ -115,7 +115,7 @@ class WinstonLutzReport(BaseReport):
             data.append([Paragraph("<b>Patient ID</b>"), f": {self._patient_info['patient_id']}"])
         
         doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT",
-                                  style=[('LEFTPADDING', (-1,-1), (-1,-1), 0)]))
+                                  style=[('LEFTPADDING', (0,0), (0,-1), 0)]))
 
     def set_analysis_details(self, doc_contents: list):
         doc_contents.append(Spacer(1, 16)) # add spacing of 8 pts
@@ -150,6 +150,7 @@ class WinstonLutzReport(BaseReport):
         if self._summary_plot is not None:
             self.set_plot_summary(doc_contents)
         
+        self.add_comments(doc_contents)
         self.add_signature(doc_contents)
 
         document.build(doc_contents, onFirstPage=self.add_metadata)
@@ -201,7 +202,7 @@ class PicketFenceReport(BaseReport):
             data.append([Paragraph("<b>Test outcome</b>"), f": {self._report_status}"])
         
         doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT",
-                                  style=[('LEFTPADDING', (-1,-1), (-1,-1), 0)]))
+                                  style=[('LEFTPADDING', (0,0), (0,-1), 0)]))
 
     def set_analysis_details(self, doc_contents: list):
         doc_contents.append(Spacer(1, 16)) # add spacing of 8 pts
@@ -220,11 +221,11 @@ class PicketFenceReport(BaseReport):
         doc_contents.append(table)
 
     def set_plot_summary(self, doc_contents: list):
-        doc_contents.append(PageBreak())
+        doc_contents.append(Spacer(1, 16))
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Summary plot:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 8 pts
 
-        image = PdfImage(self._summary_plot, width=8.0*cm, height=8.0*cm)
+        image = PdfImage(self._summary_plot, width=7.5*cm, height=7.5*cm)
         image.hAlign = "CENTRE"
         doc_contents.append(image)
 
@@ -239,6 +240,7 @@ class PicketFenceReport(BaseReport):
         if self._summary_plot is not None:
             self.set_plot_summary(doc_contents)
         
+        self.add_comments(doc_contents)
         self.add_signature(doc_contents)
 
         document.build(doc_contents, onFirstPage=self.add_metadata)
@@ -279,7 +281,7 @@ class FieldAnalysisReport(BaseReport):
         ]
         
         doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT",
-                                  style=[('LEFTPADDING', (-1,-1), (-1,-1), 0)]))
+                                  style=[('LEFTPADDING', (0,0), (0,-1), 0)]))
 
     def set_analysis_details(self, doc_contents: list):
         results = self._analysis_summary
@@ -301,8 +303,8 @@ class FieldAnalysisReport(BaseReport):
                       style=[('GRID', (0,0), (-1,-1), 0.5, colors.grey),
                              ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
                              ('LINEABOVE', (0,0), (-1,0), 1, colors.black),
-                             ('LINEABOVE', (0,1), (-1,1), 1, colors.black)])
-
+                             ('LINEABOVE', (0,1), (-1,1), 1, colors.black)]
+                        )
         
             doc_contents.append(table)
 
@@ -328,6 +330,7 @@ class FieldAnalysisReport(BaseReport):
         if self._summary_plots is not None:
             self.set_plot_summary(doc_contents)
         
+        self.add_comments(doc_contents)
         self.add_signature(doc_contents)
 
         document.build(doc_contents, onFirstPage=self.add_metadata)
@@ -370,7 +373,9 @@ class StarshotReport(BaseReport):
                 [Paragraph("<b>Test outcome</b>"),
                          f": {self._report_status} (wobble diameter  = {self._wobble_diameter:2.3f} mm)"]]
         
-        doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT"))
+        doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT",
+                            style=[('LEFTPADDING', (0,0), (0,-1), 0)])
+                            )
 
     def set_analysis_details(self, doc_contents: list):
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
@@ -384,7 +389,8 @@ class StarshotReport(BaseReport):
                       style=[('GRID', (0,0), (-1,-1), 0.5, colors.grey),
                              ('BACKGROUND', (0,0), (-1,0), colors.lightgrey),
                              ('LINEABOVE', (0,0), (-1,0), 1, colors.black),
-                             ('LINEABOVE', (0,1), (-1,1), 1, colors.black)])
+                             ('LINEABOVE', (0,1), (-1,1), 1, colors.black)]
+                    )
         
         doc_contents.append(table)
 
@@ -410,6 +416,7 @@ class StarshotReport(BaseReport):
         if self._summary_plots is not None:
             self.set_plot_summary(doc_contents)
         
+        self.add_comments(doc_contents)
         self.add_signature(doc_contents)
 
         document.build(doc_contents, onFirstPage=self.add_metadata)
@@ -424,6 +431,9 @@ class PlanarImagingReport(BaseReport):
         author: str = "N/A",
         institution: str = "N/A",
         treatment_unit_name: str | None = None,
+        imaging_system_type: str | None = None,
+        imaging_system_name: str | None = None,
+        phantom_name: str | None = None,
         analysis_summary: list | None = None,
         summary_plots: list[io.BytesIO] | None = None,
         comments: str | None = None
@@ -433,6 +443,9 @@ class PlanarImagingReport(BaseReport):
         self._author = author
         self._institution = institution
         self._treatment_unit_name = treatment_unit_name
+        self._imaging_sys_type = imaging_system_type
+        self._imaging_sys_name = imaging_system_name
+        self._phantom_name = phantom_name
         self._analysis_summary = analysis_summary
         self._summary_plots = summary_plots
         self._comments = comments
@@ -441,13 +454,13 @@ class PlanarImagingReport(BaseReport):
         data = [[Paragraph("<b>Physicist</b>"), f": {self._author}"],
                 [Paragraph("<b>Institution</b>"), f": {self._institution}"],
                 [Paragraph("<b>Treatment unit</b>"), f": {self._treatment_unit_name}"],
+                [Paragraph("<b>Imaging system</b>"), f": {self._imaging_sys_type} ({self._imaging_sys_name})"],
+                [Paragraph("<b>Analysis phantom</b>"), f": {self._phantom_name}"],
                 [Paragraph("<b>Analysis date</b>"), f": {datetime.today().strftime('%d %B %Y')}"],
-                [Paragraph("<b>Test tolerance</b>"), f": {self._tolerance:2.2f} mm"],
-                [Paragraph("<b>Test outcome</b>"),
-                         f": {self._report_status} (wobble diameter  = {self._wobble_diameter:2.3f} mm)"]]
+                ]
         
         doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT",
-                                  style=[('LEFTPADDING', (-1,-1), (-1,-1), 0)]))
+                                  style=[('LEFTPADDING', (0,0), (0,-1), 0)]))
 
     def set_analysis_details(self, doc_contents: list):
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
@@ -471,19 +484,19 @@ class PlanarImagingReport(BaseReport):
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Summary plots:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
 
-        data = [[PdfImage(self._summary_plots[0], width=7.5*cm, height=7.5*cm), 
-                 PdfImage(self._summary_plots[1], width=7.5*cm, height=7.5*cm)]]
+        data = []
+
+        if len(self._summary_plots) > 2:
+            data.append([PdfImage(self._summary_plots[1], width=7.5*cm, height=7.5*cm), 
+                         PdfImage(self._summary_plots[2], width=7.5*cm, height=7.5*cm)
+                        ])
+            data.append([PdfImage(self._summary_plots[0], width=7.5*cm, height=7.5*cm)])
+
+        else:
+            for image in self._summary_plots:
+                data.append([PdfImage(image, width=7.5*cm, height=7.5*cm)])
 
         doc_contents.append(Table(data, colWidths=[8.0*cm, 8.0*cm], hAlign="CENTER"))
-
-    def add_signature(self, doc_contents: list):
-
-        data = [[Paragraph("<b>Performed by</b>"), ":", self._author],
-                [Paragraph("<b>Signature</b>"), ":", ""]]
-
-        table = Table(data, colWidths=[3.0*cm, 0.5*cm, 4*cm], hAlign="LEFT",
-                      style=[('LINEBELOW', (-1,-1), (-1,-1), 1, colors.black)])
-        doc_contents.append(TopPadder(table))
 
     def save_report(self):
         document =  SimpleDocTemplate(self._filename)
@@ -496,6 +509,7 @@ class PlanarImagingReport(BaseReport):
         if self._summary_plots is not None:
             self.set_plot_summary(doc_contents)
         
+        self.add_comments(doc_contents)
         self.add_signature(doc_contents)
 
         document.build(doc_contents, onFirstPage=self.add_metadata)
@@ -522,7 +536,8 @@ class BaseCalibrationReport(BaseReport):
                 [Paragraph("<b>Analysis date</b>"), f': {self._calibration_info["date"]}'],
                 [Paragraph("<b>Test tolerance</b>"), f': {self._calibration_info["tolerance"]}%']]
         
-        doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT"))
+        doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT",
+                                  style=[('LEFTPADDING', (0,0), (0,-1), 0)]))
 
     def set_instrumentation_details(self, doc_contents: list):
         doc_contents.append(Spacer(1, 16)) # Add spacing of 16 pts
@@ -538,7 +553,7 @@ class BaseCalibrationReport(BaseReport):
                 [Paragraph("<b>Chamber Serial No.</b>"), f': {ion_chamber_info["serial_no"]}'],
                 [Paragraph("<b>Calibration Laboratory</b>"), f': {ion_chamber_info["calibration_lab"]}'],
                 [Paragraph("<b>Calibration Date</b>"), f': {ion_chamber_info["calibration_date"]}'],
-                [Paragraph("<b>Calibration Coefficient</b>"), f': {ion_chamber_info["calibration_coeff"]} cGy/nC'],
+                [Paragraph("<b>Calibration Coefficient</b>"), f': {ion_chamber_info["calibration_coeff"]} Gy/nC'],
                 ["", ""],
                 [Paragraph("<b>Electrometer Model</b>"), f': {elect_meter_info["model_name"]}'],
                 [Paragraph("<b>Electrometer Serial No.</b>"), f': {elect_meter_info["serial_no"]}'],
@@ -713,15 +728,6 @@ class PhotonCalibrationReport(BaseCalibrationReport):
         
         doc_contents.append(table)
 
-    def add_signature(self, doc_contents: list):
-
-        data = [[Paragraph("<b>Performed by</b>"), ":", self._calibration_info["user"]],
-                [Paragraph("<b>Signature</b>"), ":", ""]]
-
-        table = Table(data, colWidths=[3.0*cm, 0.5*cm, 4*cm], hAlign="LEFT",
-                      style=[('LINEBELOW', (-1,-1), (-1,-1), 1, colors.black)])
-        doc_contents.append(TopPadder(table))
-
     def save_report(self):
         document =  SimpleDocTemplate(self._filename, pagesize=A4, pageCompression=1)
         doc_contents = [Spacer(1, 2.0*cm)]
@@ -757,7 +763,7 @@ class ElectronCalibrationReport(BaseCalibrationReport):
         #TODO Allow report to accept custom units of measurement
 
         worksheet = self._calibration_info["worksheets"][0]
-        data = [[Paragraph("<b>Setup Type (SSD or SAD)</b>"), "SSD"],
+        data = [[Paragraph("<b>Setup Type (SSD or SAD)</b>"), ": SSD"],
                 [Paragraph("<b>Reference Distance</b>"), f': {worksheet["reference_distance"]} cm'],
                 [Paragraph("<b>Field Size</b>"), f': {worksheet["reference_field_size"].replace(" ", "")} cm²'],
                 [Paragraph("<b>Number of MUs</b>"), f': {worksheet["corresponding_linac_mu"]}'],
@@ -770,7 +776,7 @@ class ElectronCalibrationReport(BaseCalibrationReport):
         data = [["", Paragraph("<para align='centre'><b>Nominal Energy (MeV)</b> \
                                </para>")],
                 [Paragraph("<b>Parameter</b>")],
-                [PdfImage(assets_dir + "/meas_depth_zref.pdf")]
+                ["Reference depth (g/cm²)"]
             ]
         
         num_worksheets = len(self._calibration_info["worksheets"])
@@ -779,8 +785,7 @@ class ElectronCalibrationReport(BaseCalibrationReport):
         #data[7].extend([""]*num_worksheets)
         
         for worksheet in self._calibration_info["worksheets"]:
-            data[1].append(worksheet["beam_energy"] + (" FFF" if worksheet["is_fff"] 
-                                   else ""))
+            data[1].append(worksheet["beam_energy"])
             """
             data[2].append("SSD" if self._calibration_info["setup_type"] == -2 else "SAD")
             data[3].append(worksheet["reference_distance"])
@@ -814,7 +819,7 @@ class ElectronCalibrationReport(BaseCalibrationReport):
                                       "Correction Factors:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
         #TODO Allow report to accept custom units of measurement
-        data = [["", Paragraph("<para align='centre'><b>Nominal Accelerating Potential (MV)</b> \
+        data = [["", Paragraph("<para align='centre'><b>Nominal Energy (MeV)</b> \
                                </para>")],
                 [Paragraph("<b>Parameter</b>")],
                 [PdfImage(assets_dir + "/r50.pdf")],
@@ -832,11 +837,10 @@ class ElectronCalibrationReport(BaseCalibrationReport):
         data[8].extend([""]*num_worksheets)
         
         for worksheet in self._calibration_info["worksheets"]:
-            data[1].append(worksheet["beam_energy"] + (" FFF" if worksheet["is_fff"] 
-                                   else ""))
+            data[1].append(worksheet["beam_energy"])
             
             cal_summary = worksheet["cal_summary"]
-            data[2].append(worksheet["tpr_2010"])
+            data[2].append(worksheet["r_50"])
             data[3].append(cal_summary["kQQo"])
             data[4].append(cal_summary["kElec"])
             data[5].append(cal_summary["kTP"])
@@ -862,11 +866,11 @@ class ElectronCalibrationReport(BaseCalibrationReport):
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Absorbed Dose To Water:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
 
-        data = [["", Paragraph("<para align='centre'><b>Nominal Accelerating Potential (MV)</b> \
+        data = [["", Paragraph("<para align='centre'><b>Nominal Energy (MeV)</b> \
                                </para>")],
                 [Paragraph("<b>Parameter</b>")],
                 [PdfImage(assets_dir + "/depth_zmax.pdf")],
-                [],
+                [PdfImage(assets_dir + "/pdd_zref.pdf")],
                 [PdfImage(assets_dir + "/dw_zref.pdf")],
                 [PdfImage(assets_dir + "/dw_zmax.pdf")],
                 [""],
@@ -874,20 +878,14 @@ class ElectronCalibrationReport(BaseCalibrationReport):
         
         num_worksheets = len(self._calibration_info["worksheets"])
         data[0].extend([""]*(num_worksheets-1))
-        data[6].extend([""]*num_worksheets)
-
-        beam_q_file, key = (("/pdd_zref.pdf", "pdd_zref") if self._calibration_info["setup_type"] == -2 
-                            else ("/tmr_zref.pdf", "tmr_zref"))
-        
-        data[3].insert(0,PdfImage(assets_dir + beam_q_file))
+        data[6].extend([""]*num_worksheets)        
         
         for worksheet in self._calibration_info["worksheets"]:
-            data[1].append(worksheet["beam_energy"] + (" FFF" if worksheet["is_fff"] 
-                                   else ""))
+            data[1].append(worksheet["beam_energy"])
             
             cal_summary = worksheet["cal_summary"]
             data[2].append(worksheet["depth_dmax"])
-            data[3].append(worksheet[key])
+            data[3].append(worksheet["pdd_zref"])
             data[4].append(cal_summary["dw_zref"])
             data[5].append(cal_summary["dw_zmax"])
             data[7].append(cal_summary["test_outcome"])
@@ -902,15 +900,6 @@ class ElectronCalibrationReport(BaseCalibrationReport):
                              ('LINEBEFORE', (1,0), (1,-1), 1, colors.black)])
         
         doc_contents.append(table)
-
-    def add_signature(self, doc_contents: list):
-
-        data = [[Paragraph("<b>Performed by</b>"), ":", self._calibration_info["user"]],
-                [Paragraph("<b>Signature</b>"), ":", ""]]
-
-        table = Table(data, colWidths=[3.0*cm, 0.5*cm, 4*cm], hAlign="LEFT",
-                      style=[('LINEBELOW', (-1,-1), (-1,-1), 1, colors.black)])
-        doc_contents.append(TopPadder(table))
 
     def save_report(self):
         document =  SimpleDocTemplate(self._filename, pagesize=A4, pageCompression=1)

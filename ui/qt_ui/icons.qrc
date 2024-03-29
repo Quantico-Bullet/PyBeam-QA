@@ -14,10 +14,8 @@
         <file>icons/minus.png</file>
         <file>icons/scan.png</file>
         <file>icons/warning.png</file>
-        <file>icons/warning_48.png</file>
         <file>icons/bb_shift.png</file>
         <file>icons/error_round.png</file>
-        <file>icons/error_round_48.png</file>
         <file>icons/pie_chart_report.png</file>
         <file>icons/down_button.png</file>
         <file>icons/up_button.png</file>
@@ -27,6 +25,7 @@
         <file>icons/waiting.png</file>
         <file>icons/in_progress.png</file>
         <file>icons/settings.png</file>
+        <file>icons/info.png</file>
     </qresource>
     <qresource prefix="/actionIcons">
         <file>icons/eye.png</file>
