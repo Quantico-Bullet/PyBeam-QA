@@ -715,20 +715,20 @@ class QPicketFenceWorksheet(QWidget):
 
             pf = self.current_results["picket_fence_obj"]
 
-            summary_text = [["Gantry angle", f"{pf.image.gantry_angle:2.2f}°"],
-                       ["Collimator angle", f"{pf.image.collimator_angle:2.2f}°"],
-                       ["Number of leaves failing", str(len(pf.failed_leaves()))],
-                       ["Absolute median error", f"{pf.abs_median_error:2.2f} mm"],
-                       ["Mean picket spacing", f"{pf.mean_picket_spacing:2.2f} mm"]]
+            summary_text = {"Gantry angle": f"{pf.image.gantry_angle:2.2f}°",
+                            "Collimator angle": f"{pf.image.collimator_angle:2.2f}°",
+                            "Number of leaves failing": str(len(pf.failed_leaves())),
+                            "Absolute median error": f"{pf.abs_median_error:2.2f} mm",
+                            "Mean picket spacing": f"{pf.mean_picket_spacing:2.2f} mm"}
             
             if pf.separate_leaves:
                 leaf_name = pf.max_error_leaf[0] + f"-{(int(pf.max_error_leaf[1:]) + 1)}"
-                summary_text.append(["Max Error", f"{pf.max_error:2.3f} mm",
-                 f"Picket: {pf.max_error_picket + 1}, Leaf: {leaf_name}"])
+                summary_text["Max Error"] = [f"{pf.max_error:2.3f} mm",
+                                             f"At picket: {pf.max_error_picket + 1}, leaf: {leaf_name}"]
 
             else:
-                summary_text.append(["Max Error", f"{pf.max_error:2.3f} mm",
-                                      f"At picket: {pf.max_error_picket + 1}, leaf: {pf.max_error_leaf + 1}"]) 
+                summary_text["Max Error"] = [f"{pf.max_error:2.3f} mm",
+                                             f"At picket: {pf.max_error_picket + 1}, leaf: {pf.max_error_leaf + 1}"] 
 
             report = PicketFenceReport(save_path_le.text(),
                                    author = physicist_name,

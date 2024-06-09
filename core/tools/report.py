@@ -213,7 +213,8 @@ class PicketFenceReport(BaseReport):
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Analysis Details:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
 
-        data = [[param, value] for param, value in self._analysis_summary.items()]
+        data = [[param, value] if isinstance(value, str) else [param, value[0], value[1]] 
+                for param, value in self._analysis_summary.items()]
         data.insert(0, [Paragraph("<b>Parameter</b>"), Paragraph("<b>Value</b>"), Paragraph("<b>Comment(s)</b>")])
 
         table = Table(data, colWidths=[6.0*cm, 3.0*cm, 6.5*cm], hAlign="LEFT",
