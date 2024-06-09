@@ -2,9 +2,10 @@ from PySide6.QtWidgets import (QWidget, QLabel, QProgressBar, QVBoxLayout, QFile
                                QListWidgetItem, QMenu, QSizePolicy, QMessageBox, 
                                QMainWindow, QFormLayout, QComboBox,
                                QDialog, QDialogButtonBox, QLineEdit, QSpacerItem,
-                               QPushButton, QCheckBox, QHBoxLayout, QPlainTextEdit)
+                               QPushButton, QCheckBox, QHBoxLayout, QPlainTextEdit,
+                               QDateEdit)
 from PySide6.QtGui import QIcon, QPixmap
-from PySide6.QtCore import Qt, QSize, QEvent, QThread, Signal
+from PySide6.QtCore import Qt, QSize, QEvent, QThread, Signal, QDate
 
 from ui.qaToolsWindow import QAToolsWindow
 from ui.py_ui import icons_rc
@@ -29,7 +30,8 @@ from pylinac.core.image_generator import (GaussianFilterLayer,
                                           AS1000Image,
                                           AS1200Image)
 
-from ui.utilsWidgets.statusbar_widgets import AnalysisInfoLabel
+from ui.util_widgets import worksheet_save_report
+from ui.util_widgets.statusbar_widgets import AnalysisInfoLabel
 from ui.starshot_test_dialog import StarshotTestDialog
 
 class StarshotMainWindow(QAToolsWindow):
@@ -93,6 +95,7 @@ class StarshotMainWindow(QAToolsWindow):
 class QStarshotWorksheet(QWidget):
 
     analysis_info_signal = Signal(dict)
+    save_info_signal = Signal(dict)
 
     def __init__(self):
         super().__init__()
@@ -173,6 +176,13 @@ class QStarshotWorksheet(QWidget):
         #Set analysis state and message for status bar
         self.analysis_message = None
         self.analysis_state = AnalysisInfoLabel.IDLE
+
+        # Set initial session save info
+        self.report_author = ""
+        self.report_institution = ""
+        self.report_date = QDate.currentDate()
+        self.save_path = ""
+        self.save_comment = ""
 
     def setup_config(self):
         self.ui.SIDInputCB.addItems(["Auto", "Manual"])
@@ -503,8 +513,8 @@ class QStarshotWorksheet(QWidget):
         self.ui.analysisImageVL.addWidget(self.current_plot)
 
         #Update the summary
-        self.analysis_summary = [["Wobble (circle) diameter", f"{starshot.wobble.radius_mm*2.0:2.3f} mm"],
-                                 ["Number of spokes detected", f"{len(starshot.lines)}"]]
+        self.analysis_summary= {"Wobble (circle) diameter": f"{starshot.wobble.radius_mm*2.0:2.3f} mm",
+                                "Number of spokes detected": f"{len(starshot.lines)}"}
 
     def remove_list_checkmarks(self):
         for index in range(self.ui.imageListWidget.count()):
@@ -560,6 +570,7 @@ class QStarshotWorksheet(QWidget):
         physicist_name_le = QLineEdit()
         institution_name_le = QLineEdit()
         treatment_unit_le = QComboBox()
+        analysis_date = QDateEdit()
         comments_te = QPlainTextEdit()
         treatment_unit_le.setEditable(True)
         physicist_name_le.setMaximumWidth(250)
@@ -568,6 +579,16 @@ class QStarshotWorksheet(QWidget):
         institution_name_le.setMinimumWidth(350)
         treatment_unit_le.setMaximumWidth(250)
         treatment_unit_le.setMinimumWidth(250)
+        analysis_date.setMaximumWidth(120)
+        analysis_date.setCalendarPopup(True)
+        analysis_date.setDisplayFormat("dd MMMM yyyy")
+        analysis_date.setMaximumDate(QDate.currentDate())
+
+        # restore current save info
+        physicist_name_le.setText(self.report_author)
+        institution_name_le.setText(self.report_institution)
+        analysis_date.setDate(self.report_date)
+        comments_te.setPlainText(self.save_comment)
 
         save_path_le = QLineEdit()
         save_win_btn = QPushButton("Save to...")
@@ -593,6 +614,7 @@ class QStarshotWorksheet(QWidget):
         user_details_layout.addRow("Treatment unit:", treatment_unit_le)
         user_details_layout.addRow("Institution:", institution_name_le)
         user_details_layout.addRow("Save location:", save_location_layout)
+        user_details_layout.addRow("Analysis date:", analysis_date)
         user_details_layout.addRow("Comments:", comments_te)
         user_details_layout.addRow("",show_report_layout)
         user_details_layout.addItem(QSpacerItem(1,10, QSizePolicy.Policy.Minimum,
@@ -621,11 +643,18 @@ class QStarshotWorksheet(QWidget):
 
         cancel_button.clicked.connect(report_dialog.reject)
         save_button.clicked.connect(report_dialog.accept)
-        save_win_btn.clicked.connect(lambda: self.save_report_to(save_path_le))
+        save_win_btn.clicked.connect(lambda: save_path_le.setText(worksheet_save_report(self)))
 
         result = report_dialog.exec()
 
         if result == QDialog.DialogCode.Accepted:
+
+            # Amend save info
+            self.report_author = physicist_name_le.text()
+            self.report_institution = institution_name_le.text()
+            self.save_comment = comments_te.toPlainText()
+            self.report_date = analysis_date.date()
+
             physicist_name = "N/A" if physicist_name_le.text() == "" else physicist_name_le.text()
             institution_name = "N/A" if institution_name_le.text() == "" else institution_name_le.text()
             treatment_unit = "N/A" if treatment_unit_le.currentText() == "" else treatment_unit_le.currentText()
@@ -636,6 +665,7 @@ class QStarshotWorksheet(QWidget):
                                     author = physicist_name,
                                     institution = institution_name,
                                     treatment_unit_name = treatment_unit,
+                                    analysis_date = self.report_date.toString("dd MMMM yyyy"),
                                     analysis_summary = self.analysis_summary.copy(),
                                     summary_plots = starshot.get_publishable_plots(),
                                     wobble_diameter = starshot.wobble.radius_mm * 2.0,
@@ -647,15 +677,4 @@ class QStarshotWorksheet(QWidget):
 
             if show_report_checkbox.isChecked():
                 webbrowser.open(save_path_le.text())
-
-    def save_report_to(self, line_edit: QLineEdit):
-        file_path = QFileDialog.getSaveFileName(caption="Save To File...", filter="PDF (*.pdf)")
-        
-        if file_path[0] != "":
-            path = file_path[0].split("/")
-            
-            if not path[-1].endswith(".pdf"):
-                path[-1] = path[-1] + ".pdf"
-            
-            line_edit.setText("/".join(path))
             

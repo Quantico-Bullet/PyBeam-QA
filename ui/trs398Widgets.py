@@ -9,8 +9,9 @@ from core.tools.devices import Linac
 
 from ui.py_ui.photonsWorksheet_ui import Ui_QPhotonsWorksheet
 from ui.py_ui.electronsWorksheet_ui import Ui_QElectronsWorksheet
-from ui.utilsWidgets.validators import DoubleValidator
-from ui.utilsWidgets.dialogs import MessageDialog
+from ui.util_widgets import worksheet_save_report
+from ui.util_widgets.validators import DoubleValidator
+from ui.util_widgets.dialogs import MessageDialog
 from core.tools.report import PhotonCalibrationReport, ElectronCalibrationReport
 from core.calibration.trs398 import TRS398Photons, TRS398Electrons
 from core.configuration.config import ChambersConfig, SettingsConfig
@@ -202,7 +203,8 @@ class BaseTRS398Window(QAToolsWindow):
 
         cancel_button.clicked.connect(report_dialog.reject)
         save_button.clicked.connect(report_dialog.accept)
-        save_win_btn.clicked.connect(lambda: save_path_le.setText(self.save_report_to(report_dialog)))
+        save_win_btn.clicked.connect(
+            lambda: save_path_le.setText(worksheet_save_report(report_dialog)))
 
         result = report_dialog.exec()
 
@@ -237,22 +239,6 @@ class BaseTRS398Window(QAToolsWindow):
         
         else:
             return None
-
-    def save_report_to(self, top_dialog: QDialog) -> str:
-        file_path = QFileDialog.getSaveFileName(caption="Save Report As...", 
-                                                filter="PDF (*.pdf)",
-                                                parent=top_dialog)
-        
-        if file_path[0] != "":
-            path = file_path[0].split("/")
-            
-            if not path[-1].endswith(".pdf"):
-                path[-1] = path[-1] + ".pdf"
-            
-            return "/".join(path)
-        
-        else:
-            return ""
 
 class PhotonsMainWindow(BaseTRS398Window):
     

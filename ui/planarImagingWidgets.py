@@ -2,18 +2,20 @@ from PySide6.QtWidgets import (QWidget, QLabel, QProgressBar, QVBoxLayout, QFile
                                QListWidgetItem, QMenu, QSizePolicy, QMessageBox, 
                                QMainWindow, QFormLayout, QGridLayout,
                                QSplitter, QComboBox, QDialog, QDialogButtonBox, QLineEdit, 
-                               QSpacerItem, QPushButton, QCheckBox, QHBoxLayout, QPlainTextEdit)
+                               QSpacerItem, QPushButton, QCheckBox, QHBoxLayout, QPlainTextEdit,
+                               QDateEdit)
 from PySide6.QtGui import QIcon, QPixmap
-from PySide6.QtCore import Qt, QSize, QEvent, QThread, Signal
+from PySide6.QtCore import Qt, QSize, QEvent, QThread, Signal, QDate
 
-from ui.utilsWidgets.dialogs import MessageDialog
+from ui.util_widgets.dialogs import MessageDialog
 from ui.py_ui.planarImagingWorksheet_ui import Ui_QPlanarImagingWorksheet
 from ui.py_ui import icons_rc
 from core.analysis.planar_imaging import QPlanarImaging, QPlanarImagingWorker
 from core.tools.report import PlanarImagingReport
 from core.tools.devices import DeviceManager
 
-from ui.utilsWidgets.statusbar_widgets import AnalysisInfoLabel
+from ui.util_widgets import worksheet_save_report
+from ui.util_widgets.statusbar_widgets import AnalysisInfoLabel
 from ui.qaToolsWindow import QAToolsWindow
 
 import platform
@@ -51,6 +53,7 @@ class PlanarImagingMainWindow(QAToolsWindow):
 class QPlanarImagingWorksheet(QWidget):
 
     analysis_info_signal = Signal(dict)
+    save_info_signal = Signal(dict)
 
     DEFAULT_PHANTOMS = ["Leeds TOR 18 (Red)", "Leeds TOR 18 (Blue)", 
                         "Standard Imaging QC-3 MV", "Standard Imaging QC kV", 
@@ -140,6 +143,13 @@ class QPlanarImagingWorksheet(QWidget):
         #Set analysis state and message for status bar
         self.analysis_message = None
         self.analysis_state = AnalysisInfoLabel.IDLE
+
+        # Set initial session save info
+        self.report_author = ""
+        self.report_institution = ""
+        self.report_date = QDate.currentDate()
+        self.save_path = ""
+        self.save_comment = ""
 
     def setup_config(self):
         """
@@ -502,13 +512,13 @@ class QPlanarImagingWorksheet(QWidget):
 
         #TODO remove repeated code
         #update analysis summary
-        self.analysis_summary = [["No. of low contrasts ROIs visible", f"{data.num_contrast_rois_seen}"],
-                                 ["Median contrast", f"{data.median_contrast:2.2f}"],
-                                 ["Median contrast-to-noise ratio", f"{data.median_cnr:2.2f}"],
-                                 ["MTF 80% (lp/mm)", f"{data.mtf_lp_mm[0][80]: 2.2f}"],
-                                 ["MTF 50% (lp/mm)", f"{data.mtf_lp_mm[1][50]: 2.2f}"],
-                                 ["MTF 30% (lp/mm):", f"{data.mtf_lp_mm[2][30]: 2.2f}"]
-                                 ]
+        self.analysis_summary = {"No. of low contrasts ROIs visible": f"{data.num_contrast_rois_seen}",
+                                 "Median contrast": f"{data.median_contrast:2.2f}",
+                                 "Median contrast-to-noise ratio": f"{data.median_cnr:2.2f}",
+                                 "MTF 80% (lp/mm)": f"{data.mtf_lp_mm[0][80]: 2.2f}",
+                                 "MTF 50% (lp/mm)": f"{data.mtf_lp_mm[1][50]: 2.2f}",
+                                 "MTF 30% (lp/mm)": f"{data.mtf_lp_mm[2][30]: 2.2f}"
+                                 }
 
         pi = results["planar_img_obj"]
         # Update the advanced viewcle
@@ -547,6 +557,7 @@ class QPlanarImagingWorksheet(QWidget):
         imaging_sys_cb.addItems(["EPID", "kV Imager"])
         imaging_sys_name = QComboBox()
         imaging_sys_name.setEditable(True)
+        analysis_date = QDateEdit()
         comments_te = QPlainTextEdit()
         treatment_unit_le.setEditable(True)
         physicist_name_le.setMaximumWidth(250)
@@ -555,6 +566,16 @@ class QPlanarImagingWorksheet(QWidget):
         institution_name_le.setMinimumWidth(350)
         treatment_unit_le.setMaximumWidth(250)
         treatment_unit_le.setMinimumWidth(250)
+        analysis_date.setMaximumWidth(120)
+        analysis_date.setCalendarPopup(True)
+        analysis_date.setDisplayFormat("dd MMMM yyyy")
+        analysis_date.setMaximumDate(QDate.currentDate())
+
+        # restore current save info
+        physicist_name_le.setText(self.report_author)
+        institution_name_le.setText(self.report_institution)
+        analysis_date.setDate(self.report_date)
+        comments_te.setPlainText(self.save_comment)
 
         save_path_le = QLineEdit()
         save_win_btn = QPushButton("Save to...")
@@ -582,6 +603,7 @@ class QPlanarImagingWorksheet(QWidget):
         user_details_layout.addRow("Imaging system type:", imaging_sys_cb)
         user_details_layout.addRow("Imaging system name:", imaging_sys_name)
         user_details_layout.addRow("Save location:", save_location_layout)
+        user_details_layout.addRow("Analysis date:", analysis_date)
         user_details_layout.addRow("Comments:", comments_te)
         user_details_layout.addRow("",show_report_layout)
         user_details_layout.addItem(QSpacerItem(1,10, QSizePolicy.Policy.Minimum,
@@ -610,11 +632,18 @@ class QPlanarImagingWorksheet(QWidget):
 
         cancel_button.clicked.connect(report_dialog.reject)
         save_button.clicked.connect(report_dialog.accept)
-        save_win_btn.clicked.connect(lambda: self.save_report_to(save_path_le))
+        save_win_btn.clicked.connect(lambda: save_path_le.setText(worksheet_save_report(self)))
 
         result = report_dialog.exec()
 
         if result == QDialog.DialogCode.Accepted:
+
+            # Amend save info
+            self.report_author = physicist_name_le.text()
+            self.report_institution = institution_name_le.text()
+            self.save_comment = comments_te.toPlainText()
+            self.report_date = analysis_date.date()
+
             physicist_name = "N/A" if physicist_name_le.text() == "" else physicist_name_le.text()
             institution_name = "N/A" if institution_name_le.text() == "" else institution_name_le.text()
             treatment_unit = "N/A" if treatment_unit_le.currentText() == "" else treatment_unit_le.currentText()
@@ -625,6 +654,7 @@ class QPlanarImagingWorksheet(QWidget):
                                    author = physicist_name,
                                    institution = institution_name,
                                    treatment_unit_name = treatment_unit,
+                                   analysis_date = self.report_date.toString("dd MMMM yyyy"),
                                    imaging_system_type = imaging_sys_cb.currentText(),
                                    imaging_system_name = imaging_sys_name.currentText(),
                                    phantom_name = pi._phantom.common_name,
@@ -636,18 +666,6 @@ class QPlanarImagingWorksheet(QWidget):
 
             if show_report_checkbox.isChecked():
                 webbrowser.open(save_path_le.text())
-
-
-    def save_report_to(self, line_edit: QLineEdit):
-        file_path = QFileDialog.getSaveFileName(caption="Save To File...", filter="PDF (*.pdf)")
-        
-        if file_path[0] != "":
-            path = file_path[0].split("/")
-            
-            if not path[-1].endswith(".pdf"):
-                path[-1] = path[-1] + ".pdf"
-            
-            line_edit.setText("/".join(path))
             
 class AdvancedPIView(QMainWindow):
 

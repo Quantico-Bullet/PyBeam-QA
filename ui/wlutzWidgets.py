@@ -3,9 +3,9 @@ from PySide6.QtWidgets import (QWidget, QListWidgetItem, QMenu, QFileDialog, QDi
                                QMessageBox, QSizePolicy, QMainWindow, QGroupBox, 
                                QLineEdit, QComboBox, QDialogButtonBox, QPushButton, QSpacerItem,
                                QCheckBox, QGridLayout, QTabWidget, QSplitter, QTableWidget,
-                               QHeaderView, QTableWidgetItem, QPlainTextEdit)
+                               QHeaderView, QTableWidgetItem, QPlainTextEdit, QDateEdit)
 from PySide6.QtGui import QIcon, QPixmap, QColor
-from PySide6.QtCore import Qt, QSize, QEvent, QThread, Signal
+from PySide6.QtCore import Qt, QSize, QEvent, QThread, Signal, QDate
 
 from ui.qaToolsWindow import QAToolsWindow
 from ui.py_ui.wlutzWorksheet_ui import Ui_QWLutzWorksheet
@@ -33,8 +33,9 @@ import platform
 import subprocess
 import webbrowser
 
-from ui.utilsWidgets.statusbar_widgets import AnalysisInfoLabel
-from ui.utilsWidgets.dialogs import MessageDialog
+from ui.util_widgets.statusbar_widgets import AnalysisInfoLabel
+from ui.util_widgets import worksheet_save_report
+from ui.util_widgets.dialogs import MessageDialog
 from ui.wl_test_dialog import WLTestDialog
 
 pg.setConfigOptions(antialias=True, imageAxisOrder='row-major')
@@ -253,9 +254,16 @@ class QWLutzWorksheet(QWidget):
         self.analysis_summary = {}
         self.set_analysis_outcome()
 
-        #Set analysis state and message for status bar
+        # Set analysis state and message for status bar
         self.analysis_message = None
         self.analysis_state = AnalysisInfoLabel.IDLE
+
+        # Set initial session save info
+        self.report_author = ""
+        self.report_institution = ""
+        self.report_date = QDate.currentDate()
+        self.save_path = ""
+        self.save_comment = ""
 
     def add_files(self, files: tuple | list | None = None):
         if not files:
@@ -646,6 +654,7 @@ class QWLutzWorksheet(QWidget):
         physicist_name_le = QLineEdit()
         institution_name_le = QLineEdit()
         treatment_unit_le = QComboBox()
+        analysis_date = QDateEdit()
         comments_te = QPlainTextEdit()
         treatment_unit_le.setEditable(True)
         physicist_name_le.setMaximumWidth(250)
@@ -654,6 +663,16 @@ class QWLutzWorksheet(QWidget):
         institution_name_le.setMinimumWidth(350)
         treatment_unit_le.setMaximumWidth(250)
         treatment_unit_le.setMinimumWidth(250)
+        analysis_date.setMaximumWidth(120)
+        analysis_date.setCalendarPopup(True)
+        analysis_date.setDisplayFormat("dd MMMM yyyy")
+        analysis_date.setMaximumDate(QDate.currentDate())
+
+        # restore current save info
+        physicist_name_le.setText(self.report_author)
+        institution_name_le.setText(self.report_institution)
+        analysis_date.setDate(self.report_date)
+        comments_te.setPlainText(self.save_comment)
 
         save_path_le = QLineEdit()
         save_win_btn = QPushButton("Save to...")
@@ -679,6 +698,7 @@ class QWLutzWorksheet(QWidget):
         user_details_layout.addRow("Treatment unit:", treatment_unit_le)
         user_details_layout.addRow("Institution:", institution_name_le)
         user_details_layout.addRow("Save location:", save_location_layout)
+        user_details_layout.addRow("Analysis date:", analysis_date)
         user_details_layout.addRow("Comments:", comments_te)
         user_details_layout.addRow("",show_report_layout)
         user_details_layout.addItem(QSpacerItem(1,10, QSizePolicy.Policy.Minimum,
@@ -727,11 +747,18 @@ class QWLutzWorksheet(QWidget):
             patient_info_button, patient_info_group, report_dialog))
         cancel_button.clicked.connect(report_dialog.reject)
         save_button.clicked.connect(report_dialog.accept)
-        save_win_btn.clicked.connect(lambda: self.save_report_to(save_path_le))
+        save_win_btn.clicked.connect(lambda: save_path_le.setText(worksheet_save_report(self)))
 
         result = report_dialog.exec()
 
         if result == QDialog.DialogCode.Accepted:
+
+            # Amend save info
+            self.report_author = physicist_name_le.text()
+            self.report_institution = institution_name_le.text()
+            self.save_comment = comments_te.toPlainText()
+            self.report_date = analysis_date.date()
+
             physicist_name = "N/A" if physicist_name_le.text() == "" else physicist_name_le.text()
             institution_name = "N/A" if institution_name_le.text() == "" else institution_name_le.text()
             treatment_unit = "N/A" if treatment_unit_le.currentText() == "" else treatment_unit_le.currentText()
@@ -746,6 +773,7 @@ class QWLutzWorksheet(QWidget):
                                    author = physicist_name,
                                    institution = institution_name,
                                    treatment_unit_name = treatment_unit,
+                                   analysis_date = self.report_date.toString("dd MMMM yyyy"),
                                    summary_plot = self.current_results["summary_plot"],
                                    analysis_summary = self.analysis_summary,
                                    report_status = self.ui.outcomeLE.text(),
@@ -773,17 +801,6 @@ class QWLutzWorksheet(QWidget):
             self.patient_info_toggled = True
             dialog.setMinimumSize(dialog.sizeHint())
             dialog.setMaximumSize(dialog.sizeHint())
-
-    def save_report_to(self, line_edit: QLineEdit):
-        file_path = QFileDialog.getSaveFileName(caption="Save To File...", filter="PDF (*.pdf)")
-        
-        if file_path[0] != "":
-            path = file_path[0].split("/")
-            
-            if not path[-1].endswith(".pdf"):
-                path[-1] = path[-1] + ".pdf"
-            
-            line_edit.setText("/".join(path))
 
 class AdvancedWLView(QMainWindow):
 

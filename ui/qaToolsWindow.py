@@ -1,10 +1,10 @@
-from PySide6.QtWidgets import QMainWindow, QDialogButtonBox, QDialog
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtWidgets import (QLineEdit, QMainWindow, QDialogButtonBox, QDialog, QFileDialog)
+from PySide6.QtCore import Qt, Signal, QDate
 from PySide6.QtGui import QPixmap, QDesktopServices
 
-from ui.utilsWidgets.statusbar_widgets import AnalysisInfoLabel
+from ui.util_widgets.statusbar_widgets import AnalysisInfoLabel
 from ui.py_ui.qaMainWin_ui import Ui_MainWindow
-from ui.utilsWidgets.dialogs import MessageDialog
+from ui.util_widgets.dialogs import MessageDialog
 from ui.about_dialog import AboutDialog
 from ui.py_ui import icons_rc
 
@@ -42,7 +42,7 @@ class QAToolsWindow(QMainWindow):
         full_screen_action.setCheckable(True)
         #full_screen_action.toggled.connect(self.set_window_state)
 
-        # setup basic window functionality
+        # setup basic dock functionality
         self.ui.dockWidget.close()
 
         #copyright_text = QLabel("PyBeam QA - v0.1.0 (Copyright © 2023 Kagiso Lebang)")
@@ -55,8 +55,8 @@ class QAToolsWindow(QMainWindow):
         self.analysis_info_label = AnalysisInfoLabel()
         self.ui.statusbar.addWidget(self.analysis_info_label)
 
-        self.curr_anal_message = None
-        self.curr_anal_state = AnalysisInfoLabel.IDLE
+        self.curr_analy_message = None
+        self.curr_analy_state = AnalysisInfoLabel.IDLE
         
         self.ui.tabWidget.currentChanged.connect(self.tab_window_changed)
         self.ui.tabWidget.tabCloseRequested.connect(self.tab_close_requested)

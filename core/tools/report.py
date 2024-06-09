@@ -42,7 +42,7 @@ class BaseReport:
         canvas.setSubject("Radiotherapy QA")
 
         canvas.saveState()
-        canvas.setFont("Helvetica-Bold", 20)
+        canvas.setFont("Times-Bold", 22)
         canvas.drawCentredString(A4[0]/2.0, 26.0 * cm , self.report_name)
         canvas.restoreState()
 
@@ -82,6 +82,7 @@ class WinstonLutzReport(BaseReport):
         author: str = "N/A",
         institution: str = "N/A",
         treatment_unit_name: str = None,
+        analysis_date: str | None = None,
         analysis_summary: dict = None,
         patient_info: dict = None,
         summary_plot: io.BytesIO = None,
@@ -94,6 +95,7 @@ class WinstonLutzReport(BaseReport):
         self._author = author
         self._institution = institution
         self._treatment_unit_name = treatment_unit_name
+        self._analysis_date = analysis_date
         self._analysis_summary = analysis_summary
         self._patient_info = patient_info
         self._summary_plot = summary_plot
@@ -105,7 +107,7 @@ class WinstonLutzReport(BaseReport):
         data = [[Paragraph("<b>Physicist</b>"), f": {self._author}"],
                 [Paragraph("<b>Institution</b>"), f": {self._institution}"],
                 [Paragraph("<b>Treatment unit</b>"), f": {self._treatment_unit_name}"],
-                [Paragraph("<b>Analysis date</b>"), f": {datetime.today().strftime('%d %B %Y')}"],
+                [Paragraph("<b>Analysis date</b>"), f": {self._analysis_date}"],
                 [Paragraph("<b>Test tolerance</b>"), f": {self._tolerance} mm"],
                 [Paragraph("<b>Test outcome</b>"), f": {self._report_status}"]]
         
@@ -123,7 +125,7 @@ class WinstonLutzReport(BaseReport):
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
 
         data = [[param, value] for param, value in self._analysis_summary.items()]
-        data.insert(0, [Paragraph("<b>Parameter</b>"), Paragraph("<b>Value</b>")])
+        data.insert(0, [Paragraph("<b>Parameter</b>"), Paragraph("<b>Value</b>"), Paragraph("<b>Comment(s)</b>")])
 
         table = Table(data, colWidths=[8.0*cm, 3.5*cm], hAlign="LEFT",
                       style=[('GRID', (0,0), (-1,-1), 0.5, colors.grey),
@@ -167,6 +169,7 @@ class PicketFenceReport(BaseReport):
         treatment_unit_name: str | None = None,
         mlc_type: str = "N/A",
         analysis_summary: list | None = None,
+        analysis_date: str | None = None,
         summary_plot: io.BytesIO | None = None,
         report_status: str = "N/A",
         max_error: float | None = None,
@@ -179,6 +182,7 @@ class PicketFenceReport(BaseReport):
         self._institution = institution
         self._treatment_unit_name = treatment_unit_name
         self._mlc_type = mlc_type
+        self._analysis_date = analysis_date
         self._analysis_summary = analysis_summary
         self._summary_plot = summary_plot
         self._report_status = report_status
@@ -191,7 +195,7 @@ class PicketFenceReport(BaseReport):
                 [Paragraph("<b>Institution</b>"), f": {self._institution}"],
                 [Paragraph("<b>Treatment unit</b>"), f": {self._treatment_unit_name}"],
                 [Paragraph("<b>MLC type</b>"), f": {self._mlc_type}"],
-                [Paragraph("<b>Analysis date</b>"), f": {datetime.today().strftime('%d %B %Y')}"],
+                [Paragraph("<b>Analysis date</b>"), f": {self._analysis_date}"],
                 [Paragraph("<b>Test tolerance</b>"), f": {self._tolerance:2.2f} mm"]]
         
         if self._max_error is not None:
@@ -209,7 +213,7 @@ class PicketFenceReport(BaseReport):
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Analysis Details:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
 
-        data = self._analysis_summary
+        data = [[param, value] for param, value in self._analysis_summary.items()]
         data.insert(0, [Paragraph("<b>Parameter</b>"), Paragraph("<b>Value</b>"), Paragraph("<b>Comment(s)</b>")])
 
         table = Table(data, colWidths=[6.0*cm, 3.0*cm, 6.5*cm], hAlign="LEFT",
@@ -256,6 +260,7 @@ class FieldAnalysisReport(BaseReport):
         institution: str = "N/A",
         protocol: str = "N/A",
         treatment_unit_name: str | None = None,
+        analysis_date: str | None = None,
         analysis_summary: dict | None = None,
         summary_plots: list[io.BytesIO] | None = None,
         comments: str | None = None
@@ -266,6 +271,7 @@ class FieldAnalysisReport(BaseReport):
         self._institution = institution
         self._treatment_unit_name = treatment_unit_name
         self._protocol = protocol
+        self._analysis_date = analysis_date
         self._analysis_summary = analysis_summary
         self._summary_plots = summary_plots
         self._comments = comments
@@ -275,7 +281,7 @@ class FieldAnalysisReport(BaseReport):
             [Paragraph("<b>Physicist</b>"), f": {self._author}"],
             [Paragraph("<b>Institution</b>"), f": {self._institution}"],
             [Paragraph("<b>Treatment unit</b>"), f": {self._treatment_unit_name}"],
-            [Paragraph("<b>Analysis date</b>"), f": {datetime.today().strftime('%d %B %Y')}"],
+            [Paragraph("<b>Analysis date</b>"), f": {self._analysis_date}"],
             [],
             [Paragraph("<b>Analysis protocol</b>"), f": {self._protocol}"]
         ]
@@ -346,6 +352,7 @@ class StarshotReport(BaseReport):
         institution: str = "N/A",
         treatment_unit_name: str | None = None,
         analysis_summary: list | None = None,
+        analysis_date: str | None = None,
         summary_plots: list[io.BytesIO] | None = None,
         report_status: str = "N/A",
         wobble_diameter: float | None = None,
@@ -357,6 +364,7 @@ class StarshotReport(BaseReport):
         self._author = author
         self._institution = institution
         self._treatment_unit_name = treatment_unit_name
+        self._analysis_date = analysis_date
         self._analysis_summary = analysis_summary
         self._summary_plots = summary_plots
         self._report_status = report_status
@@ -368,7 +376,7 @@ class StarshotReport(BaseReport):
         data = [[Paragraph("<b>Physicist</b>"), f": {self._author}"],
                 [Paragraph("<b>Institution</b>"), f": {self._institution}"],
                 [Paragraph("<b>Treatment unit</b>"), f": {self._treatment_unit_name}"],
-                [Paragraph("<b>Analysis date</b>"), f": {datetime.today().strftime('%d %B %Y')}"],
+                [Paragraph("<b>Analysis date</b>"), f": {self._analysis_date}"],
                 [Paragraph("<b>Test tolerance</b>"), f": {self._tolerance:2.2f} mm"],
                 [Paragraph("<b>Test outcome</b>"),
                          f": {self._report_status} (wobble diameter  = {self._wobble_diameter:2.3f} mm)"]]
@@ -382,7 +390,7 @@ class StarshotReport(BaseReport):
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Analysis Details:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
 
-        data = self._analysis_summary
+        data = [[param, value] for param, value in self._analysis_summary.items()]
         data.insert(0, [Paragraph("<b>Parameter</b>"), Paragraph("<b>Value</b>"), Paragraph("<b>Comment(s)</b>")])
 
         table = Table(data, colWidths=[6.0*cm, 3.0*cm, 6.5*cm], hAlign="LEFT",
@@ -435,6 +443,7 @@ class PlanarImagingReport(BaseReport):
         imaging_system_name: str | None = None,
         phantom_name: str | None = None,
         analysis_summary: list | None = None,
+        analysis_date: str | None = None,
         summary_plots: list[io.BytesIO] | None = None,
         comments: str | None = None
         ):
@@ -443,6 +452,7 @@ class PlanarImagingReport(BaseReport):
         self._author = author
         self._institution = institution
         self._treatment_unit_name = treatment_unit_name
+        self._analysis_date = analysis_date
         self._imaging_sys_type = imaging_system_type
         self._imaging_sys_name = imaging_system_name
         self._phantom_name = phantom_name
@@ -456,7 +466,7 @@ class PlanarImagingReport(BaseReport):
                 [Paragraph("<b>Treatment unit</b>"), f": {self._treatment_unit_name}"],
                 [Paragraph("<b>Imaging system</b>"), f": {self._imaging_sys_type} ({self._imaging_sys_name})"],
                 [Paragraph("<b>Analysis phantom</b>"), f": {self._phantom_name}"],
-                [Paragraph("<b>Analysis date</b>"), f": {datetime.today().strftime('%d %B %Y')}"],
+                [Paragraph("<b>Analysis date</b>"), f": {self._analysis_date}"],
                 ]
         
         doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT",
@@ -467,7 +477,7 @@ class PlanarImagingReport(BaseReport):
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Analysis Details:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
 
-        data = self._analysis_summary
+        data = [[param, value] for param, value in self._analysis_summary.items()]
         data.insert(0, [Paragraph("<b>Parameter</b>"), Paragraph("<b>Value</b>"), Paragraph("<b>Comment(s)</b>")])
 
         table = Table(data, colWidths=[6.0*cm, 3.0*cm, 6.5*cm], hAlign="LEFT",
