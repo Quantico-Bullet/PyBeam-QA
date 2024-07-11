@@ -8,7 +8,7 @@ from PySide6.QtCore import Signal, Slot, QObject
 import pyqtgraph as pg
 
 from pylinac import WinstonLutz
-from pylinac.winston_lutz import bb_projection_gantry_plane, bb_projection_long
+from pylinac.winston_lutz import bb_projection_with_rotation
 from pylinac.picketfence import Orientation
 from pylinac.core.geometry import cos, sin
 from pylinac.core.scale import MachineScale
@@ -97,13 +97,15 @@ class QWinstonLutzWorker(QObject):
             wl_data["summary_plot"] = summary_image_data
 
             self.analysis_results_changed.emit(wl_data)
-            self.bb_shift_info_changed.emit(self._wl.bb_shift_instructions())
+            self.bb_shift_info_changed.emit(str(self._wl.bb_shift_instructions()))
             del self._wl
             self.thread_finished.emit()
 
         except Exception as err:
             self.analysis_failed.emit(traceback.format_exception_only(err)[-1])
             self.thread_finished.emit()
+
+            raise err
 
 def generate_winstonlutz(
     simulator: Simulator,
@@ -152,15 +154,13 @@ def generate_winstonlutz(
         sim_single.image = ndimage.rotate(sim_single.image, -coll,
                                           reshape = False, mode = 'nearest')
 
-        long_offset = bb_projection_long(
-            offset_in=offset_mm_in,
-            offset_up=offset_mm_up,
+        gplane_offset, long_offset = bb_projection_with_rotation(
             offset_left=offset_mm_left,
-            sad=1000,
+            offset_up=offset_mm_up,
+            offset_in=offset_mm_in,
             gantry=gantry,
-        )
-        gplane_offset = bb_projection_gantry_plane(
-            offset_left=offset_mm_left, offset_up=offset_mm_up, sad=1000, gantry=gantry
+            couch=couch,
+            sad=1000,
         )
         sim_single.add_layer(
             PerfectBBLayer(
