@@ -1,6 +1,6 @@
 {
-    "files": ["icons.qrc","wlutzWorksheet.ui","photonsWorksheet.ui","qaMainWin.ui","appMainWin.ui",
-    "electronsWorksheet.ui", "picketFenceWorksheet.ui", "starshotWorksheet.ui", "fieldAnalysisWorksheet.ui",
-    "planarImagingWorksheet.ui", "wl_test_dialog.ui", "about_dialog.ui", "starshot_test_dialog.ui", 
-    "picket_fence_test_dialog.ui", "pf_offsets_dialog.ui", "preferences.ui"]
+    "files": ["icons.qrc","winston_lutz_worksheet.ui","photons_worksheet.ui","qa_main_win.ui","app_main_win.ui",
+    "electrons_worksheet.ui", "picket_fence_worksheet.ui", "starshot_worksheet.ui", "field_analysis_worksheet.ui",
+    "planar_imaging_worksheet.ui", "winston_lutz_test_dialog.ui", "about_dialog.ui", "starshot_test_dialog.ui", 
+    "picket_fence_test_dialog.ui", "picket_fence_offsets_dialog.ui", "preferences.ui"]
 }

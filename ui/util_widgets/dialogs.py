@@ -1,12 +1,19 @@
+from PySide6.QtGui import (QPixmap, QImage, QDesktopServices, QPixmap, QImage, QPainter, 
+                           QColor)
+from PySide6.QtSvg import QSvgRenderer
+from PySide6.QtCore import Qt, QSize
 from PySide6.QtWidgets import (QWidget, QDialogButtonBox, QSpacerItem, QGridLayout,
                                QSizePolicy, QDialog, QLabel,
-                               QVBoxLayout, QMessageBox)
-from PySide6.QtGui import QPixmap, QImage
-from PySide6.QtCore import Qt, QSize
+                               QVBoxLayout)
 
-from enum import Flag
+from core import __version__ as pybeamqa_version
+from pdfrw import __version__ as pdfrw_version
+from pylinac import __version__ as pylinac_version
+from PySide6 import __version__ as pyside6_version
+from pyqtgraph import __version__ as pyqtgraph_version
 
 from ui.py_ui import icons_rc
+from ui.py_ui.about_dialog_ui import Ui_AboutDialog
 
 class MessageDialog(QDialog):
 
@@ -90,6 +97,41 @@ class MessageDialog(QDialog):
             pixmap = pixmap.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
 
         self.icon.setPixmap(pixmap)
+
+class AboutDialog(QDialog):
+
+    app_svg = QSvgRenderer(u":/misc_icons/icons/ic_app.svg")
+    app_img = QImage(256, 256, QImage.Format.Format_ARGB32)
+    app_img.fill(QColor(255, 255, 255, 0))
+    qpainter = QPainter(app_img)
+    app_svg.render(qpainter)
+    qpainter.end()
+    
+    def __init__(self, parent: QWidget | None = None):
+        super().__init__(parent)
+
+        self.setWindowTitle("About PyBeam QA")
+
+        self.ui = Ui_AboutDialog()
+        self.ui.setupUi(self)
+
+        self.ui.github_btn.clicked.connect(self.open_github)
+        
+        self.app_icon = QPixmap.fromImage(self.app_img)
+        self.app_icon = self.app_icon.scaled(QSize(128, 128),
+                               mode = Qt.TransformationMode.SmoothTransformation)
+        self.ui.app_icon.setPixmap(self.app_icon) 
+
+        self.ui.app_version_label.setText(f"version {pybeamqa_version}")
+        self.ui.open_source_te.setText(f"⊹ PySide6 ({pyside6_version})\n" \
+                                       f"⊹ Pylinac ({pylinac_version})\n" \
+                                       f"⊹ Pyqtgraph ({pyqtgraph_version})\n" \
+                                       f"⊹ Pdfrw ({pdfrw_version})") 
+
+        self.setFixedSize(self.size())
+
+    def open_github(self):
+        QDesktopServices.openUrl("https://github.com/Quantico-Bullet/PyBeam-QA/")
 
 
     

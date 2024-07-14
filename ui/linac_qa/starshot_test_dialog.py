@@ -1,5 +1,3 @@
-from typing import Optional
-import PySide6.QtCore
 from PySide6.QtWidgets import (QDialog, QWidget, QDialogButtonBox, QFileDialog,
                                QLineEdit)
 

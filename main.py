@@ -1,9 +1,7 @@
 from PySide6 import QtWidgets
 from PySide6.QtGui import QIcon
-from PySide6.QtCore import QDir, QUrl, QFile, QIODevice, Qt
-from PySide6.QtUiTools import QUiLoader
 
-from ui.appMainWin import AppMainWin
+from ui.app_main_win import AppMainWin
 from core.tools.devices import DeviceManager
 
 import sys

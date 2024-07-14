@@ -1,16 +1,17 @@
-from PySide6.QtWidgets import (QWidget, QMainWindow, QCheckBox)
 from PySide6.QtCore import QObject, QEvent
+from PySide6.QtWidgets import (QWidget, QMainWindow, QCheckBox)
 
+from ui.py_ui.app_main_win_ui import Ui_MainWindow as Ui_AppMainWin
+from ui.linac_qa.qa_tools_win import QAToolsWindow
+from ui.linac_qa.trs398_widgets import PhotonsMainWindow, ElectronsMainWindow
+from ui.linac_qa.starshot_widgets import StarshotMainWindow
+from ui.linac_qa.winston_lutz_widgets import WinstonLutzMainWindow
+from ui.linac_qa.picket_fence_widgets import PicketFenceMainWindow
+from ui.linac_qa.field_analysis_widgets import FieldAnalysisMainWindow
+from ui.linac_qa.planar_imaging_widgets import PlanarImagingMainWindow
+
+from core import __app_name__
 from core.tools.devices import DeviceManager
-
-from ui.py_ui.appMainWin_ui import Ui_MainWindow as Ui_AppMainWin
-from ui.qaToolsWindow import QAToolsWindow
-from ui.trs398Widgets import PhotonsMainWindow, ElectronsMainWindow
-from ui.starshotWidgets import StarshotMainWindow
-from ui.wlutzWidgets import WinstonLutzMainWindow
-from ui.fieldAnalysisWidgets import FieldAnalysisMainWindow
-from ui.picketFenceWidgets import PicketFenceMainWindow
-from ui.planarImagingWidgets import PlanarImagingMainWindow
 
 class AppMainWin(QMainWindow):
     def __init__(self):
@@ -20,7 +21,7 @@ class AppMainWin(QMainWindow):
 
         self.initSetupComplete = False
 
-        self.setWindowTitle("PyBeam QA")
+        self.setWindowTitle(__app_name__)
         self.setup_pages()
 
         self.initSetupComplete = True

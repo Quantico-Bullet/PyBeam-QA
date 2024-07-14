@@ -7,25 +7,24 @@ from PySide6.QtWidgets import (QWidget, QLabel, QProgressBar, QVBoxLayout, QFile
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtCore import Qt, QSize, QEvent, QThread, Signal, QDate
 
-from ui.util_widgets.dialogs import MessageDialog
-from ui.py_ui.planarImagingWorksheet_ui import Ui_QPlanarImagingWorksheet
+from ui.py_ui.planar_imaging_worksheet_ui import Ui_QPlanarImagingWorksheet
 from ui.py_ui import icons_rc
+from ui.util_widgets import worksheet_save_report
+from ui.util_widgets.dialogs import MessageDialog
+from ui.util_widgets.statusbar import AnalysisInfoLabel
+from ui.linac_qa.qa_tools_win import QAToolsWindow
 from core.analysis.planar_imaging import QPlanarImaging, QPlanarImagingWorker
 from core.tools.report import PlanarImagingReport
 from core.tools.devices import DeviceManager
-
-from ui.util_widgets import worksheet_save_report
-from ui.util_widgets.statusbar_widgets import AnalysisInfoLabel
-from ui.qaToolsWindow import QAToolsWindow
 
 import platform
 import webbrowser
 import subprocess
 import pyqtgraph as pg
 from pathlib import Path
+
 from pylinac.core.image import LinacDicomImage
 from pylinac.planar_imaging import ImagePhantomBase
-
 from pylinac.core.contrast import Contrast
 
 class PlanarImagingMainWindow(QAToolsWindow):

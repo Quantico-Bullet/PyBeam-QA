@@ -571,7 +571,7 @@ font-weight: bold
              <enum>Qt::Vertical</enum>
             </property>
             <property name="sizeType">
-             <enum>QSizePolicy::Expanding</enum>
+             <enum>QSizePolicy::Ignored</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -3432,12 +3432,12 @@ QPushButton:!enabled{
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="r50SourceGroup"/>
+  <buttongroup name="userPolarityGroup"/>
+  <buttongroup name="calibPolarityGroup"/>
   <buttongroup name="calibSetupGroup"/>
   <buttongroup name="beamQualityGroup"/>
   <buttongroup name="calibSeparateGroup"/>
-  <buttongroup name="userPolarityGroup"/>
-  <buttongroup name="calibPolarityGroup"/>
+  <buttongroup name="r50SourceGroup"/>
   <buttongroup name="beamTypeGroup"/>
  </buttongroups>
 </ui>

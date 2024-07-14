@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'photonsWorksheet.ui'
+## Form generated from reading UI file 'photons_worksheet.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.6.2
 ##
@@ -26,7 +26,7 @@ class Ui_QPhotonsWorksheet(object):
     def setupUi(self, QPhotonsWorksheet):
         if not QPhotonsWorksheet.objectName():
             QPhotonsWorksheet.setObjectName(u"QPhotonsWorksheet")
-        QPhotonsWorksheet.resize(1109, 620)
+        QPhotonsWorksheet.resize(1109, 704)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -49,12 +49,12 @@ class Ui_QPhotonsWorksheet(object):
         self.calibSummaryVL.setObjectName(u"calibSummaryVL")
         self.calibSummaryWidget = QWidget(QPhotonsWorksheet)
         self.calibSummaryWidget.setObjectName(u"calibSummaryWidget")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.calibSummaryWidget.sizePolicy().hasHeightForWidth())
         self.calibSummaryWidget.setSizePolicy(sizePolicy1)
-        self.calibSummaryWidget.setMaximumSize(QSize(400, 16777215))
+        self.calibSummaryWidget.setMaximumSize(QSize(450, 16777215))
         self.calibSummaryWidget.setStyleSheet(u"")
         self.verticalLayout_12 = QVBoxLayout(self.calibSummaryWidget)
         self.verticalLayout_12.setSpacing(6)
@@ -67,9 +67,6 @@ class Ui_QPhotonsWorksheet(object):
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.CalibSummaryLabel.sizePolicy().hasHeightForWidth())
         self.CalibSummaryLabel.setSizePolicy(sizePolicy2)
-        font = QFont()
-        font.setPointSize(13)
-        self.CalibSummaryLabel.setFont(font)
         self.CalibSummaryLabel.setFrameShape(QFrame.NoFrame)
         self.CalibSummaryLabel.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
 
@@ -100,6 +97,7 @@ class Ui_QPhotonsWorksheet(object):
         sizePolicy4.setVerticalStretch(0)
         sizePolicy4.setHeightForWidth(self.scrollArea.sizePolicy().hasHeightForWidth())
         self.scrollArea.setSizePolicy(sizePolicy4)
+        self.scrollArea.setMinimumSize(QSize(0, 387))
         self.scrollArea.setAutoFillBackground(True)
         self.scrollArea.setStyleSheet(u"QScrollArea {\n"
 "	background-color: rgba(0,0,0,0);\n"
@@ -112,7 +110,7 @@ class Ui_QPhotonsWorksheet(object):
         self.scrollArea.setWidgetResizable(True)
         self.calSummaryScroll = QWidget()
         self.calSummaryScroll.setObjectName(u"calSummaryScroll")
-        self.calSummaryScroll.setGeometry(QRect(0, 0, 379, 346))
+        self.calSummaryScroll.setGeometry(QRect(0, 0, 379, 387))
         sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.MinimumExpanding)
         sizePolicy5.setHorizontalStretch(0)
         sizePolicy5.setVerticalStretch(0)
@@ -132,7 +130,6 @@ class Ui_QPhotonsWorksheet(object):
         self.corrFactorFL_2 = QFormLayout()
         self.corrFactorFL_2.setObjectName(u"corrFactorFL_2")
         self.corrFactorFL_2.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
-        self.corrFactorFL_2.setRowWrapPolicy(QFormLayout.DontWrapRows)
         self.corrFactorFL_2.setVerticalSpacing(4)
         self.kQLabel = QLabel(self.calSummaryScroll)
         self.kQLabel.setObjectName(u"kQLabel")
@@ -159,11 +156,8 @@ class Ui_QPhotonsWorksheet(object):
 
         self.kElecLabel = QLabel(self.calSummaryScroll)
         self.kElecLabel.setObjectName(u"kElecLabel")
-        sizePolicy6 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.MinimumExpanding)
-        sizePolicy6.setHorizontalStretch(0)
-        sizePolicy6.setVerticalStretch(0)
-        sizePolicy6.setHeightForWidth(self.kElecLabel.sizePolicy().hasHeightForWidth())
-        self.kElecLabel.setSizePolicy(sizePolicy6)
+        sizePolicy.setHeightForWidth(self.kElecLabel.sizePolicy().hasHeightForWidth())
+        self.kElecLabel.setSizePolicy(sizePolicy)
         self.kElecLabel.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
 
         self.corrFactorFL_2.setWidget(1, QFormLayout.LabelRole, self.kElecLabel)
@@ -239,10 +233,9 @@ class Ui_QPhotonsWorksheet(object):
         self.kSLabel = QLabel(self.calSummaryScroll)
         self.kSLabel.setObjectName(u"kSLabel")
 
-        self.corrFactorFL_2.setWidget(4, QFormLayout.LabelRole, self.kSLabel)
+        self.corrFactorFL_2.setWidget(5, QFormLayout.LabelRole, self.kSLabel)
 
         self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setSpacing(10)
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.kSLE = QLineEdit(self.calSummaryScroll)
         self.kSLE.setObjectName(u"kSLE")
@@ -264,13 +257,36 @@ class Ui_QPhotonsWorksheet(object):
 
         self.ks_status_icon = QLabel(self.calSummaryScroll)
         self.ks_status_icon.setObjectName(u"ks_status_icon")
+        sizePolicy2.setHeightForWidth(self.ks_status_icon.sizePolicy().hasHeightForWidth())
+        self.ks_status_icon.setSizePolicy(sizePolicy2)
         self.ks_status_icon.setMaximumSize(QSize(24, 24))
         self.ks_status_icon.setScaledContents(True)
 
         self.horizontalLayout_2.addWidget(self.ks_status_icon)
 
 
-        self.corrFactorFL_2.setLayout(4, QFormLayout.FieldRole, self.horizontalLayout_2)
+        self.corrFactorFL_2.setLayout(5, QFormLayout.FieldRole, self.horizontalLayout_2)
+
+        self.label = QLabel(self.calSummaryScroll)
+        self.label.setObjectName(u"label")
+
+        self.corrFactorFL_2.setWidget(4, QFormLayout.LabelRole, self.label)
+
+        self.lineEdit = QLineEdit(self.calSummaryScroll)
+        self.lineEdit.setObjectName(u"lineEdit")
+        sizePolicy2.setHeightForWidth(self.lineEdit.sizePolicy().hasHeightForWidth())
+        self.lineEdit.setSizePolicy(sizePolicy2)
+        self.lineEdit.setStyleSheet(u"border-radius: 15px;\n"
+"border-color: rgb(130, 160, 250);\n"
+"border-style: solid;\n"
+"border-width:2px;\n"
+"background-color: rgba(130, 160, 250,150);\n"
+"padding-left: 15px;\n"
+"height: 30px;\n"
+"font-weight: bold")
+        self.lineEdit.setReadOnly(True)
+
+        self.corrFactorFL_2.setWidget(4, QFormLayout.FieldRole, self.lineEdit)
 
 
         self.verticalLayout_5.addLayout(self.corrFactorFL_2)
@@ -292,11 +308,11 @@ class Ui_QPhotonsWorksheet(object):
         self.absorbedDoseFL_2.setVerticalSpacing(4)
         self.zrefDoseLabel = QLabel(self.calSummaryScroll)
         self.zrefDoseLabel.setObjectName(u"zrefDoseLabel")
-        sizePolicy7 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
-        sizePolicy7.setHorizontalStretch(0)
-        sizePolicy7.setVerticalStretch(0)
-        sizePolicy7.setHeightForWidth(self.zrefDoseLabel.sizePolicy().hasHeightForWidth())
-        self.zrefDoseLabel.setSizePolicy(sizePolicy7)
+        sizePolicy6 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
+        sizePolicy6.setHorizontalStretch(0)
+        sizePolicy6.setVerticalStretch(0)
+        sizePolicy6.setHeightForWidth(self.zrefDoseLabel.sizePolicy().hasHeightForWidth())
+        self.zrefDoseLabel.setSizePolicy(sizePolicy6)
 
         self.absorbedDoseFL_2.setWidget(0, QFormLayout.LabelRole, self.zrefDoseLabel)
 
@@ -320,8 +336,8 @@ class Ui_QPhotonsWorksheet(object):
 
         self.zmaxDoseLabel = QLabel(self.calSummaryScroll)
         self.zmaxDoseLabel.setObjectName(u"zmaxDoseLabel")
-        sizePolicy7.setHeightForWidth(self.zmaxDoseLabel.sizePolicy().hasHeightForWidth())
-        self.zmaxDoseLabel.setSizePolicy(sizePolicy7)
+        sizePolicy6.setHeightForWidth(self.zmaxDoseLabel.sizePolicy().hasHeightForWidth())
+        self.zmaxDoseLabel.setSizePolicy(sizePolicy6)
 
         self.absorbedDoseFL_2.setWidget(1, QFormLayout.LabelRole, self.zmaxDoseLabel)
 
@@ -355,24 +371,20 @@ class Ui_QPhotonsWorksheet(object):
 
         self.verticalLayout_12.addWidget(self.scrollArea)
 
-        self.verticalSpacer_9 = QSpacerItem(20, 5, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-
-        self.verticalLayout_12.addItem(self.verticalSpacer_9)
-
         self.outcomeLabel = QLabel(self.calibSummaryWidget)
         self.outcomeLabel.setObjectName(u"outcomeLabel")
-        sizePolicy7.setHeightForWidth(self.outcomeLabel.sizePolicy().hasHeightForWidth())
-        self.outcomeLabel.setSizePolicy(sizePolicy7)
+        sizePolicy2.setHeightForWidth(self.outcomeLabel.sizePolicy().hasHeightForWidth())
+        self.outcomeLabel.setSizePolicy(sizePolicy2)
 
         self.verticalLayout_12.addWidget(self.outcomeLabel)
 
         self.outcomeHLine = QFrame(self.calibSummaryWidget)
         self.outcomeHLine.setObjectName(u"outcomeHLine")
-        sizePolicy8 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        sizePolicy8.setHorizontalStretch(0)
-        sizePolicy8.setVerticalStretch(0)
-        sizePolicy8.setHeightForWidth(self.outcomeHLine.sizePolicy().hasHeightForWidth())
-        self.outcomeHLine.setSizePolicy(sizePolicy8)
+        sizePolicy7 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        sizePolicy7.setHorizontalStretch(0)
+        sizePolicy7.setVerticalStretch(0)
+        sizePolicy7.setHeightForWidth(self.outcomeHLine.sizePolicy().hasHeightForWidth())
+        self.outcomeHLine.setSizePolicy(sizePolicy7)
         self.outcomeHLine.setMaximumSize(QSize(16777215, 1))
         self.outcomeHLine.setStyleSheet(u"background-color: rgb(82, 142, 122)")
         self.outcomeHLine.setFrameShape(QFrame.HLine)
@@ -399,8 +411,12 @@ class Ui_QPhotonsWorksheet(object):
 
         self.verticalLayout_12.addWidget(self.outcomeLE)
 
+        self.verticalSpacer = QSpacerItem(20, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
 
-        self.calibSummaryVL.addWidget(self.calibSummaryWidget, 0, Qt.AlignTop)
+        self.verticalLayout_12.addItem(self.verticalSpacer)
+
+
+        self.calibSummaryVL.addWidget(self.calibSummaryWidget)
 
 
         self.worksheetGrid.addLayout(self.calibSummaryVL, 1, 2, 1, 1)
@@ -415,7 +431,7 @@ class Ui_QPhotonsWorksheet(object):
         self.worksheetScrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 605, 1903))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 605, 2002))
         sizePolicy2.setHeightForWidth(self.scrollAreaWidgetContents.sizePolicy().hasHeightForWidth())
         self.scrollAreaWidgetContents.setSizePolicy(sizePolicy2)
         self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents)
@@ -424,11 +440,11 @@ class Ui_QPhotonsWorksheet(object):
         self.sectionOneGB = QGroupBox(self.scrollAreaWidgetContents)
         self.sectionOneGB.setObjectName(u"sectionOneGB")
         self.sectionOneGB.setEnabled(True)
-        sizePolicy9 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
-        sizePolicy9.setHorizontalStretch(0)
-        sizePolicy9.setVerticalStretch(0)
-        sizePolicy9.setHeightForWidth(self.sectionOneGB.sizePolicy().hasHeightForWidth())
-        self.sectionOneGB.setSizePolicy(sizePolicy9)
+        sizePolicy8 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
+        sizePolicy8.setHorizontalStretch(0)
+        sizePolicy8.setVerticalStretch(0)
+        sizePolicy8.setHeightForWidth(self.sectionOneGB.sizePolicy().hasHeightForWidth())
+        self.sectionOneGB.setSizePolicy(sizePolicy8)
         self.sectionOneGB.setMinimumSize(QSize(0, 0))
         self.sectionOneGB.setMaximumSize(QSize(16777215, 16777215))
         self.sectionOneGB.setAutoFillBackground(False)
@@ -450,9 +466,9 @@ class Ui_QPhotonsWorksheet(object):
         sizePolicy2.setHeightForWidth(self.linacNameLE.sizePolicy().hasHeightForWidth())
         self.linacNameLE.setSizePolicy(sizePolicy2)
         self.linacNameLE.setMinimumSize(QSize(350, 0))
-        font1 = QFont()
-        font1.setPointSize(10)
-        self.linacNameLE.setFont(font1)
+        font = QFont()
+        font.setPointSize(10)
+        self.linacNameLE.setFont(font)
         self.linacNameLE.setClearButtonEnabled(True)
 
         self.sectionOneFL.setWidget(0, QFormLayout.FieldRole, self.linacNameLE)
@@ -466,8 +482,11 @@ class Ui_QPhotonsWorksheet(object):
         self.nomAccPotHL.setObjectName(u"nomAccPotHL")
         self.nomAccPotLE = QLineEdit(self.sectionOneGB)
         self.nomAccPotLE.setObjectName(u"nomAccPotLE")
-        sizePolicy1.setHeightForWidth(self.nomAccPotLE.sizePolicy().hasHeightForWidth())
-        self.nomAccPotLE.setSizePolicy(sizePolicy1)
+        sizePolicy9 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+        sizePolicy9.setHorizontalStretch(0)
+        sizePolicy9.setVerticalStretch(0)
+        sizePolicy9.setHeightForWidth(self.nomAccPotLE.sizePolicy().hasHeightForWidth())
+        self.nomAccPotLE.setSizePolicy(sizePolicy9)
         self.nomAccPotLE.setMinimumSize(QSize(0, 0))
         self.nomAccPotLE.setMaximumSize(QSize(100, 16777215))
         self.nomAccPotLE.setMouseTracking(False)
@@ -481,8 +500,8 @@ class Ui_QPhotonsWorksheet(object):
 
         self.nomAccPotUnit = QLabel(self.sectionOneGB)
         self.nomAccPotUnit.setObjectName(u"nomAccPotUnit")
-        sizePolicy7.setHeightForWidth(self.nomAccPotUnit.sizePolicy().hasHeightForWidth())
-        self.nomAccPotUnit.setSizePolicy(sizePolicy7)
+        sizePolicy6.setHeightForWidth(self.nomAccPotUnit.sizePolicy().hasHeightForWidth())
+        self.nomAccPotUnit.setSizePolicy(sizePolicy6)
 
         self.nomAccPotHL.addWidget(self.nomAccPotUnit)
 
@@ -1143,8 +1162,8 @@ class Ui_QPhotonsWorksheet(object):
 
         self.electRangeSettLE = QLineEdit(self.sectionTwoGB)
         self.electRangeSettLE.setObjectName(u"electRangeSettLE")
-        sizePolicy1.setHeightForWidth(self.electRangeSettLE.sizePolicy().hasHeightForWidth())
-        self.electRangeSettLE.setSizePolicy(sizePolicy1)
+        sizePolicy9.setHeightForWidth(self.electRangeSettLE.sizePolicy().hasHeightForWidth())
+        self.electRangeSettLE.setSizePolicy(sizePolicy9)
         self.electRangeSettLE.setMinimumSize(QSize(175, 0))
         self.electRangeSettLE.setMaximumSize(QSize(175, 16777215))
 
@@ -1203,8 +1222,8 @@ class Ui_QPhotonsWorksheet(object):
         self.sectionThreeFL.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         self.rawDosReadLabel = QLabel(self.sectionThreeGB)
         self.rawDosReadLabel.setObjectName(u"rawDosReadLabel")
-        sizePolicy7.setHeightForWidth(self.rawDosReadLabel.sizePolicy().hasHeightForWidth())
-        self.rawDosReadLabel.setSizePolicy(sizePolicy7)
+        sizePolicy6.setHeightForWidth(self.rawDosReadLabel.sizePolicy().hasHeightForWidth())
+        self.rawDosReadLabel.setSizePolicy(sizePolicy6)
         self.rawDosReadLabel.setTextFormat(Qt.MarkdownText)
 
         self.sectionThreeFL.setWidget(0, QFormLayout.LabelRole, self.rawDosReadLabel)
@@ -1666,8 +1685,8 @@ class Ui_QPhotonsWorksheet(object):
         self.ssdPageVL.setSizeConstraint(QLayout.SetMaximumSize)
         self.ssdSetupLabel = QLabel(self.ssdPage)
         self.ssdSetupLabel.setObjectName(u"ssdSetupLabel")
-        sizePolicy7.setHeightForWidth(self.ssdSetupLabel.sizePolicy().hasHeightForWidth())
-        self.ssdSetupLabel.setSizePolicy(sizePolicy7)
+        sizePolicy6.setHeightForWidth(self.ssdSetupLabel.sizePolicy().hasHeightForWidth())
+        self.ssdSetupLabel.setSizePolicy(sizePolicy6)
 
         self.ssdPageVL.addWidget(self.ssdSetupLabel)
 
@@ -1718,8 +1737,8 @@ class Ui_QPhotonsWorksheet(object):
         self.sadPageVL.setSizeConstraint(QLayout.SetDefaultConstraint)
         self.sadSetupLabel = QLabel(self.sadPage)
         self.sadSetupLabel.setObjectName(u"sadSetupLabel")
-        sizePolicy7.setHeightForWidth(self.sadSetupLabel.sizePolicy().hasHeightForWidth())
-        self.sadSetupLabel.setSizePolicy(sizePolicy7)
+        sizePolicy6.setHeightForWidth(self.sadSetupLabel.sizePolicy().hasHeightForWidth())
+        self.sadSetupLabel.setSizePolicy(sizePolicy6)
 
         self.sadPageVL.addWidget(self.sadSetupLabel)
 
@@ -1735,8 +1754,8 @@ class Ui_QPhotonsWorksheet(object):
 
         self.tmrLE = QLineEdit(self.sadPage)
         self.tmrLE.setObjectName(u"tmrLE")
-        sizePolicy8.setHeightForWidth(self.tmrLE.sizePolicy().hasHeightForWidth())
-        self.tmrLE.setSizePolicy(sizePolicy8)
+        sizePolicy7.setHeightForWidth(self.tmrLE.sizePolicy().hasHeightForWidth())
+        self.tmrLE.setSizePolicy(sizePolicy7)
         self.tmrLE.setMinimumSize(QSize(100, 0))
         self.tmrLE.setMaximumSize(QSize(100, 16777215))
 
@@ -1840,8 +1859,8 @@ class Ui_QPhotonsWorksheet(object):
         self.hLayoutTol.setSizeConstraint(QLayout.SetFixedSize)
         self.toleranceLabel = QLabel(self.siteDataWidget)
         self.toleranceLabel.setObjectName(u"toleranceLabel")
-        sizePolicy7.setHeightForWidth(self.toleranceLabel.sizePolicy().hasHeightForWidth())
-        self.toleranceLabel.setSizePolicy(sizePolicy7)
+        sizePolicy6.setHeightForWidth(self.toleranceLabel.sizePolicy().hasHeightForWidth())
+        self.toleranceLabel.setSizePolicy(sizePolicy6)
 
         self.hLayoutTol.addWidget(self.toleranceLabel)
 
@@ -1905,7 +1924,7 @@ class Ui_QPhotonsWorksheet(object):
 
     def retranslateUi(self, QPhotonsWorksheet):
         QPhotonsWorksheet.setWindowTitle(QCoreApplication.translate("QPhotonsWorksheet", u"Form", None))
-        self.CalibSummaryLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-weight:700;\">Calibration Summary</span></p></body></html>", None))
+        self.CalibSummaryLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-size:13pt; font-weight:704;\">Calibration Summary</span></p></body></html>", None))
         self.corrFactorsLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-weight:700; text-decoration: underline;\">Correction factors</span></p></body></html>", None))
         self.kQLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">k</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">Q,Qo </span>:</p></body></html>", None))
         self.kQLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
@@ -1920,13 +1939,15 @@ class Ui_QPhotonsWorksheet(object):
         self.kSLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">k</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">s </span>:</p></body></html>", None))
         self.kSLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
         self.ks_status_icon.setText("")
+        self.label.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">k</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">vol</span><span style=\" font-style:italic;\">:</span></p></body></html>", None))
+        self.lineEdit.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
         self.absorsedDoseLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-weight:700; text-decoration: underline;\">Absorbed dose to water</span></p></body></html>", None))
         self.zrefDoseLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p>At reference depth, <span style=\" font-style:italic;\">D</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">w,Q </span>(<span style=\" font-style:italic;\">z</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">ref </span>) :</p></body></html>", None))
         self.zrefDoseLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
         self.zmaxDoseLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p>At depth of dose max, <span style=\" font-weight:700; font-style:italic;\">D</span><span style=\" font-size:12pt; font-weight:700; font-style:italic; vertical-align:sub;\">w,Q </span><span style=\" font-weight:700;\">(</span><span style=\" font-weight:700; font-style:italic;\">z</span><span style=\" font-size:12pt; font-weight:700; font-style:italic; vertical-align:sub;\">max </span><span style=\" font-weight:700;\">)</span> :</p></body></html>", None))
         self.zmaxDoseLE.setText("")
         self.zmaxDoseLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
-        self.outcomeLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-size:12pt; font-weight:700;\">Outcome</span></p></body></html>", None))
+        self.outcomeLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-size:13pt; font-weight:704;\">Outcome</span></p></body></html>", None))
         self.outcomeLE.setText("")
         self.outcomeLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
         self.sectionOneGB.setTitle(QCoreApplication.translate("QPhotonsWorksheet", u"1. Radiation treatment unit and reference conditions ", None))

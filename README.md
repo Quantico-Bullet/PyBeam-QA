@@ -29,8 +29,8 @@ The program includes some of these complementary features:
 As of current the program depends on the following:
 - Python (3.10+)
 - PySide6 (6.4+)
-- pylinac (3.16.0+)
-- pyqtgraph (0.13.2+)
+- pylinac (3.20.0+)
+- pyqtgraph (0.13.3+)
 - pdfrw (0.4)
 
 ## Installation

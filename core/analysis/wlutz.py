@@ -7,8 +7,8 @@ from PySide6.QtCore import Signal, Slot, QObject
 
 import pyqtgraph as pg
 
-from pylinac import WinstonLutz
-from pylinac.winston_lutz import bb_projection_with_rotation
+from pylinac import WinstonLutz, WinstonLutz2D
+from pylinac.winston_lutz import bb_projection_with_rotation, BB3D, BBArrangement
 from pylinac.picketfence import Orientation
 from pylinac.core.geometry import cos, sin
 from pylinac.core.scale import MachineScale
@@ -37,19 +37,56 @@ class QWinstonLutz(WinstonLutz):
         self.update_signal = update_signal
         self.image_data = []
 
-    def analyze(self, bb_size_mm: float = 5,
-                machine_scale: MachineScale = MachineScale.IEC61217,
-                low_density_bb: bool = False):
-        counter = 0
+    def analyze(self,
+                bb_size_mm: float = 5,
+                machine_scale: MachineScale = MachineScale.IEC61217, 
+                low_density_bb: bool = False,
+                open_field: bool = False,
+                apply_virtual_shift: bool = False,):
+        
+        # Initial counter value for the progress bar
+        self.progress_counter = 0
         self.machine_scale = machine_scale
 
+        self.machine_scale = machine_scale
+        if self.is_from_cbct:
+            low_density_bb = True
+            open_field = True
         for img in self.images:
-            img.analyze(bb_size_mm, low_density_bb)
+            img.analyze(bb_size_mm, low_density_bb, open_field)
 
-            self.image_data.append({
+            self.update_image_info(img)
+            
+        # we need to construct the BB representation to get the shift vector
+        bb_config = BBArrangement.ISO[0]
+        bb_config.bb_size_mm = bb_size_mm
+        self.bb = BB3D(
+            bb_config=bb_config,
+            bb_matches=[img.arrangement_matches["Iso"] for img in self.images],
+            scale=self.machine_scale,
+        )
+        if apply_virtual_shift:
+            shift = self.bb_shift_vector
+            self._virtual_shift = self.bb_shift_instructions()
+            for img in self.images:
+                img.analyze(bb_size_mm, low_density_bb, open_field, shift_vector=shift)
+
+        # in the vanilla WL case, the BB can only be represented by non-couch-kick images
+        # the ray trace cannot handle the kick currently
+        self.bb = BB3D(
+            bb_config=bb_config,
+            bb_matches=[img.arrangement_matches["Iso"] for img in self.images],
+            scale=self.machine_scale,
+        )
+        self._is_analyzed = True
+        self._bb_diameter = bb_size_mm
+
+    def update_image_info(self, img: WinstonLutz2D):
+        self.image_data.append({
                 "file_path": str(img.path),
                 "filename": Path(str(img.path)).name,
                 "bb_location": {"x": img.bb.x, "y": img.bb.y},
+                "bb_outline_coords": img.bb,
                 "field_cax": {"x": img.field_cax.x, "y": img.field_cax.y},
                 "epid": {"x": img.epid.x, "y": img.epid.y},
                 "cax_to_bb_dist": img.cax2bb_distance,
@@ -61,10 +98,8 @@ class QWinstonLutz(WinstonLutz):
                 "delta_v": f"{(img.bb.x - img.field_cax.x) / img.dpmm:3.2f}"
             })
 
-            counter += 1
-            self.update_signal.emit(counter)
-        
-        self._is_analyzed = True
+        self.progress_counter += 1
+        self.update_signal.emit(self.progress_counter)
 
 class QWinstonLutzWorker(QObject):
 

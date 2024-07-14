@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QDialog, QWidget, QDialogButtonBox, QFileDialog
 
-from ui.py_ui.wl_test_dialog_ui import Ui_WLTestDialog
+from ui.py_ui.winston_lutz_test_dialog_ui import Ui_WLTestDialog
 
 import ast
 

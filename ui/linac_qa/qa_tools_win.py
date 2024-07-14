@@ -2,11 +2,11 @@ from PySide6.QtWidgets import (QLineEdit, QMainWindow, QDialogButtonBox, QDialog
 from PySide6.QtCore import Qt, Signal, QDate
 from PySide6.QtGui import QPixmap, QDesktopServices
 
-from ui.util_widgets.statusbar_widgets import AnalysisInfoLabel
-from ui.py_ui.qaMainWin_ui import Ui_MainWindow
-from ui.util_widgets.dialogs import MessageDialog
-from ui.about_dialog import AboutDialog
 from ui.py_ui import icons_rc
+from ui.py_ui.qa_main_win_ui import Ui_MainWindow
+from ui.util_widgets.statusbar import AnalysisInfoLabel
+from ui.util_widgets.dialogs import MessageDialog
+from ui.util_widgets.dialogs import AboutDialog
 
 class QAToolsWindow(QMainWindow):
 

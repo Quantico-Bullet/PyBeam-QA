@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'fieldAnalysisWorksheet.ui'
+## Form generated from reading UI file 'field_analysis_worksheet.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.6.2
 ##

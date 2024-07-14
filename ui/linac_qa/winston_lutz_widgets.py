@@ -7,9 +7,14 @@ from PySide6.QtWidgets import (QWidget, QListWidgetItem, QMenu, QFileDialog, QDi
 from PySide6.QtGui import QIcon, QPixmap, QColor
 from PySide6.QtCore import Qt, QSize, QEvent, QThread, Signal, QDate
 
-from ui.qaToolsWindow import QAToolsWindow
-from ui.py_ui.wlutzWorksheet_ui import Ui_QWLutzWorksheet
 from ui.py_ui import icons_rc
+from ui.linac_qa.qa_tools_win import QAToolsWindow
+from ui.py_ui.winston_lutz_worksheet_ui import Ui_QWLutzWorksheet
+from ui.util_widgets.statusbar import AnalysisInfoLabel
+from ui.util_widgets import worksheet_save_report
+from ui.util_widgets.dialogs import MessageDialog
+from ui.linac_qa.winston_lutz_test_dialog import WLTestDialog
+
 from core.analysis.wlutz import QWinstonLutzWorker, generate_winstonlutz
 from core.tools.report import WinstonLutzReport
 from core.tools.devices import DeviceManager
@@ -24,19 +29,16 @@ from pylinac.core.image_generator import (FilteredFieldLayer,
                                           AS1000Image,
                                           AS1200Image,
                                           generate_winstonlutz_cone)
-
 from pylinac.core.image import LinacDicomImage
+from pylinac.metrics.image import (GlobalSizedDiskLocator)
+
 from pathlib import Path
 import gc
 import pyqtgraph as pg
 import platform
 import subprocess
 import webbrowser
-
-from ui.util_widgets.statusbar_widgets import AnalysisInfoLabel
-from ui.util_widgets import worksheet_save_report
-from ui.util_widgets.dialogs import MessageDialog
-from ui.wl_test_dialog import WLTestDialog
+import numpy as np
 
 pg.setConfigOptions(antialias=True, imageAxisOrder='row-major')
 
@@ -939,8 +941,6 @@ class AnalysedImageViewer(QMainWindow):
                                                labelTextColor=(255,255,255),
                                                brush=pg.mkBrush((27, 38, 59, 200)))
 
-        image.flipud() # WL images are flip up-side down in Pylinac
-        
         image_item = pg.ImageItem(image=image.array)
 
         bbX = image_data["bb_location"]["x"]
@@ -964,6 +964,21 @@ class AnalysedImageViewer(QMainWindow):
                                          label="EPID y = {value:3.2f}", labelOpts={'position': 0.1, 
                                         'color': (255,255,255), 'fill': (0,200,0,200), 'movable': True})
         
+        # Plot the field and BB boundaries
+
+        metrics = image.compute(
+            metrics= [GlobalSizedDiskLocator(radius_mm=8.0,
+                                             radius_tolerance_mm=3.0,
+                                             max_number=1)]
+        )
+
+        for boundary in image.metrics[0].boundaries:
+            boundary_y, boundary_x = np.nonzero(boundary)
+        
+        field_bounds_plot = pg.ScatterPlotItem()
+        field_bounds_plot.setData(x=boundary_x,
+                                  y=boundary_y)
+
         plot_legend.addItem(epidX_plot, "EPID-x line")
         plot_legend.addItem(epidY_plot, "EPID-y line")
         
@@ -973,6 +988,7 @@ class AnalysedImageViewer(QMainWindow):
         self.plot_item.addItem(image_item)
         self.plot_item.addColorBar(image_item, colorMap=pg.colormap.getFromMatplotlib('gray'))
         self.plot_item.addItem(bb_plotItem)
+        self.plot_item.addItem(field_bounds_plot)
         self.plot_item.addItem(cax_plotItem)
         self.plot_item.addItem(epidX_plot)
         self.plot_item.addItem(epidY_plot)

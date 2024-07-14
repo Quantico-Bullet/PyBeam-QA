@@ -7,15 +7,15 @@ from PySide6.QtCore import Qt, Signal, QDate
 from PySide6.QtGui import QPixmap, QIntValidator
 from core.tools.devices import Linac
 
-from ui.py_ui.photonsWorksheet_ui import Ui_QPhotonsWorksheet
-from ui.py_ui.electronsWorksheet_ui import Ui_QElectronsWorksheet
+from ui.py_ui.photons_worksheet_ui import Ui_QPhotonsWorksheet
+from ui.py_ui.electrons_worksheet_ui import Ui_QElectronsWorksheet
 from ui.util_widgets import worksheet_save_report
 from ui.util_widgets.validators import DoubleValidator
 from ui.util_widgets.dialogs import MessageDialog
 from core.tools.report import PhotonCalibrationReport, ElectronCalibrationReport
 from core.calibration.trs398 import TRS398Photons, TRS398Electrons
 from core.configuration.config import ChambersConfig, SettingsConfig
-from ui.qaToolsWindow import QAToolsWindow
+from ui.linac_qa.qa_tools_win import QAToolsWindow
 from ui.preferences.prefs_main import Preferences
 
 from pathlib import Path

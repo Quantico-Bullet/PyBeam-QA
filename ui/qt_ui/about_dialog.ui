@@ -69,7 +69,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Copyright © 2023 Kagiso Lebang</string>
+         <string>Copyright © 2023-2024 Kagiso Lebang</string>
         </property>
        </widget>
       </item>
@@ -82,7 +82,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>version 0.1.0</string>
+         <string>version a.b.c</string>
         </property>
        </widget>
       </item>

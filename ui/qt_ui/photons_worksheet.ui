@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1109</width>
-    <height>620</height>
+    <height>704</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -58,17 +58,17 @@
      </item>
      <item row="1" column="2">
       <layout class="QVBoxLayout" name="calibSummaryVL">
-       <item alignment="Qt::AlignTop">
+       <item>
         <widget class="QWidget" name="calibSummaryWidget" native="true">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
          <property name="maximumSize">
           <size>
-           <width>400</width>
+           <width>450</width>
            <height>16777215</height>
           </size>
          </property>
@@ -99,16 +99,11 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="font">
-             <font>
-              <pointsize>13</pointsize>
-             </font>
-            </property>
             <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
             </property>
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Calibration Summary&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:13pt; font-weight:704;&quot;&gt;Calibration Summary&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -161,6 +156,12 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>387</height>
+             </size>
+            </property>
             <property name="autoFillBackground">
              <bool>true</bool>
             </property>
@@ -185,7 +186,7 @@ QAbstractScrollArea::corner {
                <x>0</x>
                <y>0</y>
                <width>379</width>
-               <height>346</height>
+               <height>387</height>
               </rect>
              </property>
              <property name="sizePolicy">
@@ -218,9 +219,6 @@ QAbstractScrollArea::corner {
                <layout class="QFormLayout" name="corrFactorFL_2">
                 <property name="fieldGrowthPolicy">
                  <enum>QFormLayout::ExpandingFieldsGrow</enum>
-                </property>
-                <property name="rowWrapPolicy">
-                 <enum>QFormLayout::DontWrapRows</enum>
                 </property>
                 <property name="verticalSpacing">
                  <number>4</number>
@@ -267,7 +265,7 @@ font-weight: bold</string>
                 <item row="1" column="0">
                  <widget class="QLabel" name="kElecLabel">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
@@ -408,18 +406,15 @@ font-weight: bold</string>
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="0">
+                <item row="5" column="0">
                  <widget class="QLabel" name="kSLabel">
                   <property name="text">
                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;k&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic; vertical-align:sub;&quot;&gt;s &lt;/span&gt;:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="1">
+                <item row="5" column="1">
                  <layout class="QHBoxLayout" name="horizontalLayout_2">
-                  <property name="spacing">
-                   <number>10</number>
-                  </property>
                   <item>
                    <widget class="QLineEdit" name="kSLE">
                     <property name="sizePolicy">
@@ -454,6 +449,12 @@ font-weight: bold</string>
                   </item>
                   <item>
                    <widget class="QLabel" name="ks_status_icon">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
                     <property name="maximumSize">
                      <size>
                       <width>24</width>
@@ -469,6 +470,39 @@ font-weight: bold</string>
                    </widget>
                   </item>
                  </layout>
+                </item>
+                <item row="4" column="0">
+                 <widget class="QLabel" name="label">
+                  <property name="text">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;k&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic; vertical-align:sub;&quot;&gt;vol&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="1">
+                 <widget class="QLineEdit" name="lineEdit">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">border-radius: 15px;
+border-color: rgb(130, 160, 250);
+border-style: solid;
+border-width:2px;
+background-color: rgba(130, 160, 250,150);
+padding-left: 15px;
+height: 30px;
+font-weight: bold</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                  <property name="placeholderText">
+                   <string>N/A</string>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </item>
@@ -618,31 +652,15 @@ font-weight: bold
            </widget>
           </item>
           <item>
-           <spacer name="verticalSpacer_9">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Expanding</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>5</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
            <widget class="QLabel" name="outcomeLabel">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:700;&quot;&gt;Outcome&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:13pt; font-weight:704;&quot;&gt;Outcome&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
@@ -702,6 +720,22 @@ font-weight: bold;
             </property>
            </widget>
           </item>
+          <item>
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::MinimumExpanding</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>1</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
          </layout>
         </widget>
        </item>
@@ -736,7 +770,7 @@ font-weight: bold;
           <x>0</x>
           <y>0</y>
           <width>605</width>
-          <height>1903</height>
+          <height>2002</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -3327,11 +3361,11 @@ QPushButton:!enabled{
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="calibSeparateGroup"/>
-  <buttongroup name="calibPolarityGroup"/>
-  <buttongroup name="beamTypeGroup"/>
-  <buttongroup name="beamQualityGroup"/>
   <buttongroup name="userPolarityGroup"/>
+  <buttongroup name="calibPolarityGroup"/>
   <buttongroup name="calibSetupGroup"/>
+  <buttongroup name="beamQualityGroup"/>
+  <buttongroup name="calibSeparateGroup"/>
+  <buttongroup name="beamTypeGroup"/>
  </buttongroups>
 </ui>

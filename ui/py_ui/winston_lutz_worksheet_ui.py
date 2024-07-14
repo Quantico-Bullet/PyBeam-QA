@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'wlutzWorksheet.ui'
+## Form generated from reading UI file 'winston_lutz_worksheet.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.6.2
 ##

@@ -1,47 +1,35 @@
 from PySide6.QtWidgets import (QWidget, QLabel, QProgressBar, QVBoxLayout, QFileDialog,
                                QListWidgetItem, QMenu, QSizePolicy, QMessageBox, 
-                               QMainWindow, QFormLayout, QComboBox,
-                               QDialog, QDialogButtonBox, QLineEdit, QSpacerItem,
-                               QPushButton, QCheckBox, QHBoxLayout, QPlainTextEdit,
+                               QMainWindow, QFormLayout, QGridLayout,
+                               QSplitter, QComboBox, QDialog, QDialogButtonBox, QLineEdit,
+                               QSpacerItem,QPushButton, QCheckBox, QHBoxLayout, QPlainTextEdit,
                                QDateEdit)
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtCore import Qt, QSize, QEvent, QThread, Signal, QDate
 
-from ui.qaToolsWindow import QAToolsWindow
+from ui.linac_qa.qa_tools_win import QAToolsWindow
 from ui.py_ui import icons_rc
-from ui.py_ui.starshotWorksheet_ui import Ui_QStarshotWorksheet
-from core.analysis.starshot import QStarshotWorker
-
-from scipy import ndimage
-from core.tools.report import StarshotReport
+from ui.util_widgets import worksheet_save_report
+from ui.util_widgets.statusbar import AnalysisInfoLabel
+from ui.py_ui.field_analysis_worksheet_ui import Ui_QFieldAnalysisWorksheet
+from core.analysis.field_analysis import QFieldAnalysis, QFieldAnalysisWorker
+from core.tools.report import FieldAnalysisReport
 from core.tools.devices import DeviceManager
 
-import traceback
 import platform
 import webbrowser
 import subprocess
 import pyqtgraph as pg
 from pathlib import Path
+from pylinac.core.image import LinacDicomImage
+from pylinac.field_analysis import Protocol, Centering, Interpolation, Normalization, Edge
 
-from pylinac.core.image import load
-from pylinac.core.image_generator import (GaussianFilterLayer,
-                                          FilteredFieldLayer,
-                                          AS500Image,
-                                          AS1000Image,
-                                          AS1200Image)
-
-from ui.util_widgets import worksheet_save_report
-from ui.util_widgets.statusbar_widgets import AnalysisInfoLabel
-from ui.starshot_test_dialog import StarshotTestDialog
-
-class StarshotMainWindow(QAToolsWindow):
-
-    analysis_info_signal = Signal(dict)
+class FieldAnalysisMainWindow(QAToolsWindow):
     
     def __init__(self, initData: dict = None):
         super().__init__(initData)
 
-        self.window_title = "Starshot Analysis ‒ PyBeam QA"
+        self.window_title = "Field Analysis ‒ PyBeam QA"
         self.setWindowTitle(self.window_title)
 
         self.add_new_worksheet()
@@ -49,95 +37,75 @@ class StarshotMainWindow(QAToolsWindow):
         self.ui.menuFile.addAction("Add Image(s)", self.ui.tabWidget.currentWidget().add_files)
         self.ui.menuFile.addSeparator()
         self.ui.menuFile.addAction("Add New Worksheet", self.add_new_worksheet)
-        self.ui.menuTools.addAction("Benchmark Test", self.init_test_dialog, "Ctrl+T")
-
-    def init_test_dialog(self):
-        dialog = StarshotTestDialog()
-        result = dialog.exec()
-
-        if result == QDialog.DialogCode.Accepted:
-            sim_image = dialog.ui.sim_image_cb.currentText()
-            
-            if sim_image == "AS500":
-                sim_image = AS500Image()
-            
-            elif sim_image == "AS1000":
-                sim_image = AS1000Image()
-            
-            else: sim_image = AS1200Image()
-
-            num_spokes = dialog.ui.num_spokes_sb.value()
-            cax_offset = dialog.ui.cax_offset_dsb.value()
-
-            for _ in range(num_spokes):
-                sim_image.add_layer(FilteredFieldLayer((200, 5),
-                                    alpha=0.5,
-                                    cax_offset_mm = (cax_offset, cax_offset)))
-                
-                sim_image.image = ndimage.rotate(sim_image.image,
-                                                 360 / num_spokes,
-                                                 reshape = False,
-                                                 mode = 'nearest')
-                
-            sim_image.add_layer(GaussianFilterLayer(sigma_mm = 3))
-            sim_image.generate_dicom(dialog.ui.out_file_le.text())
-
-            self.add_new_worksheet(dialog.ui.test_name_le.text() + " (Test)")
-            self.ui.tabWidget.currentWidget().add_files([dialog.ui.out_file_le.text()])
 
     def add_new_worksheet(self, worksheet_name: str = None, enable_icon: bool = True):
         if worksheet_name is None:
             self.untitled_counter = self.untitled_counter + 1
-            worksheet_name = f"Starshot (Untitled-{self.untitled_counter})"
+            worksheet_name = f"Field Analysis (Untitled-{self.untitled_counter})"
 
-        return super().add_new_worksheet(QStarshotWorksheet(), worksheet_name, enable_icon)
+        return super().add_new_worksheet(QFieldAnalysisWorksheet(), worksheet_name, enable_icon)
 
-class QStarshotWorksheet(QWidget):
+class QFieldAnalysisWorksheet(QWidget):
 
     analysis_info_signal = Signal(dict)
-    save_info_signal = Signal(dict)
+
+    DEFAULT_PROTOCOLS = {"Varian": Protocol.VARIAN,
+                         "Elekta": Protocol.ELEKTA,
+                         "Siemens": Protocol.SIEMENS}
+    
+    CENTERING = {"Beam center": Centering.BEAM_CENTER,
+                 "Geometric center": Centering.GEOMETRIC_CENTER,
+                 "Manual": Centering.MANUAL}
+    
+    INTERPOLATION = {"Linear": Interpolation.LINEAR,
+                     "Spline": Interpolation.SPLINE}
+    
+    EDGE_DETECTION = {"FWHM": Edge.FWHM,
+                      "Inflection Derivative": Edge.INFLECTION_DERIVATIVE,
+                      "Inflection Hill": Edge.INFLECTION_HILL}
+    
+    NORMALIZATION = {"Beam center": Normalization.BEAM_CENTER,
+                     "Geometric center": Normalization.GEOMETRIC_CENTER,
+                     "Max": Normalization.MAX}
 
     def __init__(self):
         super().__init__()
 
-        self.ui = Ui_QStarshotWorksheet()
+        self.ui = Ui_QFieldAnalysisWorksheet()
         self.ui.setupUi(self)
 
         self.image_icon = QIcon()
         self.image_icon.addFile(u":/colorIcons/icons/picture.png", QSize(), QIcon.Normal, QIcon.Off)
 
-        self.form_layout = QFormLayout()
-        self.form_layout.setHorizontalSpacing(40)
-        self.ui.analysisInfoVL.addLayout(self.form_layout)
-
         self.ui.analyzeBtn.setText("Analyze image(s)")
+        self.ui.advancedViewBtn.setEnabled(False)
         self.ui.genReportBtn.setEnabled(False)
+        self.ui.summaryTE.setReadOnly(True)
 
-        #--------  add widgets --------
+        # Add widgets
         self.progress_vl = QVBoxLayout()
         self.progress_vl.setSpacing(10)
+        self.ui.analysisOutcomeFrame.hide()
 
         self.ui.analysisInfoVL.addLayout(self.progress_vl)
 
-        # setup context menu for image list widget
+        # Setup context menu for image list widget
         self.img_list_contextmenu = QMenu()
-        self.img_list_contextmenu.addAction("View Original Image", self.view_dicom_image, "Ctrl+I")
+        self.img_list_contextmenu.addAction("View Original Image", self.view_dicom_image)
+        self.view_analyzed_img_action = self.img_list_contextmenu.addAction("View Analyzed Image")
+        self.view_analyzed_img_action.setEnabled(False)
         self.img_list_contextmenu.addAction("Show Containing Folder", self.open_file_folder)
         self.remove_file_action = self.img_list_contextmenu.addAction("Remove from List", self.remove_file)
         self.delete_file_action = self.img_list_contextmenu.addAction("Delete", self.delete_file)
         self.img_list_contextmenu.addAction("Properties")
         self.img_list_contextmenu.addSeparator()
-        self.select_all_action = self.img_list_contextmenu.addAction("Select All", lambda: self.perform_selection("selectAll"), "Ctrl+A")
-        self.unselect_all_action = self.img_list_contextmenu.addAction("Unselect All", lambda: self.perform_selection("unselectAll"),
-                                                                        "Ctrl+Shift+A")
+        self.select_all_action = self.img_list_contextmenu.addAction("Select All", lambda: self.perform_selection("selectAll"))
+        self.unselect_all_action = self.img_list_contextmenu.addAction("Unselect All", lambda: self.perform_selection("unselectAll"))
         self.invert_select_action = self.img_list_contextmenu.addAction("Invert Selection", lambda: self.perform_selection("invertSelection"))
         self.img_list_contextmenu.addSeparator()
         self.remove_selected_files_action = self.img_list_contextmenu.addAction("Remove Selected Files", self.remove_selected_files)
         self.remove_all_files_action = self.img_list_contextmenu.addAction("Remove All Files", self.remove_all_files)
         self.ui.imageListWidget.installEventFilter(self)
-
-        #Add all context menu actions to this widget to use shortcuts
-        self.addActions(self.img_list_contextmenu.actions())
 
         self.analysis_progress_bar = QProgressBar()
         self.analysis_progress_bar.setRange(0,0)
@@ -153,16 +121,15 @@ class QStarshotWorksheet(QWidget):
         self.progress_vl.addWidget(self.analysis_progress_bar, 0, Qt.AlignHCenter)
         self.progress_vl.addWidget(self.analysis_message_label, 0, Qt.AlignHCenter)
 
-        #--------  connect slots -------- 
+        # Connect slots
         self.ui.addImgBtn.clicked.connect(self.add_files)
         self.ui.analyzeBtn.clicked.connect(self.start_analysis)
+        self.ui.advancedViewBtn.clicked.connect(self.show_advanced_results_view)
         self.ui.genReportBtn.clicked.connect(self.generate_report)
         self.ui.imageListWidget.itemChanged.connect(self.update_marked_images)
-        self.ui.toleranceDSB.valueChanged.connect(self.set_analysis_outcome)
 
-        #-------- init defaults --------
+        # Initialise defaults 
         self.marked_images = []
-        self.current_plot = None
         self.current_results = None
         self.imageView_windows = []
         self.advanced_results_view = None
@@ -171,9 +138,8 @@ class QStarshotWorksheet(QWidget):
 
         self.setup_config()
         self.update_marked_images()
-        self.set_analysis_outcome()
 
-        #Set analysis state and message for status bar
+        # Set analysis state and message for status bar
         self.analysis_message = None
         self.analysis_state = AnalysisInfoLabel.IDLE
 
@@ -185,34 +151,99 @@ class QStarshotWorksheet(QWidget):
         self.save_comment = ""
 
     def setup_config(self):
-        self.ui.SIDInputCB.addItems(["Auto", "Manual"])
-        self.ui.DPIInputCB.addItems(["Auto", "Manual"])
-        self.ui.DPIInputCB.currentIndexChanged.connect(self.on_config_change)
-        self.ui.SIDInputCB.currentIndexChanged.connect(self.on_config_change)
+        """
+        Setup field analysis configuration options and values.
+        """
+        self.ui.protocolCB.clear()
+        self.ui.centeringCB.clear()
+        self.ui.interpolationCB.clear()
 
-        # call this one time to ensure correct config display
+        self.ui.protocolCB.addItems([key for key in self.DEFAULT_PROTOCOLS.keys()])
+        self.ui.centeringCB.addItems([key for key in self.CENTERING.keys()])
+        self.ui.interpolationCB.addItems([key for key in self.INTERPOLATION.keys()])
+        self.ui.edgeDetCB.addItems([key for key in self.EDGE_DETECTION.keys()])
+        self.ui.normalizationCB.addItems([key for key in self.NORMALIZATION.keys()])
+
+        self.ui.centeringCB.currentIndexChanged.connect(self.on_config_change)
+        self.ui.interpolationCB.currentIndexChanged.connect(self.on_config_change)
+        self.ui.edgeDetCB.currentIndexChanged.connect(self.on_config_change)
+        self.ui.normalizationCB.currentIndexChanged.connect(self.on_config_change)
+        self.ui.fffBeamCheckB.stateChanged.connect(self.on_config_change)
+
+        # call this manually the first time to display correct config options
         self.on_config_change()
 
+        self.set_default_values()
+
+    def set_default_values(self):
+        """
+        Set default values for configuration fields, useful for restoring defaults.
+        """
+        self.ui.centeringCB.setCurrentIndex(0)
+
+        self.ui.vertPosDSB.setValue(0.50)
+        self.ui.horPosDSB.setValue(0.50)
+        self.ui.edgeSmoothDSB.setValue(0.003)
+        self.ui.hillWinRatioDSB.setValue(0.15)
+        self.ui.interpolationResDSB.setValue(0.10)
+        self.ui.inFieldRatioDSB.setValue(0.80)
+        self.ui.slopeExclRatioDSB.setValue(0.20)
+
+        self.ui.groundCheckB.setChecked(True)
+        self.ui.invertImageCheckB.setChecked(False)
+        self.ui.fffBeamCheckB.setChecked(False)
+
     def on_config_change(self):
-        if self.ui.SIDInputCB.currentText() == "Manual":
-            self.ui.configFormLayout.setRowVisible(4, True)
-        else:
-            self.ui.configFormLayout.setRowVisible(4, False)
+        """
+        Checks the current config values and adjusts fields and displays warnings if any issues
+        are encountered
+        """
 
-        if self.ui.DPIInputCB.currentText() == "Manual":
-            self.ui.configFormLayout.setRowVisible(6, True)
+        if self.ui.centeringCB.currentText() == "Manual":
+            self.ui.configFormLayout.setRowVisible(2, True)
         else:
-            self.ui.configFormLayout.setRowVisible(6, False)
-     
-    def add_files(self, files: tuple | list | None = None):
+            self.ui.configFormLayout.setRowVisible(2, False)
 
-        if not files:
-            files, _ = QFileDialog.getOpenFileNames(
-                self,
-                "Select Starshot Images",
-                "",
-                "DICOM Images (*.dcm);; TIFF Images (*.tiff *.tif);; PNG Image (*.png)",
-                )
+        if self.ui.edgeDetCB.currentText() == "Inflection Hill":
+            self.ui.hillWinRatioLabel.show()
+            self.ui.hillWinRatioDSB.show()
+        else:
+            self.ui.hillWinRatioLabel.hide()
+            self.ui.hillWinRatioDSB.hide()
+
+            if self.ui.edgeDetCB.currentText() == "FWHM" and self.ui.fffBeamCheckB.isChecked():
+               self.show_warning("Oh-oh! Becareful with your parameters",
+                                 "Using FWHM as an edge detection method for a FFF beam is not advised. "
+                                 "Consider using 'Inflection Derivative' or 'Inflection Hill'")
+
+        if self.ui.interpolationCB.currentText() == "None":
+            self.ui.configFormLayout.setRowVisible(7, False)
+        else:
+            self.ui.configFormLayout.setRowVisible(7, True)
+
+    def show_warning(self, title_text:str, message: str):
+        self.warning_dialog = QMessageBox()
+        self.warning_dialog.resize(400,0)
+        self.warning_dialog.setWindowTitle("Warning")
+        self.warning_dialog.setText("<p><span style=\" font-weight:700; font-size: 12pt;\">" \
+                                  f"{title_text}</span></p>")
+        self.warning_dialog.setInformativeText(message)
+        self.warning_dialog.setStandardButtons(QMessageBox.StandardButton.Ok)
+        self.warning_dialog.setTextFormat(Qt.TextFormat.RichText)
+
+        error_icon = QPixmap(u":/colorIcons/icons/error_round.png")
+        error_icon = error_icon.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
+        self.warning_dialog.setIconPixmap(error_icon)
+
+        self.warning_dialog.exec()
+
+    def add_files(self):
+        files, _ = QFileDialog.getOpenFileNames(
+            self,
+            "Select DICOM Field Analysis Images",
+            "",
+            "DICOM Images (*.dcm)",
+        )
 
         if files:
             for file in files:
@@ -292,13 +323,6 @@ class QStarshotWorksheet(QWidget):
         if len(self.marked_images) > 0:
             self.ui.analyzeBtn.setEnabled(True)
 
-            if len(self.marked_images) > 1:
-                self.analysis_message_label.setText(f"{len(self.marked_images)} images will be merged and analyzed")
-                self.analysis_message_label.show()
-
-            else:
-                self.analysis_message_label.hide()
-
         else:
             self.ui.analyzeBtn.setEnabled(False)
             self.analysis_message_label.hide()
@@ -306,11 +330,11 @@ class QStarshotWorksheet(QWidget):
     def view_dicom_image(self):
         image_short_name = self.ui.imageListWidget.currentItem().text()
         image_path = self.ui.imageListWidget.selectedItems()[0].data(Qt.UserRole)["file_path"]
-        image = load(image_path)
+        image = LinacDicomImage(image_path)
 
         imgView = pg.ImageView()
         imgView.setImage(image.array)
-        imgView.setPredefinedGradient("grey")
+        imgView.setPredefinedGradient("viridis")
 
         new_win = QMainWindow()
         new_win.setWindowTitle(image_short_name)
@@ -324,20 +348,20 @@ class QStarshotWorksheet(QWidget):
     def delete_file(self):
         listWidgetItem = self.ui.imageListWidget.currentItem()
 
-        self.error_dialog = QMessageBox()
-        self.error_dialog.setWindowTitle("Delete File")
-        self.error_dialog.setText("<p><span style=\" font-weight:700; font-size: 11pt;\">" \
+        self.delete_dialog = QMessageBox()
+        self.delete_dialog.setWindowTitle("Delete File")
+        self.delete_dialog.setText("<p><span style=\" font-weight:700; font-size: 11pt;\">" \
                                   f"Are you sure you want to permanently delete \'{listWidgetItem.text()}\' ? </span></p>")
-        self.error_dialog.setInformativeText("This action is irreversible!")
-        self.error_dialog.setStandardButtons(QMessageBox.StandardButton.Yes | 
+        self.delete_dialog.setInformativeText("This action is irreversible!")
+        self.delete_dialog.setStandardButtons(QMessageBox.StandardButton.Yes | 
                                              QMessageBox.StandardButton.Cancel)
-        self.error_dialog.setTextFormat(Qt.TextFormat.RichText)
+        self.delete_dialog.setTextFormat(Qt.TextFormat.RichText)
 
         warning_icon = QPixmap(u":/colorIcons/icons/warning.png")
         warning_icon = warning_icon.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
-        self.error_dialog.setIconPixmap(warning_icon)
+        self.delete_dialog.setIconPixmap(warning_icon)
 
-        ret = self.error_dialog.exec()
+        ret = self.delete_dialog.exec()
 
         if ret == QMessageBox.StandardButton.Yes:
             path = Path(listWidgetItem.data(Qt.UserRole)["file_path"])
@@ -352,6 +376,11 @@ class QStarshotWorksheet(QWidget):
             if type(self.ui.imageListWidget.itemAt(pos)) == QListWidgetItem:
                 # Show context menu
                 if not self.analysis_in_progress:
+                    if self.ui.imageListWidget.itemAt(pos).data(Qt.UserRole)["analysis_data"]:
+                        self.view_analyzed_img_action.setEnabled(True)
+                    else:
+                        self.view_analyzed_img_action.setEnabled(False)
+
                     if len(self.marked_images) > 0:
                         self.invert_select_action.setEnabled(True)
                         self.unselect_all_action.setEnabled(True)
@@ -382,7 +411,7 @@ class QStarshotWorksheet(QWidget):
                 self.img_list_contextmenu.exec(event.globalPos())
 
         return super().eventFilter(source, event)
-    
+
     def on_analysis_failed(self, error_message: str = "Unknown Error"):
         self.analysis_info_signal.emit({"state": AnalysisInfoLabel.FAILED,
                                         "message": None})
@@ -398,19 +427,19 @@ class QStarshotWorksheet(QWidget):
         self.analysis_progress_bar.hide()
         self.analysis_message_label.hide()
 
-        self.error_dialog = QMessageBox()
-        self.error_dialog.setWindowTitle("Analysis Error")
-        self.error_dialog.setText("<p><span style=\" font-weight:700; font-size: 12pt;\">" \
-                                  "Oops! An error was encountered </span></p>")
-        self.error_dialog.setInformativeText(error_message)
-        self.error_dialog.setStandardButtons(QMessageBox.StandardButton.Ok)
-        self.error_dialog.setTextFormat(Qt.TextFormat.RichText)
+        self.warning_dialog = QMessageBox()
+        self.warning_dialog.setWindowTitle("Analysis Error")
+        self.warning_dialog.setText("<p><span style=\" font-weight:700; font-size: 12pt;\">" \
+                                  "Oops! An error was encountered</span></p>")
+        self.warning_dialog.setInformativeText(error_message)
+        self.warning_dialog.setStandardButtons(QMessageBox.StandardButton.Ok)
+        self.warning_dialog.setTextFormat(Qt.TextFormat.RichText)
 
         error_icon = QPixmap(u":/colorIcons/icons/error_round.png")
         error_icon = error_icon.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
-        self.error_dialog.setIconPixmap(error_icon)
+        self.warning_dialog.setIconPixmap(error_icon)
 
-        self.error_dialog.exec()
+        self.warning_dialog.exec()
 
     def start_analysis(self):
         self.analysis_info_signal.emit({"state": AnalysisInfoLabel.IN_PROGRESS,
@@ -419,17 +448,12 @@ class QStarshotWorksheet(QWidget):
         self.analysis_message = None
 
         self.analysis_in_progress = True
+        self.ui.advancedViewBtn.setEnabled(False)
         self.ui.genReportBtn.setEnabled(False)
         self.remove_list_checkmarks()
-        self.set_analysis_outcome()
 
-        row_count = self.form_layout.rowCount()
-        for i in range(row_count):
-            self.form_layout.removeRow(row_count - (i+1))
-
-        if self.current_plot is not None:
-            self.current_plot.deleteLater()
-            self.current_plot = None
+        self.ui.summaryTE.hide()
+        self.ui.summaryTE.clear()
 
         self.ui.addImgBtn.setEnabled(False)
         self.ui.genReportBtn.setEnabled(False)
@@ -439,50 +463,41 @@ class QStarshotWorksheet(QWidget):
         self.analysis_progress_bar.show()
         self.analysis_message_label.show()
 
-        if len(self.marked_images) < 2:
-            images = self.marked_images[0]
+        self.set_protocol = self.ui.protocolCB.currentText()
             
-        else:
-            images = self.marked_images
+        self.worker = QFieldAnalysisWorker(path = self.marked_images[0],
+                                           protocol = self.DEFAULT_PROTOCOLS[self.set_protocol],
+                                           centering = self.ui.centeringCB.currentText(),
+                                           vert_position = self.ui.vertPosDSB.value(),
+                                           horiz_position = self.ui.horPosDSB.value(),
+                                           normalization_method = self.ui.normalizationCB.currentText(),
+                                           edge_detection_method = self.ui.edgeDetCB.currentText(),
+                                           edge_smoothing_ratio = self.ui.edgeSmoothDSB.value(),
+                                           hill_window_ratio = self.ui.hillWinRatioDSB.value(),
+                                           interpolation = self.ui.interpolationCB.currentText(),
+                                           in_field_ratio = self.ui.inFieldRatioDSB.value(),
+                                           slope_exclusion_ratio = self.ui.slopeExclRatioDSB.value(),
+                                           is_FFF = self.ui.fffBeamCheckB.isChecked(),
+                                           invert = self.ui.invertImageCheckB.isChecked(),
+                                           ground = self.ui.groundCheckB.isChecked()
+                                           )
+        
+        self.qthread = QThread()
+        self.worker.moveToThread(self.qthread)
+        self.worker.analysis_failed.connect(self.qthread.quit)
+        self.worker.analysis_failed.connect(self.on_analysis_failed)
+        self.worker.thread_finished.connect(self.qthread.quit)
+        self.worker.analysis_results_ready.connect(lambda results: self.show_analysis_results(results))
+        self.qthread.started.connect(self.worker.analyze)
+        self.qthread.finished.connect(self.qthread.deleteLater)
 
-        params = {}
-
-        if self.ui.SIDInputCB.currentText() == "Manual":
-            params["sid"] = self.ui.sIDDSB.value()
-
-        if self.ui.DPIInputCB.currentText() == "Manual":
-            params["dpi"] = self.ui.dPIDSB.value()
-
-        # Top level try clause catches file IO errors
-        try:
-            self.worker = QStarshotWorker(filepath = images,
-                                          radius = self.ui.radiusSB.value(),
-                                          min_peak_height = self.ui.miniPeakHeightDSB.value(),
-                                          tolerance = self.ui.toleranceDSB.value(),
-                                          fwhm = self.ui.useFWHMCB.isChecked(),
-                                          recursive = self.ui.recursiveSearchCB.isChecked(),
-                                          invert = self.ui.forceInvertCB.isChecked(),
-                                          **params
-                                          )
-            self.qthread = QThread()
-            self.worker.moveToThread(self.qthread)
-            self.worker.analysis_failed.connect(self.qthread.quit)
-            self.worker.analysis_failed.connect(self.on_analysis_failed)
-            self.worker.thread_finished.connect(self.qthread.quit)
-            self.worker.thread_finished.connect(self.worker.deleteLater)
-            self.worker.analysis_results_ready.connect(lambda results: self.show_analysis_results(results))
-            self.qthread.started.connect(self.worker.analyze)
-            self.qthread.finished.connect(self.qthread.deleteLater)
-
-            self.qthread.start()
-
-        except Exception as err:
-            self.on_analysis_failed(traceback.format_exception_only(err)[-1])
+        self.qthread.start()
 
     def show_analysis_results(self, results: dict):
         self.has_analysis = True
         self.current_results = results
         self.analysis_in_progress = False
+        self.ui.advancedViewBtn.setEnabled(True)
         self.ui.genReportBtn.setEnabled(True)
         self.restore_list_checkmarks()
 
@@ -500,21 +515,15 @@ class QStarshotWorksheet(QWidget):
         self.analysis_progress_bar.hide()
         self.analysis_message_label.hide()
 
-        for summary_item in results["summary_text"]:
-            self.form_layout.addRow(summary_item[0], QLabel(summary_item[1]))
+        # Update the report summary
+        pf = results["field_analysis_obj"]
 
-        #set outcome
-        self.set_analysis_outcome()
+        self.ui.summaryTE.setText(results["summary_text"])
+        self.ui.summaryTE.show()
 
-        # Update the plot
-        starshot = results["starshot_obj"]
-        starshot.plot_image()
-        self.current_plot = starshot.imagePlotWidget
-        self.ui.analysisImageVL.addWidget(self.current_plot)
-
-        #Update the summary
-        self.analysis_summary= {"Wobble (circle) diameter": f"{starshot.wobble.radius_mm*2.0:2.3f} mm",
-                                "Number of spokes detected": f"{len(starshot.lines)}"}
+        # Update the advanced view
+        if self.advanced_results_view is not None:
+            self.advanced_results_view.update_field_analysis(pf)
 
     def remove_list_checkmarks(self):
         for index in range(self.ui.imageListWidget.count()):
@@ -532,39 +541,13 @@ class QStarshotWorksheet(QWidget):
             if listItemWidget.data(Qt.ItemDataRole.UserRole)["file_path"] in self.marked_images:
                 listItemWidget.setCheckState(Qt.CheckState.Checked)
 
-    def set_analysis_outcome(self):
-        if not self.has_analysis or self.analysis_in_progress:
-            self.ui.outcomeLE.clear()
-            self.ui.outcomeLE.setStyleSheet(u"border-color: rgba(0, 0, 0,0);\n"
-                "border-radius: 15px;\n"
-                "border-style: solid;\n"
-                "border-width: 2px;\n"
-                "background-color: rgba(0, 0, 0, 0);\n"
-                "padding-left: 15px;\n"
-                "height: 30px;\n"
-                "font-weight: bold;\n")
-            
-        elif self.current_results["starshot_obj"].wobble.radius_mm * 2.0 < self.ui.toleranceDSB.value():
-            self.ui.outcomeLE.setText("PASS")
-            self.ui.outcomeLE.setStyleSheet(u"border-color: rgb(95, 200, 26);\n"
-                "border-radius: 15px;\n"
-                "border-style: solid;\n"
-                "border-width: 2px;\n"
-                "background-color: rgba(95, 200, 26, 150);\n"
-                "padding-left: 15px;\n"
-                "height: 30px;\n"
-                "font-weight: bold;\n")
-            
-        else:
-            self.ui.outcomeLE.setText("FAIL")
-            self.ui.outcomeLE.setStyleSheet(u"border-color: rgb(231, 29, 14);\n"
-                "border-radius: 15px;\n"
-                "border-style: solid;\n"
-                "border-width: 2px;\n"
-                "background-color: rgba(231, 29, 14, 150);\n"
-                "padding-left: 15px;\n"
-                "height: 30px;\n"
-                "font-weight: bold;\n")
+    def show_advanced_results_view(self):
+        if self.advanced_results_view is None:
+            self.advanced_results_view = AdvancedFAView(fa = self.current_results["field_analysis_obj"])
+            self.advanced_results_view.show()
+
+        else: 
+            self.advanced_results_view.show()
     
     def generate_report(self):
         physicist_name_le = QLineEdit()
@@ -616,7 +599,7 @@ class QStarshotWorksheet(QWidget):
         user_details_layout.addRow("Save location:", save_location_layout)
         user_details_layout.addRow("Analysis date:", analysis_date)
         user_details_layout.addRow("Comments:", comments_te)
-        user_details_layout.addRow("",show_report_layout)
+        user_details_layout.addRow("", show_report_layout)
         user_details_layout.addItem(QSpacerItem(1,10, QSizePolicy.Policy.Minimum,
                                                 QSizePolicy.Policy.Minimum))
         
@@ -636,7 +619,7 @@ class QStarshotWorksheet(QWidget):
         layout.addWidget(dialog_buttons)
 
         report_dialog = QDialog()
-        report_dialog.setWindowTitle("Generate Starshot Report ‒ PyBeam QA")
+        report_dialog.setWindowTitle("Generate Field Analysis Report ‒ PyBeam QA")
         report_dialog.setLayout(layout)
         report_dialog.setMinimumSize(report_dialog.sizeHint())
         report_dialog.setMaximumSize(report_dialog.sizeHint())
@@ -658,23 +641,74 @@ class QStarshotWorksheet(QWidget):
             physicist_name = "N/A" if physicist_name_le.text() == "" else physicist_name_le.text()
             institution_name = "N/A" if institution_name_le.text() == "" else institution_name_le.text()
             treatment_unit = "N/A" if treatment_unit_le.currentText() == "" else treatment_unit_le.currentText()
-        
-            starshot = self.current_results["starshot_obj"]
 
-            report = StarshotReport(filename = save_path_le.text(),
-                                    author = physicist_name,
-                                    institution = institution_name,
-                                    treatment_unit_name = treatment_unit,
-                                    analysis_date = self.report_date.toString("dd MMMM yyyy"),
-                                    analysis_summary = self.analysis_summary.copy(),
-                                    summary_plots = starshot.get_publishable_plots(),
-                                    wobble_diameter = starshot.wobble.radius_mm * 2.0,
-                                    tolerance = self.ui.toleranceDSB.value(),
-                                    report_status = self.ui.outcomeLE.text(),
-                                    comments = comments_te.toPlainText()
-                                    )
+            fa = self.current_results["field_analysis_obj"]
+
+            report = FieldAnalysisReport(save_path_le.text(),
+                                   author = physicist_name,
+                                   institution = institution_name,
+                                   treatment_unit_name = treatment_unit,
+                                   protocol = self.set_protocol,
+                                   analysis_date = self.report_date.toString("dd MMMM yyyy"),
+                                   analysis_summary = fa.get_publishable_results(),
+                                   summary_plots = fa.get_publishable_plots(),
+                                   comments = comments_te.toPlainText())
+        
             report.save_report()
 
             if show_report_checkbox.isChecked():
                 webbrowser.open(save_path_le.text())
             
+class AdvancedFAView(QMainWindow):
+
+    def __init__(self, parent: QWidget | None = None, fa: QFieldAnalysis = None):
+        super().__init__(parent = parent)
+
+        self.fa = fa
+ 
+        self.initComplete = False
+
+        self.setWindowTitle("Field Analysis (Advanced Results) ‒ PyBeam QA")
+        self.resize(720, 480)
+
+        self.central_widget = QWidget(self)
+        self.setCentralWidget(self.central_widget)
+
+        self.top_layout = QGridLayout(self.central_widget)
+        self.top_layout.setContentsMargins(0, 0, 0, 0)
+
+        size_policy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        size_policy.setVerticalStretch(0)
+        size_policy.setHorizontalStretch(0)
+        self.central_widget.setSizePolicy(size_policy)
+
+        #----- Setup analyzed image content
+        self.analyzed_img_qSplitter = QSplitter()
+        self.analyzed_img_qSplitter.setSizePolicy(size_policy)
+
+        self.top_layout.addWidget(self.analyzed_img_qSplitter, 0, 0, 1, 1)
+
+        self.curr_analyzed_image_widget = None
+
+        if fa is not None:
+            self.init_analyzed_image()
+
+        self.initComplete = True
+    
+    def update_field_analysis(self, fa: QFieldAnalysis):
+        self.fa = fa
+
+        self.initComplete = False
+
+        self.init_analyzed_image()
+
+        self.initComplete = True
+            
+    def init_analyzed_image(self):
+        if self.curr_analyzed_image_widget is not None:
+            self.curr_analyzed_image_widget.deleteLater()
+
+        self.curr_analyzed_image_widget = self.fa.analyzed_image_plot_widget
+        self.analyzed_img_qSplitter.addWidget(self.curr_analyzed_image_widget)
+
+        self.fa.qplot_analyzed_image()

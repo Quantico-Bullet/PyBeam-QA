@@ -145,8 +145,8 @@ class Ui_AboutDialog(object):
 
     def retranslateUi(self, AboutDialog):
         self.app_name_label.setText(QCoreApplication.translate("AboutDialog", u"<html><head/><body><p><span style=\" font-size:12pt; font-weight:700;\">PyBeam QA</span></p></body></html>", None))
-        self.copyright_label.setText(QCoreApplication.translate("AboutDialog", u"Copyright \u00a9 2023 Kagiso Lebang", None))
-        self.app_version_label.setText(QCoreApplication.translate("AboutDialog", u"version 0.1.0", None))
+        self.copyright_label.setText(QCoreApplication.translate("AboutDialog", u"Copyright \u00a9 2023-2024 Kagiso Lebang", None))
+        self.app_version_label.setText(QCoreApplication.translate("AboutDialog", u"version a.b.c", None))
         self.github_btn.setText(QCoreApplication.translate("AboutDialog", u"Github", None))
         self.oslibs_groubbox.setTitle(QCoreApplication.translate("AboutDialog", u"Open source libraries", None))
         pass

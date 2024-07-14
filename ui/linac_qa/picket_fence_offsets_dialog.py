@@ -1,6 +1,6 @@
-from PySide6.QtWidgets import QDialog, QWidget, QDialogButtonBox, QFileDialog, QLineEdit
+from PySide6.QtWidgets import QDialog, QWidget
 
-from ui.py_ui.pf_offsets_dialog_ui import Ui_PFOffsetDialog
+from ui.py_ui.picket_fence_offsets_dialog_ui import Ui_PFOffsetDialog
 
 class PFTestDialog(QDialog):
     

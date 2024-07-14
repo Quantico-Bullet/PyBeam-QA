@@ -86,12 +86,12 @@ class DevicesPreferences:
         photon_beams_le.setReadOnly(True)
         photon_beams_le.setFixedWidth(200)
         photon_beams_le.setClearButtonEnabled(True)
-        add_photon_beam_btn = QPushButton("Add")
+        add_photon_beam_btn = QPushButton("Add/Edit")
         electron_beams_le = QLineEdit("1, 3, 5, 7")
         electron_beams_le.setReadOnly(True)
         electron_beams_le.setFixedWidth(200)
         electron_beams_le.setClearButtonEnabled(True)
-        add_electron_beam_btn = QPushButton("Add")
+        add_electron_beam_btn = QPushButton("Add/Edit")
         
         linac_manufacturer_comboB.currentTextChanged.connect(lambda x:
             self.add_linac_manufacturer_changed(x, linac_model_comboB))

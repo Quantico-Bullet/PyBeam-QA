@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'electronsWorksheet.ui'
+## Form generated from reading UI file 'electrons_worksheet.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.6.2
 ##
@@ -340,7 +340,7 @@ class Ui_QElectronsWorksheet(object):
 
         self.verticalLayout_12.addWidget(self.scrollArea)
 
-        self.verticalSpacer_9 = QSpacerItem(20, 5, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        self.verticalSpacer_9 = QSpacerItem(20, 5, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Ignored)
 
         self.verticalLayout_12.addItem(self.verticalSpacer_9)
 
