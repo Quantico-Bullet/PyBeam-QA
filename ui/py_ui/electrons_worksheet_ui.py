@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'electrons_worksheet.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.2
+## Created by: Qt User Interface Compiler version 6.7.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -80,8 +80,8 @@ class Ui_QElectronsWorksheet(object):
         self.calibSummaryHLine.setSizePolicy(sizePolicy3)
         self.calibSummaryHLine.setMaximumSize(QSize(16777215, 1))
         self.calibSummaryHLine.setStyleSheet(u"background-color: rgb(82, 142, 122)")
-        self.calibSummaryHLine.setFrameShape(QFrame.HLine)
-        self.calibSummaryHLine.setFrameShadow(QFrame.Sunken)
+        self.calibSummaryHLine.setFrameShape(QFrame.Shape.HLine)
+        self.calibSummaryHLine.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout_12.addWidget(self.calibSummaryHLine)
 
@@ -357,8 +357,8 @@ class Ui_QElectronsWorksheet(object):
         self.outcomeHLine.setSizePolicy(sizePolicy3)
         self.outcomeHLine.setMaximumSize(QSize(16777215, 1))
         self.outcomeHLine.setStyleSheet(u"background-color: rgb(82, 142, 122)")
-        self.outcomeHLine.setFrameShape(QFrame.HLine)
-        self.outcomeHLine.setFrameShadow(QFrame.Sunken)
+        self.outcomeHLine.setFrameShape(QFrame.Shape.HLine)
+        self.outcomeHLine.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout_12.addWidget(self.outcomeHLine)
 

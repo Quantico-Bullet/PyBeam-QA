@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'app_main_win.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.2
+## Created by: Qt User Interface Compiler version 6.7.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -554,7 +554,7 @@ class Ui_MainWindow(object):
 "	background-color: rgba(82, 142, 122,122);\n"
 "}")
         icon = QIcon()
-        icon.addFile(u":/colorIcons/icons/settings.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile(u":/colorIcons/icons/settings.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.pushButton.setIcon(icon)
         self.pushButton.setIconSize(QSize(32, 32))
 
@@ -752,7 +752,7 @@ class Ui_MainWindow(object):
 "	background-color: rgba(82, 142, 122,122);\n"
 "}")
         icon1 = QIcon()
-        icon1.addFile(u":/colorIcons/icons/left.png", QSize(), QIcon.Normal, QIcon.Off)
+        icon1.addFile(u":/colorIcons/icons/left.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.backBtn.setIcon(icon1)
         self.backBtn.setIconSize(QSize(32, 32))
 

@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'preferences.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.2
+## Created by: Qt User Interface Compiler version 6.7.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -125,8 +125,8 @@ class Ui_PreferencesDialog(object):
         self.nav_line_separator.setObjectName(u"nav_line_separator")
         self.nav_line_separator.setMaximumSize(QSize(1, 16777215))
         self.nav_line_separator.setStyleSheet(u"background-color: rgb(82, 142, 122)")
-        self.nav_line_separator.setFrameShape(QFrame.VLine)
-        self.nav_line_separator.setFrameShadow(QFrame.Sunken)
+        self.nav_line_separator.setFrameShape(QFrame.Shape.VLine)
+        self.nav_line_separator.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.gridLayout.addWidget(self.nav_line_separator, 1, 1, 1, 1)
 

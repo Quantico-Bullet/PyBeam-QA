@@ -266,8 +266,13 @@ class PhotonsMainWindow(BaseTRS398Window):
         if isFFF:
             self.ui.tabWidget.addTab(worksheet, f"{beam_energy} MV FFF beam")
             worksheet.ui.nomAccPotUnit.setText("MV (FFF beam)")
+
         else:
             self.ui.tabWidget.addTab(worksheet, f"{beam_energy} MV beam")
+
+            # Hide the volume averaging correction factor row
+            worksheet.ui.corrFactorFL.setRowVisible(4, False)
+            worksheet.ui.scrollArea.setMinimumSize(0, 340)
 
         # Send data changes to other worksheets
         worksheet.ui.institutionLE.textChanged.connect(self.institution_changed)
@@ -826,8 +831,6 @@ class ElectronsMainWindow(BaseTRS398Window):
 
 class QPhotonsWorksheet(QWidget):
 
-    beam_type = 0 # 0 for a flattened beam and 1 for FFF
-
     def __init__(self):
         super().__init__()
         self.ui = Ui_QPhotonsWorksheet()
@@ -859,6 +862,7 @@ class QPhotonsWorksheet(QWidget):
         self.ui.calibSetupGroup.buttonClicked.connect(self.set_zmax_depth_dose)
         self.ui.IonChamberModelComboB.currentIndexChanged.connect(self.calc_kq)
         self.ui.beamQualityLE.textChanged.connect(self.calc_kq)
+        self.ui.refDepthComboB.currentTextChanged.connect(self.calc_kq)
         self.ui.refPressureLE.textChanged.connect(self.calc_ktp)
         self.ui.refTempLE.textChanged.connect(self.calc_ktp)
         self.ui.refHumidityLE.textChanged.connect(self.calc_ktp)
@@ -984,6 +988,10 @@ class QPhotonsWorksheet(QWidget):
             self.ui.kElecLE.clear() # kElec will still be 1.00 in TRS class until set
 
     def calc_kq(self):
+        """
+        Calculate the beam quality correction factor and the volume averaging correction 
+        factor
+        """
         curr_chamber = self.ui.IonChamberModelComboB.currentText()
         tpr_value = self.ui.beamQualityLE.text()
 
@@ -992,11 +1000,23 @@ class QPhotonsWorksheet(QWidget):
         if tpr_value != "":
             for chamberType in chambers:
                 if curr_chamber in chambers[chamberType]:
+                    tpr_value = float(tpr_value)
                     tpr_kQ: dict = chambers[chamberType][curr_chamber]["tpr_kQ"]
-                    kQ = self.trs398.tpr2010_to_kQ(float(tpr_value), tpr_kQ)
+                    kQ = self.trs398.tpr2010_to_kQ(tpr_value, tpr_kQ)
+
                     self.ui.kQLE.setText("%.3f" % kQ)
+
+                    if "(FFF" in self.ui.nomAccPotUnit.text():
+                        if self.ui.refDepthComboB.currentText() != "":
+                            depth = float(self.ui.refDepthComboB.currentText())
+                            sdd = 100. + depth
+                            cavity_len = chambers[chamberType][curr_chamber]["cavity_length"] / 10 #to cm
+                            kVol = self.trs398.kVol_corr(tpr_value, cavity_len, sdd)
+                            self.ui.kVolLE.setText("%.3f" % kVol)
+
         else:
             self.ui.kQLE.clear()
+            self.ui.kVolLE.clear()
 
     def calc_ktp(self):
         user_temp = self.ui.userTempLE.text()
@@ -1265,8 +1285,6 @@ class QPhotonsWorksheet(QWidget):
         return worksheet_info
 
 class QElectronsWorksheet(QWidget):
-
-    beam_type = 0 # 0 for a flattened beam and 1 for FFF
 
     def __init__(self):
         super().__init__()
@@ -1696,7 +1714,6 @@ class QElectronsWorksheet(QWidget):
         worksheet_info["v2_voltage"] = self.ui.redVoltageLE.text()
         worksheet_info["m1_reading"] = self.ui.normReadLE.text()
         worksheet_info["m2_reading"] = self.ui.redReadLE.text()
-        worksheet_info["beam_type"] = self.ui.beamTypeGroup.checkedId()
         worksheet_info["depth_dmax"] = self.ui.depthDMaxLE.text()
         worksheet_info["pdd_zref"] = self.ui.pddLE.text()
 

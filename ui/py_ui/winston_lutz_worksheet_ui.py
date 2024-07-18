@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'winston_lutz_worksheet.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.2
+## Created by: Qt User Interface Compiler version 6.7.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -143,8 +143,8 @@ class Ui_QWLutzWorksheet(object):
         self.line.setObjectName(u"line")
         self.line.setMaximumSize(QSize(16777215, 1))
         self.line.setStyleSheet(u"background-color: rgb(82, 142, 122)")
-        self.line.setFrameShape(QFrame.HLine)
-        self.line.setFrameShadow(QFrame.Sunken)
+        self.line.setFrameShape(QFrame.Shape.HLine)
+        self.line.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout_4.addWidget(self.line)
 
@@ -233,8 +233,8 @@ class Ui_QWLutzWorksheet(object):
         self.line_3.setObjectName(u"line_3")
         self.line_3.setMaximumSize(QSize(16777215, 1))
         self.line_3.setStyleSheet(u"background-color: rgb(82, 142, 122)")
-        self.line_3.setFrameShape(QFrame.HLine)
-        self.line_3.setFrameShadow(QFrame.Sunken)
+        self.line_3.setFrameShape(QFrame.Shape.HLine)
+        self.line_3.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout_4.addWidget(self.line_3)
 
@@ -322,8 +322,8 @@ class Ui_QWLutzWorksheet(object):
         self.analysisSummaryLabel.setSizePolicy(sizePolicy7)
         self.analysisSummaryLabel.setMaximumSize(QSize(16777215, 1))
         self.analysisSummaryLabel.setStyleSheet(u"background-color: rgb(82, 142, 122)")
-        self.analysisSummaryLabel.setFrameShape(QFrame.HLine)
-        self.analysisSummaryLabel.setFrameShadow(QFrame.Sunken)
+        self.analysisSummaryLabel.setFrameShape(QFrame.Shape.HLine)
+        self.analysisSummaryLabel.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout_3.addWidget(self.analysisSummaryLabel)
 
@@ -345,8 +345,8 @@ class Ui_QWLutzWorksheet(object):
 
         self.line_2 = QFrame(self.analysisPage)
         self.line_2.setObjectName(u"line_2")
-        self.line_2.setFrameShape(QFrame.VLine)
-        self.line_2.setFrameShadow(QFrame.Sunken)
+        self.line_2.setFrameShape(QFrame.Shape.VLine)
+        self.line_2.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.gridLayout.addWidget(self.line_2, 1, 2, 1, 1)
 

@@ -58,6 +58,9 @@
      </item>
      <item row="1" column="2">
       <layout class="QVBoxLayout" name="calibSummaryVL">
+       <property name="spacing">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QWidget" name="calibSummaryWidget" native="true">
          <property name="sizePolicy">
@@ -159,7 +162,7 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>387</height>
+              <height>375</height>
              </size>
             </property>
             <property name="autoFillBackground">
@@ -186,7 +189,7 @@ QAbstractScrollArea::corner {
                <x>0</x>
                <y>0</y>
                <width>379</width>
-               <height>387</height>
+               <height>386</height>
               </rect>
              </property>
              <property name="sizePolicy">
@@ -216,7 +219,7 @@ QAbstractScrollArea::corner {
                </widget>
               </item>
               <item>
-               <layout class="QFormLayout" name="corrFactorFL_2">
+               <layout class="QFormLayout" name="corrFactorFL">
                 <property name="fieldGrowthPolicy">
                  <enum>QFormLayout::ExpandingFieldsGrow</enum>
                 </property>
@@ -472,14 +475,14 @@ font-weight: bold</string>
                  </layout>
                 </item>
                 <item row="4" column="0">
-                 <widget class="QLabel" name="label">
+                 <widget class="QLabel" name="kVolLabel">
                   <property name="text">
                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;k&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-style:italic; vertical-align:sub;&quot;&gt;vol&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                  </widget>
                 </item>
                 <item row="4" column="1">
-                 <widget class="QLineEdit" name="lineEdit">
+                 <widget class="QLineEdit" name="kVolLE">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -768,7 +771,7 @@ font-weight: bold;
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>0</y>
+          <y>-1020</y>
           <width>605</width>
           <height>2002</height>
          </rect>
@@ -3361,11 +3364,11 @@ QPushButton:!enabled{
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="userPolarityGroup"/>
-  <buttongroup name="calibPolarityGroup"/>
-  <buttongroup name="calibSetupGroup"/>
   <buttongroup name="beamQualityGroup"/>
   <buttongroup name="calibSeparateGroup"/>
+  <buttongroup name="calibPolarityGroup"/>
+  <buttongroup name="calibSetupGroup"/>
   <buttongroup name="beamTypeGroup"/>
+  <buttongroup name="userPolarityGroup"/>
  </buttongroups>
 </ui>

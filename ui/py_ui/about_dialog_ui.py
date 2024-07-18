@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'about_dialog.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.2
+## Created by: Qt User Interface Compiler version 6.7.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -73,7 +73,7 @@ class Ui_AboutDialog(object):
         self.github_btn = QPushButton(self.frame_2)
         self.github_btn.setObjectName(u"github_btn")
         icon = QIcon()
-        icon.addFile(u":/actionIcons/icons/logo-github.svg", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile(u":/actionIcons/icons/logo-github.svg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.github_btn.setIcon(icon)
 
         self.gridLayout_2.addWidget(self.github_btn, 3, 0, 1, 1, Qt.AlignHCenter)

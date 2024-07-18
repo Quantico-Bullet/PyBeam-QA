@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'picket_fence_test_dialog.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.2
+## Created by: Qt User Interface Compiler version 6.7.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -164,15 +164,15 @@ class Ui_PFTestDialog(object):
 
         self.line_3 = QFrame(self.frame)
         self.line_3.setObjectName(u"line_3")
-        self.line_3.setFrameShape(QFrame.HLine)
-        self.line_3.setFrameShadow(QFrame.Sunken)
+        self.line_3.setFrameShape(QFrame.Shape.HLine)
+        self.line_3.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.formLayout.setWidget(6, QFormLayout.LabelRole, self.line_3)
 
         self.line_2 = QFrame(self.frame)
         self.line_2.setObjectName(u"line_2")
-        self.line_2.setFrameShape(QFrame.HLine)
-        self.line_2.setFrameShadow(QFrame.Sunken)
+        self.line_2.setFrameShape(QFrame.Shape.HLine)
+        self.line_2.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.formLayout.setWidget(6, QFormLayout.FieldRole, self.line_2)
 
@@ -237,15 +237,15 @@ class Ui_PFTestDialog(object):
 
         self.line_4 = QFrame(self.frame)
         self.line_4.setObjectName(u"line_4")
-        self.line_4.setFrameShape(QFrame.HLine)
-        self.line_4.setFrameShadow(QFrame.Sunken)
+        self.line_4.setFrameShape(QFrame.Shape.HLine)
+        self.line_4.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.formLayout.setWidget(11, QFormLayout.LabelRole, self.line_4)
 
         self.line = QFrame(self.frame)
         self.line.setObjectName(u"line")
-        self.line.setFrameShape(QFrame.HLine)
-        self.line.setFrameShadow(QFrame.Sunken)
+        self.line.setFrameShape(QFrame.Shape.HLine)
+        self.line.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.formLayout.setWidget(11, QFormLayout.FieldRole, self.line)
 

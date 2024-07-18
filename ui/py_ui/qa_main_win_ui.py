@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'qa_main_win.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.2
+## Created by: Qt User Interface Compiler version 6.7.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -71,7 +71,7 @@ class Ui_MainWindow(object):
         self.dockWidgetContents = QWidget()
         self.dockWidgetContents.setObjectName(u"dockWidgetContents")
         self.dockWidget.setWidget(self.dockWidgetContents)
-        MainWindow.addDockWidget(Qt.RightDockWidgetArea, self.dockWidget)
+        MainWindow.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.dockWidget)
 
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuView.menuAction())

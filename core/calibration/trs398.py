@@ -28,6 +28,7 @@ class TRS398:
         self.kPol = kPol
         self.kElec = kElec
         self.kQQo = kQQo
+        self.kVol = 1.00
 
         self.refTemp = 20.0
         self.refPress = 101.325
@@ -159,7 +160,7 @@ class TRS398:
         return -0.7898 + 0.0329*pdd10 - 0.000166*pow(pdd10, 2)
 
     def get_Mcorrected(self) -> float:
-        return self.mRaw * self.kTP * self.kElec * self.kPol * self.kS
+        return self.mRaw * self.kTP * self.kElec * self.kPol * self.kS * self.kVol
 
     def get_DwQ_zref(self) -> float:
         return self.get_Mcorrected() * self.nDW * self.kQQo / self.linac_mu
@@ -193,6 +194,10 @@ class TRS398Photons(TRS398):
             kQSpline = CubicSpline(tprValues, kQValues)
             self.kQQo = float(kQSpline(tpr2010))
             return self.kQQo
+        
+    def kVol_corr(self, tpr2010: float, cavity_len: float, sdd: float) -> float:
+        self.kVol = 1 + (0.0062*tpr2010 - 0.0036) * pow(100*cavity_len/sdd, 2)
+        return self.kVol
         
 class TRS398Electrons(TRS398):
     def __init__(self, mRaw: float = 1.0, nDW: float = 1.0, kTP: float = 1.0, 
