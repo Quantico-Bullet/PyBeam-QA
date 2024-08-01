@@ -602,7 +602,7 @@ class QWLutzWorksheet(QWidget):
         analysed_image_viewer.show()
 
     def show_shift_info(self):
-        self.shift_dialog = MessageDialo𝚫g()
+        self.shift_dialog = MessageDialog()
         self.shift_dialog.set_title("BB Shift Instructions")
         self.shift_dialog.set_header_text("To minimize the mean positioning error, shift the ball-bearing as follows:")
         self.shift_dialog.set_standard_buttons(QDialogButtonBox.StandardButton.Ok)
