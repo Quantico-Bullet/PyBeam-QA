@@ -45,394 +45,23 @@ class Ui_QPhotonsWorksheet(object):
 
         self.worksheetGrid.addItem(self.horizontalSpacer, 1, 1, 1, 1)
 
-        self.calibSummaryVL = QVBoxLayout()
-        self.calibSummaryVL.setSpacing(0)
-        self.calibSummaryVL.setObjectName(u"calibSummaryVL")
-        self.calibSummaryWidget = QWidget(QPhotonsWorksheet)
-        self.calibSummaryWidget.setObjectName(u"calibSummaryWidget")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.calibSummaryWidget.sizePolicy().hasHeightForWidth())
-        self.calibSummaryWidget.setSizePolicy(sizePolicy1)
-        self.calibSummaryWidget.setMaximumSize(QSize(450, 16777215))
-        self.calibSummaryWidget.setStyleSheet(u"")
-        self.verticalLayout_12 = QVBoxLayout(self.calibSummaryWidget)
-        self.verticalLayout_12.setSpacing(6)
-        self.verticalLayout_12.setObjectName(u"verticalLayout_12")
-        self.verticalLayout_12.setContentsMargins(0, 0, 0, 0)
-        self.CalibSummaryLabel = QLabel(self.calibSummaryWidget)
-        self.CalibSummaryLabel.setObjectName(u"CalibSummaryLabel")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.CalibSummaryLabel.sizePolicy().hasHeightForWidth())
-        self.CalibSummaryLabel.setSizePolicy(sizePolicy2)
-        self.CalibSummaryLabel.setFrameShape(QFrame.NoFrame)
-        self.CalibSummaryLabel.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-
-        self.verticalLayout_12.addWidget(self.CalibSummaryLabel)
-
-        self.calibSummaryHLine = QFrame(self.calibSummaryWidget)
-        self.calibSummaryHLine.setObjectName(u"calibSummaryHLine")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Fixed)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.calibSummaryHLine.sizePolicy().hasHeightForWidth())
-        self.calibSummaryHLine.setSizePolicy(sizePolicy3)
-        self.calibSummaryHLine.setMaximumSize(QSize(16777215, 1))
-        self.calibSummaryHLine.setStyleSheet(u"background-color: rgb(82, 142, 122)")
-        self.calibSummaryHLine.setFrameShape(QFrame.Shape.HLine)
-        self.calibSummaryHLine.setFrameShadow(QFrame.Shadow.Sunken)
-
-        self.verticalLayout_12.addWidget(self.calibSummaryHLine)
-
-        self.verticalSpacer_7 = QSpacerItem(20, 4, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
-
-        self.verticalLayout_12.addItem(self.verticalSpacer_7)
-
-        self.scrollArea = QScrollArea(self.calibSummaryWidget)
-        self.scrollArea.setObjectName(u"scrollArea")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.MinimumExpanding)
-        sizePolicy4.setHorizontalStretch(0)
-        sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.scrollArea.sizePolicy().hasHeightForWidth())
-        self.scrollArea.setSizePolicy(sizePolicy4)
-        self.scrollArea.setMinimumSize(QSize(0, 375))
-        self.scrollArea.setAutoFillBackground(True)
-        self.scrollArea.setStyleSheet(u"QScrollArea {\n"
-"	background-color: rgba(0,0,0,0);\n"
-"}\n"
-"\n"
-"QAbstractScrollArea::corner {\n"
-"	background-color: rgba(0,0,0,0);\n"
-"}")
-        self.scrollArea.setFrameShape(QFrame.NoFrame)
-        self.scrollArea.setWidgetResizable(True)
-        self.calSummaryScroll = QWidget()
-        self.calSummaryScroll.setObjectName(u"calSummaryScroll")
-        self.calSummaryScroll.setGeometry(QRect(0, 0, 379, 386))
-        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.MinimumExpanding)
-        sizePolicy5.setHorizontalStretch(0)
-        sizePolicy5.setVerticalStretch(0)
-        sizePolicy5.setHeightForWidth(self.calSummaryScroll.sizePolicy().hasHeightForWidth())
-        self.calSummaryScroll.setSizePolicy(sizePolicy5)
-        self.calSummaryScroll.setAutoFillBackground(False)
-        self.calSummaryScroll.setStyleSheet(u"background-color: rgba(252, 247, 247, 0);")
-        self.verticalLayout_5 = QVBoxLayout(self.calSummaryScroll)
-        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
-        self.corrFactorsLabel = QLabel(self.calSummaryScroll)
-        self.corrFactorsLabel.setObjectName(u"corrFactorsLabel")
-        sizePolicy2.setHeightForWidth(self.corrFactorsLabel.sizePolicy().hasHeightForWidth())
-        self.corrFactorsLabel.setSizePolicy(sizePolicy2)
-
-        self.verticalLayout_5.addWidget(self.corrFactorsLabel)
-
-        self.corrFactorFL = QFormLayout()
-        self.corrFactorFL.setObjectName(u"corrFactorFL")
-        self.corrFactorFL.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
-        self.corrFactorFL.setVerticalSpacing(4)
-        self.kQLabel = QLabel(self.calSummaryScroll)
-        self.kQLabel.setObjectName(u"kQLabel")
-
-        self.corrFactorFL.setWidget(0, QFormLayout.LabelRole, self.kQLabel)
-
-        self.kQLE = QLineEdit(self.calSummaryScroll)
-        self.kQLE.setObjectName(u"kQLE")
-        sizePolicy2.setHeightForWidth(self.kQLE.sizePolicy().hasHeightForWidth())
-        self.kQLE.setSizePolicy(sizePolicy2)
-        self.kQLE.setFocusPolicy(Qt.NoFocus)
-        self.kQLE.setContextMenuPolicy(Qt.NoContextMenu)
-        self.kQLE.setStyleSheet(u"border-radius: 15px;\n"
-"border-color: rgb(130, 160, 250);\n"
-"border-style: solid;\n"
-"border-width:2px;\n"
-"background-color: rgba(130, 160, 250,150);\n"
-"padding-left: 15px;\n"
-"height: 30px;\n"
-"font-weight: bold")
-        self.kQLE.setReadOnly(True)
-
-        self.corrFactorFL.setWidget(0, QFormLayout.FieldRole, self.kQLE)
-
-        self.kElecLabel = QLabel(self.calSummaryScroll)
-        self.kElecLabel.setObjectName(u"kElecLabel")
-        sizePolicy.setHeightForWidth(self.kElecLabel.sizePolicy().hasHeightForWidth())
-        self.kElecLabel.setSizePolicy(sizePolicy)
-        self.kElecLabel.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-
-        self.corrFactorFL.setWidget(1, QFormLayout.LabelRole, self.kElecLabel)
-
-        self.kElecLE = QLineEdit(self.calSummaryScroll)
-        self.kElecLE.setObjectName(u"kElecLE")
-        self.kElecLE.setEnabled(True)
-        sizePolicy2.setHeightForWidth(self.kElecLE.sizePolicy().hasHeightForWidth())
-        self.kElecLE.setSizePolicy(sizePolicy2)
-        self.kElecLE.setFocusPolicy(Qt.NoFocus)
-        self.kElecLE.setContextMenuPolicy(Qt.NoContextMenu)
-        self.kElecLE.setAutoFillBackground(False)
-        self.kElecLE.setStyleSheet(u"border-radius: 15px;\n"
-"border-color: rgb(130, 160, 250);\n"
-"border-style: solid;\n"
-"border-width:2px;\n"
-"background-color: rgba(130, 160, 250,150);\n"
-"padding-left: 15px;\n"
-"height: 30px;\n"
-"font-weight: bold")
-        self.kElecLE.setFrame(True)
-        self.kElecLE.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
-        self.kElecLE.setReadOnly(True)
-
-        self.corrFactorFL.setWidget(1, QFormLayout.FieldRole, self.kElecLE)
-
-        self.kTPLabel = QLabel(self.calSummaryScroll)
-        self.kTPLabel.setObjectName(u"kTPLabel")
-
-        self.corrFactorFL.setWidget(2, QFormLayout.LabelRole, self.kTPLabel)
-
-        self.kTPLE = QLineEdit(self.calSummaryScroll)
-        self.kTPLE.setObjectName(u"kTPLE")
-        sizePolicy2.setHeightForWidth(self.kTPLE.sizePolicy().hasHeightForWidth())
-        self.kTPLE.setSizePolicy(sizePolicy2)
-        self.kTPLE.setFocusPolicy(Qt.NoFocus)
-        self.kTPLE.setContextMenuPolicy(Qt.NoContextMenu)
-        self.kTPLE.setStyleSheet(u"border-radius: 15px;\n"
-"border-color: rgb(130, 160, 250);\n"
-"border-style: solid;\n"
-"border-width:2px;\n"
-"background-color: rgba(130, 160, 250,150);\n"
-"padding-left: 15px;\n"
-"height: 30px;\n"
-"font-weight: bold")
-        self.kTPLE.setReadOnly(True)
-
-        self.corrFactorFL.setWidget(2, QFormLayout.FieldRole, self.kTPLE)
-
-        self.kPolLabel = QLabel(self.calSummaryScroll)
-        self.kPolLabel.setObjectName(u"kPolLabel")
-
-        self.corrFactorFL.setWidget(3, QFormLayout.LabelRole, self.kPolLabel)
-
-        self.kPolLE = QLineEdit(self.calSummaryScroll)
-        self.kPolLE.setObjectName(u"kPolLE")
-        sizePolicy2.setHeightForWidth(self.kPolLE.sizePolicy().hasHeightForWidth())
-        self.kPolLE.setSizePolicy(sizePolicy2)
-        self.kPolLE.setFocusPolicy(Qt.NoFocus)
-        self.kPolLE.setContextMenuPolicy(Qt.NoContextMenu)
-        self.kPolLE.setStyleSheet(u"border-radius: 15px;\n"
-"border-color: rgb(130, 160, 250);\n"
-"border-style: solid;\n"
-"border-width:2px;\n"
-"background-color: rgba(130, 160, 250,150);\n"
-"padding-left: 15px;\n"
-"height: 30px;\n"
-"font-weight: bold")
-        self.kPolLE.setReadOnly(True)
-
-        self.corrFactorFL.setWidget(3, QFormLayout.FieldRole, self.kPolLE)
-
-        self.kSLabel = QLabel(self.calSummaryScroll)
-        self.kSLabel.setObjectName(u"kSLabel")
-
-        self.corrFactorFL.setWidget(5, QFormLayout.LabelRole, self.kSLabel)
-
-        self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.kSLE = QLineEdit(self.calSummaryScroll)
-        self.kSLE.setObjectName(u"kSLE")
-        sizePolicy2.setHeightForWidth(self.kSLE.sizePolicy().hasHeightForWidth())
-        self.kSLE.setSizePolicy(sizePolicy2)
-        self.kSLE.setFocusPolicy(Qt.NoFocus)
-        self.kSLE.setContextMenuPolicy(Qt.NoContextMenu)
-        self.kSLE.setStyleSheet(u"border-radius: 15px;\n"
-"border-color: rgb(130, 160, 250);\n"
-"border-style: solid;\n"
-"border-width:2px;\n"
-"background-color: rgba(130, 160, 250,150);\n"
-"padding-left: 15px;\n"
-"height: 30px;\n"
-"font-weight: bold")
-        self.kSLE.setReadOnly(True)
-
-        self.horizontalLayout_2.addWidget(self.kSLE)
-
-        self.ks_status_icon = QLabel(self.calSummaryScroll)
-        self.ks_status_icon.setObjectName(u"ks_status_icon")
-        sizePolicy2.setHeightForWidth(self.ks_status_icon.sizePolicy().hasHeightForWidth())
-        self.ks_status_icon.setSizePolicy(sizePolicy2)
-        self.ks_status_icon.setMaximumSize(QSize(24, 24))
-        self.ks_status_icon.setScaledContents(True)
-
-        self.horizontalLayout_2.addWidget(self.ks_status_icon)
-
-
-        self.corrFactorFL.setLayout(5, QFormLayout.FieldRole, self.horizontalLayout_2)
-
-        self.kVolLabel = QLabel(self.calSummaryScroll)
-        self.kVolLabel.setObjectName(u"kVolLabel")
-
-        self.corrFactorFL.setWidget(4, QFormLayout.LabelRole, self.kVolLabel)
-
-        self.kVolLE = QLineEdit(self.calSummaryScroll)
-        self.kVolLE.setObjectName(u"kVolLE")
-        sizePolicy2.setHeightForWidth(self.kVolLE.sizePolicy().hasHeightForWidth())
-        self.kVolLE.setSizePolicy(sizePolicy2)
-        self.kVolLE.setStyleSheet(u"border-radius: 15px;\n"
-"border-color: rgb(130, 160, 250);\n"
-"border-style: solid;\n"
-"border-width:2px;\n"
-"background-color: rgba(130, 160, 250,150);\n"
-"padding-left: 15px;\n"
-"height: 30px;\n"
-"font-weight: bold")
-        self.kVolLE.setReadOnly(True)
-
-        self.corrFactorFL.setWidget(4, QFormLayout.FieldRole, self.kVolLE)
-
-
-        self.verticalLayout_5.addLayout(self.corrFactorFL)
-
-        self.verticalSpacer_8 = QSpacerItem(20, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
-
-        self.verticalLayout_5.addItem(self.verticalSpacer_8)
-
-        self.absorsedDoseLabel = QLabel(self.calSummaryScroll)
-        self.absorsedDoseLabel.setObjectName(u"absorsedDoseLabel")
-        sizePolicy2.setHeightForWidth(self.absorsedDoseLabel.sizePolicy().hasHeightForWidth())
-        self.absorsedDoseLabel.setSizePolicy(sizePolicy2)
-
-        self.verticalLayout_5.addWidget(self.absorsedDoseLabel)
-
-        self.absorbedDoseFL_2 = QFormLayout()
-        self.absorbedDoseFL_2.setObjectName(u"absorbedDoseFL_2")
-        self.absorbedDoseFL_2.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
-        self.absorbedDoseFL_2.setVerticalSpacing(4)
-        self.zrefDoseLabel = QLabel(self.calSummaryScroll)
-        self.zrefDoseLabel.setObjectName(u"zrefDoseLabel")
-        sizePolicy6 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
-        sizePolicy6.setHorizontalStretch(0)
-        sizePolicy6.setVerticalStretch(0)
-        sizePolicy6.setHeightForWidth(self.zrefDoseLabel.sizePolicy().hasHeightForWidth())
-        self.zrefDoseLabel.setSizePolicy(sizePolicy6)
-
-        self.absorbedDoseFL_2.setWidget(0, QFormLayout.LabelRole, self.zrefDoseLabel)
-
-        self.zrefDoseLE = QLineEdit(self.calSummaryScroll)
-        self.zrefDoseLE.setObjectName(u"zrefDoseLE")
-        sizePolicy2.setHeightForWidth(self.zrefDoseLE.sizePolicy().hasHeightForWidth())
-        self.zrefDoseLE.setSizePolicy(sizePolicy2)
-        self.zrefDoseLE.setFocusPolicy(Qt.NoFocus)
-        self.zrefDoseLE.setContextMenuPolicy(Qt.NoContextMenu)
-        self.zrefDoseLE.setStyleSheet(u"border-radius: 15px;\n"
-"border-color: rgb(130, 160, 250);\n"
-"border-style: solid;\n"
-"border-width:2px;\n"
-"background-color: rgba(130, 160, 250,150);\n"
-"padding-left: 15px;\n"
-"height: 30px;\n"
-"font-weight: bold")
-        self.zrefDoseLE.setReadOnly(True)
-
-        self.absorbedDoseFL_2.setWidget(0, QFormLayout.FieldRole, self.zrefDoseLE)
-
-        self.zmaxDoseLabel = QLabel(self.calSummaryScroll)
-        self.zmaxDoseLabel.setObjectName(u"zmaxDoseLabel")
-        sizePolicy6.setHeightForWidth(self.zmaxDoseLabel.sizePolicy().hasHeightForWidth())
-        self.zmaxDoseLabel.setSizePolicy(sizePolicy6)
-
-        self.absorbedDoseFL_2.setWidget(1, QFormLayout.LabelRole, self.zmaxDoseLabel)
-
-        self.zmaxDoseLE = QLineEdit(self.calSummaryScroll)
-        self.zmaxDoseLE.setObjectName(u"zmaxDoseLE")
-        sizePolicy2.setHeightForWidth(self.zmaxDoseLE.sizePolicy().hasHeightForWidth())
-        self.zmaxDoseLE.setSizePolicy(sizePolicy2)
-        self.zmaxDoseLE.setFocusPolicy(Qt.NoFocus)
-        self.zmaxDoseLE.setContextMenuPolicy(Qt.NoContextMenu)
-        self.zmaxDoseLE.setAutoFillBackground(False)
-        self.zmaxDoseLE.setStyleSheet(u"border-radius: 15px;\n"
-"border-color: rgb(250, 200, 83);\n"
-"background-color: rgba(250, 200, 83,150);\n"
-"border-style: solid;\n"
-"border-width:2px;\n"
-"padding-left: 15px;\n"
-"height: 30px;\n"
-"font-weight: bold\n"
-"\n"
-"\n"
-"")
-        self.zmaxDoseLE.setFrame(False)
-        self.zmaxDoseLE.setReadOnly(True)
-
-        self.absorbedDoseFL_2.setWidget(1, QFormLayout.FieldRole, self.zmaxDoseLE)
-
-
-        self.verticalLayout_5.addLayout(self.absorbedDoseFL_2)
-
-        self.scrollArea.setWidget(self.calSummaryScroll)
-
-        self.verticalLayout_12.addWidget(self.scrollArea)
-
-        self.outcomeLabel = QLabel(self.calibSummaryWidget)
-        self.outcomeLabel.setObjectName(u"outcomeLabel")
-        sizePolicy2.setHeightForWidth(self.outcomeLabel.sizePolicy().hasHeightForWidth())
-        self.outcomeLabel.setSizePolicy(sizePolicy2)
-
-        self.verticalLayout_12.addWidget(self.outcomeLabel)
-
-        self.outcomeHLine = QFrame(self.calibSummaryWidget)
-        self.outcomeHLine.setObjectName(u"outcomeHLine")
-        sizePolicy7 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        sizePolicy7.setHorizontalStretch(0)
-        sizePolicy7.setVerticalStretch(0)
-        sizePolicy7.setHeightForWidth(self.outcomeHLine.sizePolicy().hasHeightForWidth())
-        self.outcomeHLine.setSizePolicy(sizePolicy7)
-        self.outcomeHLine.setMaximumSize(QSize(16777215, 1))
-        self.outcomeHLine.setStyleSheet(u"background-color: rgb(82, 142, 122)")
-        self.outcomeHLine.setFrameShape(QFrame.Shape.HLine)
-        self.outcomeHLine.setFrameShadow(QFrame.Shadow.Sunken)
-
-        self.verticalLayout_12.addWidget(self.outcomeHLine)
-
-        self.outcomeLE = QLineEdit(self.calibSummaryWidget)
-        self.outcomeLE.setObjectName(u"outcomeLE")
-        self.outcomeLE.setFocusPolicy(Qt.NoFocus)
-        self.outcomeLE.setContextMenuPolicy(Qt.NoContextMenu)
-        self.outcomeLE.setStyleSheet(u"border-color: rgb(95, 200, 26);\n"
-"border-radius: 15px;\n"
-"border-style: solid;\n"
-"border-width: 2px;\n"
-"background-color: rgba(95, 200, 26,150);\n"
-"padding-left: 15px;\n"
-"height: 30px;\n"
-"font-weight: bold;\n"
-"\n"
-"")
-        self.outcomeLE.setReadOnly(True)
-        self.outcomeLE.setClearButtonEnabled(False)
-
-        self.verticalLayout_12.addWidget(self.outcomeLE)
-
-        self.verticalSpacer = QSpacerItem(20, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
-
-        self.verticalLayout_12.addItem(self.verticalSpacer)
-
-
-        self.calibSummaryVL.addWidget(self.calibSummaryWidget)
-
-
-        self.worksheetGrid.addLayout(self.calibSummaryVL, 1, 2, 1, 1)
-
         self.worksheetScrollArea = QScrollArea(QPhotonsWorksheet)
         self.worksheetScrollArea.setObjectName(u"worksheetScrollArea")
-        sizePolicy5.setHeightForWidth(self.worksheetScrollArea.sizePolicy().hasHeightForWidth())
-        self.worksheetScrollArea.setSizePolicy(sizePolicy5)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.MinimumExpanding)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.worksheetScrollArea.sizePolicy().hasHeightForWidth())
+        self.worksheetScrollArea.setSizePolicy(sizePolicy1)
         self.worksheetScrollArea.setMaximumSize(QSize(630, 16777215))
         self.worksheetScrollArea.setStyleSheet(u"")
         self.worksheetScrollArea.setFrameShape(QFrame.StyledPanel)
         self.worksheetScrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, -1020, 605, 2002))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 605, 2002))
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.scrollAreaWidgetContents.sizePolicy().hasHeightForWidth())
         self.scrollAreaWidgetContents.setSizePolicy(sizePolicy2)
         self.verticalLayout = QVBoxLayout(self.scrollAreaWidgetContents)
@@ -441,11 +70,11 @@ class Ui_QPhotonsWorksheet(object):
         self.sectionOneGB = QGroupBox(self.scrollAreaWidgetContents)
         self.sectionOneGB.setObjectName(u"sectionOneGB")
         self.sectionOneGB.setEnabled(True)
-        sizePolicy8 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
-        sizePolicy8.setHorizontalStretch(0)
-        sizePolicy8.setVerticalStretch(0)
-        sizePolicy8.setHeightForWidth(self.sectionOneGB.sizePolicy().hasHeightForWidth())
-        self.sectionOneGB.setSizePolicy(sizePolicy8)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.sectionOneGB.sizePolicy().hasHeightForWidth())
+        self.sectionOneGB.setSizePolicy(sizePolicy3)
         self.sectionOneGB.setMinimumSize(QSize(0, 0))
         self.sectionOneGB.setMaximumSize(QSize(16777215, 16777215))
         self.sectionOneGB.setAutoFillBackground(False)
@@ -467,9 +96,6 @@ class Ui_QPhotonsWorksheet(object):
         sizePolicy2.setHeightForWidth(self.linacNameLE.sizePolicy().hasHeightForWidth())
         self.linacNameLE.setSizePolicy(sizePolicy2)
         self.linacNameLE.setMinimumSize(QSize(350, 0))
-        font = QFont()
-        font.setPointSize(10)
-        self.linacNameLE.setFont(font)
         self.linacNameLE.setClearButtonEnabled(True)
 
         self.sectionOneFL.setWidget(0, QFormLayout.FieldRole, self.linacNameLE)
@@ -483,11 +109,11 @@ class Ui_QPhotonsWorksheet(object):
         self.nomAccPotHL.setObjectName(u"nomAccPotHL")
         self.nomAccPotLE = QLineEdit(self.sectionOneGB)
         self.nomAccPotLE.setObjectName(u"nomAccPotLE")
-        sizePolicy9 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
-        sizePolicy9.setHorizontalStretch(0)
-        sizePolicy9.setVerticalStretch(0)
-        sizePolicy9.setHeightForWidth(self.nomAccPotLE.sizePolicy().hasHeightForWidth())
-        self.nomAccPotLE.setSizePolicy(sizePolicy9)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+        sizePolicy4.setHorizontalStretch(0)
+        sizePolicy4.setVerticalStretch(0)
+        sizePolicy4.setHeightForWidth(self.nomAccPotLE.sizePolicy().hasHeightForWidth())
+        self.nomAccPotLE.setSizePolicy(sizePolicy4)
         self.nomAccPotLE.setMinimumSize(QSize(0, 0))
         self.nomAccPotLE.setMaximumSize(QSize(100, 16777215))
         self.nomAccPotLE.setMouseTracking(False)
@@ -501,8 +127,11 @@ class Ui_QPhotonsWorksheet(object):
 
         self.nomAccPotUnit = QLabel(self.sectionOneGB)
         self.nomAccPotUnit.setObjectName(u"nomAccPotUnit")
-        sizePolicy6.setHeightForWidth(self.nomAccPotUnit.sizePolicy().hasHeightForWidth())
-        self.nomAccPotUnit.setSizePolicy(sizePolicy6)
+        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Preferred)
+        sizePolicy5.setHorizontalStretch(0)
+        sizePolicy5.setVerticalStretch(0)
+        sizePolicy5.setHeightForWidth(self.nomAccPotUnit.sizePolicy().hasHeightForWidth())
+        self.nomAccPotUnit.setSizePolicy(sizePolicy5)
 
         self.nomAccPotHL.addWidget(self.nomAccPotUnit)
 
@@ -1163,8 +792,8 @@ class Ui_QPhotonsWorksheet(object):
 
         self.electRangeSettLE = QLineEdit(self.sectionTwoGB)
         self.electRangeSettLE.setObjectName(u"electRangeSettLE")
-        sizePolicy9.setHeightForWidth(self.electRangeSettLE.sizePolicy().hasHeightForWidth())
-        self.electRangeSettLE.setSizePolicy(sizePolicy9)
+        sizePolicy4.setHeightForWidth(self.electRangeSettLE.sizePolicy().hasHeightForWidth())
+        self.electRangeSettLE.setSizePolicy(sizePolicy4)
         self.electRangeSettLE.setMinimumSize(QSize(175, 0))
         self.electRangeSettLE.setMaximumSize(QSize(175, 16777215))
 
@@ -1209,11 +838,11 @@ class Ui_QPhotonsWorksheet(object):
         self.sectionThreeGB = QGroupBox(self.scrollAreaWidgetContents)
         self.sectionThreeGB.setObjectName(u"sectionThreeGB")
         self.sectionThreeGB.setEnabled(True)
-        sizePolicy10 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Preferred)
-        sizePolicy10.setHorizontalStretch(0)
-        sizePolicy10.setVerticalStretch(0)
-        sizePolicy10.setHeightForWidth(self.sectionThreeGB.sizePolicy().hasHeightForWidth())
-        self.sectionThreeGB.setSizePolicy(sizePolicy10)
+        sizePolicy6 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Preferred)
+        sizePolicy6.setHorizontalStretch(0)
+        sizePolicy6.setVerticalStretch(0)
+        sizePolicy6.setHeightForWidth(self.sectionThreeGB.sizePolicy().hasHeightForWidth())
+        self.sectionThreeGB.setSizePolicy(sizePolicy6)
         self.sectionThreeGB.setFlat(False)
         self.sectionThreeGB.setCheckable(False)
         self.verticalLayout_6 = QVBoxLayout(self.sectionThreeGB)
@@ -1223,8 +852,8 @@ class Ui_QPhotonsWorksheet(object):
         self.sectionThreeFL.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         self.rawDosReadLabel = QLabel(self.sectionThreeGB)
         self.rawDosReadLabel.setObjectName(u"rawDosReadLabel")
-        sizePolicy6.setHeightForWidth(self.rawDosReadLabel.sizePolicy().hasHeightForWidth())
-        self.rawDosReadLabel.setSizePolicy(sizePolicy6)
+        sizePolicy5.setHeightForWidth(self.rawDosReadLabel.sizePolicy().hasHeightForWidth())
+        self.rawDosReadLabel.setSizePolicy(sizePolicy5)
         self.rawDosReadLabel.setTextFormat(Qt.MarkdownText)
 
         self.sectionThreeFL.setWidget(0, QFormLayout.LabelRole, self.rawDosReadLabel)
@@ -1608,8 +1237,11 @@ class Ui_QPhotonsWorksheet(object):
 
         self.electmeterCorrSpacer = QWidget(self.sectionThreeGB)
         self.electmeterCorrSpacer.setObjectName(u"electmeterCorrSpacer")
-        sizePolicy4.setHeightForWidth(self.electmeterCorrSpacer.sizePolicy().hasHeightForWidth())
-        self.electmeterCorrSpacer.setSizePolicy(sizePolicy4)
+        sizePolicy7 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.MinimumExpanding)
+        sizePolicy7.setHorizontalStretch(0)
+        sizePolicy7.setVerticalStretch(0)
+        sizePolicy7.setHeightForWidth(self.electmeterCorrSpacer.sizePolicy().hasHeightForWidth())
+        self.electmeterCorrSpacer.setSizePolicy(sizePolicy7)
         self.electmeterCorrSpacer.setMinimumSize(QSize(20, 20))
         self.verticalLayout_7 = QVBoxLayout(self.electmeterCorrSpacer)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
@@ -1686,8 +1318,8 @@ class Ui_QPhotonsWorksheet(object):
         self.ssdPageVL.setSizeConstraint(QLayout.SetMaximumSize)
         self.ssdSetupLabel = QLabel(self.ssdPage)
         self.ssdSetupLabel.setObjectName(u"ssdSetupLabel")
-        sizePolicy6.setHeightForWidth(self.ssdSetupLabel.sizePolicy().hasHeightForWidth())
-        self.ssdSetupLabel.setSizePolicy(sizePolicy6)
+        sizePolicy5.setHeightForWidth(self.ssdSetupLabel.sizePolicy().hasHeightForWidth())
+        self.ssdSetupLabel.setSizePolicy(sizePolicy5)
 
         self.ssdPageVL.addWidget(self.ssdSetupLabel)
 
@@ -1738,8 +1370,8 @@ class Ui_QPhotonsWorksheet(object):
         self.sadPageVL.setSizeConstraint(QLayout.SetDefaultConstraint)
         self.sadSetupLabel = QLabel(self.sadPage)
         self.sadSetupLabel.setObjectName(u"sadSetupLabel")
-        sizePolicy6.setHeightForWidth(self.sadSetupLabel.sizePolicy().hasHeightForWidth())
-        self.sadSetupLabel.setSizePolicy(sizePolicy6)
+        sizePolicy5.setHeightForWidth(self.sadSetupLabel.sizePolicy().hasHeightForWidth())
+        self.sadSetupLabel.setSizePolicy(sizePolicy5)
 
         self.sadPageVL.addWidget(self.sadSetupLabel)
 
@@ -1755,8 +1387,11 @@ class Ui_QPhotonsWorksheet(object):
 
         self.tmrLE = QLineEdit(self.sadPage)
         self.tmrLE.setObjectName(u"tmrLE")
-        sizePolicy7.setHeightForWidth(self.tmrLE.sizePolicy().hasHeightForWidth())
-        self.tmrLE.setSizePolicy(sizePolicy7)
+        sizePolicy8 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        sizePolicy8.setHorizontalStretch(0)
+        sizePolicy8.setVerticalStretch(0)
+        sizePolicy8.setHeightForWidth(self.tmrLE.sizePolicy().hasHeightForWidth())
+        self.tmrLE.setSizePolicy(sizePolicy8)
         self.tmrLE.setMinimumSize(QSize(100, 0))
         self.tmrLE.setMaximumSize(QSize(100, 16777215))
 
@@ -1798,18 +1433,21 @@ class Ui_QPhotonsWorksheet(object):
         self.siteDataFL.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         self.institutionLabel = QLabel(self.siteDataWidget)
         self.institutionLabel.setObjectName(u"institutionLabel")
-        sizePolicy11 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        sizePolicy11.setHorizontalStretch(0)
-        sizePolicy11.setVerticalStretch(0)
-        sizePolicy11.setHeightForWidth(self.institutionLabel.sizePolicy().hasHeightForWidth())
-        self.institutionLabel.setSizePolicy(sizePolicy11)
+        sizePolicy9 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
+        sizePolicy9.setHorizontalStretch(0)
+        sizePolicy9.setVerticalStretch(0)
+        sizePolicy9.setHeightForWidth(self.institutionLabel.sizePolicy().hasHeightForWidth())
+        self.institutionLabel.setSizePolicy(sizePolicy9)
 
         self.siteDataFL.setWidget(0, QFormLayout.LabelRole, self.institutionLabel)
 
         self.institutionLE = QLineEdit(self.siteDataWidget)
         self.institutionLE.setObjectName(u"institutionLE")
-        sizePolicy3.setHeightForWidth(self.institutionLE.sizePolicy().hasHeightForWidth())
-        self.institutionLE.setSizePolicy(sizePolicy3)
+        sizePolicy10 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Fixed)
+        sizePolicy10.setHorizontalStretch(0)
+        sizePolicy10.setVerticalStretch(0)
+        sizePolicy10.setHeightForWidth(self.institutionLE.sizePolicy().hasHeightForWidth())
+        self.institutionLE.setSizePolicy(sizePolicy10)
         self.institutionLE.setMinimumSize(QSize(350, 0))
         self.institutionLE.setClearButtonEnabled(True)
 
@@ -1824,8 +1462,8 @@ class Ui_QPhotonsWorksheet(object):
 
         self.userLE = QLineEdit(self.siteDataWidget)
         self.userLE.setObjectName(u"userLE")
-        sizePolicy3.setHeightForWidth(self.userLE.sizePolicy().hasHeightForWidth())
-        self.userLE.setSizePolicy(sizePolicy3)
+        sizePolicy10.setHeightForWidth(self.userLE.sizePolicy().hasHeightForWidth())
+        self.userLE.setSizePolicy(sizePolicy10)
         self.userLE.setMinimumSize(QSize(350, 0))
 
         self.siteDataFL.setWidget(1, QFormLayout.FieldRole, self.userLE)
@@ -1860,8 +1498,8 @@ class Ui_QPhotonsWorksheet(object):
         self.hLayoutTol.setSizeConstraint(QLayout.SetFixedSize)
         self.toleranceLabel = QLabel(self.siteDataWidget)
         self.toleranceLabel.setObjectName(u"toleranceLabel")
-        sizePolicy6.setHeightForWidth(self.toleranceLabel.sizePolicy().hasHeightForWidth())
-        self.toleranceLabel.setSizePolicy(sizePolicy6)
+        sizePolicy5.setHeightForWidth(self.toleranceLabel.sizePolicy().hasHeightForWidth())
+        self.toleranceLabel.setSizePolicy(sizePolicy5)
 
         self.hLayoutTol.addWidget(self.toleranceLabel)
 
@@ -1912,6 +1550,365 @@ class Ui_QPhotonsWorksheet(object):
 
         self.worksheetGrid.addWidget(self.gen_report_btn, 0, 2, 1, 1)
 
+        self.calibSummaryVL = QVBoxLayout()
+        self.calibSummaryVL.setSpacing(0)
+        self.calibSummaryVL.setObjectName(u"calibSummaryVL")
+        self.calibSummaryWidget = QWidget(QPhotonsWorksheet)
+        self.calibSummaryWidget.setObjectName(u"calibSummaryWidget")
+        sizePolicy11 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
+        sizePolicy11.setHorizontalStretch(0)
+        sizePolicy11.setVerticalStretch(0)
+        sizePolicy11.setHeightForWidth(self.calibSummaryWidget.sizePolicy().hasHeightForWidth())
+        self.calibSummaryWidget.setSizePolicy(sizePolicy11)
+        self.calibSummaryWidget.setMaximumSize(QSize(450, 16777215))
+        self.calibSummaryWidget.setStyleSheet(u"")
+        self.verticalLayout_12 = QVBoxLayout(self.calibSummaryWidget)
+        self.verticalLayout_12.setSpacing(6)
+        self.verticalLayout_12.setObjectName(u"verticalLayout_12")
+        self.verticalLayout_12.setContentsMargins(0, 0, 0, 0)
+        self.CalibSummaryLabel = QLabel(self.calibSummaryWidget)
+        self.CalibSummaryLabel.setObjectName(u"CalibSummaryLabel")
+        sizePolicy2.setHeightForWidth(self.CalibSummaryLabel.sizePolicy().hasHeightForWidth())
+        self.CalibSummaryLabel.setSizePolicy(sizePolicy2)
+        self.CalibSummaryLabel.setFrameShape(QFrame.NoFrame)
+        self.CalibSummaryLabel.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+
+        self.verticalLayout_12.addWidget(self.CalibSummaryLabel)
+
+        self.calibSummaryHLine = QFrame(self.calibSummaryWidget)
+        self.calibSummaryHLine.setObjectName(u"calibSummaryHLine")
+        sizePolicy10.setHeightForWidth(self.calibSummaryHLine.sizePolicy().hasHeightForWidth())
+        self.calibSummaryHLine.setSizePolicy(sizePolicy10)
+        self.calibSummaryHLine.setMaximumSize(QSize(16777215, 1))
+        self.calibSummaryHLine.setStyleSheet(u"background-color: rgb(82, 142, 122)")
+        self.calibSummaryHLine.setFrameShape(QFrame.Shape.HLine)
+        self.calibSummaryHLine.setFrameShadow(QFrame.Shadow.Sunken)
+
+        self.verticalLayout_12.addWidget(self.calibSummaryHLine)
+
+        self.verticalSpacer_7 = QSpacerItem(20, 4, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+
+        self.verticalLayout_12.addItem(self.verticalSpacer_7)
+
+        self.scrollArea = QScrollArea(self.calibSummaryWidget)
+        self.scrollArea.setObjectName(u"scrollArea")
+        sizePolicy7.setHeightForWidth(self.scrollArea.sizePolicy().hasHeightForWidth())
+        self.scrollArea.setSizePolicy(sizePolicy7)
+        self.scrollArea.setMinimumSize(QSize(0, 375))
+        self.scrollArea.setAutoFillBackground(True)
+        self.scrollArea.setStyleSheet(u"QScrollArea {\n"
+"	background-color: rgba(0,0,0,0);\n"
+"}\n"
+"\n"
+"QAbstractScrollArea::corner {\n"
+"	background-color: rgba(0,0,0,0);\n"
+"}")
+        self.scrollArea.setFrameShape(QFrame.NoFrame)
+        self.scrollArea.setWidgetResizable(True)
+        self.calSummaryScroll = QWidget()
+        self.calSummaryScroll.setObjectName(u"calSummaryScroll")
+        self.calSummaryScroll.setGeometry(QRect(0, 0, 379, 386))
+        sizePolicy1.setHeightForWidth(self.calSummaryScroll.sizePolicy().hasHeightForWidth())
+        self.calSummaryScroll.setSizePolicy(sizePolicy1)
+        self.calSummaryScroll.setAutoFillBackground(False)
+        self.calSummaryScroll.setStyleSheet(u"background-color: rgba(252, 247, 247, 0);")
+        self.verticalLayout_5 = QVBoxLayout(self.calSummaryScroll)
+        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
+        self.corrFactorsLabel = QLabel(self.calSummaryScroll)
+        self.corrFactorsLabel.setObjectName(u"corrFactorsLabel")
+        sizePolicy2.setHeightForWidth(self.corrFactorsLabel.sizePolicy().hasHeightForWidth())
+        self.corrFactorsLabel.setSizePolicy(sizePolicy2)
+
+        self.verticalLayout_5.addWidget(self.corrFactorsLabel)
+
+        self.corrFactorFL = QFormLayout()
+        self.corrFactorFL.setObjectName(u"corrFactorFL")
+        self.corrFactorFL.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
+        self.corrFactorFL.setVerticalSpacing(4)
+        self.kQLabel = QLabel(self.calSummaryScroll)
+        self.kQLabel.setObjectName(u"kQLabel")
+
+        self.corrFactorFL.setWidget(0, QFormLayout.LabelRole, self.kQLabel)
+
+        self.kQLE = QLineEdit(self.calSummaryScroll)
+        self.kQLE.setObjectName(u"kQLE")
+        sizePolicy2.setHeightForWidth(self.kQLE.sizePolicy().hasHeightForWidth())
+        self.kQLE.setSizePolicy(sizePolicy2)
+        self.kQLE.setFocusPolicy(Qt.NoFocus)
+        self.kQLE.setContextMenuPolicy(Qt.NoContextMenu)
+        self.kQLE.setStyleSheet(u"border-radius: 15px;\n"
+"border-color: rgb(130, 160, 250);\n"
+"border-style: solid;\n"
+"border-width:2px;\n"
+"background-color: rgba(130, 160, 250,150);\n"
+"padding-left: 15px;\n"
+"height: 30px;\n"
+"font-weight: bold")
+        self.kQLE.setReadOnly(True)
+
+        self.corrFactorFL.setWidget(0, QFormLayout.FieldRole, self.kQLE)
+
+        self.kElecLabel = QLabel(self.calSummaryScroll)
+        self.kElecLabel.setObjectName(u"kElecLabel")
+        sizePolicy.setHeightForWidth(self.kElecLabel.sizePolicy().hasHeightForWidth())
+        self.kElecLabel.setSizePolicy(sizePolicy)
+        self.kElecLabel.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+
+        self.corrFactorFL.setWidget(1, QFormLayout.LabelRole, self.kElecLabel)
+
+        self.kElecLE = QLineEdit(self.calSummaryScroll)
+        self.kElecLE.setObjectName(u"kElecLE")
+        self.kElecLE.setEnabled(True)
+        sizePolicy2.setHeightForWidth(self.kElecLE.sizePolicy().hasHeightForWidth())
+        self.kElecLE.setSizePolicy(sizePolicy2)
+        self.kElecLE.setFocusPolicy(Qt.NoFocus)
+        self.kElecLE.setContextMenuPolicy(Qt.NoContextMenu)
+        self.kElecLE.setAutoFillBackground(False)
+        self.kElecLE.setStyleSheet(u"border-radius: 15px;\n"
+"border-color: rgb(130, 160, 250);\n"
+"border-style: solid;\n"
+"border-width:2px;\n"
+"background-color: rgba(130, 160, 250,150);\n"
+"padding-left: 15px;\n"
+"height: 30px;\n"
+"font-weight: bold")
+        self.kElecLE.setFrame(True)
+        self.kElecLE.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+        self.kElecLE.setReadOnly(True)
+
+        self.corrFactorFL.setWidget(1, QFormLayout.FieldRole, self.kElecLE)
+
+        self.kTPLabel = QLabel(self.calSummaryScroll)
+        self.kTPLabel.setObjectName(u"kTPLabel")
+
+        self.corrFactorFL.setWidget(2, QFormLayout.LabelRole, self.kTPLabel)
+
+        self.kTPLE = QLineEdit(self.calSummaryScroll)
+        self.kTPLE.setObjectName(u"kTPLE")
+        sizePolicy2.setHeightForWidth(self.kTPLE.sizePolicy().hasHeightForWidth())
+        self.kTPLE.setSizePolicy(sizePolicy2)
+        self.kTPLE.setFocusPolicy(Qt.NoFocus)
+        self.kTPLE.setContextMenuPolicy(Qt.NoContextMenu)
+        self.kTPLE.setStyleSheet(u"border-radius: 15px;\n"
+"border-color: rgb(130, 160, 250);\n"
+"border-style: solid;\n"
+"border-width:2px;\n"
+"background-color: rgba(130, 160, 250,150);\n"
+"padding-left: 15px;\n"
+"height: 30px;\n"
+"font-weight: bold")
+        self.kTPLE.setReadOnly(True)
+
+        self.corrFactorFL.setWidget(2, QFormLayout.FieldRole, self.kTPLE)
+
+        self.kPolLabel = QLabel(self.calSummaryScroll)
+        self.kPolLabel.setObjectName(u"kPolLabel")
+
+        self.corrFactorFL.setWidget(3, QFormLayout.LabelRole, self.kPolLabel)
+
+        self.kPolLE = QLineEdit(self.calSummaryScroll)
+        self.kPolLE.setObjectName(u"kPolLE")
+        sizePolicy2.setHeightForWidth(self.kPolLE.sizePolicy().hasHeightForWidth())
+        self.kPolLE.setSizePolicy(sizePolicy2)
+        self.kPolLE.setFocusPolicy(Qt.NoFocus)
+        self.kPolLE.setContextMenuPolicy(Qt.NoContextMenu)
+        self.kPolLE.setStyleSheet(u"border-radius: 15px;\n"
+"border-color: rgb(130, 160, 250);\n"
+"border-style: solid;\n"
+"border-width:2px;\n"
+"background-color: rgba(130, 160, 250,150);\n"
+"padding-left: 15px;\n"
+"height: 30px;\n"
+"font-weight: bold")
+        self.kPolLE.setReadOnly(True)
+
+        self.corrFactorFL.setWidget(3, QFormLayout.FieldRole, self.kPolLE)
+
+        self.kSLabel = QLabel(self.calSummaryScroll)
+        self.kSLabel.setObjectName(u"kSLabel")
+
+        self.corrFactorFL.setWidget(5, QFormLayout.LabelRole, self.kSLabel)
+
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.kSLE = QLineEdit(self.calSummaryScroll)
+        self.kSLE.setObjectName(u"kSLE")
+        sizePolicy2.setHeightForWidth(self.kSLE.sizePolicy().hasHeightForWidth())
+        self.kSLE.setSizePolicy(sizePolicy2)
+        self.kSLE.setFocusPolicy(Qt.NoFocus)
+        self.kSLE.setContextMenuPolicy(Qt.NoContextMenu)
+        self.kSLE.setStyleSheet(u"border-radius: 15px;\n"
+"border-color: rgb(130, 160, 250);\n"
+"border-style: solid;\n"
+"border-width:2px;\n"
+"background-color: rgba(130, 160, 250,150);\n"
+"padding-left: 15px;\n"
+"height: 30px;\n"
+"font-weight: bold")
+        self.kSLE.setReadOnly(True)
+
+        self.horizontalLayout_2.addWidget(self.kSLE)
+
+        self.ks_status_icon = QLabel(self.calSummaryScroll)
+        self.ks_status_icon.setObjectName(u"ks_status_icon")
+        sizePolicy2.setHeightForWidth(self.ks_status_icon.sizePolicy().hasHeightForWidth())
+        self.ks_status_icon.setSizePolicy(sizePolicy2)
+        self.ks_status_icon.setMaximumSize(QSize(24, 24))
+        self.ks_status_icon.setScaledContents(True)
+
+        self.horizontalLayout_2.addWidget(self.ks_status_icon)
+
+
+        self.corrFactorFL.setLayout(5, QFormLayout.FieldRole, self.horizontalLayout_2)
+
+        self.kVolLabel = QLabel(self.calSummaryScroll)
+        self.kVolLabel.setObjectName(u"kVolLabel")
+
+        self.corrFactorFL.setWidget(4, QFormLayout.LabelRole, self.kVolLabel)
+
+        self.kVolLE = QLineEdit(self.calSummaryScroll)
+        self.kVolLE.setObjectName(u"kVolLE")
+        sizePolicy2.setHeightForWidth(self.kVolLE.sizePolicy().hasHeightForWidth())
+        self.kVolLE.setSizePolicy(sizePolicy2)
+        self.kVolLE.setStyleSheet(u"border-radius: 15px;\n"
+"border-color: rgb(130, 160, 250);\n"
+"border-style: solid;\n"
+"border-width:2px;\n"
+"background-color: rgba(130, 160, 250,150);\n"
+"padding-left: 15px;\n"
+"height: 30px;\n"
+"font-weight: bold")
+        self.kVolLE.setReadOnly(True)
+
+        self.corrFactorFL.setWidget(4, QFormLayout.FieldRole, self.kVolLE)
+
+
+        self.verticalLayout_5.addLayout(self.corrFactorFL)
+
+        self.verticalSpacer_8 = QSpacerItem(20, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+
+        self.verticalLayout_5.addItem(self.verticalSpacer_8)
+
+        self.absorsedDoseLabel = QLabel(self.calSummaryScroll)
+        self.absorsedDoseLabel.setObjectName(u"absorsedDoseLabel")
+        sizePolicy2.setHeightForWidth(self.absorsedDoseLabel.sizePolicy().hasHeightForWidth())
+        self.absorsedDoseLabel.setSizePolicy(sizePolicy2)
+
+        self.verticalLayout_5.addWidget(self.absorsedDoseLabel)
+
+        self.absorbedDoseFL_2 = QFormLayout()
+        self.absorbedDoseFL_2.setObjectName(u"absorbedDoseFL_2")
+        self.absorbedDoseFL_2.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
+        self.absorbedDoseFL_2.setVerticalSpacing(4)
+        self.zrefDoseLabel = QLabel(self.calSummaryScroll)
+        self.zrefDoseLabel.setObjectName(u"zrefDoseLabel")
+        sizePolicy5.setHeightForWidth(self.zrefDoseLabel.sizePolicy().hasHeightForWidth())
+        self.zrefDoseLabel.setSizePolicy(sizePolicy5)
+
+        self.absorbedDoseFL_2.setWidget(0, QFormLayout.LabelRole, self.zrefDoseLabel)
+
+        self.zrefDoseLE = QLineEdit(self.calSummaryScroll)
+        self.zrefDoseLE.setObjectName(u"zrefDoseLE")
+        sizePolicy2.setHeightForWidth(self.zrefDoseLE.sizePolicy().hasHeightForWidth())
+        self.zrefDoseLE.setSizePolicy(sizePolicy2)
+        self.zrefDoseLE.setFocusPolicy(Qt.NoFocus)
+        self.zrefDoseLE.setContextMenuPolicy(Qt.NoContextMenu)
+        self.zrefDoseLE.setStyleSheet(u"border-radius: 15px;\n"
+"border-color: rgb(130, 160, 250);\n"
+"border-style: solid;\n"
+"border-width:2px;\n"
+"background-color: rgba(130, 160, 250,150);\n"
+"padding-left: 15px;\n"
+"height: 30px;\n"
+"font-weight: bold")
+        self.zrefDoseLE.setReadOnly(True)
+
+        self.absorbedDoseFL_2.setWidget(0, QFormLayout.FieldRole, self.zrefDoseLE)
+
+        self.zmaxDoseLabel = QLabel(self.calSummaryScroll)
+        self.zmaxDoseLabel.setObjectName(u"zmaxDoseLabel")
+        sizePolicy5.setHeightForWidth(self.zmaxDoseLabel.sizePolicy().hasHeightForWidth())
+        self.zmaxDoseLabel.setSizePolicy(sizePolicy5)
+
+        self.absorbedDoseFL_2.setWidget(1, QFormLayout.LabelRole, self.zmaxDoseLabel)
+
+        self.zmaxDoseLE = QLineEdit(self.calSummaryScroll)
+        self.zmaxDoseLE.setObjectName(u"zmaxDoseLE")
+        sizePolicy2.setHeightForWidth(self.zmaxDoseLE.sizePolicy().hasHeightForWidth())
+        self.zmaxDoseLE.setSizePolicy(sizePolicy2)
+        self.zmaxDoseLE.setFocusPolicy(Qt.NoFocus)
+        self.zmaxDoseLE.setContextMenuPolicy(Qt.NoContextMenu)
+        self.zmaxDoseLE.setAutoFillBackground(False)
+        self.zmaxDoseLE.setStyleSheet(u"border-radius: 15px;\n"
+"border-color: rgb(250, 200, 83);\n"
+"background-color: rgba(250, 200, 83,150);\n"
+"border-style: solid;\n"
+"border-width:2px;\n"
+"padding-left: 15px;\n"
+"height: 30px;\n"
+"font-weight: bold\n"
+"\n"
+"\n"
+"")
+        self.zmaxDoseLE.setFrame(False)
+        self.zmaxDoseLE.setReadOnly(True)
+
+        self.absorbedDoseFL_2.setWidget(1, QFormLayout.FieldRole, self.zmaxDoseLE)
+
+
+        self.verticalLayout_5.addLayout(self.absorbedDoseFL_2)
+
+        self.scrollArea.setWidget(self.calSummaryScroll)
+
+        self.verticalLayout_12.addWidget(self.scrollArea)
+
+        self.outcomeLabel = QLabel(self.calibSummaryWidget)
+        self.outcomeLabel.setObjectName(u"outcomeLabel")
+        sizePolicy2.setHeightForWidth(self.outcomeLabel.sizePolicy().hasHeightForWidth())
+        self.outcomeLabel.setSizePolicy(sizePolicy2)
+
+        self.verticalLayout_12.addWidget(self.outcomeLabel)
+
+        self.outcomeHLine = QFrame(self.calibSummaryWidget)
+        self.outcomeHLine.setObjectName(u"outcomeHLine")
+        sizePolicy8.setHeightForWidth(self.outcomeHLine.sizePolicy().hasHeightForWidth())
+        self.outcomeHLine.setSizePolicy(sizePolicy8)
+        self.outcomeHLine.setMaximumSize(QSize(16777215, 1))
+        self.outcomeHLine.setStyleSheet(u"background-color: rgb(82, 142, 122)")
+        self.outcomeHLine.setFrameShape(QFrame.Shape.HLine)
+        self.outcomeHLine.setFrameShadow(QFrame.Shadow.Sunken)
+
+        self.verticalLayout_12.addWidget(self.outcomeHLine)
+
+        self.outcomeLE = QLineEdit(self.calibSummaryWidget)
+        self.outcomeLE.setObjectName(u"outcomeLE")
+        self.outcomeLE.setFocusPolicy(Qt.NoFocus)
+        self.outcomeLE.setContextMenuPolicy(Qt.NoContextMenu)
+        self.outcomeLE.setStyleSheet(u"border-color: rgb(95, 200, 26);\n"
+"border-radius: 15px;\n"
+"border-style: solid;\n"
+"border-width: 2px;\n"
+"background-color: rgba(95, 200, 26,150);\n"
+"padding-left: 15px;\n"
+"height: 30px;\n"
+"font-weight: bold;\n"
+"\n"
+"")
+        self.outcomeLE.setReadOnly(True)
+        self.outcomeLE.setClearButtonEnabled(False)
+
+        self.verticalLayout_12.addWidget(self.outcomeLE)
+
+        self.verticalSpacer = QSpacerItem(20, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
+
+        self.verticalLayout_12.addItem(self.verticalSpacer)
+
+
+        self.calibSummaryVL.addWidget(self.calibSummaryWidget)
+
+
+        self.worksheetGrid.addLayout(self.calibSummaryVL, 1, 2, 1, 1)
+
         self.worksheetGrid.setColumnStretch(0, 3)
         self.worksheetGrid.setColumnStretch(2, 1)
 
@@ -1925,32 +1922,6 @@ class Ui_QPhotonsWorksheet(object):
 
     def retranslateUi(self, QPhotonsWorksheet):
         QPhotonsWorksheet.setWindowTitle(QCoreApplication.translate("QPhotonsWorksheet", u"Form", None))
-        self.CalibSummaryLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-size:13pt; font-weight:704;\">Calibration Summary</span></p></body></html>", None))
-        self.corrFactorsLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-weight:700; text-decoration: underline;\">Correction factors</span></p></body></html>", None))
-        self.kQLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">k</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">Q,Qo </span>:</p></body></html>", None))
-        self.kQLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
-        self.kElecLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">k</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">elec </span>:</p></body></html>", None))
-        self.kElecLE.setText("")
-        self.kElecLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
-        self.kTPLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">k</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">TP </span>:</p></body></html>", None))
-        self.kTPLE.setText("")
-        self.kTPLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
-        self.kPolLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">k</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">pol </span>:</p></body></html>", None))
-        self.kPolLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
-        self.kSLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">k</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">s </span>:</p></body></html>", None))
-        self.kSLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
-        self.ks_status_icon.setText("")
-        self.kVolLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">k</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">vol</span><span style=\" font-style:italic;\">:</span></p></body></html>", None))
-        self.kVolLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
-        self.absorsedDoseLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-weight:700; text-decoration: underline;\">Absorbed dose to water</span></p></body></html>", None))
-        self.zrefDoseLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p>At reference depth, <span style=\" font-style:italic;\">D</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">w,Q </span>(<span style=\" font-style:italic;\">z</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">ref </span>) :</p></body></html>", None))
-        self.zrefDoseLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
-        self.zmaxDoseLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p>At depth of dose max, <span style=\" font-weight:700; font-style:italic;\">D</span><span style=\" font-size:12pt; font-weight:700; font-style:italic; vertical-align:sub;\">w,Q </span><span style=\" font-weight:700;\">(</span><span style=\" font-weight:700; font-style:italic;\">z</span><span style=\" font-size:12pt; font-weight:700; font-style:italic; vertical-align:sub;\">max </span><span style=\" font-weight:700;\">)</span> :</p></body></html>", None))
-        self.zmaxDoseLE.setText("")
-        self.zmaxDoseLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
-        self.outcomeLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-size:13pt; font-weight:704;\">Outcome</span></p></body></html>", None))
-        self.outcomeLE.setText("")
-        self.outcomeLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
         self.sectionOneGB.setTitle(QCoreApplication.translate("QPhotonsWorksheet", u"1. Radiation treatment unit and reference conditions ", None))
         self.linacNameLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Accelerator:", None))
         self.nomAccPotLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Nominal Acc. Potential:", None))
@@ -2073,5 +2044,31 @@ class Ui_QPhotonsWorksheet(object):
         self.toleranceLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Tolerance:", None))
         self.toleranceDSB.setSuffix(QCoreApplication.translate("QPhotonsWorksheet", u"%", None))
         self.gen_report_btn.setText(QCoreApplication.translate("QPhotonsWorksheet", u"Generate report", None))
+        self.CalibSummaryLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-size:13pt; font-weight:704;\">Calibration Summary</span></p></body></html>", None))
+        self.corrFactorsLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-weight:700; text-decoration: underline;\">Correction factors</span></p></body></html>", None))
+        self.kQLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">k</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">Q,Qo </span>:</p></body></html>", None))
+        self.kQLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
+        self.kElecLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">k</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">elec </span>:</p></body></html>", None))
+        self.kElecLE.setText("")
+        self.kElecLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
+        self.kTPLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">k</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">TP </span>:</p></body></html>", None))
+        self.kTPLE.setText("")
+        self.kTPLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
+        self.kPolLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">k</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">pol </span>:</p></body></html>", None))
+        self.kPolLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
+        self.kSLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">k</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">s </span>:</p></body></html>", None))
+        self.kSLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
+        self.ks_status_icon.setText("")
+        self.kVolLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-style:italic;\">k</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">vol </span>:</p></body></html>", None))
+        self.kVolLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
+        self.absorsedDoseLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-weight:700; text-decoration: underline;\">Absorbed dose to water</span></p></body></html>", None))
+        self.zrefDoseLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p>At reference depth, <span style=\" font-style:italic;\">D</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">w,Q </span>(<span style=\" font-style:italic;\">z</span><span style=\" font-size:12pt; font-style:italic; vertical-align:sub;\">ref </span>) :</p></body></html>", None))
+        self.zrefDoseLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
+        self.zmaxDoseLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p>At depth of dose max, <span style=\" font-weight:700; font-style:italic;\">D</span><span style=\" font-size:12pt; font-weight:700; font-style:italic; vertical-align:sub;\">w,Q </span><span style=\" font-weight:700;\">(</span><span style=\" font-weight:700; font-style:italic;\">z</span><span style=\" font-size:12pt; font-weight:700; font-style:italic; vertical-align:sub;\">max </span><span style=\" font-weight:700;\">)</span> :</p></body></html>", None))
+        self.zmaxDoseLE.setText("")
+        self.zmaxDoseLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
+        self.outcomeLabel.setText(QCoreApplication.translate("QPhotonsWorksheet", u"<html><head/><body><p><span style=\" font-size:13pt; font-weight:704;\">Outcome</span></p></body></html>", None))
+        self.outcomeLE.setText("")
+        self.outcomeLE.setPlaceholderText(QCoreApplication.translate("QPhotonsWorksheet", u"N/A", None))
     # retranslateUi
 

@@ -94,8 +94,8 @@ class QWinstonLutz(WinstonLutz):
                 "gantry_angle": f"{img.gantry_angle:3.2f}",
                 "collimator_angle": f"{img.collimator_angle:3.2f}",
                 "couch_angle": f"{img.couch_angle:3.2f}",
-                "delta_u": f"{(img.bb.y - img.field_cax.y) / img.dpmm:3.2f}",
-                "delta_v": f"{(img.bb.x - img.field_cax.x) / img.dpmm:3.2f}"
+                "delta_u": f"{(img.bb.x - img.field_cax.x) / img.dpmm:3.2f}",
+                "delta_v": f"{(img.bb.y - img.field_cax.y) / img.dpmm:3.2f}"
             })
 
         self.progress_counter += 1

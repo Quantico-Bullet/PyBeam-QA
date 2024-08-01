@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (QWidget, QListWidgetItem, QMenu, QFileDialog, QDi
                                QLineEdit, QComboBox, QDialogButtonBox, QPushButton, QSpacerItem,
                                QCheckBox, QGridLayout, QTabWidget, QSplitter, QTableWidget,
                                QHeaderView, QTableWidgetItem, QPlainTextEdit, QDateEdit)
-from PySide6.QtGui import QIcon, QPixmap, QColor
+from PySide6.QtGui import QIcon, QPixmap, QColor, QAction, QTransform
 from PySide6.QtCore import Qt, QSize, QEvent, QThread, Signal, QDate
 
 from ui.py_ui import icons_rc
@@ -921,27 +921,59 @@ class AnalysedImageViewer(QMainWindow):
 
         self.setWindowTitle(list_item.text() + " (Analyzed Image)")
 
-        image_path = list_item.data(Qt.UserRole)["file_path"]
-        image_data = list_item.data(Qt.UserRole)["analysis_data"]
-        image = LinacDicomImage(image_path)
+        self.list_item = list_item
 
-        self.dpmm = image.dpmm
-        self.image_dim = image.array.shape
+        # plot config values
+        self.show_epid_coord_sys = True
+        self.use_mm_units = False
 
+        # Initialise the plot item
         self.plot_view = pg.PlotWidget()
         self.plot_view.setAspectLocked(True)
         self.plot_item = self.plot_view.getPlotItem()
-        self.plot_item.setLimits(xMin=-150, xMax=self.image_dim[1]+150, yMin=-150, yMax=self.image_dim[0]+150)
-        self.plot_item.setRange(xRange=(-50, self.image_dim[1]+50), yRange=(-50, self.image_dim[0]+50))
-        self.plot_item.setLabel('left', 'Pixel')
-        self.plot_item.setLabel('bottom', 'Pixel')
-        #plotItem.invertY(True)
 
+        # Modify plot context menu
+        context_menu = self.plot_item.getViewBox().menu
+        context_menu.addSeparator()
+
+        self.show_epid_coords_action = QAction("Show EPID coordinate system")
+        self.show_epid_coords_action.setCheckable(True)
+
+        self.chg_axes_units = context_menu.addAction(self.show_epid_coords_action)
+        self.chg_axes_units = context_menu.addAction("Change axes units to mm or pixels")
+        self.chg_axes_units.triggered.connect(lambda: 
+                                    self.set_axes_units(not self.use_mm_units))
+
+        self.setCentralWidget(self.plot_view)
+        self.setMinimumSize(600, 500)
+        
+        # draw the plot
+        self.draw_plots()
+
+    def draw_plots(self):
+        self.plot_item.clear()
+
+        image_path = self.list_item.data(Qt.UserRole)["file_path"]
+        image_data = self.list_item.data(Qt.UserRole)["analysis_data"]
+        image = LinacDicomImage(image_path)
+
+        self.image_dim = image.array.shape
+        self.mm_per_dot = 1/image.dpmm
+        xMin, xMax = -150., self.image_dim[1]+150.
+        yMin, yMax = -150., self.image_dim[0]+150.
+        xRange = (-50., self.image_dim[1]+50.)
+        yRange = (-50., self.image_dim[0]+50.)
+
+        image_item = pg.ImageItem(image=image.array)
+
+        #self.plot_item.setLimits(xMin=xMin, xMax=xMax, yMin=yMin, yMax=yMax)
+        #self.plot_item.setRange(xRange=xRange, yRange=yRange)
+        self.plot_item.setLabel('left', '<b>Y (px)</b>') # in pixels
+        self.plot_item.setLabel('bottom', '<b>X (px)</b>')
+        #plotItem.invertY(True)
         plot_legend = self.plot_item.addLegend(size = (50,50), offset=(30,20), 
                                                labelTextColor=(255,255,255),
                                                brush=pg.mkBrush((27, 38, 59, 200)))
-
-        image_item = pg.ImageItem(image=image.array)
 
         bbX = image_data["bb_location"]["x"]
         bbY = image_data["bb_location"]["y"]
@@ -959,25 +991,12 @@ class AnalysedImageViewer(QMainWindow):
         epidX_plot = pg.InfiniteLine(pos=[epidX,0],movable=False, angle=90, pen = (0,255,0), name="EPID-x line",
                                         label="EPID x = {value:3.2f}", labelOpts={'position': 0.1,
                                         'color': (255,255,255), 'fill': (0,200,0,200), 'movable': True})
+        setattr(epidX_plot, 'id', "EPID-x line")
         
         epidY_plot = pg.InfiniteLine(pos=[0,epidY], movable=False, angle=0, pen = (0,255,0), name="EPID-y line", 
                                          label="EPID y = {value:3.2f}", labelOpts={'position': 0.1, 
                                         'color': (255,255,255), 'fill': (0,200,0,200), 'movable': True})
-        
-        # Plot the field and BB boundaries
-
-        metrics = image.compute(
-            metrics= [GlobalSizedDiskLocator(radius_mm=8.0,
-                                             radius_tolerance_mm=3.0,
-                                             max_number=1)]
-        )
-
-        for boundary in image.metrics[0].boundaries:
-            boundary_y, boundary_x = np.nonzero(boundary)
-        
-        field_bounds_plot = pg.ScatterPlotItem()
-        field_bounds_plot.setData(x=boundary_x,
-                                  y=boundary_y)
+        setattr(epidY_plot, 'id', "EPID-y line")
 
         plot_legend.addItem(epidX_plot, "EPID-x line")
         plot_legend.addItem(epidY_plot, "EPID-y line")
@@ -988,47 +1007,66 @@ class AnalysedImageViewer(QMainWindow):
         self.plot_item.addItem(image_item)
         self.plot_item.addColorBar(image_item, colorMap=pg.colormap.getFromMatplotlib('gray'))
         self.plot_item.addItem(bb_plotItem)
-        self.plot_item.addItem(field_bounds_plot)
         self.plot_item.addItem(cax_plotItem)
         self.plot_item.addItem(epidX_plot)
         self.plot_item.addItem(epidY_plot)
         self.plot_item.autoRange()
 
-        # Modify plot context menu
-        context_menu = self.plot_item.getViewBox().menu
-        context_menu.addSeparator()
-        
-        self.axes_unit_mode = 0 # 0 = pixels; 1 = millimetres
-
-        self.chg_axes_units = context_menu.addAction("Change axes units to mm")
-        self.chg_axes_units.triggered.connect(self.change_axes_units)
-
-        self.setCentralWidget(self.plot_view)
-        self.setMinimumSize(600, 500)
-
-    def change_axes_units(self):
-        """
-        if self.axes_unit_mode == 0:
-            self.chg_axes_units.setText("Change axes units to pixels")
-            self.axes_unit_mode = 1
-
-            self.plot_item.setLimits(xMin=-150/self.dpmm, 
-                                     xMax=(self.image_dim[1]+150)/self.dpmm, 
-                                     yMin=-150/self.dpmm, 
-                                     yMax=(self.image_dim[0]+150)/self.dpmm)
-            self.plot_item.setRange(xRange=(-50, self.image_dim[1]+50)/self.dpmm, 
-                                    yRange=(-50, self.image_dim[0]+50)/self.dpmm)
-            self.plot_item.setLabel('left', 'Distance relative to EPID Y')
-            self.plot_item.setLabel('bottom', 'Distance relative to EPID X')
+    def set_axis_ranges(self):
+        if self.use_mm_units:
+            xMin = -self.mm_per_dot * (0.5*self.image_dim[1]+150)
+            xMax = self.mm_per_dot * (0.5*self.image_dim[1]+150)
+            yMin = -self.mm_per_dot * (0.5*self.image_dim[0]+150)
+            yMax = self.mm_per_dot * (0.5*self.image_dim[0]+150)
+            xRange = (xMin + 50 * self.mm_per_dot, xMax - 50 * self.mm_per_dot)
+            yRange = (yMin + 50 * self.mm_per_dot, yMax - 50 * self.mm_per_dot)
 
         else:
-            self.chg_axes_units.setText("Change axes units to mm")
-            self.axes_unit_mode = 0
-        
-            self.plot_item.setLimits(xMin=-150, xMax=self.image_dim[1]+150, yMin=-150, yMax=self.image_dim[0]+150)
-            self.plot_item.setRange(xRange=(-50, self.image_dim[1]+50), yRange=(-50, self.image_dim[0]+50))
-            self.plot_item.setLabel('left', 'Pixel')
-            self.plot_item.setLabel('bottom', 'Pixel')
-        """
+            xMin, yMin = -150, -150
+            xMax, yMax= self.image_dim[1]+150, self.image_dim[0]+150
+            xRange = (xMin + 50, xMax - 50)
+            yRange = (yMin + 50, yMax - 50)
+
+        self.plot_item.setRange(xRange=xRange, yRange=yRange)
+        self.plot_item.setLimits(xMin=xMin, xMax=xMax, yMin=yMin, yMax=yMax)
+        self.plot_item.autoRange()
+
+    def set_axes_units(self, use_mm_units: bool):
+        image_data = self.list_item.data(Qt.UserRole)["analysis_data"]
+
+        if use_mm_units:
+            transform = QTransform() # The transformation to use
+            transform.scale(self.mm_per_dot, self.mm_per_dot)
+            transform.translate(-0.5*self.image_dim[1], -0.5*self.image_dim[0])
+
+            for item in self.plot_item.items:
+                if hasattr(item, "id"):
+                    if item.id == "EPID-x line":
+                        item.setPos([0,0])
+
+                    elif item.id == "EPID-y line":
+                        item.setPos([0,0])
+                else:
+                    item.setTransform(transform)
+
+            self.plot_item.setLabel('left', '<b>EPID Y offset, 𝚫v  (mm)</b>')
+            self.plot_item.setLabel('bottom', '<b>EPID X offset, 𝚫u (mm)</b>')
+        else:
+            for item in self.plot_item.items:
+                if hasattr(item, "id"):
+                    if item.id == "EPID-x line":
+                        item.setPos(image_data["epid"]["x"])
+
+                    elif item.id == "EPID-y line":
+                        item.setPos(image_data["epid"]["y"])
+                
+                else:
+                    item.resetTransform()
+
+            self.plot_item.setLabel('left', '<b>Y (px)</b>')
+            self.plot_item.setLabel('bottom', '<b>X (px)</b>')
+
+        self.use_mm_units = use_mm_units
+        self.set_axis_ranges()
         
 
