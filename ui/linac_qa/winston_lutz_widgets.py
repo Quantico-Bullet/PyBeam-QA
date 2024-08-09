@@ -33,9 +33,8 @@ from pylinac.core.image import LinacDicomImage
 from pylinac.metrics.image import (GlobalSizedDiskLocator)
 
 from pathlib import Path
-import gc
 import pyqtgraph as pg
-import platform
+import platform        
 import subprocess
 import webbrowser
 import numpy as np
@@ -525,7 +524,7 @@ class QWLutzWorksheet(QWidget):
                 self.form_layout.addRow(f"{param}:", QLabel(str(results[key])))
 
         self.show_advanced_results_view(True)
-        self.set_analysis_outcome()    
+        self.set_analysis_outcome()
 
     def show_advanced_results_view(self, only_update: bool = False):
         if self.current_results is not None:
@@ -597,7 +596,9 @@ class QWLutzWorksheet(QWidget):
 
     def view_analyzed_image(self):
         listWidgetItem = self.ui.imageListWidget.currentItem()
-        analysed_image_viewer = AnalysedImageViewer(list_item=listWidgetItem, parent=self)
+        analysed_image_viewer = AnalysedImageViewer(list_item=listWidgetItem, 
+                                                    tolerance=self.ui.toleranceDSB.value(),
+                                                    parent=self)
 
         analysed_image_viewer.show()
 
@@ -916,39 +917,85 @@ class AdvancedWLView(QMainWindow):
 
 class AnalysedImageViewer(QMainWindow):
 
-    def __init__(self, list_item: QListWidgetItem, parent: QWidget = None) -> None:
+    def __init__(self, list_item: QListWidgetItem,
+                 tolerance: float = 1.0,
+                 parent: QWidget = None) -> None:
         super().__init__(parent)
 
         self.setWindowTitle(list_item.text() + " (Analyzed Image)")
 
         self.list_item = list_item
+        self.tolerance = tolerance
 
         # plot config values
+        self.show_analysis_info = True
         self.show_epid_coord_sys = True
         self.use_mm_units = False
 
         # Initialise the plot item
-        self.plot_view = pg.PlotWidget()
-        self.plot_view.setAspectLocked(True)
-        self.plot_item = self.plot_view.getPlotItem()
+        central_win = QWidget()
+        #central_win.setStyleSheet('background-color: black')
+        self.main_layout = QGridLayout()
+        self.main_layout.setHorizontalSpacing(50)
+        self.plot_widget = pg.PlotWidget()
+        self.plot_info = QLabel()
+        self.plot_info.setTextFormat(Qt.TextFormat.RichText)
+        self.plot_item = self.plot_widget.getPlotItem()
+        self.plot_item.setAspectLocked(True)
+
+        self.main_layout.addWidget(self.plot_info, 0, 0)
+        self.main_layout.addWidget(self.plot_widget, 0, 1)
 
         # Modify plot context menu
         context_menu = self.plot_item.getViewBox().menu
         context_menu.addSeparator()
 
-        self.show_epid_coords_action = QAction("Show EPID coordinate system")
-        self.show_epid_coords_action.setCheckable(True)
+        self.show_analysis_summary = QAction("Show analysis summary")
+        self.show_analysis_summary.setEnabled(True)
+        self.show_analysis_summary.setCheckable(True)
+        self.show_analysis_summary.triggered.connect(self.toggleAnalysisInfo)
+        context_menu.addAction(self.show_analysis_summary)
 
-        self.chg_axes_units = context_menu.addAction(self.show_epid_coords_action)
+        self.show_epid_coords_action = QAction("Show EPID coordinate system")
+        self.show_epid_coords_action.setEnabled(False)
+        self.show_epid_coords_action.setCheckable(True)
+        context_menu.addAction(self.show_epid_coords_action)
+
         self.chg_axes_units = context_menu.addAction("Change axes units to mm or pixels")
         self.chg_axes_units.triggered.connect(lambda: 
                                     self.set_axes_units(not self.use_mm_units))
 
-        self.setCentralWidget(self.plot_view)
+        central_win.setLayout(self.main_layout)
+        self.setCentralWidget(central_win)
+        self.setStyleSheet('background-color: black')
         self.setMinimumSize(600, 500)
         
+        self.setPlotInfo()
         # draw the plot
         self.draw_plots()
+
+    def setPlotInfo(self):
+        image_data = self.list_item.data(Qt.UserRole)["analysis_data"]
+
+        if image_data["cax_to_bb_dist"] < self.tolerance:
+            color = "green"
+            status = "Pass"
+        else:
+            color = "red"
+            status = "Fail"
+
+        # Set plot info
+        self.plot_info.setText(f"<p><b>Outcome:<span style='color:{color}'> {status}</span></b></p>"\
+                                "<span style='white-space: pre-line'></span>" \
+                                f"<p><b>Gantry ∡:</b> {image_data['gantry_angle']}°</p>" \
+                                f"<p><b>Collimator ∡:</b> {image_data['collimator_angle']}°</p>" \
+                                f"<p><b>Couch ∡:</b> {image_data['couch_angle']}°</p>" \
+                                "<span style='white-space: pre-line'></span>" \
+                                f"<p><b>Field CAX to EPID CAX:</b> {image_data['cax_to_epid_dist']:3.2f} mm</p>"\
+                                f"<p><b>Field CAX to BB CAX:</b> {image_data['cax_to_bb_dist']:3.2f} mm</p>"\
+                                f"<p><b>𝚫u:</b> {image_data['delta_u']} mm</p>" \
+                                f"<p><b>𝚫v:</b> {image_data['delta_v']} mm</p>"
+                                )
 
     def draw_plots(self):
         self.plot_item.clear()
@@ -959,18 +1006,11 @@ class AnalysedImageViewer(QMainWindow):
 
         self.image_dim = image.array.shape
         self.mm_per_dot = 1/image.dpmm
-        xMin, xMax = -150., self.image_dim[1]+150.
-        yMin, yMax = -150., self.image_dim[0]+150.
-        xRange = (-50., self.image_dim[1]+50.)
-        yRange = (-50., self.image_dim[0]+50.)
 
         image_item = pg.ImageItem(image=image.array)
 
-        #self.plot_item.setLimits(xMin=xMin, xMax=xMax, yMin=yMin, yMax=yMax)
-        #self.plot_item.setRange(xRange=xRange, yRange=yRange)
         self.plot_item.setLabel('left', '<b>Y (px)</b>') # in pixels
         self.plot_item.setLabel('bottom', '<b>X (px)</b>')
-        #plotItem.invertY(True)
         plot_legend = self.plot_item.addLegend(size = (50,50), offset=(30,20), 
                                                labelTextColor=(255,255,255),
                                                brush=pg.mkBrush((27, 38, 59, 200)))
@@ -1011,6 +1051,7 @@ class AnalysedImageViewer(QMainWindow):
         self.plot_item.addItem(epidX_plot)
         self.plot_item.addItem(epidY_plot)
         self.plot_item.autoRange()
+        self.set_axis_ranges()
 
     def set_axis_ranges(self):
         if self.use_mm_units:
@@ -1049,8 +1090,8 @@ class AnalysedImageViewer(QMainWindow):
                 else:
                     item.setTransform(transform)
 
-            self.plot_item.setLabel('left', '<b>EPID Y offset, 𝚫v  (mm)</b>')
-            self.plot_item.setLabel('bottom', '<b>EPID X offset, 𝚫u (mm)</b>')
+            self.plot_item.setLabel('left', '<b>EPID Y offset, v  (mm)</b>')
+            self.plot_item.setLabel('bottom', '<b>EPID X offset, u (mm)</b>')
         else:
             for item in self.plot_item.items:
                 if hasattr(item, "id"):
@@ -1068,5 +1109,14 @@ class AnalysedImageViewer(QMainWindow):
 
         self.use_mm_units = use_mm_units
         self.set_axis_ranges()
-        
 
+    def toggleAnalysisInfo(self): 
+        if self.show_analysis_info:
+            self.show_analysis_info = False
+            self.plot_info.hide()
+        else:
+            self.show_analysis_info = True
+            self.plot_info.show()
+
+        self.show_analysis_summary.setChecked(self.show_analysis_info)
+        

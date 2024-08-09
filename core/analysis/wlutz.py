@@ -18,6 +18,8 @@ from pylinac.core.image_generator.layers import (FilteredFieldLayer,
                                                  PerfectFieldLayer,
                                                  PerfectBBLayer, 
                                                  Layer)
+
+import gc
 from pathlib import Path
 import io
 import matplotlib.pyplot as plt
@@ -135,6 +137,7 @@ class QWinstonLutzWorker(QObject):
             self.bb_shift_info_changed.emit(str(self._wl.bb_shift_instructions()))
             del self._wl
             self.thread_finished.emit()
+
 
         except Exception as err:
             self.analysis_failed.emit(traceback.format_exception_only(err)[-1])
