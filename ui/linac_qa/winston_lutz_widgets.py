@@ -37,7 +37,6 @@ import pyqtgraph as pg
 import platform        
 import subprocess
 import webbrowser
-import numpy as np
 
 pg.setConfigOptions(antialias=True, imageAxisOrder='row-major')
 
@@ -631,7 +630,8 @@ class QWLutzWorksheet(QWidget):
 
         ret = self.delete_dialog.exec()
 
-        if ret == QDialogButtonBox.StandardButton.Yes:
+        print(QDialogButtonBox.StandardButton.Yes.value)
+        if ret == QDialogButtonBox.StandardButton.Yes.value:
             path = Path(listWidgetItem.data(Qt.UserRole)["file_path"])
             path.unlink(missing_ok=True)
             self.ui.imageListWidget.takeItem(self.ui.imageListWidget.currentRow())

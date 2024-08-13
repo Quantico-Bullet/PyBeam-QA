@@ -1718,6 +1718,7 @@ class QElectronsWorksheet(QWidget):
         worksheet_info["v2_voltage"] = self.ui.redVoltageLE.text()
         worksheet_info["m1_reading"] = self.ui.normReadLE.text()
         worksheet_info["m2_reading"] = self.ui.redReadLE.text()
+        worksheet_info["beam_type"] = self.ui.beamTypeGroup.checkedId()
         worksheet_info["depth_dmax"] = self.ui.depthDMaxLE.text()
         worksheet_info["pdd_zref"] = self.ui.pddLE.text()
 
