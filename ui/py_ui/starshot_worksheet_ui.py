@@ -25,7 +25,7 @@ class Ui_QStarshotWorksheet(object):
     def setupUi(self, QStarshotWorksheet):
         if not QStarshotWorksheet.objectName():
             QStarshotWorksheet.setObjectName(u"QStarshotWorksheet")
-        QStarshotWorksheet.resize(1237, 535)
+        QStarshotWorksheet.resize(1237, 552)
         self.verticalLayout = QVBoxLayout(QStarshotWorksheet)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.stackedWidget = QStackedWidget(QStarshotWorksheet)
@@ -340,7 +340,7 @@ class Ui_QStarshotWorksheet(object):
 
         self.verticalLayout_3.addWidget(self.analysisSummaryLabel)
 
-        self.buttonSpacer = QSpacerItem(20, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
+        self.buttonSpacer = QSpacerItem(0, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
 
         self.verticalLayout_3.addItem(self.buttonSpacer)
 
@@ -349,18 +349,14 @@ class Ui_QStarshotWorksheet(object):
 
         self.verticalLayout_3.addLayout(self.analysisInfoVL)
 
-        self.verticalSpacer = QSpacerItem(20, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed)
-
-        self.verticalLayout_3.addItem(self.verticalSpacer)
-
         self.analysisImageVL = QVBoxLayout()
         self.analysisImageVL.setObjectName(u"analysisImageVL")
 
         self.verticalLayout_3.addLayout(self.analysisImageVL)
 
-        self.verticalSpacer_4 = QSpacerItem(10, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
+        self.image_vl_spacer = QSpacerItem(0, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.MinimumExpanding)
 
-        self.verticalLayout_3.addItem(self.verticalSpacer_4)
+        self.verticalLayout_3.addItem(self.image_vl_spacer)
 
 
         self.gridLayout.addWidget(self.frame, 1, 1, 1, 1)

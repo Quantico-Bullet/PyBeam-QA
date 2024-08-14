@@ -430,6 +430,8 @@ class QStarshotWorksheet(QWidget):
             self.current_plot.deleteLater()
             self.current_plot = None
 
+        # Restore spacer size to prevent other widgets from moving
+        self.ui.image_vl_spacer.changeSize(0, 10, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
         self.ui.addImgBtn.setEnabled(False)
         self.ui.genReportBtn.setEnabled(False)
         self.ui.analyzeBtn.setEnabled(False)
@@ -499,17 +501,17 @@ class QStarshotWorksheet(QWidget):
         self.analysis_progress_bar.hide()
         self.analysis_message_label.hide()
 
-        for summary_item in results["summary_text"]:
-            self.form_layout.addRow(summary_item[0], QLabel(summary_item[1]))
-
         #set outcome
         self.set_analysis_outcome()
 
-        # Update the plot
+        #---------- Update the plot --------------
         starshot = results["starshot_obj"]
         starshot.plot_image()
-        self.current_plot = starshot.imagePlotWidget
+        self.current_plot = starshot.graphics_widget
         self.ui.analysisImageVL.addWidget(self.current_plot)
+        
+        # Change spacer size to allow the image widget to scale properly
+        self.ui.image_vl_spacer.changeSize(0, 10, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
 
         #Update the summary
         self.analysis_summary= {"Wobble (circle) diameter": f"{starshot.wobble.radius_mm*2.0:2.3f} mm",

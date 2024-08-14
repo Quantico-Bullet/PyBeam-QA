@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1237</width>
-    <height>535</height>
+    <height>552</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -501,7 +501,7 @@ QPushButton:!enabled{
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>20</width>
+              <width>0</width>
               <height>10</height>
              </size>
             </property>
@@ -511,26 +511,10 @@ QPushButton:!enabled{
            <layout class="QVBoxLayout" name="analysisInfoVL"/>
           </item>
           <item>
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
            <layout class="QVBoxLayout" name="analysisImageVL"/>
           </item>
           <item>
-           <spacer name="verticalSpacer_4">
+           <spacer name="image_vl_spacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
             </property>
@@ -539,8 +523,8 @@ QPushButton:!enabled{
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>10</width>
-              <height>0</height>
+              <width>0</width>
+              <height>10</height>
              </size>
             </property>
            </spacer>

@@ -953,7 +953,7 @@ class AnalysedImageViewer(QMainWindow):
         self.show_analysis_summary = QAction("Show analysis summary")
         self.show_analysis_summary.setEnabled(True)
         self.show_analysis_summary.setCheckable(True)
-        self.show_analysis_summary.triggered.connect(self.toggleAnalysisInfo)
+        self.show_analysis_summary.triggered.connect(self.toggle_analysis_info)
         context_menu.addAction(self.show_analysis_summary)
 
         self.show_epid_coords_action = QAction("Show EPID coordinate system")
@@ -962,8 +962,7 @@ class AnalysedImageViewer(QMainWindow):
         context_menu.addAction(self.show_epid_coords_action)
 
         self.chg_axes_units = context_menu.addAction("Change axes units to mm or pixels")
-        self.chg_axes_units.triggered.connect(lambda: 
-                                    self.set_axes_units(not self.use_mm_units))
+        self.chg_axes_units.triggered.connect(lambda: self.set_axes_units(not self.use_mm_units))
 
         central_win.setLayout(self.main_layout)
         self.setCentralWidget(central_win)
@@ -1051,9 +1050,9 @@ class AnalysedImageViewer(QMainWindow):
         self.plot_item.addItem(epidX_plot)
         self.plot_item.addItem(epidY_plot)
         self.plot_item.autoRange()
-        self.set_axis_ranges()
+        self.set_axes_ranges()
 
-    def set_axis_ranges(self):
+    def set_axes_ranges(self):
         if self.use_mm_units:
             xMin = -self.mm_per_dot * (0.5*self.image_dim[1]+150)
             xMax = self.mm_per_dot * (0.5*self.image_dim[1]+150)
@@ -1108,9 +1107,9 @@ class AnalysedImageViewer(QMainWindow):
             self.plot_item.setLabel('bottom', '<b>X (px)</b>')
 
         self.use_mm_units = use_mm_units
-        self.set_axis_ranges()
+        self.set_axes_ranges()
 
-    def toggleAnalysisInfo(self): 
+    def toggle_analysis_info(self): 
         if self.show_analysis_info:
             self.show_analysis_info = False
             self.plot_info.hide()
