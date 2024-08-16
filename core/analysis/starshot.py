@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QSizePolicy
 from PySide6.QtCore import Signal, Slot, QObject
-from PySide6.QtGui import QTransform
+from PySide6.QtGui import QTransform, QActionGroup
 
 import io
 import traceback
@@ -37,12 +37,25 @@ class QStarshot(Starshot):
         context_menu = self.img_plot_item.getViewBox().menu
         context_menu.addSeparator()
 
-        self.chg_axes_units_action = context_menu.addAction("Change axes units to mm or pixels")
+        self.chg_axes_units_action = context_menu.addAction("Change Axes Units To mm Or pixels")
         self.chg_axes_units_action.triggered.connect(lambda: self.set_axes_units(not self.use_mm_units))
-        self.zoom_circle_action = context_menu.addAction("Zoom-in to minimum intersecting circle")
-        #self.zoom_circle_action.triggered.connect(lambda: self.set_axes_units(not self.use_mm_units))
-        self.show_profile_action = context_menu.addAction("Show starshot profile")
+        self.zoom_circle_action = context_menu.addAction("Zoom-In To Minimum Intersecting Circle")
+        self.zoom_circle_action.triggered.connect(self.zoom_to_circle)
+
+        context_menu.addSeparator()
+        self.show_image_action = context_menu.addAction("Starshot Image View")
+        self.show_image_action.setCheckable(True)
+        self.show_profile_action = context_menu.addAction("Starshot Profile View")
         self.show_profile_action.setCheckable(True)
+
+        action_group = QActionGroup(context_menu)
+        action_group.addAction(self.show_image_action)
+        action_group.addAction(self.show_profile_action)
+        action_group.setExclusive(True)
+        self.show_profile_action.setChecked(True)
+        #TODO Add profile plot
+        #self.show_profile_action = context_menu.addAction("Show starshot profile")
+        #self.show_profile_action.setCheckable(True)
         #self.show_profile_action.triggered.connect(lambda: self.set_axes_units(not self.use_mm_units))
 
     def analyze(self, 
@@ -101,7 +114,7 @@ class QStarshot(Starshot):
         self.img_plot_item.addItem(pg.ScatterPlotItem(peak_x, peak_y,
                                                         size = 15, pxMode = False,
                                                         pen = pg.mkPen(None), brush = pg.mkBrush(255,0,255,150)))
-        
+      
         self.set_axes_units(self.use_mm_units)
         
     def set_axes_units(self, use_mm_units: bool):
@@ -141,23 +154,42 @@ class QStarshot(Starshot):
         self.use_mm_units = use_mm_units
         self.set_axes_ranges()
 
-    def set_axes_ranges(self):
+    def zoom_to_circle(self):
+        radius = self.wobble.radius
+        x_coord = self.wobble.center.x 
+        y_coord = self.wobble.center.y
+        x_margin = 1.20 * radius # Use a 120% radius margin
+        y_margin = 1.20 * radius # Use a 120% radius margin
+
         if self.use_mm_units:
-            xMin = -self.mm_per_dot * (0.5*self.image_dim[1]+350)
-            xMax = self.mm_per_dot * (0.5*self.image_dim[1]+350)
-            yMin = -self.mm_per_dot * (0.5*self.image_dim[0]+350)
-            yMax = self.mm_per_dot * (0.5*self.image_dim[0]+350)
-            xRange = (xMin + 50 * self.mm_per_dot, xMax - 50 * self.mm_per_dot)
-            yRange = (yMin + 50 * self.mm_per_dot, yMax - 50 * self.mm_per_dot)
+            x_min = self.mm_per_dot * (x_coord - 0.5*self.image_dim[1] - radius - x_margin)
+            x_max = self.mm_per_dot * (x_coord - 0.5*self.image_dim[1] + radius + x_margin)
+            y_min = self.mm_per_dot * (y_coord - 0.5*self.image_dim[0] - radius - y_margin)
+            y_max = self.mm_per_dot * (y_coord - 0.5*self.image_dim[0] + radius + y_margin)
             
         else:
-            xMin, yMin = -350, -350
-            xMax, yMax= self.image_dim[1]+350, self.image_dim[0]+350
-            xRange = (xMin + 50, xMax - 50)
-            yRange = (yMin + 50, yMax - 50)
+            x_min = x_coord - radius - x_margin
+            x_max = x_coord + radius + x_margin
+            y_min = y_coord - radius - y_margin
+            y_max = y_coord + radius + y_margin
             
-        self.img_plot_item.setRange(xRange=xRange, yRange=yRange)
-        self.img_plot_item.setLimits(xMin=xMin, xMax=xMax, yMin=yMin, yMax=yMax)
+        self.img_plot_item.setRange(xRange=(x_min, x_max), yRange=(y_min, y_max))
+
+    def set_axes_ranges(self):
+        x_lim_margin = 0.45 * self.image_dim[1] # Use a 45% width margin for limits
+        y_lim_margin = 0.45 * self.image_dim[0] # Use a 45% height margin for limits
+
+        if self.use_mm_units:
+            x_min = -self.mm_per_dot * (0.5*self.image_dim[1] + x_lim_margin)
+            x_max = self.mm_per_dot * (0.5*self.image_dim[1]+ x_lim_margin)
+            y_min = -self.mm_per_dot * (0.5*self.image_dim[0] + y_lim_margin)
+            y_max = self.mm_per_dot * (0.5*self.image_dim[0] + y_lim_margin)
+            
+        else:
+            x_min, y_min = -x_lim_margin, -y_lim_margin
+            x_max, y_max = x_lim_margin + self.image_dim[1], y_lim_margin + self.image_dim[0]
+            
+        self.img_plot_item.setLimits(xMin=x_min, xMax=x_max, yMin=y_min, yMax=y_max)
         self.img_plot_item.autoRange()
 
     def get_publishable_plots(self) -> list[io.BytesIO]:

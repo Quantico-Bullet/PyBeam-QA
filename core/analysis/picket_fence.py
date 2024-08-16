@@ -264,7 +264,8 @@ class QPicketFence(PicketFence):
                                          )
                 pg.arrayToQPath
                 image_plot_item.addItem(curve)
-                QCoreApplication.processEvents()
+                #TODO check if the code below is still necessary
+                #QCoreApplication.processEvents()  "No longer necessary?"
         
         image_plot_item.enableAutoRange()
         error_plot_item.autoRange()
