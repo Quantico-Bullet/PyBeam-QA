@@ -1,3 +1,19 @@
+# PyBeam QA
+# Copyright (C) 2024 Kagiso Lebang
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+
 from PySide6.QtWidgets import (QWidget, QFileDialog, QLineEdit,
                                QComboBox, QPlainTextEdit, QPushButton,
                                QHBoxLayout, QVBoxLayout, QCheckBox, QLabel,
@@ -82,7 +98,6 @@ class BaseTRS398Window(QAToolsWindow):
 
         if enable_icon:
             tab_icon = QPixmap(u":/colorIcons/icons/tools.png")
-            tab_icon = tab_icon.scaled(16, 16, mode = Qt.TransformationMode.SmoothTransformation)
 
             self.ui.tabWidget.setCurrentIndex(index)
             self.ui.tabWidget.setTabIcon(index, tab_icon)
@@ -924,6 +939,9 @@ class QPhotonsWorksheet(QWidget):
         self.ui.pddLE.setValidator(DoubleValidator.from_args(0.0, 100.0, 2))
         self.ui.tmrLE.setValidator(dVal)
 
+        self.ui.ks_status_icon.setScaledContents(True)
+        self.ui.ks_status_icon.setFixedSize(32, 32)
+
         # set reference condition values
         self.ui.refTempLE.setText(f"{self.trs398.refTemp}")
         self.ui.refPressureLE.setText(f"{self.trs398.refPress}")
@@ -1083,12 +1101,10 @@ class QPhotonsWorksheet(QWidget):
 
             if abs(kS - kS_test) <= 0.01:
                 pixmap = QPixmap(u":/colorIcons/icons/correct.png")
-                pixmap = pixmap.scaled(24, 24, mode = Qt.TransformationMode.SmoothTransformation)
                 self.ui.ks_status_icon.setPixmap(pixmap)
 
             else:
                 pixmap = QPixmap(u":/colorIcons/icons/warning.png")
-                pixmap = pixmap.scaled(24, 24, mode = Qt.TransformationMode.SmoothTransformation)
                 self.ui.ks_status_icon.setPixmap(pixmap)
 
             self.ui.ks_status_icon.show()
@@ -1274,12 +1290,18 @@ class QPhotonsWorksheet(QWidget):
             cal_summary["kElec"] = self.ui.kElecLE.text()
             cal_summary["kTP"] = self.ui.kTPLE.text()
             cal_summary["kPol"] = self.ui.kPolLE.text()
+            cal_summary["kVol"] = f"{self.trs398.kVol:2.3f}"
             cal_summary["kS"] = self.ui.kSLE.text()
-            cal_summary["corr_dos_reading"] = f"{self.trs398.get_Mcorrected():2.2f}"
             cal_summary["dw_zref"] = self.ui.zrefDoseLE.text().split(" ")[0]
             cal_summary["dw_zmax"] = self.ui.zmaxDoseLE.text().split(" ")[0]
             cal_summary["test_outcome"] = self.ui.outcomeLE.text().split(" ")[0]
             worksheet_info["cal_summary"] = cal_summary
+
+            # Use 3 sig. figures for charge readings between +/-10 nC or 2 sig. figures otherwise.
+            if abs(self.trs398.get_Mcorrected()) < 10.0:
+                cal_summary["corr_dos_reading"] = f"{self.trs398.get_Mcorrected():2.3f}"
+            else:
+                cal_summary["corr_dos_reading"] = f"{self.trs398.get_Mcorrected():2.2f}"
 
         else:
             worksheet_info["cal_summary"] = None
@@ -1381,6 +1403,9 @@ class QElectronsWorksheet(QWidget):
         self.ui.depthDMaxLE.setValidator(dVal)
         self.ui.pddLE.setValidator(DoubleValidator.from_args(0.0, 100.0, 2))
         self.ui.tmrLE.setValidator(dVal)
+
+        self.ui.ks_status_icon.setScaledContents(True)
+        self.ui.ks_status_icon.setFixedSize(32, 32)
 
         # set reference condition values
         self.ui.refTempLE.setText(f"{self.trs398.refTemp}")
@@ -1538,12 +1563,10 @@ class QElectronsWorksheet(QWidget):
 
             if abs(kS - kS_test) <= 0.01:
                 pixmap = QPixmap(u":/colorIcons/icons/correct.png")
-                pixmap = pixmap.scaled(24, 24, mode = Qt.TransformationMode.SmoothTransformation)
                 self.ui.ks_status_icon.setPixmap(pixmap)
 
             else:
                 pixmap = QPixmap(u":/colorIcons/icons/warning.png")
-                pixmap = pixmap.scaled(24, 24, mode = Qt.TransformationMode.SmoothTransformation)
                 self.ui.ks_status_icon.setPixmap(pixmap)
 
             self.ui.ks_status_icon.show()
@@ -1729,11 +1752,16 @@ class QElectronsWorksheet(QWidget):
             cal_summary["kTP"] = self.ui.kTPLE.text()
             cal_summary["kPol"] = self.ui.kPolLE.text()
             cal_summary["kS"] = self.ui.kSLE.text()
-            cal_summary["corr_dos_reading"] = f"{self.trs398.get_Mcorrected():2.2f}"
             cal_summary["dw_zref"] = self.ui.zrefDoseLE.text().split(" ")[0]
             cal_summary["dw_zmax"] = self.ui.zmaxDoseLE.text().split(" ")[0]
             cal_summary["test_outcome"] = self.ui.outcomeLE.text().split(" ")[0]
             worksheet_info["cal_summary"] = cal_summary
+
+            # Use 3 sig. figures for charge readings between +/-10 nC or 2 sig. figures otherwise.
+            if abs(self.trs398.get_Mcorrected()) < 10.0:
+                cal_summary["corr_dos_reading"] = f"{self.trs398.get_Mcorrected():2.3f}"
+            else:
+                cal_summary["corr_dos_reading"] = f"{self.trs398.get_Mcorrected():2.2f}"
 
         else:
             worksheet_info["cal_summary"] = None

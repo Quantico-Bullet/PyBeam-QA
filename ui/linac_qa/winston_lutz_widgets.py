@@ -1,3 +1,19 @@
+# PyBeam QA
+# Copyright (C) 2024 Kagiso Lebang
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+
 from PySide6.QtWidgets import (QWidget, QListWidgetItem, QMenu, QFileDialog, QDialog, 
                                QFormLayout, QVBoxLayout, QHBoxLayout, QLabel, QProgressBar, 
                                QMessageBox, QSizePolicy, QMainWindow, QGroupBox, 
@@ -32,6 +48,7 @@ from pylinac.core.image_generator import (FilteredFieldLayer,
 from pylinac.core.image import LinacDicomImage
 from pylinac.metrics.image import (GlobalSizedDiskLocator)
 
+from decimal import Decimal, getcontext
 from pathlib import Path
 import pyqtgraph as pg
 import platform        
@@ -620,18 +637,17 @@ class QWLutzWorksheet(QWidget):
     def delete_file(self):
         listWidgetItem = self.ui.imageListWidget.currentItem()
 
-        self.delete_dialog = MessageDialog()
-        self.delete_dialog.set_title("Delete File")
-        self.delete_dialog.set_icon(MessageDialog.WARNING_ICON)
-        self.delete_dialog.set_header_text(f"Are you sure you want to permanently delete {listWidgetItem.text()}?")
-        self.delete_dialog.set_info_text("This action is irreversible!")
-        self.delete_dialog.set_standard_buttons(QDialogButtonBox.StandardButton.Yes | 
-                                             QDialogButtonBox.StandardButton.Cancel)
+        warning_dialog = MessageDialog()
+        warning_dialog.set_icon(MessageDialog.WARNING_ICON)
+        warning_dialog.set_title("Delete File")
+        warning_dialog.set_header_text(f"Are you sure you want to permanently delete {listWidgetItem.text()} ?")
+        warning_dialog.set_info_text("This action is irreversible!")
+        warning_dialog.set_standard_buttons(QDialogButtonBox.StandardButton.Yes | 
+                                            QDialogButtonBox.StandardButton.Cancel)
 
-        ret = self.delete_dialog.exec()
+        ret = warning_dialog.exec()
 
-        print(QDialogButtonBox.StandardButton.Yes.value)
-        if ret == QDialogButtonBox.StandardButton.Yes.value:
+        if ret == QDialogButtonBox.StandardButton.Yes:
             path = Path(listWidgetItem.data(Qt.UserRole)["file_path"])
             path.unlink(missing_ok=True)
             self.ui.imageListWidget.takeItem(self.ui.imageListWidget.currentRow())
@@ -871,10 +887,10 @@ class AdvancedWLView(QMainWindow):
             gantry_angle_item = QTableWidgetItem(result["gantry_angle"])
             coll_angle_item = QTableWidgetItem(result["collimator_angle"])
             couch_angle_item = QTableWidgetItem(result["couch_angle"])
-            cax_2_epid_item = QTableWidgetItem(f"{result['cax_to_epid_dist']:2.2f}")
+            cax_2_epid_item = QTableWidgetItem(f"{result['cax_to_epid_dist']:.2f}")
             delta_u_item = QTableWidgetItem(result["delta_u"])
             delta_v_item = QTableWidgetItem(result["delta_v"])
-            cax_2_bb_item = QTableWidgetItem(f"{result['cax_to_bb_dist']:2.2f}")
+            cax_2_bb_item = QTableWidgetItem(f"{result['cax_to_bb_dist']:.2f}")
 
             if result["cax_to_bb_dist"] < tolerance:
                 outcome_item = QTableWidgetItem("PASS")
@@ -969,11 +985,12 @@ class AnalysedImageViewer(QMainWindow):
         self.setStyleSheet('background-color: black')
         self.setMinimumSize(600, 500)
         
-        self.setPlotInfo()
+        self.set_plot_info()
         # draw the plot
         self.draw_plots()
+        self.set_axes_units(True)
 
-    def setPlotInfo(self):
+    def set_plot_info(self):
         image_data = self.list_item.data(Qt.UserRole)["analysis_data"]
 
         if image_data["cax_to_bb_dist"] < self.tolerance:

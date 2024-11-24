@@ -331,22 +331,17 @@ class QPlanarImagingWorksheet(QWidget):
     def delete_file(self):
         listWidgetItem = self.ui.imageListWidget.currentItem()
 
-        self.delete_dialog = QMessageBox()
-        self.delete_dialog.setWindowTitle("Delete File")
-        self.delete_dialog.setText("<p><span style=\" font-weight:700; font-size: 11pt;\">" \
-                                  f"Are you sure you want to permanently delete \'{listWidgetItem.text()}\' ? </span></p>")
-        self.delete_dialog.setInformativeText("This action is irreversible!")
-        self.delete_dialog.setStandardButtons(QDialogButtonBox.StandardButton.Yes,
-                                              QDialogButtonBox.StandardButton.Cancel)
-        self.delete_dialog.setTextFormat(Qt.TextFormat.RichText)
+        warning_dialog = MessageDialog()
+        warning_dialog.set_icon(MessageDialog.WARNING_ICON)
+        warning_dialog.set_title("Delete File")
+        warning_dialog.set_header_text(f"Are you sure you want to permanently delete {listWidgetItem.text()} ?")
+        warning_dialog.set_info_text("This action is irreversible!")
+        warning_dialog.set_standard_buttons(QDialogButtonBox.StandardButton.Yes | 
+                                            QDialogButtonBox.StandardButton.Cancel)
 
-        warning_icon = QPixmap(u":/colorIcons/icons/warning.png")
-        warning_icon = warning_icon.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
-        self.delete_dialog.setIconPixmap(warning_icon)
+        ret = warning_dialog.exec()
 
-        ret = self.delete_dialog.exec()
-
-        if ret == QDialogButtonBox.StandardButtonYes:
+        if ret == QDialogButtonBox.StandardButton.Yes:
             path = Path(listWidgetItem.data(Qt.UserRole)["file_path"])
             path.unlink(missing_ok=True)
             self.ui.imageListWidget.takeItem(self.ui.imageListWidget.currentRow())
@@ -404,14 +399,14 @@ class QPlanarImagingWorksheet(QWidget):
         self.analysis_progress_bar.hide()
         self.analysis_message_label.hide()
 
-        self.warning_dialog = MessageDialog()
-        self.warning_dialog.set_title("Analysis Error")
-        self.warning_dialog.set_header_text("Oops! An error was encountered")
-        self.warning_dialog.set_info_text(error_message)
-        self.warning_dialog.set_standard_buttons(QDialogButtonBox.StandardButton.Ok)
-        self.warning_dialog.set_icon(MessageDialog.CRITICAL_ICON)
-
-        self.warning_dialog.exec()
+        self.error_dialog = MessageDialog()
+        self.error_dialog.set_icon(MessageDialog.CRITICAL_ICON)
+        self.error_dialog.set_title("Analysis Error")
+        self.error_dialog.set_header_text("Oops! An error was encountered")
+        self.error_dialog.set_info_text(error_message)
+        self.error_dialog.set_standard_buttons(QDialogButtonBox.StandardButton.Ok)
+        
+        self.error_dialog.exec()
 
     def start_analysis(self):
         self.analysis_info_signal.emit({"state": AnalysisInfoLabel.IN_PROGRESS,

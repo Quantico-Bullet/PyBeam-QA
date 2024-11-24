@@ -26,12 +26,19 @@
         <file>icons/in_progress.png</file>
         <file>icons/settings.png</file>
         <file>icons/info.png</file>
+        <file>icons/not_started.png</file>
     </qresource>
     <qresource prefix="/actionIcons">
         <file>icons/eye.png</file>
         <file>icons/remove.png</file>
         <file>icons/delete.png</file>
         <file>icons/logo-github.svg</file>
+        <file>icons/select_all.svg</file>
+        <file>icons/zoom_in_area.svg</file>
+        <file>icons/deselect.svg</file>
+        <file>icons/trash_x.svg</file>
+        <file>icons/transform.svg</file>
+        <file>icons/zoom_pan.svg</file>
     </qresource>
     <qresource prefix="/misc_icons">
         <file>icons/ic_app.svg</file>

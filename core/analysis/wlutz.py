@@ -1,3 +1,19 @@
+# PyBeam QA
+# Copyright (C) 2024 Kagiso Lebang
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import os
 import os.path as osp
 import copy
@@ -93,11 +109,11 @@ class QWinstonLutz(WinstonLutz):
                 "epid": {"x": img.epid.x, "y": img.epid.y},
                 "cax_to_bb_dist": img.cax2bb_distance,
                 "cax_to_epid_dist": img.cax2epid_distance,
-                "gantry_angle": f"{img.gantry_angle:3.2f}",
-                "collimator_angle": f"{img.collimator_angle:3.2f}",
-                "couch_angle": f"{img.couch_angle:3.2f}",
-                "delta_u": f"{(img.bb.x - img.field_cax.x) / img.dpmm:3.2f}",
-                "delta_v": f"{(img.bb.y - img.field_cax.y) / img.dpmm:3.2f}"
+                "gantry_angle": f"{img.gantry_angle:.2f}",
+                "collimator_angle": f"{img.collimator_angle:.2f}",
+                "couch_angle": f"{img.couch_angle:.2f}",
+                "delta_u": f"{(img.bb.x - img.field_cax.x) / img.dpmm:.2f}",
+                "delta_v": f"{(img.bb.y - img.field_cax.y) / img.dpmm:.2f}"
             })
 
         self.progress_counter += 1
@@ -128,14 +144,15 @@ class QWinstonLutzWorker(QObject):
             wl_data = self._wl.results_data(as_dict=True)
             wl_data["image_details"] = self._wl.image_data
 
-            summary_image_data = io.BytesIO()
-            self._wl.save_summary(summary_image_data, format = "pdf",
-                                  pad_inches = 0.0, bbox_inches='tight')
-            wl_data["summary_plot"] = summary_image_data
+            #summary_image_data = io.BytesIO()
+            #self._wl.save_summary(summary_image_data, format = "pdf",
+            #                      pad_inches = 0.0, bbox_inches='tight')
+            #wl_data["summary_plot"] = summary_image_data
 
             self.analysis_results_changed.emit(wl_data)
             self.bb_shift_info_changed.emit(str(self._wl.bb_shift_instructions()))
             del self._wl
+            gc.collect()
             self.thread_finished.emit()
 
 
@@ -210,7 +227,9 @@ def generate_winstonlutz(
         if final_layers is not None:
             for layer in final_layers:
                 sim_single.add_layer(layer)
-        file_name = f"WL G={gantry}, C={coll}, P={couch}; Field={field_size_mm}mm; BB={bb_size_mm}mm @ left={offset_mm_left}, in={offset_mm_in}, up={offset_mm_up}; Gantry tilt={gantry_tilt}, Gantry sag={gantry_sag}.dcm"
+        file_name = f"WL G={gantry}, C={coll}, P={couch}; Field={field_size_mm}mm; " \
+                    f"BB={bb_size_mm}mm @ left={offset_mm_left}, in={offset_mm_in}, " \
+                    f"up={offset_mm_up}; Gantry tilt={gantry_tilt}, Gantry sag={gantry_sag}.dcm"
         sim_single.generate_dicom(
             osp.join(dir_out, file_name),
             gantry_angle=gantry,

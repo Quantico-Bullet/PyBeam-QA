@@ -1,3 +1,19 @@
+# PyBeam QA
+# Copyright (C) 2024 Kagiso Lebang
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 from reportlab.platypus import (SimpleDocTemplate, Paragraph, PageBreak, Spacer, Table,
                                 Image, TopPadder, Flowable)
 from reportlab.lib.styles import getSampleStyleSheet
@@ -658,6 +674,7 @@ class PhotonCalibrationReport(BaseCalibrationReport):
                 [PdfImage(assets_dir + "/kElec.pdf")],
                 [PdfImage(assets_dir + "/kTP.pdf")],
                 [PdfImage(assets_dir + "/kPol.pdf")],
+                [PdfImage(assets_dir + "/kVol.pdf")],
                 [PdfImage(assets_dir + "/kS.pdf")],
                 [""],
                 ["Average dosimeter rdg. (nC)"],
@@ -665,7 +682,7 @@ class PhotonCalibrationReport(BaseCalibrationReport):
         
         num_worksheets = len(self._calibration_info["worksheets"])
         data[0].extend([""]*(num_worksheets-1))
-        data[8].extend([""]*num_worksheets)
+        data[9].extend([""]*num_worksheets)
         
         for worksheet in self._calibration_info["worksheets"]:
             data[1].append(worksheet["beam_energy"] + (" FFF" if worksheet["is_fff"] 
@@ -677,10 +694,11 @@ class PhotonCalibrationReport(BaseCalibrationReport):
             data[4].append(cal_summary["kElec"])
             data[5].append(cal_summary["kTP"])
             data[6].append(cal_summary["kPol"])
-            data[7].append(cal_summary["kS"])
+            data[7].append(cal_summary["kVol"])
+            data[8].append(cal_summary["kS"])
 
-            data[9].append(worksheet["raw_dosimeter_reading_v1"])
-            data[10].append(cal_summary["corr_dos_reading"])
+            data[10].append(worksheet["raw_dosimeter_reading_v1"])
+            data[11].append(cal_summary["corr_dos_reading"])
 
         col_widths = [5.5*cm]
         col_widths.extend([10.0*cm / num_worksheets]*num_worksheets)

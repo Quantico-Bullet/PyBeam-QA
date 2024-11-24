@@ -1,5 +1,22 @@
+# PyBeam QA
+# Copyright (C) 2024 Kagiso Lebang
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 from PySide6.QtCore import QObject, QEvent
-from PySide6.QtWidgets import (QWidget, QMainWindow, QCheckBox)
+from PySide6.QtGui import QMouseEvent
+from PySide6.QtWidgets import (QWidget, QMainWindow, QCheckBox,)
 
 from ui.py_ui.app_main_win_ui import Ui_MainWindow as Ui_AppMainWin
 from ui.linac_qa.qa_tools_win import QAToolsWindow
@@ -10,8 +27,12 @@ from ui.linac_qa.picket_fence_widgets import PicketFenceMainWindow
 from ui.linac_qa.field_analysis_widgets import FieldAnalysisMainWindow
 from ui.linac_qa.planar_imaging_widgets import PlanarImagingMainWindow
 
+from ui import move_to_screen_center
+
 from core import __app_name__
 from core.tools.devices import DeviceManager
+
+import gc
 
 class AppMainWin(QMainWindow):
     def __init__(self):
@@ -25,6 +46,8 @@ class AppMainWin(QMainWindow):
         self.setup_pages()
 
         self.initSetupComplete = True
+
+        move_to_screen_center(self)
 
     def setup_pages(self):
         # setup main page
@@ -54,15 +77,15 @@ class AppMainWin(QMainWindow):
         self.beam_checkbox_list = []
 
         # setup daily/monthly photons page functionality
-        self._ui.calibStartBtn.clicked.connect(lambda: "fake slot") # use fake slots so that we can disconnect past slots without errors
-        self._ui.loadQABtn.clicked.connect(lambda: "fake slot")
-        self._ui.backBtn.clicked.connect(lambda: "fake slot")
-        self._ui.linacNameCB.currentTextChanged.connect(lambda x: "fake slot")
+        self._ui.calibStartBtn.clicked.connect(QObject) # use dummy slots so that we can disconnect past slots without errors
+        self._ui.loadQABtn.clicked.connect(QObject)
+        self._ui.backBtn.clicked.connect(QObject)
+        self._ui.linacNameCB.currentTextChanged.connect(QObject)
         self._ui.backBtn.clicked.disconnect()
         self._ui.backBtn.clicked.connect(lambda: self.change_main_page(self._ui.linacQAPage))
         self._ui.calibStartBtn.clicked.disconnect()
         self._ui.loadQABtn.clicked.disconnect()
-        self._ui.linacNameCB.currentTextChanged.disconnect()
+        self._ui.linacNameCB.currentTextChanged.disconnect(None)
         self._ui.institutionLE.clear()
         self._ui.userLE.clear()
         self._ui.linacNameCB.clear()
@@ -135,34 +158,43 @@ class AppMainWin(QMainWindow):
             self._ui.navigationStackedWidget.setCurrentIndex(2)
     
     def eventFilter(self, source: QObject, event: QEvent) -> bool:
-        # Catch all sub-navigation component clicks here
-        # TODO remove too many if else checks
+        
+        #TODO handle only **right** mouse events and not general mouse clicks
         if event.type() == QEvent.Type.MouseButtonPress and source is self._ui.photonCalib:
             self.setup_calibration_page("photons")
             self.change_main_page(self._ui.initCalibPage)
+            return True
 
         elif event.type() == QEvent.Type.MouseButtonPress and source is self._ui.electronCalib:
             self.setup_calibration_page("electrons")
             self.change_main_page(self._ui.initCalibPage)
+            return True
 
         elif event.type() == QEvent.Type.MouseButtonPress and source is self._ui.winstonLutzAnalysis:
             self.open_window("winston_lutz", WinstonLutzMainWindow)
+            return True
         
         elif event.type() == QEvent.Type.MouseButtonPress and source is self._ui.picketFence:
             self.open_window("picket_fence", PicketFenceMainWindow)
+            return True
 
         elif event.type() == QEvent.Type.MouseButtonPress and source is self._ui.starshotAnalysis:
             self.open_window("starshot", StarshotMainWindow)
+            return True
 
         elif event.type() == QEvent.Type.MouseButtonPress and source is self._ui.fieldAnalysis:
             self.open_window("field_analysis", FieldAnalysisMainWindow)
+            return True
 
         elif event.type() == QEvent.Type.MouseButtonPress and source is self._ui.planarImagingAnalysis:
             self.open_window("planar_imaging_analysis", PlanarImagingMainWindow)
+            return True
             
-        return super().eventFilter(source, event)
+        else:
+            return False
     
     def open_window(self, window_type: str, window: QAToolsWindow, data: dict | None = None):
+
         if self.qa_windows[window_type] is None:
 
             if window_type != 'photon_cal' and window_type != 'electron_cal':

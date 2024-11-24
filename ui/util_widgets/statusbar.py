@@ -1,3 +1,19 @@
+# PyBeam QA
+# Copyright (C) 2024 Kagiso Lebang
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+
 from PySide6.QtWidgets import (QWidget, QHBoxLayout, QLabel)
 from PySide6.QtGui import Qt, QPixmap
 
@@ -19,6 +35,8 @@ class AnalysisInfoLabel(QWidget):
 
         self.label = QLabel()
         self.icon = QLabel()
+        self.icon.setScaledContents(True)
+        self.icon.setMaximumSize(16, 16)
         
         layout.addWidget(self.icon)
         layout.addWidget(self.label)
@@ -35,7 +53,6 @@ class AnalysisInfoLabel(QWidget):
             self.label.setText(base_text + f" ({message}%)" if message else base_text)
 
             icon_pixmap = QPixmap(u":/colorIcons/icons/in_progress.png")
-            icon_pixmap = icon_pixmap.scaled(16, 16, mode = Qt.TransformationMode.SmoothTransformation)
             self.icon.setPixmap(icon_pixmap)
 
         elif state == self.COMPLETE:
@@ -44,14 +61,12 @@ class AnalysisInfoLabel(QWidget):
             self.label.setText(alt_text + message if message else base_text)
 
             icon_pixmap = QPixmap(u":/colorIcons/icons/correct.png")
-            icon_pixmap = icon_pixmap.scaled(16, 16, mode = Qt.TransformationMode.SmoothTransformation)
             self.icon.setPixmap(icon_pixmap)
 
         elif state == self.FAILED:
             self.label.setText("Analysis failed (see error message...)")
 
             icon_pixmap = QPixmap(u":/colorIcons/icons/error_round.png")
-            icon_pixmap = icon_pixmap.scaled(16, 16, mode = Qt.TransformationMode.SmoothTransformation)
             self.icon.setPixmap(icon_pixmap)
 
         else:

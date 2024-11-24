@@ -9,6 +9,7 @@ from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtCore import Qt, QSize, QEvent, QThread, Signal, QDate
 
 from ui.util_widgets import worksheet_save_report
+from ui.util_widgets.dialogs import MessageDialog
 from ui.util_widgets.statusbar import AnalysisInfoLabel
 from ui.linac_qa.picket_fence_test_dialog import PFTestDialog
 from ui.linac_qa.qa_tools_win import QAToolsWindow
@@ -379,22 +380,17 @@ class QPicketFenceWorksheet(QWidget):
     def delete_file(self):
         listWidgetItem = self.ui.imageListWidget.currentItem()
 
-        self.delete_dialog = QMessageBox()
-        self.delete_dialog.setWindowTitle("Delete File")
-        self.delete_dialog.setText("<p><span style=\" font-weight:700; font-size: 11pt;\">" \
-                                  f"Are you sure you want to permanently delete \'{listWidgetItem.text()}\' ? </span></p>")
-        self.delete_dialog.setInformativeText("This action is irreversible!")
-        self.delete_dialog.setStandardButtons(QMessageBox.StandardButton.Yes | 
-                                             QMessageBox.StandardButton.Cancel)
-        self.delete_dialog.setTextFormat(Qt.TextFormat.RichText)
+        warning_dialog = MessageDialog()
+        warning_dialog.set_icon(MessageDialog.WARNING_ICON)
+        warning_dialog.set_title("Delete File")
+        warning_dialog.set_header_text(f"Are you sure you want to permanently delete {listWidgetItem.text()} ?")
+        warning_dialog.set_info_text("This action is irreversible!")
+        warning_dialog.set_standard_buttons(QDialogButtonBox.StandardButton.Yes | 
+                                            QDialogButtonBox.StandardButton.Cancel)
 
-        warning_icon = QPixmap(u":/colorIcons/icons/warning.png")
-        warning_icon = warning_icon.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
-        self.delete_dialog.setIconPixmap(warning_icon)
+        ret = warning_dialog.exec()
 
-        ret = self.delete_dialog.exec()
-
-        if ret == QMessageBox.StandardButton.Yes:
+        if ret == QDialogButtonBox.StandardButton.Yes:
             path = Path(listWidgetItem.data(Qt.UserRole)["file_path"])
             path.unlink(missing_ok=True)
             self.ui.imageListWidget.takeItem(self.ui.imageListWidget.currentRow())
@@ -455,18 +451,13 @@ class QPicketFenceWorksheet(QWidget):
         self.analysis_progress_bar.hide()
         self.analysis_message_label.hide()
 
-        self.error_dialog = QMessageBox()
-        self.error_dialog.setWindowTitle("Analysis Error")
-        self.error_dialog.setText("<p><span style=\" font-weight:700; font-size: 12pt;\">" \
-                                  f"{title_text}</span></p>")
-        self.error_dialog.setInformativeText(error_message)
-        self.error_dialog.setStandardButtons(QMessageBox.StandardButton.Ok)
-        self.error_dialog.setTextFormat(Qt.TextFormat.RichText)
-
-        error_icon = QPixmap(u":/colorIcons/icons/error_round.png")
-        error_icon = error_icon.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
-        self.error_dialog.setIconPixmap(error_icon)
-
+        self.error_dialog = MessageDialog()
+        self.error_dialog.set_icon(MessageDialog.CRITICAL_ICON)
+        self.error_dialog.set_title("Analysis Error")
+        self.error_dialog.set_header_text("Oops! An error was encountered")
+        self.error_dialog.set_info_text(error_message)
+        self.error_dialog.set_standard_buttons(QDialogButtonBox.StandardButton.Ok)
+        
         self.error_dialog.exec()
 
     def start_analysis(self):

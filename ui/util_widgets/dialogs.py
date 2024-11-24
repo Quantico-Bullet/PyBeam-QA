@@ -1,10 +1,27 @@
+# PyBeam QA
+# Copyright (C) 2024 Kagiso Lebang
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+
 from PySide6.QtGui import (QPixmap, QImage, QDesktopServices, QPixmap, QImage, QPainter, 
                            QColor)
 from PySide6.QtSvg import QSvgRenderer
 from PySide6.QtCore import Qt, QSize
-from PySide6.QtWidgets import (QWidget, QDialogButtonBox, QSpacerItem, QGridLayout,
+from PySide6.QtWidgets import (QWidget, QDialogButtonBox, QGridLayout,
                                QSizePolicy, QDialog, QLabel,
                                QVBoxLayout)
+from PySide6.QtGui import QGuiApplication
 
 from core import __version__ as pybeamqa_version
 from pdfrw import __version__ as pdfrw_version
@@ -27,33 +44,36 @@ class MessageDialog(QDialog):
         super().__init__(parent)
 
         self.header_text = QLabel()
-        self.header_text.setWordWrap(True)
-        self.header_text.setMinimumWidth(400)
-        self.icon = QLabel()
-        self.icon.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         self.message_text = QLabel()
-        self.message_text.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self.header_text.setWordWrap(True)
+        self.message_text.setWordWrap(True)
+        self.header_text.setSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.MinimumExpanding)
+        self.message_text.setSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.MinimumExpanding)
+
+        self.icon = QLabel()
+        self.icon.setFixedSize(QSize(48, 48))
+        self.icon.setScaledContents(True)
+        self.icon.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         
         self.button_box = QDialogButtonBox()
 
         self.button_box.accepted.connect(self.accept)
         self.button_box.rejected.connect(self.reject)
-
-        hor_spacer = QSpacerItem(350, 10, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         
         base_layout = QVBoxLayout()
         layout = QGridLayout()
         layout.setHorizontalSpacing(10)
         layout.addWidget(self.icon, 0, 0, 1, 1, Qt.AlignmentFlag.AlignTop)
         layout.addWidget(self.header_text, 0, 1, 1, 1, Qt.AlignmentFlag.AlignVCenter)
-        layout.addWidget(self.message_text, 1, 1, 1, 1, Qt.AlignmentFlag.AlignLeft)
-        layout.addItem(hor_spacer, 2, 0, 1, 2, Qt.AlignmentFlag.AlignLeft)
+        layout.addWidget(self.message_text, 1, 1, 1, 1, Qt.AlignmentFlag.AlignTop)
 
         base_layout.addLayout(layout)
         base_layout.addWidget(self.button_box)
         self.setLayout(base_layout)
 
-        self.setMaximumWidth(450)
+        primary_screen = QGuiApplication.primaryScreen()
+
+        self.setFixedWidth(primary_screen.availableSize().toTuple()[0] * 0.35)
 
         #set default button
         self.set_standard_buttons()
@@ -76,7 +96,7 @@ class MessageDialog(QDialog):
     
     def set_icon(self, pixmap: QPixmap | QImage | str | int, smooth_image: bool = True) -> None:
         if isinstance(pixmap, (QPixmap, QImage)) and smooth_image:
-            pixmap = pixmap.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
+            pixmap = pixmap
 
         elif isinstance(pixmap, int):
             if pixmap == self.INFO_ICON:
@@ -94,8 +114,6 @@ class MessageDialog(QDialog):
             else:
                 return
             
-            pixmap = pixmap.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
-
         self.icon.setPixmap(pixmap)
 
 class AboutDialog(QDialog):
@@ -132,6 +150,3 @@ class AboutDialog(QDialog):
 
     def open_github(self):
         QDesktopServices.openUrl("https://github.com/Quantico-Bullet/PyBeam-QA/")
-
-
-    

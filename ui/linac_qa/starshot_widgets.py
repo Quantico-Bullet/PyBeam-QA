@@ -1,15 +1,32 @@
+# PyBeam QA
+# Copyright (C) 2024 Kagiso Lebang
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+
 from PySide6.QtWidgets import (QWidget, QLabel, QProgressBar, QVBoxLayout, QFileDialog,
                                QListWidgetItem, QMenu, QSizePolicy, QMessageBox, 
                                QMainWindow, QFormLayout, QComboBox,
                                QDialog, QDialogButtonBox, QLineEdit, QSpacerItem,
                                QPushButton, QCheckBox, QHBoxLayout, QPlainTextEdit,
                                QDateEdit)
-from PySide6.QtGui import QIcon, QPixmap
+from PySide6.QtGui import QIcon, QPixmap, QActionGroup, QTransform
 from PySide6.QtCore import Qt, QSize, QEvent, QThread, Signal, QDate
 
 from ui.py_ui import icons_rc
 from ui.py_ui.starshot_worksheet_ui import Ui_QStarshotWorksheet
 from ui.util_widgets import worksheet_save_report
+from ui.util_widgets.dialogs import MessageDialog
 from ui.util_widgets.statusbar import AnalysisInfoLabel
 from ui.linac_qa.starshot_test_dialog import StarshotTestDialog
 from ui.linac_qa.qa_tools_win import QAToolsWindow
@@ -26,12 +43,15 @@ from pylinac.core.image_generator import (GaussianFilterLayer,
 
 from scipy import ndimage
 
+import numpy as np
 import traceback
 import platform
 import webbrowser
 import subprocess
 import pyqtgraph as pg
 from pathlib import Path
+
+from copy import copy
 
 class StarshotMainWindow(QAToolsWindow):
 
@@ -127,8 +147,10 @@ class QStarshotWorksheet(QWidget):
         self.img_list_contextmenu.addAction("Properties")
         self.img_list_contextmenu.addSeparator()
         self.select_all_action = self.img_list_contextmenu.addAction("Select All", lambda: self.perform_selection("selectAll"), "Ctrl+A")
+        self.select_all_action.setIcon(QIcon(u":/actionIcons/icons/select_all.svg"))
         self.unselect_all_action = self.img_list_contextmenu.addAction("Unselect All", lambda: self.perform_selection("unselectAll"),
                                                                         "Ctrl+Shift+A")
+        self.unselect_all_action.setIcon(QIcon(u":/actionIcons/icons/deselect.svg"))
         self.invert_select_action = self.img_list_contextmenu.addAction("Invert Selection", lambda: self.perform_selection("invertSelection"))
         self.img_list_contextmenu.addSeparator()
         self.remove_selected_files_action = self.img_list_contextmenu.addAction("Remove Selected Files", self.remove_selected_files)
@@ -162,7 +184,7 @@ class QStarshotWorksheet(QWidget):
         #-------- init defaults --------
         self.marked_images = []
         self.current_plot = None
-        self.current_results = None
+        self.analysis_data = None
         self.imageView_windows = []
         self.advanced_results_view = None
         self.analysis_in_progress = False
@@ -182,6 +204,78 @@ class QStarshotWorksheet(QWidget):
         self.report_date = QDate.currentDate()
         self.save_path = ""
         self.save_comment = ""
+
+        self.init_plot_graphics()
+
+    def init_plot_graphics(self) -> None:
+
+        self.use_mm_units = True
+
+        self.graphics_widget = pg.GraphicsLayoutWidget()
+        self.plot_label = pg.LabelItem()
+        self.img_plot_item = pg.PlotItem()
+        self.img_plot_item.showAxes(True, showValues=(True, True, True, True))
+        self.img_plot_item.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self.img_plot_item.setAspectLocked(lock=True)
+        self.img_plot_item.invertY(True)
+        self.profile_plot_item = pg.PlotItem()
+        self.profile_plot_item.showAxes(True, showValues=(True, True, True, True))
+        self.profile_plot_item.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self.profile_plot_item.setLabel('left', '<b>Normalised pixel value</b>')
+        self.profile_plot_item.setLabel('bottom', '<b>A.U</b>')
+        self.profile_plot_item.setLimits(xMin=-10, xMax=370, yMin=-0.05, yMax=1.05)
+        
+        self.graphics_widget.addItem(self.plot_label, 0, 0)
+        self.graphics_widget.addItem(self.img_plot_item, 1, 0)
+
+        # Add actions to context menus
+        img_context_menu = self.img_plot_item.getViewBox().menu
+        img_context_menu.addSeparator()
+
+        prof_context_menu = self.profile_plot_item.getViewBox().menu
+        prof_context_menu.addSeparator()
+
+        self.chg_axes_units_action = img_context_menu.addAction("Change Axes Units To mm Or pixels")
+        self.chg_axes_units_action.setIcon(QIcon(u":/actionIcons/icons/transform.svg"))
+        self.chg_axes_units_action.triggered.connect(lambda: self.set_axes_units(not self.use_mm_units))
+        self.zoom_circle_action = img_context_menu.addAction("Zoom-In To Minimum Intersecting Circle")
+        self.zoom_circle_action.setIcon(QIcon(u":/actionIcons/icons/zoom_pan.svg"))
+        self.zoom_circle_action.triggered.connect(self.zoom_to_circle)
+
+        # Add action items to starshot view context menu
+        img_context_menu.addSeparator()
+        self.img_show_image_action = img_context_menu.addAction("Starshot Image View",
+                                                        self.set_current_view,
+                                                        "")
+        self.img_show_image_action.setCheckable(True)
+        self.img_show_profile_action = img_context_menu.addAction("Starshot Profile View",
+                                                          self.set_current_view,
+                                                          "")
+        self.img_show_profile_action.setCheckable(True)
+
+        img_action_group = QActionGroup(img_context_menu)
+        img_action_group.addAction(self.img_show_image_action)
+        img_action_group.addAction(self.img_show_profile_action)
+        img_action_group.setExclusive(True)
+        self.img_show_image_action.setChecked(True)
+        self.current_view = "starshot_view"
+
+        prof_context_menu.addSeparator()
+        self.prof_show_image_action = prof_context_menu.addAction("Starshot Image View",
+                                                        self.set_current_view,
+                                                        "")
+        self.prof_show_image_action.setCheckable(True)
+        self.prof_show_profile_action = prof_context_menu.addAction("Starshot Profile View",
+                                                          self.set_current_view,
+                                                          "")
+        self.prof_show_profile_action.setCheckable(True)
+
+        prof_action_group = QActionGroup(prof_context_menu)
+        prof_action_group.addAction(self.prof_show_image_action)
+        prof_action_group.addAction(self.prof_show_profile_action)
+        prof_action_group.setExclusive(True)
+        self.prof_show_image_action.setChecked(True)
+        self.current_view = "starshot_view"
 
     def setup_config(self):
         self.ui.SIDInputCB.addItems(["Auto", "Manual"])
@@ -210,6 +304,7 @@ class QStarshotWorksheet(QWidget):
                 self,
                 "Select Starshot Images",
                 "",
+                "Images (*.dcm *.png *.tiff *.tif);; " \
                 "DICOM Images (*.dcm);; TIFF Images (*.tiff *.tif);; PNG Image (*.png)",
                 )
 
@@ -323,22 +418,17 @@ class QStarshotWorksheet(QWidget):
     def delete_file(self):
         listWidgetItem = self.ui.imageListWidget.currentItem()
 
-        self.error_dialog = QMessageBox()
-        self.error_dialog.setWindowTitle("Delete File")
-        self.error_dialog.setText("<p><span style=\" font-weight:700; font-size: 11pt;\">" \
-                                  f"Are you sure you want to permanently delete \'{listWidgetItem.text()}\' ? </span></p>")
-        self.error_dialog.setInformativeText("This action is irreversible!")
-        self.error_dialog.setStandardButtons(QMessageBox.StandardButton.Yes | 
-                                             QMessageBox.StandardButton.Cancel)
-        self.error_dialog.setTextFormat(Qt.TextFormat.RichText)
+        warning_dialog = MessageDialog()
+        warning_dialog.set_icon(MessageDialog.WARNING_ICON)
+        warning_dialog.set_title("Delete File")
+        warning_dialog.set_header_text(f"Are you sure you want to permanently delete {listWidgetItem.text()} ?")
+        warning_dialog.set_info_text("This action is irreversible!")
+        warning_dialog.set_standard_buttons(QDialogButtonBox.StandardButton.Yes | 
+                                            QDialogButtonBox.StandardButton.Cancel)
 
-        warning_icon = QPixmap(u":/colorIcons/icons/warning.png")
-        warning_icon = warning_icon.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
-        self.error_dialog.setIconPixmap(warning_icon)
+        ret = warning_dialog.exec()
 
-        ret = self.error_dialog.exec()
-
-        if ret == QMessageBox.StandardButton.Yes:
+        if ret == QDialogButtonBox.StandardButton.Yes:
             path = Path(listWidgetItem.data(Qt.UserRole)["file_path"])
             path.unlink(missing_ok=True)
             self.ui.imageListWidget.takeItem(self.ui.imageListWidget.currentRow())
@@ -397,18 +487,13 @@ class QStarshotWorksheet(QWidget):
         self.analysis_progress_bar.hide()
         self.analysis_message_label.hide()
 
-        self.error_dialog = QMessageBox()
-        self.error_dialog.setWindowTitle("Analysis Error")
-        self.error_dialog.setText("<p><span style=\" font-weight:700; font-size: 12pt;\">" \
-                                  "Oops! An error was encountered </span></p>")
-        self.error_dialog.setInformativeText(error_message)
-        self.error_dialog.setStandardButtons(QMessageBox.StandardButton.Ok)
-        self.error_dialog.setTextFormat(Qt.TextFormat.RichText)
-
-        error_icon = QPixmap(u":/colorIcons/icons/error_round.png")
-        error_icon = error_icon.scaled(QSize(48, 48), mode = Qt.TransformationMode.SmoothTransformation)
-        self.error_dialog.setIconPixmap(error_icon)
-
+        self.error_dialog = MessageDialog()
+        self.error_dialog.set_icon(MessageDialog.CRITICAL_ICON)
+        self.error_dialog.set_title("Analysis Error")
+        self.error_dialog.set_header_text("Oops! An error was encountered")
+        self.error_dialog.set_info_text(error_message)
+        self.error_dialog.set_standard_buttons(QDialogButtonBox.StandardButton.Ok)
+        
         self.error_dialog.exec()
 
     def start_analysis(self):
@@ -426,9 +511,7 @@ class QStarshotWorksheet(QWidget):
         for i in range(row_count):
             self.form_layout.removeRow(row_count - (i+1))
 
-        if self.current_plot is not None:
-            self.current_plot.deleteLater()
-            self.current_plot = None
+        self.img_plot_item.clear()
 
         # Restore spacer size to prevent other widgets from moving
         self.ui.image_vl_spacer.changeSize(0, 10, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
@@ -454,7 +537,6 @@ class QStarshotWorksheet(QWidget):
         if self.ui.DPIInputCB.currentText() == "Manual":
             params["dpi"] = self.ui.dPIDSB.value()
 
-        # Top level try clause catches file IO errors
         try:
             self.worker = QStarshotWorker(filepath = images,
                                           radius = self.ui.radiusSB.value(),
@@ -471,21 +553,23 @@ class QStarshotWorksheet(QWidget):
             self.worker.analysis_failed.connect(self.on_analysis_failed)
             self.worker.thread_finished.connect(self.qthread.quit)
             self.worker.thread_finished.connect(self.worker.deleteLater)
-            self.worker.analysis_results_ready.connect(lambda results: self.show_analysis_results(results))
+            self.worker.analysis_results_ready.connect(lambda data: self.show_analysis_results(data))
             self.qthread.started.connect(self.worker.analyze)
-            self.qthread.finished.connect(self.qthread.deleteLater)
+            self.qthread.finished.connect(self.worker.deleteLater)
 
             self.qthread.start()
 
         except Exception as err:
             self.on_analysis_failed(traceback.format_exception_only(err)[-1])
 
-    def show_analysis_results(self, results: dict):
+    def show_analysis_results(self, data: dict):
         self.has_analysis = True
-        self.current_results = results
+        self.analysis_data = data
         self.analysis_in_progress = False
         self.ui.genReportBtn.setEnabled(True)
         self.restore_list_checkmarks()
+
+        self.plot_analyzed_starshot()
 
         # Analyze button is auto-enabled by update_marked_images() on item data change
         self.ui.analyzeBtn.setText(f"Analyze images")
@@ -503,19 +587,162 @@ class QStarshotWorksheet(QWidget):
 
         #set outcome
         self.set_analysis_outcome()
-
+        
         #---------- Update the plot --------------
-        starshot = results["starshot_obj"]
-        starshot.plot_image()
-        self.current_plot = starshot.graphics_widget
-        self.ui.analysisImageVL.addWidget(self.current_plot)
+        self.ui.analysisImageVL.addWidget(self.graphics_widget)
         
         # Change spacer size to allow the image widget to scale properly
         self.ui.image_vl_spacer.changeSize(0, 10, QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
 
         #Update the summary
-        self.analysis_summary= {"Wobble (circle) diameter": f"{starshot.wobble.radius_mm*2.0:2.3f} mm",
-                                "Number of spokes detected": f"{len(starshot.lines)}"}
+        #self.analysis_summary= {"Wobble (circle) diameter": f"{starshot.wobble.radius_mm*2.0:2.3f} mm",
+        #                        "Number of spokes detected": f"{len(starshot.lines)}"}
+        
+    def plot_analyzed_starshot(self) -> None:
+        #---------- Plot the image
+        self.img_plot_item.addItem(pg.ImageItem(self.analysis_data["image"].array))
+
+        # plot the lines
+        for line in self.analysis_data["spoke_lines"]:
+            self.img_plot_item.plot(x = [line.point1.x, line.point2.x],
+                                    y = [line.point1.y, line.point2.y],
+                                    pen = pg.mkPen((255,0,255), width=1.5))
+            
+        # Plot the rails used for the circle profile
+        width_ratio = self.analysis_data["star_profile"].width_ratio
+        radius = self.analysis_data["star_profile"].radius
+        center_x = self.analysis_data["star_profile"].center.x
+        center_y = self.analysis_data["star_profile"].center.y
+        x_outer = radius * (1 + width_ratio) * np.cos(np.linspace(0, 2*np.pi, 500)) + center_x
+        y_outer = radius * (1 + width_ratio) * np.sin(np.linspace(0, 2*np.pi, 500)) + center_y
+        self.img_plot_item.plot(x_outer, y_outer, pen = pg.mkPen((0, 255, 0), width = 2))
+
+        x_outer = radius * (1 - width_ratio) * np.cos(np.linspace(0, 2*np.pi, 500)) + center_x
+        y_outer = radius * (1 - width_ratio) * np.sin(np.linspace(0, 2*np.pi, 500)) + center_y
+
+        self.img_plot_item.plot(x_outer, y_outer, pen = pg.mkPen((0, 255, 0), width = 2))
+
+        # Plot the wobble
+        self.img_plot_item.addItem(
+            pg.ScatterPlotItem([self.analysis_data["wobble"].center.x], 
+                               [self.analysis_data["wobble"].center.y],
+                               pen = pg.mkPen(None), brush = pg.mkBrush(0,0,200,150),
+                               size = self.analysis_data["wobble"].diameter, pxMode = False))
+        self.img_plot_item.addItem(
+            pg.ScatterPlotItem([self.analysis_data["wobble"].center.x], 
+                               [self.analysis_data["wobble"].center.y],
+                               pen = pg.mkPen(255,191,0), brush = pg.mkBrush(255,191,0,255),
+                               size = self.analysis_data["wobble"].diameter * 0.02, pxMode = False))
+        
+        # Plot the peaks
+        peak_x = [peak.x for peak in self.analysis_data["star_profile"].peaks]
+        peak_y = [peak.y for peak in self.analysis_data["star_profile"].peaks]
+
+        self.img_plot_item.addItem(
+            pg.ScatterPlotItem(peak_x, peak_y,
+                               size = 15, pxMode = False,
+                               pen = pg.mkPen(None), brush = pg.mkBrush(255,0,255,150)))
+        
+        self.set_axes_units(True)
+    
+    def set_current_view(self):
+        if self.current_view == "starshot_view":
+            self.graphics_widget.removeItem(self.img_plot_item)
+            self.graphics_widget.addItem(self.profile_plot_item, 1, 0)
+            self.current_view = "profile_view"
+            self.img_show_profile_action.setChecked(True)
+            self.prof_show_profile_action.setChecked(True)
+        else:
+            self.graphics_widget.removeItem(self.profile_plot_item)
+            self.graphics_widget.addItem(self.img_plot_item, 1, 0)
+            self.current_view = "starshot_view"
+            self.img_show_image_action.setChecked(True)
+            self.prof_show_image_action.setChecked(True)
+
+    def set_axes_units(self, use_mm_units: bool):
+        if use_mm_units:
+            transform = QTransform() # The transformation to use
+            transform.scale(1 / self.analysis_data["image"].dpmm, 
+                            1 / self.analysis_data["image"].dpmm)
+            transform.translate(-0.5 * self.analysis_data["image"].shape[1], 
+                                -0.5 * self.analysis_data["image"].shape[0])
+
+            for item in self.img_plot_item.items:
+                item.setTransform(transform)
+
+            self.img_plot_item.setLabel('left', '<b>Y CAX offset (mm)</b>')
+            self.img_plot_item.setLabel('bottom', '<b>X CAX offset (mm)</b>')
+
+            t_unit = "mm"
+            diameter = self.analysis_data["wobble"].diameter_mm
+            x_coord = ((self.analysis_data["wobble"].center.x - 0.5 * 
+                       self.analysis_data["image"].shape[1]) / 
+                       self.analysis_data["image"].dpmm)
+            y_coord = ((self.analysis_data["wobble"].center.y - 0.5 * 
+                       self.analysis_data["image"].shape[0]) / 
+                       self.analysis_data["image"].dpmm)      
+
+        else:
+            for item in self.img_plot_item.items:
+                item.resetTransform()
+
+            self.img_plot_item.setLabel('left', '<b>Y CAX offset (px)</b>')
+            self.img_plot_item.setLabel('bottom', '<b>X CAX offset (px)</b>')
+        
+            t_unit = "px"
+            diameter = self.analysis_data["wobble"].diameter
+            x_coord = self.analysis_data["wobble"].center.x
+            y_coord = self.analysis_data["wobble"].center.y
+        
+        self.plot_label.setText(
+            "<span style='color:powderblue'>"\
+            f"<p><b>Diameter of minimum intersecting circle:</b> {diameter: 2.2f} {t_unit}</p>" \
+            f"<p><b>Circle coordinates:</b> {x_coord:2.2f} {t_unit}, {y_coord:2.2f} {t_unit}</p>" \
+            "</span>")
+        self.use_mm_units = use_mm_units
+        self.set_axes_ranges()
+
+    def zoom_to_circle(self):
+        mm_per_dot = 1 / self.analysis_data["image"].dpmm
+        image_dim = self.analysis_data["image"].shape
+        radius = self.analysis_data["wobble"].radius
+        x_coord = self.analysis_data["wobble"].center.x 
+        y_coord = self.analysis_data["wobble"].center.y
+        x_margin = 1.20 * radius # Use a 120% radius margin
+        y_margin = 1.20 * radius # Use a 120% radius margin
+
+        if self.use_mm_units:
+            x_min = mm_per_dot * (x_coord - 0.5 * image_dim[1] - radius - x_margin)
+            x_max = mm_per_dot * (x_coord - 0.5 * image_dim[1] + radius + x_margin)
+            y_min = mm_per_dot * (y_coord - 0.5 * image_dim[0] - radius - y_margin)
+            y_max = mm_per_dot * (y_coord - 0.5 * image_dim[0] + radius + y_margin)
+            
+        else:
+            x_min = x_coord - radius - x_margin
+            x_max = x_coord + radius + x_margin
+            y_min = y_coord - radius - y_margin
+            y_max = y_coord + radius + y_margin
+            
+        self.img_plot_item.setRange(xRange=(x_min, x_max), yRange=(y_min, y_max))
+
+    def set_axes_ranges(self):
+        mm_per_dot = 1 / self.analysis_data["image"].dpmm
+        image_dim = self.analysis_data["image"].shape
+        x_lim_margin = 0.45 * image_dim[1] # Use a 45% width margin for limits
+        y_lim_margin = 0.45 * image_dim[0] # Use a 45% height margin for limits
+
+        if self.use_mm_units:
+            x_min = -mm_per_dot * (0.5 * image_dim[1] + x_lim_margin)
+            y_min = -mm_per_dot * (0.5 * image_dim[0] + y_lim_margin)               
+            x_max = mm_per_dot * (0.5 * image_dim[1] + x_lim_margin)
+            y_max = mm_per_dot * (0.5 * image_dim[0] + y_lim_margin)
+            
+        else:
+            x_min, y_min = -x_lim_margin, -y_lim_margin
+            x_max, y_max = x_lim_margin + image_dim[1], y_lim_margin + image_dim[0]
+            
+        self.img_plot_item.setLimits(xMin=x_min, xMax=x_max, yMin=y_min, yMax=y_max)
+        self.img_plot_item.autoRange()
 
     def remove_list_checkmarks(self):
         for index in range(self.ui.imageListWidget.count()):
@@ -545,7 +772,7 @@ class QStarshotWorksheet(QWidget):
                 "height: 30px;\n"
                 "font-weight: bold;\n")
             
-        elif self.current_results["starshot_obj"].wobble.radius_mm * 2.0 < self.ui.toleranceDSB.value():
+        elif self.analysis_data["wobble"].radius_mm * 2.0 < self.ui.toleranceDSB.value():
             self.ui.outcomeLE.setText("PASS")
             self.ui.outcomeLE.setStyleSheet(u"border-color: rgb(95, 200, 26);\n"
                 "border-radius: 15px;\n"
@@ -660,7 +887,7 @@ class QStarshotWorksheet(QWidget):
             institution_name = "N/A" if institution_name_le.text() == "" else institution_name_le.text()
             treatment_unit = "N/A" if treatment_unit_le.currentText() == "" else treatment_unit_le.currentText()
         
-            starshot = self.current_results["starshot_obj"]
+            starshot = self.analysis_data["starshot_obj"]
 
             report = StarshotReport(filename = save_path_le.text(),
                                     author = physicist_name,
@@ -678,4 +905,3 @@ class QStarshotWorksheet(QWidget):
 
             if show_report_checkbox.isChecked():
                 webbrowser.open(save_path_le.text())
-            
