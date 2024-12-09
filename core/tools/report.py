@@ -368,11 +368,9 @@ class StarshotReport(BaseReport):
         author: str = "N/A",
         institution: str = "N/A",
         treatment_unit_name: str | None = None,
-        analysis_summary: list | None = None,
         analysis_date: str | None = None,
-        summary_plots: list[io.BytesIO] | None = None,
         report_status: str = "N/A",
-        wobble_diameter: float | None = None,
+        analysis_data: dict | None = None,
         tolerance: float = 1.0,
         comments: str | None = None
         ):
@@ -382,12 +380,10 @@ class StarshotReport(BaseReport):
         self._institution = institution
         self._treatment_unit_name = treatment_unit_name
         self._analysis_date = analysis_date
-        self._analysis_summary = analysis_summary
-        self._summary_plots = summary_plots
         self._report_status = report_status
-        self._wobble_diameter = wobble_diameter
         self._tolerance = tolerance
         self._comments = comments
+        self._analysis_data = analysis_data
 
     def set_user_details(self, doc_contents: list):
         data = [[Paragraph("<b>Physicist</b>"), f": {self._author}"],
@@ -396,7 +392,8 @@ class StarshotReport(BaseReport):
                 [Paragraph("<b>Analysis date</b>"), f": {self._analysis_date}"],
                 [Paragraph("<b>Test tolerance</b>"), f": {self._tolerance:2.2f} mm"],
                 [Paragraph("<b>Test outcome</b>"),
-                         f": {self._report_status} (wobble diameter  = {self._wobble_diameter:2.3f} mm)"]]
+                         f": {self._report_status} (wobble diameter  = " \
+                             f"{self._analysis_date["wobble"].diameter_mm:.2f} mm)"]]
         
         doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT",
                             style=[('LEFTPADDING', (0,0), (0,-1), 0)])
@@ -407,7 +404,8 @@ class StarshotReport(BaseReport):
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Analysis Details:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
 
-        data = [[param, value] for param, value in self._analysis_summary.items()]
+        data = ([["Wobble (cirle) diameter", f"{self._analysis_date["wobble"].diameter_mm:.2f}"]])
+        data.append([["Number of spokes detected", f"{len(self._analysis_date["spoke_lines"])}"]])
         data.insert(0, [Paragraph("<b>Parameter</b>"), Paragraph("<b>Value</b>"), Paragraph("<b>Comment(s)</b>")])
 
         table = Table(data, colWidths=[6.0*cm, 3.0*cm, 6.5*cm], hAlign="LEFT",
@@ -425,8 +423,8 @@ class StarshotReport(BaseReport):
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Summary plots:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
 
-        data = [[PdfImage(self._summary_plots[0], width=7.5*cm, height=7.5*cm), 
-                 PdfImage(self._summary_plots[1], width=7.5*cm, height=7.5*cm)]]
+        data = [[PdfImage(self._analysis_data["report_plots"][0], width=7.5*cm, height=7.5*cm), 
+                 PdfImage(self._analysis_data["report_plots"][1], width=7.5*cm, height=7.5*cm)]]
 
         doc_contents.append(Table(data, colWidths=[8.0*cm, 8.0*cm], hAlign="CENTER"))
 
@@ -438,7 +436,7 @@ class StarshotReport(BaseReport):
         self.set_user_details(doc_contents)
         self.set_analysis_details(doc_contents)
 
-        if self._summary_plots is not None:
+        if self._analysis_data["report_plots"] is not None:
             self.set_plot_summary(doc_contents)
         
         self.add_comments(doc_contents)

@@ -886,20 +886,16 @@ class QStarshotWorksheet(QWidget):
             physicist_name = "N/A" if physicist_name_le.text() == "" else physicist_name_le.text()
             institution_name = "N/A" if institution_name_le.text() == "" else institution_name_le.text()
             treatment_unit = "N/A" if treatment_unit_le.currentText() == "" else treatment_unit_le.currentText()
-        
-            starshot = self.analysis_data["starshot_obj"]
 
             report = StarshotReport(filename = save_path_le.text(),
                                     author = physicist_name,
                                     institution = institution_name,
                                     treatment_unit_name = treatment_unit,
                                     analysis_date = self.report_date.toString("dd MMMM yyyy"),
-                                    analysis_summary = self.analysis_summary.copy(),
-                                    summary_plots = starshot.get_publishable_plots(),
-                                    wobble_diameter = starshot.wobble.radius_mm * 2.0,
                                     tolerance = self.ui.toleranceDSB.value(),
                                     report_status = self.ui.outcomeLE.text(),
-                                    comments = comments_te.toPlainText()
+                                    comments = comments_te.toPlainText(),
+                                    analysis_data = self.analysis_data
                                     )
             report.save_report()
 
