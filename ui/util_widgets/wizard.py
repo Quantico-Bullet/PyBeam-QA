@@ -89,6 +89,7 @@ class WizardPage(QScrollArea):
         self.section_item.setEnabled(False)
         self.page_status_changed.connect(self.section_item.set_status)
         self.setWidget(widget)
+        self.setWidgetResizable(True)
         self.setFrameShape(QFrame.Shape.NoFrame)
         
         self.mandatory_fields: list[QWidget] = []

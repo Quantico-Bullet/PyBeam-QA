@@ -20,11 +20,11 @@ from PySide6.QtGui import QIcon
 from ui.app_main_win import AppMainWin
 from core.tools.devices import DeviceManager
 from core.tools.setup import init_setup_wizard
+from core.configuration.config import WorkspaceConfig
 
+import platform
 import sys
 import json
-
-workspace_path = "core/configuration/workspace.json"
 
 app = QApplication(sys.argv)
 
@@ -36,15 +36,22 @@ app.setStyleSheet("QLineEdit, QDateEdit, QPushButton, QDoubleSpinBox," \
 def initFiles():
     DeviceManager.loadDevices("core/tools/list.json")
     
-    with open(workspace_path, 'r') as workspace_file:
-        workspace = json.load(workspace_file)
+    workspace = WorkspaceConfig().getConfig()
 
-    if workspace["workspace_dir"] == None:
+    if workspace["workspace_path"] == None:
         init_setup_wizard()
 
 if __name__ == "__main__":
 
     initFiles()
+
+    plt = platform.system()
+
+    if plt == "Windows":
+        import ctypes
+        
+        appID = u"radlab.pybeamqa-0.1.2"
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(appID)
     
     QMainWin = AppMainWin()
     QMainWin.show()

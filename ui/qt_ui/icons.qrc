@@ -44,4 +44,7 @@
         <file>icons/ic_app.svg</file>
         <file>icons/ic_app_alt.svg</file>
     </qresource>
+    <qresource prefix="/anim">
+        <file>icons/setup_end_anim.svg</file>
+    </qresource>
 </RCC>

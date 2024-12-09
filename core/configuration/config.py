@@ -21,12 +21,16 @@ currDir = Path(__file__).parent
 
 chambersFile = currDir / "data/chambers.json"
 settingsFile = currDir / "data/settings.json"
+workspaceFile = currDir / "data/workspace.json"
 
 with chambersFile.open(encoding="utf-8") as file:
     chambersConfig = json.load(file)
 
 with settingsFile.open(encoding="utf-8") as file:
     settingsConfig = json.load(file)
+
+with workspaceFile.open(encoding="utf-8") as file:
+    workspaceConfig = json.load(file)
 
 class Config:
     def saveConfig(self, path: Path, config: dict):
@@ -47,6 +51,17 @@ class ChambersConfig(Config):
 class SettingsConfig(Config):
     path = settingsFile
     config = settingsConfig
+
+    def saveConfig(self, config):
+        self.config = config
+        return super().saveConfig(self.path, config)
+    
+    def getConfig(self) -> dict:
+        return self.config
+    
+class WorkspaceConfig(Config):
+    path = workspaceFile
+    config = workspaceConfig
 
     def saveConfig(self, config):
         self.config = config
