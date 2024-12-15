@@ -392,8 +392,8 @@ class StarshotReport(BaseReport):
                 [Paragraph("<b>Analysis date</b>"), f": {self._analysis_date}"],
                 [Paragraph("<b>Test tolerance</b>"), f": {self._tolerance:2.2f} mm"],
                 [Paragraph("<b>Test outcome</b>"),
-                         f": {self._report_status} (wobble diameter  = " \
-                             f"{self._analysis_date["wobble"].diameter_mm:.2f} mm)"]]
+                         f": {self._report_status} (wobble diameter  = " 
+                             f"{self._analysis_data['wobble'].diameter_mm:.2f} mm)"]]
         
         doc_contents.append(Table(data, colWidths=[3.5*cm, 5.0*cm], hAlign="LEFT",
                             style=[('LEFTPADDING', (0,0), (0,-1), 0)])
@@ -404,8 +404,8 @@ class StarshotReport(BaseReport):
         doc_contents.append(Paragraph("<b><u><font size=11 color=\"darkblue\">Analysis Details:</font></u></b>"))
         doc_contents.append(Spacer(1, 16)) # add spacing of 16 pts
 
-        data = ([["Wobble (cirle) diameter", f"{self._analysis_date["wobble"].diameter_mm:.2f}"]])
-        data.append([["Number of spokes detected", f"{len(self._analysis_date["spoke_lines"])}"]])
+        data = [["Wobble (cirle) diameter", f"{self._analysis_data['wobble'].diameter_mm:.2f} mm", ""]]
+        data.append(["Number of spokes detected", f"{len(self._analysis_data['spoke_lines'])}", ""])
         data.insert(0, [Paragraph("<b>Parameter</b>"), Paragraph("<b>Value</b>"), Paragraph("<b>Comment(s)</b>")])
 
         table = Table(data, colWidths=[6.0*cm, 3.0*cm, 6.5*cm], hAlign="LEFT",
@@ -531,8 +531,8 @@ class PlanarImagingReport(BaseReport):
         self.set_user_details(doc_contents)
         self.set_analysis_details(doc_contents)
 
-        if self._summary_plots is not None:
-            self.set_plot_summary(doc_contents)
+        #if self._summary_plots is not None:
+        #    self.set_plot_summary(doc_contents)
         
         self.add_comments(doc_contents)
         self.add_signature(doc_contents)

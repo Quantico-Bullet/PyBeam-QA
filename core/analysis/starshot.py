@@ -60,6 +60,7 @@ class QStarshot(Starshot):
         
         fig, ax = plt.subplots()
         # show analyzed image
+        self.image.plot(ax, show=False)
         self.lines.plot(ax)
         self.wobble.plot2axes(ax, edgecolor="green")
         self.circle_profile.plot2axes(ax, edgecolor="green")
@@ -76,6 +77,9 @@ class QStarshot(Starshot):
         y_limits = [self.wobble.center.y + self.wobble.diameter,
                     self.wobble.center.y - self.wobble.diameter]
         
+        ax.axis('on')
+        ax.set_xticklabels([])
+        ax.set_yticklabels([])
         ax.set_xlim(x_limits)
         ax.set_ylim(y_limits)
 
@@ -112,7 +116,6 @@ class QStarshotWorker(QObject):
         self._update_signal = update_signal
         self._kwargs = kwargs
         
-
     def analyze(self):
         try:
             if type(self._filepath) == str:
